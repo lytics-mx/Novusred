@@ -4,7 +4,7 @@
     'category': 'Website',
     'depends': ['website'],
     'data': [
-        'views/templates.xml',
+        # 'views/templates.xml',
         # 'views/footer.xml',
     ],
     'installable': True,
