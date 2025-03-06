@@ -1,5 +1,5 @@
 {
-    'name': 'Sitio Web',
+    'name': 'Portal Web Lytics',
     'version': '1.0',
     'category': 'Website',
     'depends': ['website'],
