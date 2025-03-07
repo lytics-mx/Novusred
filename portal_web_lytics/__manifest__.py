@@ -4,8 +4,8 @@
     'category': 'Website',
     'depends': ['website'],
     'data': [
-        'views/home.xml',
-        # 'views/assets.xml',  
+        'views/lytics_layout.xml',
+        'views/lytics_template.xml',
     ],
     'installable': True,
     'application': True,
