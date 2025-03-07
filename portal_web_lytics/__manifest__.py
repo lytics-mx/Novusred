@@ -5,7 +5,7 @@
     'depends': ['website'],
     'data': [
         'views/home.xml',
-        'views/assets.xml',  
+        # 'views/assets.xml',  
     ],
     'installable': True,
     'application': True,
