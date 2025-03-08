@@ -22,7 +22,7 @@
 {
     'name': 'Theme Shopping',
     'version': '18.0.1.0.0',
-    'category': 'Theme/eCommerce',
+    'category': 'Website',
     'summary': "Theme Shopping is an attractive and modern eCommerce Website "
                "theme",
     'description': "Theme Shopping is new kind of Theme.The theme is very "
