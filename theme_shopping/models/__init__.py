@@ -19,7 +19,8 @@
 # If not, see <http://www.gnu.org/licenses/>.
 #
 ###############################################################################
-from . import product_template
-from . import product_wishlist
-from . import theme_utils
-from . import website_testimonial
+# from . import product_template
+# from . import product_wishlist
+# from . import theme_utils
+# from . import website_testimonial
+from . import prueba
