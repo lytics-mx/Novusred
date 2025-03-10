@@ -32,7 +32,9 @@
     'company': 'Cybrosys Techno Solutions',
     'maintainer': 'Cybrosys Techno Solutions',
     'website': "https://www.cybrosys.com",
-    'depends': [],
+    'depends': ['base','sale_management', 'website_blog', 'website_sale_wishlist',
+                'website_sale','website',
+                'website_sale_comparison', 'website_mass_mailing'],
     'data': [
         'security/ir.model.access.csv',
         'security/security_groups.xml',
