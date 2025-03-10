@@ -72,7 +72,3 @@ class WebsiteProduct(http.Controller):
             "list_ids": [request.env.ref('mass_mailing.mailing_list_data').id]
         })
         return True
-    
-    @http.route('/about', auth='public', website=True)
-    def about(self, **kw):
-        return http.request.render('theme_xtream.xtream_about_us')
