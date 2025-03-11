@@ -44,7 +44,7 @@
         'views/snippets/main_banner.xml',
         'views/snippets/main_product.xml',
         'views/snippets/testimonial.xml',
-        'views/about_us_templates.xml',
+        # 'views/about_us_templates.xml',
     ],
     'assets': {
       'web.assets_frontend': [
