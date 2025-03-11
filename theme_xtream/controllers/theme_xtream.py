@@ -74,6 +74,3 @@ class WebsiteProduct(http.Controller):
         return True
     
 
-    @http.route('/about', auth='public', website=True)
-    def about(self, **kw):
-        return http.request.render('theme_xtream.xtream_about')
