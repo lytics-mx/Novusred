@@ -45,6 +45,7 @@
         'views/snippets/main_product.xml',
         'views/snippets/testimonial.xml',
         'views/about_us_templates.xml',
+        'views/terms_and_conditions.xml',
     ],
     'assets': {
       'web.assets_frontend': [
