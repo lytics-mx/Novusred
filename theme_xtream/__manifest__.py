@@ -49,7 +49,7 @@
         'views/purchasing_policies.xml',
         'views/warranty_policies.xml',
         'views/delivery_policies.xml',
-
+        'views/privacy_policy.xml',
 
 
     ],

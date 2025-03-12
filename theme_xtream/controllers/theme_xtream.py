@@ -93,3 +93,7 @@ class WebsiteProduct(http.Controller):
     @http.route('/delivery_policies', auth='public', website=True)
     def delivery_policies(self, **kw):
         return http.request.render('theme_xtream.delivery_policies')
+    
+    @http.route('/privacy_policy', auth='public', website=True)
+    def privacy_policy(self, **kw):
+        return http.request.render('theme_xtream.privacy_policy')
