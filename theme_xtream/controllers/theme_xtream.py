@@ -97,3 +97,7 @@ class WebsiteProduct(http.Controller):
     @http.route('/privacy_policy', auth='public', website=True)
     def privacy_policy(self, **kw):
         return http.request.render('theme_xtream.privacy_policy')
+    
+    @http.route('/refund_policies', auth='public', website=True)
+    def refund_policies(self, **kw):
+        return http.request.render('theme_xtream.refund_policies')

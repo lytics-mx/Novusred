@@ -50,6 +50,8 @@
         'views/warranty_policies.xml',
         'views/delivery_policies.xml',
         'views/privacy_policy.xml',
+        'views/refund_policies.xml',
+
 
 
     ],
