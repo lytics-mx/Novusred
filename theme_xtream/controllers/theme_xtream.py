@@ -101,3 +101,7 @@ class WebsiteProduct(http.Controller):
     @http.route('/refund_policies', auth='public', website=True)
     def refund_policies(self, **kw):
         return http.request.render('theme_xtream.refund_policies')
+    
+    @http.route('/payment_policies', auth='public', website=True)
+    def payment_policies(self, **kw):
+        return http.request.render('theme_xtream.payment_policies')

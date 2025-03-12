@@ -44,6 +44,8 @@
         'views/snippets/main_banner.xml',
         'views/snippets/main_product.xml',
         'views/snippets/testimonial.xml',
+
+# INFORMACIÓN DE POLITICAS        
         'views/about_us_templates.xml',
         'views/terms_and_conditions.xml',
         'views/purchasing_policies.xml',
@@ -51,6 +53,8 @@
         'views/delivery_policies.xml',
         'views/privacy_policy.xml',
         'views/refund_policies.xml',
+        'views/payment_policies.xml',
+
 
 
 
