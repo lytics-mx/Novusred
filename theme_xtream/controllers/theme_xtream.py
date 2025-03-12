@@ -85,3 +85,7 @@ class WebsiteProduct(http.Controller):
     @http.route('/purchasing_policies', auth='public', website=True)
     def purchasing_policies(self, **kw):
         return http.request.render('theme_xtream.purchasing_policies')
+    
+    @http.route('/warranty_policies', auth='public', website=True)
+    def warranty_policies(self, **kw):
+        return http.request.render('theme_xtream.warranty_policies')    

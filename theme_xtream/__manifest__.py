@@ -47,6 +47,8 @@
         'views/about_us_templates.xml',
         'views/terms_and_conditions.xml',
         'views/purchasing_policies.xml',
+        'views/warranty_policies.xml',
+
 
     ],
     'assets': {
