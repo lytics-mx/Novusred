@@ -6,6 +6,11 @@ class ProductProduct(models.Model):
 
     qty_available = fields.Float(string="Cantidad a la mano", compute='_compute_qty_available', store=True)
 
+    def _compute_qty_available(self):
+        for product in self:
+            # Compute logic for qty_available
+            product.qty_available = sum(self.env['stock.quant'].search([('product_id', '=', product.id)]).mapped('quantity'))
+
     @api.model
     def create(self, vals):
         # Lógica cuando se crea un nuevo producto
