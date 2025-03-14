@@ -2,7 +2,7 @@
     'name': 'Portal Web Lytics',
     'version': '1.0',
     'category': 'Website',
-    'depends': ['website','product', 'stock'],
+    'depends': ['website'],
     'data': [
         'views/lytics_layout.xml',
         'views/lytics_template.xml',
