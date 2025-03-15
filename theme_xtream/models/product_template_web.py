@@ -26,21 +26,3 @@ class ProductTemplate(models.Model):
           help="Sube documentos técnicos o fichas técnicas para este producto."
      )
 
-class BrandType(models.Model):
-    _name = 'brand.type'
-    _description = 'Tipo de Marca'
-
-    name = fields.Char(
-        string='Nombre de la Marca',
-        required=True,
-        help="Nombre del tipo de marca."
-    )
-    description = fields.Text(
-        string='Descripción',
-        help="Descripción del tipo de marca."
-    )
-    supplier_id = fields.Many2one(
-        'res.partner',
-        string='Proveedor Asociado',
-        help="Proveedor asociado con este tipo de marca."
-    )
