@@ -61,7 +61,17 @@ class ProductTemplate(models.Model):
         domain=[('mimetype', 'ilike', 'image/')],
         help="Resized images for product display."
     )
-    
+
+    image_512 = fields.Many2many(
+        'ir.attachment',
+        'product_template_image_512_rel',
+        'product_id',
+        'attachment_id',
+        string='Resized Product Images (512px)',
+        domain=[('mimetype', 'ilike', 'image/')],
+        help="Resized images for product display (512px)."
+    )
+
     def get_website_images(self):
         """
         Método para obtener todas las imágenes del producto para mostrar en el sitio web.
