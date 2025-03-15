@@ -20,3 +20,4 @@
 #
 #############################################################################
 from . import xtream_testimonials
+from . import product_template_web
