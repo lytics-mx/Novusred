@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Menú para gestionar marcas -->
+    <menuitem id="menu_product_brand_root" name="Tipos de Marcas" parent="stock.menu_stock_root" sequence="10"/>
+    <menuitem id="menu_product_brand" name="Marcas" parent="menu_product_brand_root" action="action_product_brand"/>
+
+    <!-- Acción para abrir la vista de marcas -->
+    <record id="action_product_brand" model="ir.actions.act_window">
+        <field name="name">Marcas</field>
+        <field name="res_model">product.brand</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Vista de lista para marcas -->
+    <record id="view_product_brand_tree" model="ir.ui.view">
+        <field name="name">product.brand.tree</field>
+        <field name="model">product.brand</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="partner_ids" widget="many2many_tags"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista de formulario para marcas -->
+    <record id="view_product_brand_form" model="ir.ui.view">
+        <field name="name">product.brand.form</field>
+        <field name="model">product.brand</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="partner_ids" widget="many2many_tags"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>
