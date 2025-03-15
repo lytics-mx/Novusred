@@ -36,16 +36,3 @@ from odoo import models, fields, api
 #             quant_records = self.env['stock.quant'].search([('product_id', '=', product.id)])
 #             for quant in quant_records:
 #                 quant.write({'quantity': product.qty_available})
-
-
-class ProductProduct(models.Model):
-    _inherit = 'product.product'
-
-    image_ids = fields.Many2many(
-        'ir.attachment',
-        'product_product_image_rel',  # Relación con las imágenes
-        'product_id',  # Relación al producto
-        'attachment_id',  # Relación con el archivo
-        string='Imágenes adicionales',
-        domain=[('type', '=', 'image/jpeg')]  # Limitado solo a imágenes
-    )
