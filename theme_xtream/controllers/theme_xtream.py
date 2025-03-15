@@ -73,6 +73,19 @@ class WebsiteProduct(http.Controller):
         })
         return True
     
+    @http.route(['/shop/<model("product.template"):product>'], type='http', auth="public", website=True)
+    def product_page(self, product, **kwargs):
+        """
+        Render the product page with the new image gallery field.
+        """
+        # Obtener las URLs de las imágenes del nuevo campo
+        image_gallery = product.image_gallery_ids.mapped('image_url')
+        return request.render("theme_xtream.product_page_template", {
+            'product': product,
+            'image_gallery': image_gallery,
+        })
+
+
 
     @http.route('/about', auth='public', website=True)
     def about(self, **kw):
