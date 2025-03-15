@@ -1,16 +1,23 @@
-from odoo import models, fields
+from odoo import models, fields, api
+
+
+
 
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
-    image_gallery_ids = fields.One2many(
-        'product.image.gallery', 'product_tmpl_id', string="Image Gallery"
+    technical_document_ids = fields.Many2many(
+        'ir.attachment',
+        'product_template_document_rel',  # Relación con los documentos
+        'product_id',  # Relación al producto
+        'attachment_id',  # Relación con el archivo
+        string='Documentos técnicos',
+        domain=[('mimetype', 'not ilike', 'image/')],  # Excluye imágenes
+        help="Sube documentos técnicos o fichas técnicas para este producto."
     )
 
-
-class ProductImageGallery(models.Model):
-    _name = 'product.image.gallery'
-    _description = 'Product Image Gallery'
-
-    product_tmpl_id = fields.Many2one('product.template', string="Product Template")
-    image_url = fields.Char(string="Image URL", required=True)
+    brand_type_id = fields.Many2one(
+        'brand.type',
+        string='Tipo de Marca',
+        help="Selecciona el tipo de marca asociado con este producto."
+    )
