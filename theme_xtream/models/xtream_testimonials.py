@@ -61,7 +61,15 @@ class ProductTemplate(models.Model):
         domain=[('mimetype', 'ilike', 'image/')],
         help="Resized images for product display."
     )
-
+    image_256 = fields.Many2many(
+        'ir.attachment',
+        'product_template_image_256_rel',
+        'product_id',
+        'attachment_id',
+        string='Resized Product Images (256px)',
+        domain=[('mimetype', 'ilike', 'image/')],
+        help="Resized images for product display (256px)."
+    )
     image_512 = fields.Many2many(
         'ir.attachment',
         'product_template_image_512_rel',
