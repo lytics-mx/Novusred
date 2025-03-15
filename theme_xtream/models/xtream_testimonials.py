@@ -38,34 +38,3 @@ class XtreamTestimonials(models.Model):
                                  "customer")
 
 
-class ProductProduct(models.Model):
-     _inherit = 'product.product'
-
-     image_ids = fields.Many2many(
-          'ir.attachment',
-          'product_product_image_rel',  # Relación con las imágenes
-          'product_id',  # Relación al producto
-          'attachment_id',  # Relación con el archivo
-          string='Imágenes adicionales',
-          domain=[('mimetype', 'ilike', 'image/')],  # Limitado solo a imágenes
-          help="Sube múltiples imágenes adicionales para este producto."
-     )
-
-     def get_website_images(self):
-          """
-          Método para obtener las imágenes adicionales del producto
-          que se mostrarán en el sitio web.
-          """
-          return self.image_ids.filtered(lambda img: img.mimetype.startswith('image/'))
-
-     def get_main_image(self):
-          """
-          Método para obtener la primera imagen que se mostrará en Odoo.
-          """
-          return self.image_1920 if self.image_1920 else False
-
-     def get_additional_website_images(self):
-          """
-          Método para obtener todas las imágenes adicionales excepto la principal.
-          """
-          return self.get_website_images().filtered(lambda img: img != self.image_1920)

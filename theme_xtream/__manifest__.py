@@ -56,7 +56,7 @@
         'views/payment_policies.xml',
 
 
-        'views/product_views.xml',
+        # 'views/product_views.xml',
 
 
     ],
