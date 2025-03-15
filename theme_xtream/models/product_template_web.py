@@ -41,4 +41,4 @@ class BrandType(models.Model):
         'res.partner',
         string='Proveedor Asociado',
         help="Proveedor asociado con este tipo de marca."
-    )    
+    )
