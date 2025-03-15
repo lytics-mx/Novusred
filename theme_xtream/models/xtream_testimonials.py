@@ -44,14 +44,24 @@ class ProductTemplate(models.Model):
     # Redefinir el campo image_1920 como Many2many
     image_1920 = fields.Many2many(
         'ir.attachment',
-        'product_template_image_1920_rel',  # Relación con imágenes
-        'product_id',  # Relación al producto
-        'attachment_id',  # Relación al archivo
+        'product_template_image_1920_rel',
+        'product_id',
+        'attachment_id',
         string='Product Images',
-        domain=[('mimetype', 'ilike', 'image/')],  # Solo imágenes
+        domain=[('mimetype', 'ilike', 'image/')],
         help="Upload multiple images for this product to display on the website."
-      )
+    )
 
+    image_1024 = fields.Many2many(
+        'ir.attachment',
+        'product_template_image_1024_rel',
+        'product_id',
+        'attachment_id',
+        string='Resized Product Images',
+        domain=[('mimetype', 'ilike', 'image/')],
+        help="Resized images for product display."
+    )
+    
     def get_website_images(self):
         """
         Método para obtener todas las imágenes del producto para mostrar en el sitio web.
