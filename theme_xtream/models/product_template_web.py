@@ -13,7 +13,7 @@ class ProductTemplate(models.Model):
         'attachment_id',  # Relación con el archivo
         string='Documentos técnicos',
         domain=[('mimetype', 'not ilike', 'image/')],  # Excluye imágenes
-        help="Sube documentos técnicos o fichas técnicas para este producto."
+        help="Sube varios documentos técnicos o fichas técnicas para este producto."
     )
 
     brand_type_id = fields.Many2one(
