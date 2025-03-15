@@ -39,67 +39,33 @@ class XtreamTestimonials(models.Model):
 
 
 class ProductTemplate(models.Model):
-     _inherit = 'product.template'
+    _inherit = 'product.template'
 
-     image_ids = fields.Many2many(
-          'ir.attachment',
-          'product_template_image_rel',  # Relación con las imágenes
-          'product_id',  # Relación al producto
-          'attachment_id',  # Relación con el archivo
-          string='Imágenes adicionales',
-          domain=[('mimetype', 'ilike', 'image/')],  # Limitado solo a imágenes
-          help="Sube múltiples imágenes adicionales para este producto que se mostrarán en el sitio web."
-     )
+    # Redefinir el campo image_1920 como Many2many
+    image_1920 = fields.Many2many(
+        'ir.attachment',
+        'product_template_image_1920_rel',  # Relación con imágenes
+        'product_id',  # Relación al producto
+        'attachment_id',  # Relación al archivo
+        string='Product Images',
+        domain=[('mimetype', 'ilike', 'image/')],  # Solo imágenes
+        help="Upload multiple images for this product to display on the website."
+      )
 
-     brand_ids = fields.Many2many(
-          'product.brand',
-          'product_template_brand_rel',  # Relación con las marcas
-          'product_id',  # Relación al producto
-          'brand_id',  # Relación con la marca
-          string='Marcas',
-          help="Selecciona o registra marcas asociadas con este producto."
-     )
+    def get_website_images(self):
+        """
+        Método para obtener todas las imágenes del producto para mostrar en el sitio web.
+        """
+        return self.image_1920.filtered(lambda img: img.mimetype.startswith('image/'))
 
-     technical_document_ids = fields.Many2many(
-          'ir.attachment',
-          'product_template_document_rel',  # Relación con los documentos
-          'product_id',  # Relación al producto
-          'attachment_id',  # Relación con el archivo
-          string='Documentos técnicos',
-          domain=[('mimetype', 'not ilike', 'image/')],  # Excluye imágenes
-          help="Sube documentos técnicos o fichas técnicas para este producto."
-     )
+    def get_main_image(self):
+        """
+        Método para obtener la imagen principal del producto.
+        """
+        return self.image_1920[:1] if self.image_1920 else False
 
-     def get_website_images(self):
-          """
-          Método para obtener las imágenes adicionales del producto
-          que se mostrarán en el sitio web.
-          """
-          return self.image_ids.filtered(lambda img: img.mimetype.startswith('image/'))
-
-     def get_main_image(self):
-          """
-          Método para obtener la primera imagen que se mostrará en Odoo.
-          """
-          return self.image_1920 if self.image_1920 else False
-
-     def get_additional_website_images(self):
-          """
-          Método para obtener todas las imágenes adicionales excepto la principal.
-          """
-          return self.get_website_images().filtered(lambda img: img != self.image_1920)
-
-
-class ProductBrand(models.Model):
-    _name = 'product.brand'
-    _description = 'Product Brand'
-
-    name = fields.Char(string="Nombre de la Marca", required=True)
-    partner_ids = fields.Many2many(
-        'res.partner',
-        'brand_partner_rel',
-        'brand_id',
-        'partner_id',
-        string="Proveedores",
-        help="Proveedores asociados con esta marca."
-    )
+    def get_additional_website_images(self):
+        """
+        Método para obtener imágenes adicionales del producto.
+        """
+        return self.image_1920[1:] if len(self.image_1920) > 1 else []
