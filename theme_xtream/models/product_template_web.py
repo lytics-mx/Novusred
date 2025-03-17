@@ -25,4 +25,5 @@ class ProductTemplate(models.Model):
           domain=[('mimetype', 'not ilike', 'image/')],  # Excluye imágenes
           help="Sube documentos técnicos o fichas técnicas para este producto."
      )
-
+     
+     brand_type_id = fields.Many2one('brand.type', string='Tipo de Marca')
