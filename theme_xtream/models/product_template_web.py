@@ -26,4 +26,8 @@ class ProductTemplate(models.Model):
           help="Sube documentos técnicos o fichas técnicas para este producto."
      )
      
-     brand_type_id = fields.Many2one('brand.type', string='Tipo de Marca')
+     brand_type_id = fields.Many2one(
+          comodel_name='brand.type',
+          string='Brand Type',
+          help='Select the brand type for this product'
+     )
