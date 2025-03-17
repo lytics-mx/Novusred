@@ -4,5 +4,5 @@ class BrandType(models.Model):
     _name = 'brand.type'
     _description = 'Brand Type'
 
-    name = fields.Char(string="Nombre")
-    description = fields.Text(string="Descripción")
+    name = fields.Char(string='Name', required=True)
+    description = fields.Text(string='Description')
