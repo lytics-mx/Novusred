@@ -28,6 +28,6 @@ class ProductTemplate(models.Model):
      
      brand_type_id = fields.Many2one(
           comodel_name='brand.type',
-          string='Brand Type',
+          string='Marca',
           help='Select the brand type for this product'
      )
