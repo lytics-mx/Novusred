@@ -1,19 +1,12 @@
 <odoo>
-    <record id="view_product_template_form_inherit" model="ir.ui.view">
-        <field name="name">product.template.form.inherit</field>
-        <field name="model">product.template</field>
-        <field name="inherit_id" ref="product.product_template_only_form_view"/>
-        <field name="arch" type="xml">
-            <xpath expr="//sheet" position="inside">
-                <group string="Additional Images">
-                    <field name="additional_images">
-                        <tree editable="bottom">
-                            <field name="image"/>
-                            <field name="name"/>
-                        </tree>
-                    </field>
-                </group>
-            </xpath>
-        </field>
-    </record>
+    <template id="product_details" inherit_id="website_sale.product">
+        <xpath expr="//div[@class='product_name']" position="after">
+            <t t-if="product.brand_website">
+                <div class="product-brand">
+                    <strong>Marca:</strong>
+                    <span t-esc="product.brand_website"/>
+                </div>
+            </t>
+        </xpath>
+    </template>
 </odoo>
