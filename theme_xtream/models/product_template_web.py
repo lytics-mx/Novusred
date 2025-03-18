@@ -26,20 +26,3 @@ class ProductTemplate(models.Model):
           help='Select the brand type for this product'
      )
 
-class ProductImage(models.Model):
-    _name = 'product.image'
-    _description = 'Product Images'
-
-    product_tmpl_id = fields.Many2one(
-        comodel_name='product.template',
-        string='Product Template',
-        required=True
-    )
-    image = fields.Binary(
-        string='Image',
-        required=True,
-        help='Upload additional images for the product.'
-    )
-    name = fields.Char(string='Image Name')
-
-
