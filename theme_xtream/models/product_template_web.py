@@ -43,13 +43,3 @@ class ProductImage(models.Model):
     name = fields.Char(string='Image Name')
 
 
-class ProductController(http.Controller):
-
-    @http.route(['/product/<model("product.template"):product>'], type='http', auth="public", website=True)
-    def product_page(self, product, **kwargs):
-        # Obtén las imágenes adicionales del producto
-        additional_images = product.product_image_ids
-        return request.render('theme_xtream.product_page_template', {
-            'product': product,
-            'additional_images': additional_images,
-        })
