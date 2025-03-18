@@ -5,8 +5,7 @@ from odoo import models, fields, api
 
 class ProductTemplate(models.Model):
      _inherit = 'product.template'
-
-     
+#Elimninar el campo de la marca el de brand_id     
      brand_ids = fields.Many2many(
           'product.brand',
           'product_template_brand_rel',  # Relación con las marcas
@@ -30,4 +29,8 @@ class ProductTemplate(models.Model):
           comodel_name='brand.type',
           string='Marca',
           help='Select the brand type for this product'
+     )
+
+     additional_images = fields.One2many(
+          'product.image', 'product_tmpl_id', string="Additional Images"
      )

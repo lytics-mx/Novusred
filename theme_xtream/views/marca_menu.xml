@@ -1,16 +1,19 @@
 <odoo>
-    <template id="product_page_template" inherit_id="website_sale.product">
-        <xpath expr="//div[@id='product_detail']" position="inside">
-            <div id="product_additional_images" class="mt-3">
-                <h3>Imágenes adicionales</h3>
-                <div class="owl-carousel owl-theme">
-                    <t t-foreach="additional_images" t-as="image">
-                        <div class="item">
-                            <img t-att-src="'data:image/png;base64,%s' % image.image" t-att-alt="image.name or 'Product Image'" class="img-fluid"/>
-                        </div>
-                    </t>
-                </div>
-            </div>
-        </xpath>
-    </template>
+    <record id="view_product_template_form_inherit" model="ir.ui.view">
+        <field name="name">product.template.form.inherit</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <group string="Additional Images">
+                    <field name="additional_images">
+                        <tree editable="bottom">
+                            <field name="image"/>
+                            <field name="name"/>
+                        </tree>
+                    </field>
+                </group>
+            </xpath>
+        </field>
+    </record>
 </odoo>
