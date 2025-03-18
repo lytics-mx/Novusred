@@ -31,6 +31,6 @@ class ProductTemplate(models.Model):
           help='Select the brand type for this product'
      )
 
-     additional_images = fields.One2many(
-          'product.image', 'product_tmpl_id', string="Additional Images"
-     )
+     # additional_images = fields.One2many(
+     #      'product.image', 'product_tmpl_id', string="Additional Images"
+     # )
