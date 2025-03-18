@@ -46,14 +46,14 @@
         'views/snippets/testimonial.xml',
 
 # INFORMACIÓN DE POLITICAS        
-        'views/about_us_templates.xml',
-        'views/terms_and_conditions.xml',
-        'views/purchasing_policies.xml',
-        'views/warranty_policies.xml',
-        'views/delivery_policies.xml',
-        'views/privacy_policy.xml',
-        'views/refund_policies.xml',
-        'views/payment_policies.xml',
+        'views/policies/about_us_templates.xml',
+        'views/policies/terms_and_conditions.xml',
+        'views/policies/purchasing_policies.xml',
+        'views/policies/warranty_policies.xml',
+        'views/policies/delivery_policies.xml',
+        'views/policies/privacy_policy.xml',
+        'views/policies/refund_policies.xml',
+        'views/policies/payment_policies.xml',
 
 
         'views/product_views.xml',
