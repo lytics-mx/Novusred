@@ -1,13 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="view_product_template_form_inherit_brand_type" model="ir.ui.view">
-        <field name="name">product.template.form.inherit.brand.type</field>
-        <field name="model">product.template</field>
-        <field name="inherit_id" ref="product.product_template_only_form_view"/>
-        <field name="arch" type="xml">
-            <xpath expr="//notebook/page[1]//group" position="inside">
-                <field name="brand_type_id" options="{'no_create': True}"/>
-            </xpath>
-        </field>
-    </record>
+    <template id="product_page_template" inherit_id="website_sale.product">
+        <xpath expr="//div[@id='product_detail']" position="inside">
+            <div id="product_additional_images" class="mt-3">
+                <h3>Imágenes adicionales</h3>
+                <div class="owl-carousel owl-theme">
+                    <t t-foreach="additional_images" t-as="image">
+                        <div class="item">
+                            <img t-att-src="'data:image/png;base64,%s' % image.image" t-att-alt="image.name or 'Product Image'" class="img-fluid"/>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </xpath>
+    </template>
 </odoo>
