@@ -56,8 +56,8 @@
         'views/policies/payment_policies.xml',
 
 
-        'views/product_views.xml',
-        'views/tipo_marca.xml',
+        'views/inventory_control/product_views.xml',
+        'views/inventory_control/brand_type.xml',
         # 'views/marca_menu.xml',
 
 
