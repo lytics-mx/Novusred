@@ -1,5 +1,3 @@
-import http
-from httpcore import request
 from odoo import models, fields, api
 
 
@@ -8,7 +6,15 @@ from odoo import models, fields, api
 class ProductTemplate(models.Model):
      _inherit = 'product.template'
 
-
+     
+     brand_ids = fields.Many2many(
+          'product.brand',
+          'product_template_brand_rel',  # Relación con las marcas
+          'product_id',  # Relación al producto
+          'brand_id',  # Relación con la marca
+          string='Marcas',
+          help="Selecciona o registra marcas asociadas con este producto."
+     )
 
      technical_document_ids = fields.Many2many(
           'ir.attachment',
@@ -25,4 +31,3 @@ class ProductTemplate(models.Model):
           string='Marca',
           help='Select the brand type for this product'
      )
-
