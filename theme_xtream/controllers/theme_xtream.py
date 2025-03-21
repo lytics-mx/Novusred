@@ -113,9 +113,3 @@ class WebsiteProduct(http.Controller):
             'additional_images': product.additional_images,
         })
     
-    @http.route('/eventos', auth='public', website=True)
-    def events(self, **kw):
-        """
-        Render the events page.
-        """
-        return http.request.render('theme_xtream.theme_xtream_events')
