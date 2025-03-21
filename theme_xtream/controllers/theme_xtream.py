@@ -106,10 +106,13 @@ class WebsiteProduct(http.Controller):
     def payment_policies(self, **kw):
         return http.request.render('theme_xtream.payment_policies')
     
-    @http.route(['/product/<model("product.template"):product>'], type='http', auth="public", website=True)
-    def product_page(self, product, **kwargs):
-        return request.render("website_sale.product", {
-            'product': product,
-            'additional_images': product.additional_images,
-        })
     
+    @http.route('/descubre', auth='public', website=True)
+    def descubre(self, **kw):
+        """
+        Renderiza la página Descubre con categorías destacadas.
+        """
+        return http.request.render('theme_xtream.descubre')
+
+
+
