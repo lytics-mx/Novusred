@@ -113,7 +113,7 @@ class WebsiteProduct(http.Controller):
             'additional_images': product.additional_images,
         })
     
-    @http.route('/events', auth='public', website=True)
+    @http.route('/eventos', auth='public', website=True)
     def events(self, **kw):
         """
         Render the events page.
