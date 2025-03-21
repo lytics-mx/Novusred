@@ -59,6 +59,7 @@
         'views/inventory_control/product_views.xml',
         'views/inventory_control/brand_type.xml',
         # 'views/marca_menu.xml',
+        'views/website_event.xml',
 
 
 
