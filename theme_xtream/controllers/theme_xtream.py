@@ -114,5 +114,11 @@ class WebsiteProduct(http.Controller):
         """
         return http.request.render('theme_xtream.descubre')
 
+    @http.route('/', auth='public', website=True)
+    def home(self, **kw):
+        """
+        Renderiza la página de inicio.
+        """
+        return http.request.render('website.homepage')
 
 
