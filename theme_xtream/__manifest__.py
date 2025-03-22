@@ -61,7 +61,7 @@
         # 'views/marca_menu.xml',
         'views/website_descubre.xml',
         'views/website_home.xml',
-        'views/nav_bar.xml.xml',
+        'views/nav_bar.xml',
 
 
 
