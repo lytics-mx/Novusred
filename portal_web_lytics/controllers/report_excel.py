@@ -17,7 +17,8 @@ class ReportExcelController(Controller):
         row = 0
         col = 0
 
-        products = request.env['product.product'].search([])
+        # Cambiar a product.template
+        products = request.env['product.template'].search([])
 
         for product in products:
             sheet.write(row, col, product.name)
