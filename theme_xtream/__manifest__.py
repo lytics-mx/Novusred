@@ -62,6 +62,8 @@
         'views/website_descubre.xml',
         'views/website_home.xml',
         'views/nav_bar.xml',
+        'views/report_excel_views.xml',
+
 
 
 

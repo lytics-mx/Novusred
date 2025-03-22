@@ -23,3 +23,4 @@ from . import xtream_testimonials
 from . import product_template_web
 from . import product_brand
 # from . import product_image
+from . import report
