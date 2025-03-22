@@ -6,6 +6,8 @@
     'data': [
         'views/lytics_layout.xml',
         'views/lytics_template.xml',
+        'views/report_excel_views.xml',
+
     ],
     'installable': True,
     'application': True,

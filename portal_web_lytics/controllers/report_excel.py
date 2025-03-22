@@ -3,6 +3,8 @@ import io
 import xlsxwriter
 from PIL import Image
 from odoo.http import Controller, request, route
+import tempfile
+import os
 
 class ReportExcelController(Controller):
 
@@ -24,11 +26,17 @@ class ReportExcelController(Controller):
                 image_data = base64.b64decode(product.image_1920)
                 image = Image.open(io.BytesIO(image_data))
 
-                image_path = "/tmp/temp_image.png"
-                image.save(image_path, "PNG")
+                # Guardar la imagen en un archivo temporal
+                with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as temp_image_file:
+                    image.save(temp_image_file.name, "PNG")
+                    temp_image_path = temp_image_file.name
 
-                # Insertar imagen
-                sheet.insert_image(row, col + 1, image_path, {'x_scale': 0.2, 'y_scale': 0.2})
+                # Insertar la imagen en el Excel
+                sheet.insert_image(row, col + 1, temp_image_path, {'x_scale': 0.2, 'y_scale': 0.2})
+
+                # Eliminar el archivo temporal
+                if os.path.exists(temp_image_path):
+                    os.remove(temp_image_path)
 
             row += 1
 
