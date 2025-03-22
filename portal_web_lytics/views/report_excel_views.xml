@@ -1,32 +1,21 @@
 <odoo>
-    <!-- Acción del servidor para generar el reporte Excel -->
     <record id="action_reporte_excel" model="ir.actions.server">
         <field name="name">Generar Reporte Excel</field>
         <field name="model_id" ref="product.model_product_product"/>
         <field name="state">code</field>
         <field name="code">
-            action = env.ref('portal_web_lytics.action_reporte_excel_report').report_action(env['product.product'].browse(context.get('active_ids')))
+            action = env['ir.actions.report']._get_report_from_name('portal_web_lytics.action_reporte_excel').report_action(env['product.product'].browse(context.get('active_ids')))
         </field>
     </record>
 
-    <!-- Definición del reporte -->
-    <record id="action_reporte_excel_report" model="ir.actions.report">
-        <field name="name">Reporte Excel</field>
-        <field name="model">product.product</field>
-        <field name="report_type">qweb-pdf</field>
-        <field name="report_name">portal_web_lytics.report_product_excel</field>
-        <field name="report_file">portal_web_lytics.report_product_excel</field>
-    </record>
-
-    <!-- Vista heredada para agregar el botón -->
     <record id="view_product_form_inherit" model="ir.ui.view">
         <field name="name">product.form.inherit</field>
         <field name="model">product.product</field>
         <field name="inherit_id" ref="product.product_template_only_form_view"/>
         <field name="arch" type="xml">
-            <xpath expr="//header" position="inside">
+            <header>
                 <button name="action_reporte_excel" type="action" string="Exportar Excel" class="btn-primary"/>
-            </xpath>
+            </header>
         </field>
     </record>
 </odoo>
