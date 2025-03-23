@@ -1,17 +1,25 @@
 <odoo>
     <template id="related_products_template" name="Productos Relacionados">
         <div class="related-products" style="margin-top: 30px;">
-            <h3 style="text-align: center;">Productos que has visto</h3>
+            <h3 style="text-align: center;">Productos Relacionados</h3>
             <div class="owl-carousel owl-theme" style="margin-top: 20px;">
                 <t t-foreach="request.env['product.template'].sudo().browse(request.session.get('viewed_products', []))" t-as="product">
-                    <div class="item" style="padding: 10px; text-align: center;">
-                        <a t-att-href="'/shop/product/' + str(product.id)" style="text-decoration: none;">
-                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" alt="Product Image" style="width: 100%; height: auto; border-radius: 5px;" />
-                            <p style="font-family: 'Questrial', sans-serif; font-size: 14px; color: #333; margin-top: 10px;">
-                                <t t-esc="product.name" />
-                            </p>
-                        </a>
-                    </div>
+                    <t t-set="related_products" t-value="request.env['product.template'].sudo().search([
+                        ('id', '!=', product.id),
+                        '|',
+                        ('name', 'ilike', product.name),
+                        ('categ_id', '=', product.categ_id.id)
+                    ], limit=10)" />
+                    <t t-foreach="related_products" t-as="related">
+                        <div class="item" style="padding: 10px; text-align: center;">
+                            <a t-att-href="'/shop/product/' + str(related.id)" style="text-decoration: none;">
+                                <img t-att-src="'/web/image/product.template/' + str(related.id) + '/image_1920'" alt="Product Image" style="width: 100%; height: auto; border-radius: 5px;" />
+                                <p style="font-family: 'Questrial', sans-serif; font-size: 14px; color: #333; margin-top: 10px;">
+                                    <t t-esc="related.name" />
+                                </p>
+                            </a>
+                        </div>
+                    </t>
                 </t>
             </div>
         </div>
