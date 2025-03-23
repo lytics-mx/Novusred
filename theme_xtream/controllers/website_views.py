@@ -25,3 +25,14 @@ class WebsiteShop(http.Controller):
         return request.render('theme_xtream.product_page_template', {
             'product': product,
         })
+
+    @http.route(['/viewed_products'], type='http', auth='public', website=True)
+    def viewed_products(self, **kwargs):
+        """
+        Renderiza los productos que el usuario ha visto anteriormente.
+        """
+        viewed_products = request.session.get('viewed_products', [])
+        products = request.env['product.template'].sudo().browse(viewed_products)
+        return request.render('theme_xtream.viewed_products_template', {
+            'products': products,
+        })
