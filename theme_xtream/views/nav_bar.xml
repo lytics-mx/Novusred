@@ -1,34 +1,36 @@
 <odoo>
-    <template id="custom_navbar" name="Custom Navbar" inherit_id="website.layout">
-        <xpath expr="//header" position="inside">
-            <div class="o_navbar_custom d-flex align-items-center" style="background-color: #f8f9fa; padding: 8px;">
-                <!-- "+" Button -->
-                <div class="dropdown me-auto">
-                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownAddButton" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa fa-plus"></i>
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownAddButton">
-                        <li><a class="dropdown-item" href="/page1">Página 1</a></li>
-                        <li><a class="dropdown-item" href="/page2">Página 2</a></li>
-                        <li><a class="dropdown-item" href="/page3">Página 3</a></li>
-                    </ul>
-                </div>
-
-                <!-- Spacer -->
-                <div class="flex-grow-1"></div>
-
-                <!-- "Three Lines" Button -->
-                <div class="dropdown">
-                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa fa-bars"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                        <li><a class="dropdown-item" href="/page1">Página 1</a></li>
-                        <li><a class="dropdown-item" href="/page2">Página 2</a></li>
-                        <li><a class="dropdown-item" href="/page3">Página 3</a></li>
-                    </ul>
-                </div>
+    <template id="related_products_template" name="Productos Relacionados">
+        <div class="related-products" style="margin-top: 30px;">
+            <h3 style="text-align: center;">Productos que has visto</h3>
+            <div class="owl-carousel owl-theme" style="margin-top: 20px;">
+                <t t-foreach="request.env['product.template'].sudo().browse(request.session.get('viewed_products', []))" t-as="product">
+                    <div class="item" style="padding: 10px; text-align: center;">
+                        <a t-att-href="'/shop/product/' + str(product.id)" style="text-decoration: none;">
+                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" alt="Product Image" style="width: 100%; height: auto; border-radius: 5px;" />
+                            <p style="font-family: 'Questrial', sans-serif; font-size: 14px; color: #333; margin-top: 10px;">
+                                <t t-esc="product.name" />
+                            </p>
+                        </a>
+                    </div>
+                </t>
             </div>
-        </xpath>
+        </div>
+
+        <!-- Owl Carousel JS and CSS -->
+        <t t-call-assets="web.assets_frontend" />
+        <script>
+            $(document).ready(function(){
+                $('.owl-carousel').owlCarousel({
+                    loop: true,
+                    margin: 10,
+                    nav: true,
+                    responsive: {
+                        0: { items: 1 },
+                        600: { items: 3 },
+                        1000: { items: 5 }
+                    }
+                });
+            });
+        </script>
     </template>
 </odoo>

@@ -20,3 +20,4 @@
 #
 #############################################################################
 from . import theme_xtream
+from . import website_views
