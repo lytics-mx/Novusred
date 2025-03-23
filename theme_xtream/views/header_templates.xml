@@ -2,34 +2,30 @@
 <odoo>
     <!-- To inherit header -->
     <template id="xtream_header0" inherit_id="website.template_header_default">
-        <xpath expr="//t[@t-call='website.placeholder_header_text_element']" position="replace">
+        <xpath expr="//header" position="before">
             <!-- "Three Lines" Button -->
-            <div class="d-flex align-items-center">
-                <div class="dropdown me-3">
-                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa fa-bars"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                        <li><a class="dropdown-item" href="/page1">Página 1</a></li>
-                        <li><a class="dropdown-item" href="/page2">Página 2</a></li>
-                        <li><a class="dropdown-item" href="/page3">Página 3</a></li>
-                    </ul>
-                </div>
-                <!-- Cart Icon with Number -->
-                <div t-if="cart_quantity" class="d-flex align-items-center">
-                    <a t-attf-href="/shop/cart" class="btn btn-outline-secondary position-relative">
-                        <i class="fa fa-shopping-bag"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            <t t-esc="cart_quantity"/>
-                        </span>
-                    </a>
-                </div>
+            <div class="dropdown" style="float: left; margin-right: 15px;">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" href="/page1">Página 1</a></li>
+                    <li><a class="dropdown-item" href="/page2">Página 2</a></li>
+                    <li><a class="dropdown-item" href="/page3">Página 3</a></li>
+                </ul>
             </div>
         </xpath>
+    </template>
         <xpath expr="//t[@t-call='website.placeholder_header_call_to_action']" position="replace">
             <div class="help-line text-center">
                 <a href="tel:+525544408181"><i class="fa fa-headphones"></i> 554-440-81-81</a>
             </div>
+        </xpath>
+    </template>
+    <!-- To inherit cart -->
+    <template id="xtream_cart" inherit_id="website_sale.header_cart_link">
+        <xpath expr="//i[@t-if='_icon']" position="replace">
+            <i t-if="_icon" class="fa fa-shopping-bag"/>
         </xpath>
     </template>
 </odoo>
