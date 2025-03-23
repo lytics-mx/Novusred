@@ -3,7 +3,7 @@ from odoo.http import request
 
 class WebsiteShop(http.Controller):
 
-    @http.route(['/shop/product/<model("product.template"):product>'], type='http', auth='public', website=True)
+    @http.route(['/shop/<model("product.template"):product>'], type='http', auth='public', website=True)
     def product_page(self, product, **kwargs):
         """
         Renderiza la página del producto y guarda los productos visitados en la sesión.
@@ -24,15 +24,4 @@ class WebsiteShop(http.Controller):
         # Renderizar la página del producto
         return request.render('theme_xtream.product_page_template', {
             'product': product,
-        })
-
-    @http.route(['/viewed_products'], type='http', auth='public', website=True)
-    def viewed_products(self, **kwargs):
-        """
-        Renderiza los productos que el usuario ha visto anteriormente.
-        """
-        viewed_products = request.session.get('viewed_products', [])
-        products = request.env['product.template'].sudo().browse(viewed_products)
-        return request.render('theme_xtream.viewed_products_template', {
-            'products': products,
         })

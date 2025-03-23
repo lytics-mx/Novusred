@@ -2,9 +2,9 @@
     <template id="viewed_products_template" name="Productos Vistos">
         <div class="viewed-products" style="margin-top: 30px;">
             <h3 style="text-align: center;">Productos que has visto</h3>
-            <div class="owl-carousel owl-theme" style="margin-top: 20px;">
-                <t t-foreach="products" t-as="product">
-                    <div class="item" style="padding: 10px; text-align: center;">
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
+                <t t-foreach="request.env['product.template'].sudo().browse(request.session.get('viewed_products', []))" t-as="product">
+                    <div style="width: 200px; text-align: center; border: 1px solid #ddd; border-radius: 5px; padding: 10px;">
                         <a t-att-href="'/shop/product/' + str(product.id)" style="text-decoration: none;">
                             <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" alt="Product Image" style="width: 100%; height: auto; border-radius: 5px;" />
                             <p style="font-family: 'Questrial', sans-serif; font-size: 14px; color: #333; margin-top: 10px;">
@@ -15,22 +15,5 @@
                 </t>
             </div>
         </div>
-
-        <!-- Owl Carousel JS and CSS -->
-        <t t-call-assets="web.assets_frontend" />
-        <script>
-            $(document).ready(function(){
-                $('.owl-carousel').owlCarousel({
-                    loop: true,
-                    margin: 10,
-                    nav: true,
-                    responsive: {
-                        0: { items: 1 },
-                        600: { items: 3 },
-                        1000: { items: 5 }
-                    }
-                });
-            });
-        </script>
     </template>
 </odoo>
