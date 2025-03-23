@@ -7,7 +7,7 @@
         'views/lytics_layout.xml',
         'views/lytics_template.xml',
         'views/report_excel_views.xml',
-        'reports/report_excel_template.xml',
+        # 'reports/report_excel_template.xml',
 
 
     ],
