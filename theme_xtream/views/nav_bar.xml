@@ -2,17 +2,18 @@
     <template id="viewed_products_template" name="Productos Vistos">
         <div class="viewed-products" style="margin-top: 30px;">
             <h3 style="text-align: center;">Productos que has visto</h3>
-            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
-                <t t-foreach="request.env['product.template'].sudo().browse(request.session.get('viewed_products', []))" t-as="product">
-                    <div style="width: 200px; text-align: center; border: 1px solid #ddd; border-radius: 5px; padding: 10px;">
-                        <a t-att-href="'/shop/product/' + str(product.id)" style="text-decoration: none;">
-                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" alt="Product Image" style="width: 100%; height: auto; border-radius: 5px;" />
-                            <p style="font-family: 'Questrial', sans-serif; font-size: 14px; color: #333; margin-top: 10px;">
-                                <t t-esc="product.name" />
-                            </p>
-                        </a>
-                    </div>
-                </t>
+            <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
+                <section id="o_wsale_products_grid" class="o_wsale_products_grid_table grid">
+                    <t t-foreach="request.env['product.template'].sudo().browse(request.session.get('viewed_products', []))" t-as="product">
+                        <div class="oe_product g-col-6 g-col-md-4 g-col-lg-3">
+                            <div class="o_wsale_product_grid_wrapper position-relative h-100">
+                                <t t-call="website_sale.products_item">
+                                    <t t-set="product" t-value="product" />
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+                </section>
             </div>
         </div>
     </template>
