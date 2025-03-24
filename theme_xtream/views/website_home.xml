@@ -256,13 +256,13 @@
                     <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
                         <section id="o_wsale_products_grid" class="o_wsale_products_grid_table grid">
                             <!-- Iterar sobre las categorías de productos -->
-                            <t t-set="categories" t-value="request.env['product.public.category'].sudo().search([])" />
+                            <t t-set="categories" t-value="request.env['product.public.category'].sudo().search([('name', '=', 'All')])" />
                             <t t-foreach="categories" t-as="category">
                                 <div>
                                     <h3 style="font-family: 'Questrial', sans-serif; font-size: 20px; margin-top: 20px;">
                                         <t t-esc="category.name" />
                                     </h3>
-                                    <t t-set="category_products" t-value="request.env['product.template'].sudo().search([('website_published', '=', True), ('public_categ_ids', 'in', category.id)], limit=10)" />
+                                    <t t-set="category_products" t-value="request.env['product.template'].sudo().search([('website_published', '=', True), ('categ_id', '=', category.id)], limit=10)" />
                                     <div class="row">
                                         <t t-foreach="category_products" t-as="product">
                                             <div class="col-6 col-md-3">
