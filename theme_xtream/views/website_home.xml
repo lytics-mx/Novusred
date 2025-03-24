@@ -26,45 +26,48 @@
                     <h2 class="text-center">Nuestros Productos</h2>
                     <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-inner">
-                            <t t-set="visited_products" t-value="request.env['product.template'].search([('website_published', '=', True)], limit=5)" />
-                            <t t-foreach="visited_products" t-as="product" t-enumerate="True">
-                                <div t-att-class="'carousel-item' + (' active' if enumerate[0] == 0 else '')">
-                                    <div class="row justify-content-center">
-                                        <div class="col-md-4">
-                                            <div class="card h-100 text-center">
-                                                <!-- Imagen del producto -->
-                                                <div class="oe_product_image position-relative overflow-hidden">
-                                                    <a t-att-href="'/shop/product/' + str(product.id)" class="oe_product_image_link d-block position-relative">
-                                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
-                                                            class="card-img-top img-fluid" 
-                                                            alt="Product Image" 
-                                                            style="height: 200px; object-fit: contain;" />
-                                                    </a>
-                                                </div>
-                                                <!-- Información del producto -->
-                                                <div class="card-body">
-                                                    <h5 class="card-title">
-                                                        <a t-att-href="'/shop/product/' + str(product.id)" class="text-decoration-none text-dark">
-                                                            <t t-esc="product.name" />
+                            <t t-set="products" t-value="request.env['product.template'].search([('website_published', '=', True)], limit=20)" />
+                            <t t-set="chunks" t-value="[products[i:i+5] for i in range(0, len(products), 5)]" />
+                            <t t-foreach="chunks" t-as="chunk" t-enumerate="True">
+                                <div t-attf-class="carousel-item #{'active' if enumerate[0] == 0 else ''}">
+                                    <div class="row row-cols-1 row-cols-md-5 g-4">
+                                        <t t-foreach="chunk" t-as="product">
+                                            <div class="col">
+                                                <div class="card h-100 text-center">
+                                                    <!-- Imagen del producto -->
+                                                    <div class="oe_product_image position-relative overflow-hidden">
+                                                        <a t-att-href="'/shop/product/' + str(product.id)" class="oe_product_image_link d-block position-relative">
+                                                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                                class="card-img-top img-fluid" 
+                                                                alt="Product Image" 
+                                                                style="height: 200px; object-fit: contain;" />
                                                         </a>
-                                                    </h5>
-                                                    <p class="card-text text-muted">
-                                                        $<t t-esc="'%.2f' % product.list_price" />
-                                                    </p>
-                                                </div>
-                                                <!-- Botones de acción -->
-                                                <div class="card-footer bg-transparent border-0">
-                                                    <div class="d-flex justify-content-center gap-2">
-                                                        <button type="button" class="btn btn-light" title="Agregar a la lista de deseos">
-                                                            <span class="fa fa-heart"></span>
-                                                        </button>
-                                                        <a t-att-href="'/shop/product/' + str(product.id)" class="btn btn-primary">
-                                                            Ver Producto
-                                                        </a>
+                                                    </div>
+                                                    <!-- Información del producto -->
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">
+                                                            <a t-att-href="'/shop/product/' + str(product.id)" class="text-decoration-none text-dark">
+                                                                <t t-esc="product.name" />
+                                                            </a>
+                                                        </h5>
+                                                        <p class="card-text text-muted">
+                                                            $<t t-esc="'%.2f' % product.list_price" />
+                                                        </p>
+                                                    </div>
+                                                    <!-- Botones de acción -->
+                                                    <div class="card-footer bg-transparent border-0">
+                                                        <div class="d-flex justify-content-center gap-2">
+                                                            <button type="button" class="btn btn-light" title="Agregar a la lista de deseos">
+                                                                <span class="fa fa-heart"></span>
+                                                            </button>
+                                                            <a t-att-href="'/shop/product/' + str(product.id)" class="btn btn-primary">
+                                                                Ver Producto
+                                                            </a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </t>
                                     </div>
                                 </div>
                             </t>
