@@ -50,8 +50,13 @@
                                                             loading="lazy" />
                                                     </span>
                                                 </a>
-                                                <button type="button" role="button" class="btn btn-light o_add_wishlist position-absolute" data-action="o_wishlist" title="Agregar a favoritos" style="top: 10px; right: 10px; background-color: white; border-radius: 50%; padding: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);">
-                                                    <span class="fa fa-heart text-danger" role="img" aria-label="Agregar a favoritos"></span>
+                                                <button type="button" role="button" class="btn btn-light o_add_wishlist position-absolute" data-action="o_wishlist" t-att-data-product-id="product.id" title="Agregar a favoritos" style="top: 10px; right: 10px; background-color: white; border-radius: 50%; padding: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);">
+                                                    <t t-if="product.id in request.env['product.wishlist'].sudo().search([]).mapped('product_id.id')">
+                                                        <span class="fa fa-heart text-danger" role="img" aria-label="En lista de deseos"></span>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span class="fa fa-heart-o text-muted" role="img" aria-label="Agregar a favoritos"></span>
+                                                    </t>
                                                 </button>
                                             </div>
                                             <!-- Información del producto -->
