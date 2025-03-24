@@ -39,7 +39,7 @@
                                 <div class="oe_product g-col-6 g-col-md-3 g-col-lg-3" style="--o-wsale-products-grid-product-col-height: 1;" data-name="Producto">
                                     <div class="o_wsale_product_grid_wrapper position-relative h-100 o_wsale_product_grid_wrapper_1_1">
                                         <form action="/shop/cart/update" method="post" class="oe_product_cart h-100 d-flex" itemscope="itemscope" itemtype="http://schema.org/Product" data-publish="on">
-                                            <!-- Imagen del producto con corazón de favoritos -->
+                                            <!-- Imagen del producto -->
                                             <div class="oe_product_image position-relative flex-grow-0 overflow-hidden">
                                                 <a class="oe_product_image_link d-block position-relative" itemprop="url" t-att-href="'/shop/product/' + str(product.id)">
                                                     <span class="oe_product_image_img_wrapper d-flex h-100 justify-content-center align-items-center position-absolute">
@@ -50,14 +50,54 @@
                                                             loading="lazy" />
                                                     </span>
                                                 </a>
-                                                <button type="button" role="button" class="btn btn-light o_add_wishlist position-absolute" data-action="o_wishlist" t-att-data-product-id="product.id" title="Agregar a favoritos" style="top: 10px; right: 10px; background-color: white; border-radius: 50%; padding: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);" t-on-click="add_to_wishlist(product.id)">
-                                                    <t t-if="product.id in request.env['product.wishlist'].sudo().search([]).mapped('product_id.id')">
-                                                        <span class="fa fa-heart text-danger" role="img" aria-label="En lista de deseos"></span>
-                                                    </t>
-                                                    <t t-else="">
-                                                        <span class="fa fa-heart-o text-muted" role="img" aria-label="Agregar a favoritos"></span>
-                                                    </t>
-                                                </button>
+                                            </div>
+                                            <!-- Información del producto -->
+                                            <div class="o_wsale_product_information position-relative d-flex flex-column flex-grow-1 flex-shrink-1">
+                                                <div class="o_wsale_product_information_text">
+                                                    <h6 class="o_wsale_products_item_title mb-2 text-break">
+                                                        <a class="text-primary text-decoration-none text-primary-emphasis" itemprop="name" t-att-href="'/shop/product/' + str(product.id)">
+                                                            <t t-esc="product.name" />
+                                                        </a>
+                                                    </h6>
+                                                </div>
+                                                <div class="o_wsale_product_sub d-flex justify-content-between align-items-end gap-2 flex-wrap">
+                                                    <div class="product_price" itemprop="offers" itemscope="itemscope" itemtype="http://schema.org/Offer">
+                                                        <span class="h6 mb-0">$<t t-esc="'%.2f' % product.list_price" /></span>
+                                                        <span itemprop="price" style="display:none;"><t t-esc="product.list_price" /></span>
+                                                        <span itemprop="priceCurrency" style="display:none;">MXN</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </t>
+                        </section>
+                    </div>
+                </div>
+                <div class="container mt-4">
+                    <div style="text-align: left;">
+                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;"Ofertas</h2>
+                    </div>
+                    <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
+                        <section id="o_wsale_products_grid" class="o_wsale_products_grid_table grid">
+                            <!-- Iterar sobre los productos publicados -->
+                            <t t-set="published_products" t-value="request.env['product.template'].sudo().search([('website_published', '=', True)], limit=10)" />
+                            <t t-foreach="published_products" t-as="product">
+                                <div class="oe_product g-col-6 g-col-md-3 g-col-lg-3" style="--o-wsale-products-grid-product-col-height: 1;" data-name="Producto">
+                                    <div class="o_wsale_product_grid_wrapper position-relative h-100 o_wsale_product_grid_wrapper_1_1">
+                                        <form action="/shop/cart/update" method="post" class="oe_product_cart h-100 d-flex" itemscope="itemscope" itemtype="http://schema.org/Product" data-publish="on">
+                                            <!-- Imagen del producto -->
+                                            <div class="oe_product_image position-relative flex-grow-0 overflow-hidden">
+                                                <a class="oe_product_image_link d-block position-relative" itemprop="url" t-att-href="'/shop/product/' + str(product.id)">
+                                                    <span class="oe_product_image_img_wrapper d-flex h-100 justify-content-center align-items-center position-absolute">
+                                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                            itemprop="image" 
+                                                            class="img img-fluid h-100 w-100 position-absolute" 
+                                                            t-att-alt="product.name" 
+                                                            loading="lazy" />
+                                                    </span>
+                                                </a>
                                             </div>
                                             <!-- Información del producto -->
                                             <div class="o_wsale_product_information position-relative d-flex flex-column flex-grow-1 flex-shrink-1">
@@ -84,28 +124,8 @@
                     </div>
                 </div>
 
-                <script>
-                    function add_to_wishlist(product_id) {
-                        fetch('/shop/wishlist/add', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({ product_id: product_id }),
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                location.reload();
-                            } else {
-                                alert('Error al agregar a la lista de deseos.');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                        });
-                    }
-                </script>
+
+
             </div>                        
         </t>
     </template>
