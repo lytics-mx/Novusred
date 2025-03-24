@@ -39,7 +39,7 @@
                                 <div class="oe_product g-col-6 g-col-md-3 g-col-lg-3" style="--o-wsale-products-grid-product-col-height: 1;" data-name="Producto">
                                     <div class="o_wsale_product_grid_wrapper position-relative h-100 o_wsale_product_grid_wrapper_1_1">
                                         <form action="/shop/cart/update" method="post" class="oe_product_cart h-100 d-flex" itemscope="itemscope" itemtype="http://schema.org/Product" data-publish="on">
-                                            <!-- Imagen del producto -->
+                                            <!-- Imagen del producto con corazón de favoritos -->
                                             <div class="oe_product_image position-relative flex-grow-0 overflow-hidden">
                                                 <a class="oe_product_image_link d-block position-relative" itemprop="url" t-att-href="'/shop/product/' + str(product.id)">
                                                     <span class="oe_product_image_img_wrapper d-flex h-100 justify-content-center align-items-center position-absolute">
@@ -50,6 +50,14 @@
                                                             loading="lazy" />
                                                     </span>
                                                 </a>
+                                                <button type="button" role="button" class="btn btn-light o_add_wishlist position-absolute" t-att-data-product-id="product.id" title="Agregar a favoritos" style="top: 10px; right: 10px; background-color: white; border-radius: 50%; padding: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);" t-on-click="toggleWishlist(product.id)">
+                                                    <t t-if="product.id in request.env['product.wishlist'].sudo().search([]).mapped('product_id.id')">
+                                                        <span class="fa fa-heart text-danger" role="img" aria-label="En lista de deseos"></span>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span class="fa fa-heart-o text-muted" role="img" aria-label="Agregar a favoritos"></span>
+                                                    </t>
+                                                </button>
                                             </div>
                                             <!-- Información del producto -->
                                             <div class="o_wsale_product_information position-relative d-flex flex-column flex-grow-1 flex-shrink-1">
@@ -61,16 +69,6 @@
                                                     </h6>
                                                 </div>
                                                 <div class="o_wsale_product_sub d-flex justify-content-between align-items-end gap-2 flex-wrap">
-                                                    <!-- Botón de agregar a la lista de deseos -->
-                                                    <div class="o_wsale_product_btn d-flex gap-2">
-                                                        <button type="button" role="button" class="btn btn-light o_add_wishlist" data-action="o_wishlist" 
-                                                                t-att-title="'Agregar a la lista de deseos'" 
-                                                                t-att-data-product-template-id="product.id" 
-                                                                t-att-data-product-product-id="product.product_variant_id.id">
-                                                            <span class="fa fa-heart" role="img" aria-label="Agregar a la lista de deseos"></span>
-                                                        </button>
-                                                    </div>
-                                                    <!-- Precio del producto -->
                                                     <div class="product_price" itemprop="offers" itemscope="itemscope" itemtype="http://schema.org/Offer">
                                                         <span class="h6 mb-0">$<t t-esc="'%.2f' % product.list_price" /></span>
                                                         <span itemprop="price" style="display:none;"><t t-esc="product.list_price" /></span>
@@ -85,6 +83,25 @@
                         </section>
                     </div>
                 </div>
+
+                <script>
+                    function toggleWishlist(productId) {
+                        fetch(`/shop/wishlist/toggle/${productId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                        })
+                        .then(response => {
+                            if (response.ok) {
+                                location.reload();
+                            } else {
+                                console.error('Error toggling wishlist');
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                    }
+                </script>
             </div>                        
         </t>
     </template>
