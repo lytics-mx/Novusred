@@ -27,7 +27,7 @@
 
 
                 <!-- Bloque de productos en formato carrusel -->
-                <div class="container mt-4">
+                <div class="container mt-4" t-if="request.env.user.partner_id">
                     <div style="text-align: left;">
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">De acuerdo a tu última vista</h2>
                     </div>
@@ -125,55 +125,57 @@
                     </div>
                 </div>
 
-                <div class="container mt-4">
-                    <div style="text-align: left;">
-                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Interés</h2>
-                    </div>
-                    <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
-                        <section id="o_wsale_products_grid" class="o_wsale_products_grid_table grid">
-                            <!-- Iterar sobre los productos en la lista de deseos -->
-                            <t t-set="wishlist_products" t-value="request.env['product.wishlist'].sudo().search([])" />
-                            <t t-foreach="wishlist_products" t-as="wishlist_item">
-                                <t t-set="product" t-value="wishlist_item.product_id" />
-                                <div class="oe_product g-col-6 g-col-md-3 g-col-lg-3" style="--o-wsale-products-grid-product-col-height: 1;" data-name="Producto">
-                                    <div class="o_wsale_product_grid_wrapper position-relative h-100 o_wsale_product_grid_wrapper_1_1">
-                                        <form action="/shop/cart/update" method="post" class="oe_product_cart h-100 d-flex" itemscope="itemscope" itemtype="http://schema.org/Product" data-publish="on">
-                                            <!-- Imagen del producto -->
-                                            <div class="oe_product_image position-relative flex-grow-0 overflow-hidden">
-                                                <a class="oe_product_image_link d-block position-relative" itemprop="url" t-att-href="'/shop/product/' + str(product.id)">
-                                                    <span class="oe_product_image_img_wrapper d-flex h-100 justify-content-center align-items-center position-absolute">
-                                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
-                                                            itemprop="image" 
-                                                            class="img img-fluid h-100 w-100 position-absolute" 
-                                                            t-att-alt="product.name" 
-                                                            loading="lazy" />
-                                                    </span>
-                                                </a>
-                                            </div>
-                                            <!-- Información del producto -->
-                                            <div class="o_wsale_product_information position-relative d-flex flex-column flex-grow-1 flex-shrink-1">
-                                                <div class="o_wsale_product_information_text">
-                                                    <h6 class="o_wsale_products_item_title mb-2 text-break">
-                                                        <a class="text-primary text-decoration-none text-primary-emphasis" itemprop="name" t-att-href="'/shop/product/' + str(product.id)">
-                                                            <t t-esc="product.name" />
-                                                        </a>
-                                                    </h6>
+                <t t-if="request.env.user.partner_id">
+                    <div class="container mt-4">
+                        <div style="text-align: left;">
+                            <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Interés</h2>
+                        </div>
+                        <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
+                            <section id="o_wsale_products_grid" class="o_wsale_products_grid_table grid">
+                                <!-- Iterar sobre los productos en la lista de deseos -->
+                                <t t-set="wishlist_products" t-value="request.env['product.wishlist'].sudo().search([])" />
+                                <t t-foreach="wishlist_products" t-as="wishlist_item">
+                                    <t t-set="product" t-value="wishlist_item.product_id" />
+                                    <div class="oe_product g-col-6 g-col-md-3 g-col-lg-3" style="--o-wsale-products-grid-product-col-height: 1;" data-name="Producto">
+                                        <div class="o_wsale_product_grid_wrapper position-relative h-100 o_wsale_product_grid_wrapper_1_1">
+                                            <form action="/shop/cart/update" method="post" class="oe_product_cart h-100 d-flex" itemscope="itemscope" itemtype="http://schema.org/Product" data-publish="on">
+                                                <!-- Imagen del producto -->
+                                                <div class="oe_product_image position-relative flex-grow-0 overflow-hidden">
+                                                    <a class="oe_product_image_link d-block position-relative" itemprop="url" t-att-href="'/shop/product/' + str(product.id)">
+                                                        <span class="oe_product_image_img_wrapper d-flex h-100 justify-content-center align-items-center position-absolute">
+                                                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                                itemprop="image" 
+                                                                class="img img-fluid h-100 w-100 position-absolute" 
+                                                                t-att-alt="product.name" 
+                                                                loading="lazy" />
+                                                        </span>
+                                                    </a>
                                                 </div>
-                                                <div class="o_wsale_product_sub d-flex justify-content-between align-items-end gap-2 flex-wrap">
-                                                    <div class="product_price" itemprop="offers" itemscope="itemscope" itemtype="http://schema.org/Offer">
-                                                        <span class="h6 mb-0">$<t t-esc="'%.2f' % product.list_price" /></span>
-                                                        <span itemprop="price" style="display:none;"><t t-esc="product.list_price" /></span>
-                                                        <span itemprop="priceCurrency" style="display:none;">MXN</span>
+                                                <!-- Información del producto -->
+                                                <div class="o_wsale_product_information position-relative d-flex flex-column flex-grow-1 flex-shrink-1">
+                                                    <div class="o_wsale_product_information_text">
+                                                        <h6 class="o_wsale_products_item_title mb-2 text-break">
+                                                            <a class="text-primary text-decoration-none text-primary-emphasis" itemprop="name" t-att-href="'/shop/product/' + str(product.id)">
+                                                                <t t-esc="product.name" />
+                                                            </a>
+                                                        </h6>
+                                                    </div>
+                                                    <div class="o_wsale_product_sub d-flex justify-content-between align-items-end gap-2 flex-wrap">
+                                                        <div class="product_price" itemprop="offers" itemscope="itemscope" itemtype="http://schema.org/Offer">
+                                                            <span class="h6 mb-0">$<t t-esc="'%.2f' % product.list_price" /></span>
+                                                            <span itemprop="price" style="display:none;"><t t-esc="product.list_price" /></span>
+                                                            <span itemprop="priceCurrency" style="display:none;">MXN</span>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </form>
+                                            </form>
+                                        </div>
                                     </div>
-                                </div>
-                            </t>
-                        </section>
+                                </t>
+                            </section>
+                        </div>
                     </div>
-                </div>
+                </t>
                 <div class="container mt-4">
                     <div style="text-align: left;">
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Descubre</h2>
@@ -181,7 +183,7 @@
                     <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-inner">
                             <!-- Grupo de imágenes 1 -->
-                            <!-- <div class="carousel-item active">
+                            <div class="carousel-item active">
                                 <div class="d-flex justify-content-center gap-3">
                                     <a href="/descubre">
                                         <img src="/theme_xtream/static/src/img/home/Descubre1.png" 
@@ -196,7 +198,7 @@
                                             style="width: 100%; height: auto; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
                                     </a>
                                 </div>
-                            </div> -->
+                            </div>
                             <!-- Grupo de imágenes 2 -->
                             <div class="carousel-item">
                                 <div class="d-flex justify-content-center gap-3">
@@ -279,66 +281,68 @@
                 </section>
 
 
-                <div class="container mt-4">
-                    <div style="text-align: left;">
-                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Categorías</h2>
-                    </div>
-                    <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
-                        <section id="o_wsale_products_grid" class="o_wsale_products_grid_table grid">
-                            <!-- Iterar sobre las categorías de productos -->
-                            <t t-set="categories" t-value="request.env['product.public.category'].sudo().search([])" />
-                            <t t-foreach="categories" t-as="category">
-                                <div>
-                                    <h3 style="font-family: 'Questrial', sans-serif; font-size: 20px; margin-top: 20px;">
-                                        <t t-esc="category.name" />
-                                    </h3>
-                                    <t t-set="category_products" t-value="request.env['product.template'].sudo().search([('website_published', '=', True), ('public_categ_ids', 'in', category.id)], limit=10)" />
-                                    <div class="row">
-                                        <t t-foreach="category_products" t-as="product">
-                                            <div class="col-6 col-md-3">
-                                                <div class="oe_product g-col-6 g-col-md-3 g-col-lg-3" style="--o-wsale-products-grid-product-col-height: 1;" data-name="Producto">
-                                                    <div class="o_wsale_product_grid_wrapper position-relative h-100 o_wsale_product_grid_wrapper_1_1">
-                                                        <form action="/shop/cart/update" method="post" class="oe_product_cart h-100 d-flex" itemscope="itemscope" itemtype="http://schema.org/Product" data-publish="on">
-                                                            <!-- Imagen del producto -->
-                                                            <div class="oe_product_image position-relative flex-grow-0 overflow-hidden">
-                                                                <a class="oe_product_image_link d-block position-relative" itemprop="url" t-att-href="'/shop/product/' + str(product.id)">
-                                                                    <span class="oe_product_image_img_wrapper d-flex h-100 justify-content-center align-items-center position-absolute">
-                                                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
-                                                                            itemprop="image" 
-                                                                            class="img img-fluid h-100 w-100 position-absolute" 
-                                                                            t-att-alt="product.name" 
-                                                                            loading="lazy" />
-                                                                    </span>
-                                                                </a>
-                                                            </div>
-                                                            <!-- Información del producto -->
-                                                            <div class="o_wsale_product_information position-relative d-flex flex-column flex-grow-1 flex-shrink-1">
-                                                                <div class="o_wsale_product_information_text">
-                                                                    <h6 class="o_wsale_products_item_title mb-2 text-break">
-                                                                        <a class="text-primary text-decoration-none text-primary-emphasis" itemprop="name" t-att-href="'/shop/product/' + str(product.id)">
-                                                                            <t t-esc="product.name" />
-                                                                        </a>
-                                                                    </h6>
+                <t t-if="request.env.user.partner_id">
+                    <div class="container mt-4">
+                        <div style="text-align: left;">
+                            <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Categorías</h2>
+                        </div>
+                        <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
+                            <section id="o_wsale_products_grid" class="o_wsale_products_grid_table grid">
+                                <!-- Iterar sobre las categorías de productos -->
+                                <t t-set="categories" t-value="request.env['product.public.category'].sudo().search([])" />
+                                <t t-foreach="categories" t-as="category">
+                                    <div>
+                                        <h3 style="font-family: 'Questrial', sans-serif; font-size: 20px; margin-top: 20px;">
+                                            <t t-esc="category.name" />
+                                        </h3>
+                                        <t t-set="category_products" t-value="request.env['product.template'].sudo().search([('website_published', '=', True), ('public_categ_ids', 'in', category.id)], limit=10)" />
+                                        <div class="row">
+                                            <t t-foreach="category_products" t-as="product">
+                                                <div class="col-6 col-md-3">
+                                                    <div class="oe_product g-col-6 g-col-md-3 g-col-lg-3" style="--o-wsale-products-grid-product-col-height: 1;" data-name="Producto">
+                                                        <div class="o_wsale_product_grid_wrapper position-relative h-100 o_wsale_product_grid_wrapper_1_1">
+                                                            <form action="/shop/cart/update" method="post" class="oe_product_cart h-100 d-flex" itemscope="itemscope" itemtype="http://schema.org/Product" data-publish="on">
+                                                                <!-- Imagen del producto -->
+                                                                <div class="oe_product_image position-relative flex-grow-0 overflow-hidden">
+                                                                    <a class="oe_product_image_link d-block position-relative" itemprop="url" t-att-href="'/shop/product/' + str(product.id)">
+                                                                        <span class="oe_product_image_img_wrapper d-flex h-100 justify-content-center align-items-center position-absolute">
+                                                                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                                                itemprop="image" 
+                                                                                class="img img-fluid h-100 w-100 position-absolute" 
+                                                                                t-att-alt="product.name" 
+                                                                                loading="lazy" />
+                                                                        </span>
+                                                                    </a>
                                                                 </div>
-                                                                <div class="o_wsale_product_sub d-flex justify-content-between align-items-end gap-2 flex-wrap">
-                                                                    <div class="product_price" itemprop="offers" itemscope="itemscope" itemtype="http://schema.org/Offer">
-                                                                        <span class="h6 mb-0">$<t t-esc="'%.2f' % product.list_price" /></span>
-                                                                        <span itemprop="price" style="display:none;"><t t-esc="product.list_price" /></span>
-                                                                        <span itemprop="priceCurrency" style="display:none;">MXN</span>
+                                                                <!-- Información del producto -->
+                                                                <div class="o_wsale_product_information position-relative d-flex flex-column flex-grow-1 flex-shrink-1">
+                                                                    <div class="o_wsale_product_information_text">
+                                                                        <h6 class="o_wsale_products_item_title mb-2 text-break">
+                                                                            <a class="text-primary text-decoration-none text-primary-emphasis" itemprop="name" t-att-href="'/shop/product/' + str(product.id)">
+                                                                                <t t-esc="product.name" />
+                                                                            </a>
+                                                                        </h6>
+                                                                    </div>
+                                                                    <div class="o_wsale_product_sub d-flex justify-content-between align-items-end gap-2 flex-wrap">
+                                                                        <div class="product_price" itemprop="offers" itemscope="itemscope" itemtype="http://schema.org/Offer">
+                                                                            <span class="h6 mb-0">$<t t-esc="'%.2f' % product.list_price" /></span>
+                                                                            <span itemprop="price" style="display:none;"><t t-esc="product.list_price" /></span>
+                                                                            <span itemprop="priceCurrency" style="display:none;">MXN</span>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                        </form>
+                                                            </form>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </t>
+                                            </t>
+                                        </div>
                                     </div>
-                                </div>
-                            </t>
-                        </section>
+                                </t>
+                            </section>
+                        </div>
                     </div>
-                </div>
+                </t>
                 <div class="container mt-4">
                     <div style="text-align: left;">
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Historial</h2>
@@ -346,49 +350,52 @@
                     <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
                         <section id="o_wsale_products_grid" class="o_wsale_products_grid_table grid">
                             <!-- Obtener productos del carrito del usuario que inició sesión -->
-                            <t t-set="cart" t-value="request.website.sale_get_order()" />
-                            <t t-if="cart and cart.partner_id == request.env.user.partner_id and cart.order_line">
-                                <t t-foreach="cart.order_line.filtered(lambda l: l.product_id)" t-as="cart_item">
-                                    <t t-set="product" t-value="cart_item.product_id" />
-                                    <div class="oe_product g-col-6 g-col-md-3 g-col-lg-3" style="--o-wsale-products-grid-product-col-height: 1;" data-name="Producto">
-                                        <div class="o_wsale_product_grid_wrapper position-relative h-100 o_wsale_product_grid_wrapper_1_1">
-                                            <form action="/shop/cart/update" method="post" class="oe_product_cart h-100 d-flex" itemscope="itemscope" itemtype="http://schema.org/Product" data-publish="on">
-                                                <!-- Imagen del producto -->
-                                                <div class="oe_product_image position-relative flex-grow-0 overflow-hidden">
-                                                    <a class="oe_product_image_link d-block position-relative" itemprop="url" t-att-href="'/shop/product/' + str(product.id)">
-                                                        <span class="oe_product_image_img_wrapper d-flex h-100 justify-content-center align-items-center position-absolute">
-                                                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
-                                                                itemprop="image" 
-                                                                class="img img-fluid h-100 w-100 position-absolute" 
-                                                                t-att-alt="product.name" 
-                                                                loading="lazy" />
-                                                        </span>
-                                                    </a>
-                                                </div>
-                                                <!-- Información del producto -->
-                                                <div class="o_wsale_product_information position-relative d-flex flex-column flex-grow-1 flex-shrink-1">
-                                                    <div class="o_wsale_product_information_text">
-                                                        <h6 class="o_wsale_products_item_title mb-2 text-break">
-                                                            <a class="text-primary text-decoration-none text-primary-emphasis" itemprop="name" t-att-href="'/shop/product/' + str(product.id)">
-                                                                <t t-esc="product.name" />
+                            <t t-call="website_sale.cart">
+                                <t t-call="website_sale.checkout_layout">
+                                    <t t-if="cart and cart.partner_id == request.env.user.partner_id and cart.order_line">
+                                        <t t-foreach="cart.order_line.filtered(lambda l: l.product_id)" t-as="cart_item">
+                                            <t t-set="product" t-value="cart_item.product_id" />
+                                            <div class="oe_product g-col-6 g-col-md-3 g-col-lg-3" style="--o-wsale-products-grid-product-col-height: 1;" data-name="Producto">
+                                                <div class="o_wsale_product_grid_wrapper position-relative h-100 o_wsale_product_grid_wrapper_1_1">
+                                                    <form action="/shop/cart/update" method="post" class="oe_product_cart h-100 d-flex" itemscope="itemscope" itemtype="http://schema.org/Product" data-publish="on">
+                                                        <!-- Imagen del producto -->
+                                                        <div class="oe_product_image position-relative flex-grow-0 overflow-hidden">
+                                                            <a class="oe_product_image_link d-block position-relative" itemprop="url" t-att-href="'/shop/product/' + str(product.id)">
+                                                                <span class="oe_product_image_img_wrapper d-flex h-100 justify-content-center align-items-center position-absolute">
+                                                                    <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                                        itemprop="image" 
+                                                                        class="img img-fluid h-100 w-100 position-absolute" 
+                                                                        t-att-alt="product.name" 
+                                                                        loading="lazy" />
+                                                                </span>
                                                             </a>
-                                                        </h6>
-                                                    </div>
-                                                    <div class="o_wsale_product_sub d-flex justify-content-between align-items-end gap-2 flex-wrap">
-                                                        <div class="product_price" itemprop="offers" itemscope="itemscope" itemtype="http://schema.org/Offer">
-                                                            <span class="h6 mb-0">$<t t-esc="'%.2f' % product.list_price" /></span>
-                                                            <span itemprop="price" style="display:none;"><t t-esc="product.list_price" /></span>
-                                                            <span itemprop="priceCurrency" style="display:none;">MXN</span>
                                                         </div>
-                                                    </div>
+                                                        <!-- Información del producto -->
+                                                        <div class="o_wsale_product_information position-relative d-flex flex-column flex-grow-1 flex-shrink-1">
+                                                            <div class="o_wsale_product_information_text">
+                                                                <h6 class="o_wsale_products_item_title mb-2 text-break">
+                                                                    <a class="text-primary text-decoration-none text-primary-emphasis" itemprop="name" t-att-href="'/shop/product/' + str(product.id)">
+                                                                        <t t-esc="product.name" />
+                                                                    </a>
+                                                                </h6>
+                                                            </div>
+                                                            <div class="o_wsale_product_sub d-flex justify-content-between align-items-end gap-2 flex-wrap">
+                                                                <div class="product_price" itemprop="offers" itemscope="itemscope" itemtype="http://schema.org/Offer">
+                                                                    <span class="h6 mb-0">$<t t-esc="'%.2f' % product.list_price" /></span>
+                                                                    <span itemprop="price" style="display:none;"><t t-esc="product.list_price" /></span>
+                                                                    <span itemprop="priceCurrency" style="display:none;">MXN</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
                                                 </div>
-                                            </form>
-                                        </div>
-                                    </div>
+                                            </div>
+                                        </t>
+                                    </t>
+                                    <t t-else="">
+                                        <p style="font-family: 'Questrial', sans-serif; font-size: 16px; color: #666;">No hay productos en tu carrito.</p>
+                                    </t>
                                 </t>
-                            </t>
-                            <t t-else="">
-                                <p style="font-family: 'Questrial', sans-serif; font-size: 16px; color: #666;">No hay productos en tu carrito.</p>
                             </t>
                         </section>
                     </div>
