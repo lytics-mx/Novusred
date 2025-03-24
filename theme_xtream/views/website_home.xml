@@ -31,37 +31,35 @@
                     <div style="text-align: left;">
                         <h2 class="text-left" style="font-family: 'Questrial', sans-serif; font-size: 25px;">Nuestros Productos</h2>
                     </div>
-                    <div class="row row-cols-1 row-cols-md-3 g-4">
+                    <div class="row row-cols-2 row-cols-md-4 g-3">
                         <t t-foreach="request.env['product.template'].search([('website_published', '=', True)], limit=20)" t-as="product">
                             <div class="col">
-                                <div class="card h-100 text-center">
+                                <div class="card h-100 text-center" style="max-width: 150px;">
                                     <!-- Imagen del producto -->
                                     <div class="oe_product_image position-relative overflow-hidden">
                                         <a t-att-href="'/shop/product/' + str(product.id)" class="oe_product_image_link d-block position-relative">
                                             <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
                                                 class="card-img-top img-fluid" 
                                                 alt="Product Image" 
-                                                style="height: 200px; object-fit: contain;" />
+                                                style="height: 100px; object-fit: contain;" />
                                         </a>
                                     </div>
                                     <!-- Información del producto -->
-                                    <div class="card-body">
-                                        <h5 class="card-title">
+                                    <div class="card-body p-2">
+                                        <h6 class="card-title mb-1" style="font-size: 14px;">
                                             <a t-att-href="'/shop/product/' + str(product.id)" class="text-decoration-none text-dark">
                                                 <t t-esc="product.name" />
                                             </a>
-                                        </h5>
-                                        <p class="card-text text-muted">
+                                        </h6>
+                                        <p class="card-text text-muted mb-1" style="font-size: 12px;">
                                             $<t t-esc="'%.2f' % product.list_price" />
                                         </p>
                                     </div>
                                     <!-- Botones de acción -->
-                                    <div class="card-footer bg-transparent border-0">
-                                        <div class="d-flex justify-content-center gap-2">                                            
-                                            <a t-att-href="'/shop/product/' + str(product.id)" class="btn btn-primary">
-                                                Ver Producto
-                                            </a>
-                                        </div>
+                                    <div class="card-footer bg-transparent border-0 p-2">
+                                        <a t-att-href="'/shop/product/' + str(product.id)" class="btn btn-primary btn-sm">
+                                            Ver
+                                        </a>
                                     </div>
                                 </div>
                             </div>
