@@ -5,23 +5,55 @@
             <div id="wrap" class="oe_structure oe_empty" style="font-family: 'Questrial', sans-serif;">
                 <!-- Verifica que la ruta de la imagen sea válidas -->
                 <img src="/theme_xtream/static/src/img/product-img/imagenes_home.png" alt="Image" style="width: 100%; height: auto;" />
-                <div style="display: flex; align-items: center; justify-content: space-between; background-color: white; border-radius: 10px; padding: 10px 20px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); width: 54%; margin: 20px auto;">
-                    <div style="font-size: 14px; font-weight: bold; color: #333; font-family: 'Questrial', sans-serif; text-align: center;">
+                <div style="display: flex; align-items: center; justify-content: space-between; background-color: white; border-radius: 10px; padding: 10px 20px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); width: 90%; max-width: 600px; margin: 20px auto; flex-wrap: wrap;">
+                    <div style="font-size: 14px; font-weight: bold; color: #333; font-family: 'Questrial', sans-serif; text-align: center; flex: 1 1 100%; margin-bottom: 10px;">
                         Pago Seguro y Confiable
                     </div>
-                    <div>
-                        <img src="/theme_xtream/static/src/img/product-img/pagos.png" alt="Pagos" style="height: 70px;" />
+                    <div style="flex: 1 1 auto; text-align: center; margin-bottom: 10px;">
+                        <img src="/theme_xtream/static/src/img/product-img/pagos.png" alt="Pagos" style="height: 70px; max-width: 100%;"/>
                     </div>
-                    <div style="flex: 1; display: flex; align-items: center; justify-content: flex-end; font-family: 'Questrial', sans-serif; font-size: 14px; color: #007bff; text-align: center;">
+                    <div style="flex: 1 1 100%; display: flex; align-items: center; justify-content: center; font-family: 'Questrial', sans-serif; font-size: 14px; color: #007bff; text-align: center;">
                         <img src="/theme_xtream/static/src/img/product-img/flecha.png" alt="Flecha" style="height: 35px; margin-right: 5px;" />
                         <a href="/payment_policies" style="font-size: 14px; font-weight: bold; color: #333; font-family: 'Questrial', sans-serif; text-align: center; text-decoration: none;">Ver métodos</a>
                     </div>
                 </div>
 
-                <!-- Sección de productos publicados
-                <div style="font-family: 'Questrial', sans-serif; font-size: 14px; color: #333; text-align: center; margin-top: 20px;">
-                    <t t-call="theme_xtream.viewed_products_template" />
-                </div> -->
+                <!-- Línea divisoria -->
+                <hr style="border-top: 1px solid #ddd;"/>
+
+                <!-- Bloque de productos en formato carrusel -->
+                <div class="container mt-4">
+                    <h2 class="text-center">Nuestros Productos</h2>
+                    <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <t t-foreach="request.env['product.template'].search([], limit=20)" t-as="product" t-esc-options="{'groups': 'website.group_website_publisher'}">
+                                <div t-att-class="'carousel-item' + (' active' if loop.index == 1 else '')">
+                                    <div class="row">
+                                        <t t-foreach="range(5)" t-as="i">
+                                            <div class="col-md-2">
+                                                <div class="card">
+                                                    <img t-att-src="product.image_1920" class="card-img-top" alt="Product Image"/>
+                                                    <div class="card-body">
+                                                        <h5 class="card-title" t-esc="product.name"/>
+                                                        <p class="card-text" t-esc="product.list_price"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </t>
     </template>
