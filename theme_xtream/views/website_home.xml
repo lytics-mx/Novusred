@@ -28,8 +28,8 @@
                         <div class="carousel-inner">
                             <t t-set="products" t-value="request.env['product.template'].search([], limit=20)"/>
                             <t t-set="rows" t-value="[products[i:i+5] for i in range(0, len(products), 5)]"/>
-                            <t t-foreach="rows" t-as="row" t-esc-options="{'groups': 'website.group_website_publisher'}">
-                                <div t-att-class="'carousel-item' + (' active' if loop.index == 1 else '')">
+                            <t t-foreach="rows" t-as="row" t-foreach-options="{'enumerate': True, 'groups': 'website.group_website_publisher'}">
+                                <div t-att-class="'carousel-item' + (' active' if row[0] == 0 else '')">
                                     <div class="row">
                                         <t t-foreach="row" t-as="product">
                                             <div class="col-md-2">
