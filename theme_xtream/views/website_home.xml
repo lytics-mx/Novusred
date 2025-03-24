@@ -255,11 +255,11 @@
                     </div>
                     <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
                         <section id="o_wsale_products_grid" class="o_wsale_products_grid_table grid">
-                            <t t-set="all_category" t-value="request.env['product.category'].sudo().search([('name', '=', 'All')], limit=1)" />
-                            <t t-if="all_category">
+                            <t t-set="category" t-value="request.env['product.category'].sudo().search([('name', '=', 'cableado estructurado')], limit=1)" />
+                            <t t-if="category">
                                 <t t-set="category_products" t-value="request.env['product.template'].sudo().search([
                                     ('website_published', '=', True),
-                                    ('categ_id', 'child_of', all_category.id)
+                                    ('categ_id', '=', category.id)
                                 ], limit=10)" />
                                 <t t-foreach="category_products" t-as="product">
                                     <div class="oe_product g-col-6 g-col-md-3 g-col-lg-3" style="--o-wsale-products-grid-product-col-height: 1;" data-name="Producto">
@@ -296,6 +296,9 @@
                                         </div>
                                     </div>
                                 </t>
+                            </t>
+                            <t t-else="">
+                                <p style="font-family: 'Questrial', sans-serif; font-size: 16px; color: #666;">No hay productos en la categoría de cableado estructurado.</p>
                             </t>
                         </section>
                     </div>
