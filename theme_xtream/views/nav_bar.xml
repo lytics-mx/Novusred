@@ -1,24 +1,29 @@
 <odoo>
-    <template id="viewed_products_template" name="Productos Publicados">
-        <div class="viewed-products container-fluid" style="margin-top: 30px;">
-            <h3 style="text-align: center; font-size: 20px; margin-bottom: 20px;">Productos Disponibles</h3>
-            <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
-                <section id="o_wsale_products_grid" class="o_wsale_products_grid_table grid">
-                    <!-- Itera sobre los productos publicados -->
-                    <t t-foreach="request.env['product.template'].sudo().search([('website_published', '=', True)], limit=10)" t-as="product">
-                        <div class="oe_product g-col-6 g-col-md-4 g-col-lg-3">
-                            <div class="o_wsale_product_grid_wrapper position-relative h-100">
-                                <!-- Llama al template de productos de la tienda -->
-                                <t t-call="website_sale.products_item">
-                                    <t t-set="product" t-value="product" />
-                                    <t t-set="ppr" t-value="4" /> <!-- Productos por fila -->
-                                    <t t-set="td_product" t-value="{'x': 1, 'y': 1}" /> <!-- Tamaño del producto -->
-                                </t>
-                            </div>
-                        </div>
-                    </t>
-                </section>
+    <template id="custom_navbar" name="Custom Navbar" inherit_id="website.layout">
+        <xpath expr="//header" position="inside">
+            <div class="o_navbar_custom d-flex align-items-center" style="background-color: #f8f9fa; padding: 8px;">
+                <!-- Categorías Dropdown -->
+                <div class="dropdown me-3">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownCategorias" data-bs-toggle="dropdown" aria-expanded="false">
+                        Categorías <i class="fa fa-chevron-down"></i>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownCategorias">
+                        <!-- Aquí puedes añadir las subcategorías -->
+                    </ul>
+                </div>
+
+                <!-- Enlaces principales -->
+                <div class="d-flex align-items-center">
+                    <a href="/ofertas" class="btn btn-link">Ofertas</a>
+                    <a href="/marcas" class="btn btn-link">Marcas</a>
+                    <a href="/historial" class="btn btn-link">Historial</a>
+                    <a href="/nosotros" class="btn btn-link">Nosotros</a>
+                    <a href="/contacto" class="btn btn-link">Contacto</a>
+                </div>
+
+                <!-- Spacer -->
+                <div class="flex-grow-1"></div>
             </div>
-        </div>
+        </xpath>
     </template>
 </odoo>
