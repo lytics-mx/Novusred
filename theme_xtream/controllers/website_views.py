@@ -1,6 +1,9 @@
 from odoo import http
 from odoo.http import request
 
+import logging
+_logger = logging.getLogger(__name__)
+
 class WebsiteShop(http.Controller):
 
     @http.route(['/shop/product/<model("product.template"):product>'], type='http', auth="public", website=True)
@@ -9,4 +12,5 @@ class WebsiteShop(http.Controller):
         if product.id not in visited_product_ids:
             visited_product_ids.append(product.id)
             http.request.session['visited_product_ids'] = visited_product_ids[-5:]  # Mantener solo los últimos 5 productos
+        _logger.info(f"Productos visitados: {http.request.session['visited_product_ids']}")
         return http.request.render("website_sale.product", {'product': product})
