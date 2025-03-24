@@ -3,7 +3,7 @@
     <template id="theme_xtream.xtream_inicio" name="Inicio">
         <t t-call="website.layout">
             <div id="wrap" class="oe_structure oe_empty" style="font-family: 'Questrial', sans-serif;">
-                <!-- Verifica que la ruta de la imagen sea válida -->
+                <!-- Verifica que la ruta de la imagen sea válidas -->
                 <img src="/theme_xtream/static/src/img/product-img/imagenes_home.png" alt="Image" style="width: 100%; height: auto;" />
                 <div style="display: flex; align-items: center; justify-content: space-between; background-color: white; border-radius: 10px; padding: 10px 20px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); width: 90%; max-width: 600px; margin: 20px auto; flex-wrap: wrap;">
                     <div style="font-size: 14px; font-weight: bold; color: #333; font-family: 'Questrial', sans-serif; text-align: center; flex: 1 1 100%; margin-bottom: 10px;">
@@ -26,22 +26,19 @@
                     <h2 class="text-center">Nuestros Productos</h2>
                     <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-inner">
-                            <t t-set="products" t-value="request.env['product.template'].search([], limit=20)"/>
-                            <t t-set="rows" t-value="[products[i:i+5] for i in range(0, len(products), 5)]"/>
-                            <t t-foreach="rows" t-as="row" t-foreach-options="{'enumerate': True, 'groups': 'website.group_website_publisher'}">
-                                <div t-att-class="'carousel-item' + (' active' if row[0] == 0 else '')">
-                                    <div class="row">
-                                        <t t-foreach="row" t-as="product">
-                                            <div class="col-md-2">
-                                                <div class="card">
-                                                    <img t-att-src="'data:image/png;base64,' + product.image_1920.decode('utf-8')" class="card-img-top" alt="Product Image"/>
-                                                    <div class="card-body">
-                                                        <h5 class="card-title" t-esc="product.name"/>
-                                                        <p class="card-text" t-esc="product.list_price"/>
-                                                    </div>
+                            <t t-foreach="enumerate(request.env['product.template'].search([], limit=20))" t-as="product_tuple" t-esc-options="{'groups': 'website.group_website_publisher'}">
+                                <div t-att-class="'carousel-item' + (' active' if product_tuple[0] == 0 else '')">
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-2">
+                                            <div class="card text-center">
+                                                <!-- Asegúrate de que la imagen se cargue correctamente -->
+                                                <img t-att-src="'/web/image/product.template/' + str(product_tuple[1].id) + '/image_1920'" class="card-img-top" alt="Product Image" style="height: 150px; object-fit: contain;"/>
+                                                <div class="card-body">
+                                                    <h5 class="card-title" t-esc="product_tuple[1].name"/>
+                                                    <p class="card-text" t-esc="'$' + '%.2f' % product_tuple[1].list_price"/>
                                                 </div>
                                             </div>
-                                        </t>
+                                        </div>
                                     </div>
                                 </div>
                             </t>
