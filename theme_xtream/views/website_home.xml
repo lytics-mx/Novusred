@@ -50,7 +50,7 @@
                                                             loading="lazy" />
                                                     </span>
                                                 </a>
-                                                <button type="button" role="button" class="btn btn-light o_add_wishlist position-absolute" t-att-data-product-id="product.id" title="Agregar a favoritos" style="top: 10px; right: 10px; background-color: white; border-radius: 50%; padding: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);" t-on-click="toggleWishlist(product.id)">
+                                                <button type="button" role="button" class="btn btn-light o_add_wishlist position-absolute" data-action="o_wishlist" t-att-data-product-id="product.id" title="Agregar a favoritos" style="top: 10px; right: 10px; background-color: white; border-radius: 50%; padding: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);" t-on-click="add_to_wishlist(product.id)">
                                                     <t t-if="product.id in request.env['product.wishlist'].sudo().search([]).mapped('product_id.id')">
                                                         <span class="fa fa-heart text-danger" role="img" aria-label="En lista de deseos"></span>
                                                     </t>
@@ -85,21 +85,25 @@
                 </div>
 
                 <script>
-                    function toggleWishlist(productId) {
-                        fetch(`/shop/wishlist/toggle/${productId}`, {
+                    function add_to_wishlist(product_id) {
+                        fetch('/shop/wishlist/add', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
                             },
+                            body: JSON.stringify({ product_id: product_id }),
                         })
-                        .then(response => {
-                            if (response.ok) {
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
                                 location.reload();
                             } else {
-                                console.error('Error toggling wishlist');
+                                alert('Error al agregar a la lista de deseos.');
                             }
                         })
-                        .catch(error => console.error('Error:', error));
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
                     }
                 </script>
             </div>                        
