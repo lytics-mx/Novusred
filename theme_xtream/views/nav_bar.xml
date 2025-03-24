@@ -1,10 +1,10 @@
 <odoo>
-    <template id="viewed_products_template" name="Productos Vistos">
+    <template id="viewed_products_template" name="Productos Publicados">
         <div class="viewed-products container-fluid" style="margin-top: 30px;">
-            <h3 style="text-align: center; font-size: 20px; margin-bottom: 20px;">Productos que has visto</h3>
+            <h3 style="text-align: center; font-size: 20px; margin-bottom: 20px;">Productos Disponibles</h3>
             <div class="row g-3 justify-content-center">
-                <!-- Itera sobre los productos visitados -->
-                <t t-foreach="request.env['product.template'].sudo().browse(request.session.get('viewed_products', []))" t-as="product">
+                <!-- Itera sobre los productos publicados -->
+                <t t-foreach="request.env['product.template'].sudo().search([('website_published', '=', True)], limit=10)" t-as="product">
                     <div class="col-6 col-sm-4 col-md-3 col-lg-2">
                         <div class="o_wsale_product_grid_wrapper position-relative h-100 text-center">
                             <!-- Llama al template de productos de la tienda -->
