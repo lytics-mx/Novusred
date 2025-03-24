@@ -28,8 +28,8 @@
                         <div class="carousel-inner">
                             <t t-set="products" t-value="request.env['product.template'].search([('website_published', '=', True)], limit=20)" />
                             <t t-set="chunks" t-value="[products[i:i+5] for i in range(0, len(products), 5)]" />
-                            <t t-foreach="chunks" t-as="chunk" t-enumerate="True">
-                                <div t-att-class="'carousel-item' + (' active' if t-enumerate[0] == 0 else '')">
+                            <t t-foreach="chunks" t-as="chunk" t-foreach-index="index">
+                                <div t-att-class="'carousel-item' + (' active' if index == 0 else '')">
                                     <div class="row row-cols-1 row-cols-md-5 g-4">
                                         <t t-foreach="chunk" t-as="product">
                                             <div class="col">
