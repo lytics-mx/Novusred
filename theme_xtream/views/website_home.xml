@@ -341,14 +341,15 @@
                 </div>
                 <div class="container mt-4">
                     <div style="text-align: left;">
-                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Historial de Productos</h2>
+                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Favoritos</h2>
                     </div>
                     <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
                         <section id="o_wsale_products_grid" class="o_wsale_products_grid_table grid">
-                            <!-- Obtener productos del historial del usuario -->
-                            <t t-set="user_history_products" t-value="request.env['product.template'].sudo().search([('website_published', '=', True), ('id', 'in', request.session.get('viewed_product_ids', []))], limit=10)" />
-                            <t t-if="user_history_products">
-                                <t t-foreach="user_history_products" t-as="product">
+                            <!-- Obtener productos de la lista de deseos del usuario -->
+                            <t t-set="wishlist_products" t-value="request.env['product.wishlist'].sudo().search([('partner_id', '=', request.env.user.partner_id.id)])" />
+                            <t t-if="wishlist_products">
+                                <t t-foreach="wishlist_products" t-as="wishlist_item">
+                                    <t t-set="product" t-value="wishlist_item.product_id" />
                                     <div class="oe_product g-col-6 g-col-md-3 g-col-lg-3" style="--o-wsale-products-grid-product-col-height: 1;" data-name="Producto">
                                         <div class="o_wsale_product_grid_wrapper position-relative h-100 o_wsale_product_grid_wrapper_1_1">
                                             <form action="/shop/cart/update" method="post" class="oe_product_cart h-100 d-flex" itemscope="itemscope" itemtype="http://schema.org/Product" data-publish="on">
@@ -387,7 +388,7 @@
                                 </t>
                             </t>
                             <t t-else="">
-                                <p style="font-family: 'Questrial', sans-serif; font-size: 16px; color: #666;">No hay productos en tu historial.</p>
+                                <p style="font-family: 'Questrial', sans-serif; font-size: 16px; color: #666;">No hay productos en tu lista de favoritos.</p>
                             </t>
                         </section>
                     </div>
