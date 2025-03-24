@@ -29,13 +29,13 @@
                 <!-- Bloque de productos en formato carrusel -->
                 <div class="container mt-4">
                     <div style="text-align: left;">
-                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Nuestros Productos</h2>
+                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Productos Vistos Recientemente</h2>
                     </div>
                     <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
                         <section id="o_wsale_products_grid" class="o_wsale_products_grid_table grid">
-                            <!-- Iterar sobre los productos publicados -->
-                            <t t-set="published_products" t-value="request.env['product.template'].sudo().search([('website_published', '=', True)], limit=10)" />
-                            <t t-foreach="published_products" t-as="product">
+                            <!-- Iterar sobre los productos vistos recientemente -->
+                            <t t-set="recently_viewed_products" t-value="request.env['product.template'].sudo().search([('id', 'in', request.session.get('viewed_product_ids', []))], limit=10)" />
+                            <t t-foreach="recently_viewed_products" t-as="product">
                                 <div class="oe_product g-col-6 g-col-md-3 g-col-lg-3" style="--o-wsale-products-grid-product-col-height: 1;" data-name="Producto">
                                     <div class="o_wsale_product_grid_wrapper position-relative h-100 o_wsale_product_grid_wrapper_1_1">
                                         <form action="/shop/cart/update" method="post" class="oe_product_cart h-100 d-flex" itemscope="itemscope" itemtype="http://schema.org/Product" data-publish="on">
@@ -199,7 +199,7 @@
                             <div class="carousel-item">
                                 <div class="d-flex justify-content-center gap-3">
                                     <a href="/descubre">
-                                        <img src="/theme_xtream/static/src/img/home/Descubre3.png" 
+                                        <img src="/theme_xtream/static/src/img/home/Descrubre3.png" 
                                             class="d-block" 
                                             alt="Imagen 3" 
                                             style="width: 100%; height: auto; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
