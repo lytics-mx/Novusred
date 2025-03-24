@@ -29,7 +29,7 @@
                 <!-- Bloque de productos en formato carrusel -->
                 <div class="container mt-4">
                     <div style="text-align: left;">
-                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Nuestros Productos</h2>
+                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">De acuerdo a tu última vista</h2>
                     </div>
                     <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
                         <section id="o_wsale_products_grid" class="o_wsale_products_grid_table grid">
@@ -278,6 +278,67 @@
                     </div>
                 </section>
 
+
+                <div class="container mt-4">
+                    <div style="text-align: left;">
+                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Categorías</h2>
+                    </div>
+                    <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
+                        <section id="o_wsale_products_grid" class="o_wsale_products_grid_table grid">
+                            <!-- Iterar sobre las categorías de productos -->
+                            <t t-set="categories" t-value="request.env['product.public.category'].sudo().search([])" />
+                            <t t-foreach="categories" t-as="category">
+                                <div>
+                                    <h3 style="font-family: 'Questrial', sans-serif; font-size: 20px; margin-top: 20px;">
+                                        <t t-esc="category.name" />
+                                    </h3>
+                                    <t t-set="category_products" t-value="request.env['product.template'].sudo().search([('website_published', '=', True), ('public_categ_ids', 'in', category.id)], limit=10)" />
+                                    <div class="row">
+                                        <t t-foreach="category_products" t-as="product">
+                                            <div class="col-6 col-md-3">
+                                                <div class="oe_product g-col-6 g-col-md-3 g-col-lg-3" style="--o-wsale-products-grid-product-col-height: 1;" data-name="Producto">
+                                                    <div class="o_wsale_product_grid_wrapper position-relative h-100 o_wsale_product_grid_wrapper_1_1">
+                                                        <form action="/shop/cart/update" method="post" class="oe_product_cart h-100 d-flex" itemscope="itemscope" itemtype="http://schema.org/Product" data-publish="on">
+                                                            <!-- Imagen del producto -->
+                                                            <div class="oe_product_image position-relative flex-grow-0 overflow-hidden">
+                                                                <a class="oe_product_image_link d-block position-relative" itemprop="url" t-att-href="'/shop/product/' + str(product.id)">
+                                                                    <span class="oe_product_image_img_wrapper d-flex h-100 justify-content-center align-items-center position-absolute">
+                                                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                                            itemprop="image" 
+                                                                            class="img img-fluid h-100 w-100 position-absolute" 
+                                                                            t-att-alt="product.name" 
+                                                                            loading="lazy" />
+                                                                    </span>
+                                                                </a>
+                                                            </div>
+                                                            <!-- Información del producto -->
+                                                            <div class="o_wsale_product_information position-relative d-flex flex-column flex-grow-1 flex-shrink-1">
+                                                                <div class="o_wsale_product_information_text">
+                                                                    <h6 class="o_wsale_products_item_title mb-2 text-break">
+                                                                        <a class="text-primary text-decoration-none text-primary-emphasis" itemprop="name" t-att-href="'/shop/product/' + str(product.id)">
+                                                                            <t t-esc="product.name" />
+                                                                        </a>
+                                                                    </h6>
+                                                                </div>
+                                                                <div class="o_wsale_product_sub d-flex justify-content-between align-items-end gap-2 flex-wrap">
+                                                                    <div class="product_price" itemprop="offers" itemscope="itemscope" itemtype="http://schema.org/Offer">
+                                                                        <span class="h6 mb-0">$<t t-esc="'%.2f' % product.list_price" /></span>
+                                                                        <span itemprop="price" style="display:none;"><t t-esc="product.list_price" /></span>
+                                                                        <span itemprop="priceCurrency" style="display:none;">MXN</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+                        </section>
+                    </div>
+                </div>
 
 
             </div>                        
