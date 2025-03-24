@@ -259,12 +259,12 @@
                             <t t-if="all_category">
                                 <t t-set="category_products" t-value="request.env['product.template'].sudo().search([
                                     ('website_published', '=', True),
-                                    ('categ_id', '=', all_category.id)
+                                    ('categ_id', 'child_of', all_category.id)
                                 ], limit=10)" />
                                 <t t-foreach="category_products" t-as="product">
                                     <div class="oe_product g-col-6 g-col-md-3 g-col-lg-3" style="--o-wsale-products-grid-product-col-height: 1;" data-name="Producto">
                                         <div class="o_wsale_product_grid_wrapper position-relative h-100 o_wsale_product_grid_wrapper_1_1">
-                                            <form action="/shop/cart/update" method="post" class="oe_product_cart h-100 d-flex" itemscope="itemscope" itemtype="http://schema.org/Product" data-publish="on">
+                                            <form action="/shop/cart/update" method="post" class="oe_product_cart h-100 d-flex" itemscope="itemscope" itemtype="http://schema.org/Product">
                                                 <div class="oe_product_image position-relative flex-grow-0 overflow-hidden">
                                                     <a class="oe_product_image_link d-block position-relative" itemprop="url" t-att-href="'/shop/product/' + str(product.id)">
                                                         <span class="oe_product_image_img_wrapper d-flex h-100 justify-content-center align-items-center position-absolute">
