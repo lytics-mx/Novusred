@@ -64,6 +64,7 @@
         'views/nav_bar.xml',
         # 'views/report_excel_views.xml',
 
+        'views/website_brand.xml',
 
 
 
