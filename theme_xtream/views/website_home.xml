@@ -30,48 +30,82 @@
                 <t t-if="request.env.user and request.env.user.id != request.env.ref('base.public_user').id">
                     <div class="container mt-4">
                         <div style="text-align: left;">
-                            <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">De acuerdo a tu última vista</h2>
+                            <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Sugerencias para ti</h2>
                         </div>
                         <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
                             <section id="o_wsale_products_grid" class="o_wsale_products_grid_table grid">
-                                <!-- Iterar sobre los productos publicados -->
-                                <t t-set="published_products" t-value="request.env['product.template'].sudo().search([('website_published', '=', True)], limit=10)" />
-                                <t t-foreach="published_products" t-as="product">
-                                    <div class="oe_product g-col-6 g-col-md-3 g-col-lg-3" style="--o-wsale-products-grid-product-col-height: 1;" data-name="Producto">
-                                        <div class="o_wsale_product_grid_wrapper position-relative h-100 o_wsale_product_grid_wrapper_1_1">
-                                            <form action="/shop/cart/update" method="post" class="oe_product_cart h-100 d-flex" itemscope="itemscope" itemtype="http://schema.org/Product" data-publish="on">
-                                                <!-- Imagen del producto -->
-                                                <div class="oe_product_image position-relative flex-grow-0 overflow-hidden">
-                                                    <a class="oe_product_image_link d-block position-relative" itemprop="url" t-att-href="'/shop/product/' + str(product.id)">
-                                                        <span class="oe_product_image_img_wrapper d-flex h-100 justify-content-center align-items-center position-absolute">
+                                <!-- Combinar productos de favoritos, compras y vistos recientemente -->
+                                <t t-set="user_favorites" t-value="request.env['product.wishlist'].sudo().search([('user_id', '=', request.env.user.id)], limit=4)" />
+                                <t t-set="recent_orders" t-value="request.env['sale.order'].sudo().search([('partner_id', '=', request.env.user.partner_id.id), ('state', 'in', ['sale', 'done'])], limit=4)" />
+                                <t t-set="viewed_products" t-value="request.env['website.track'].sudo().search([('visitor_id.partner_id', '=', request.env.user.partner_id.id)], limit=4)" />
+                                
+                                <!-- Productos favoritos -->
+                                <t t-foreach="user_favorites" t-as="wishlist_item">
+                                    <t t-set="product" t-value="wishlist_item.product_id" />
+                                    <t t-if="product.website_published">
+                                        <div class="oe_product g-col-6 g-col-md-3 g-col-lg-3" style="--o-wsale-products-grid-product-col-height: 1;">
+                                            <div class="o_wsale_product_grid_wrapper position-relative h-100">
+                                                <form action="/shop/cart/update" method="post" class="oe_product_cart h-100 d-flex">
+                                                    <div class="oe_product_image position-relative">
+                                                        <a t-att-href="'/shop/product/' + str(product.id)">
                                                             <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
-                                                                itemprop="image" 
-                                                                class="img img-fluid h-100 w-100 position-absolute" 
-                                                                t-att-alt="product.name" 
-                                                                loading="lazy" />
-                                                        </span>
-                                                    </a>
-                                                </div>
-                                                <!-- Información del producto -->
-                                                <div class="o_wsale_product_information position-relative d-flex flex-column flex-grow-1 flex-shrink-1">
-                                                    <div class="o_wsale_product_information_text">
-                                                        <h6 class="o_wsale_products_item_title mb-2 text-break">
-                                                            <a class="text-primary text-decoration-none text-primary-emphasis" itemprop="name" t-att-href="'/shop/product/' + str(product.id)">
-                                                                <t t-esc="product.name" />
+                                                                class="img img-fluid" 
+                                                                t-att-alt="product.name"/>
+                                                        </a>
+                                                    </div>
+                                                    <div class="o_wsale_product_information">
+                                                        <h6 class="text-break">
+                                                            <a t-att-href="'/shop/product/' + str(product.id)">
+                                                                <t t-esc="product.name"/>
                                                             </a>
                                                         </h6>
-                                                    </div>
-                                                    <div class="o_wsale_product_sub d-flex justify-content-between align-items-end gap-2 flex-wrap">
-                                                        <div class="product_price" itemprop="offers" itemscope="itemscope" itemtype="http://schema.org/Offer">
-                                                            <span class="h6 mb-0">$<t t-esc="'%.2f' % product.list_price" /></span>
-                                                            <span itemprop="price" style="display:none;"><t t-esc="product.list_price" /></span>
-                                                            <span itemprop="priceCurrency" style="display:none;">MXN</span>
+                                                        <div class="product_price">
+                                                            <span class="h6">$<t t-esc="'%.2f' % product.list_price"/></span>
+                                                            <div class="small text-muted">De tus favoritos</div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </form>
+                                                </form>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </t>
+                                </t>
+                                
+                                <!-- Productos similares basados en historial -->
+                                <t t-if="viewed_products">
+                                    <t t-foreach="viewed_products" t-as="track">
+                                        <t t-set="similar_products" t-value="request.env['product.template'].sudo().search([
+                                            ('website_published', '=', True),
+                                            ('categ_id', '=', track.product_id.categ_id.id),
+                                            ('id', '!=', track.product_id.id)
+                                        ], limit=1)" />
+                                        <t t-foreach="similar_products" t-as="product">
+                                            <div class="oe_product g-col-6 g-col-md-3 g-col-lg-3">
+                                                <!-- Similar product display structure -->
+                                                <div class="o_wsale_product_grid_wrapper position-relative h-100">
+                                                    <form action="/shop/cart/update" method="post" class="oe_product_cart h-100 d-flex">
+                                                        <div class="oe_product_image position-relative">
+                                                            <a t-att-href="'/shop/product/' + str(product.id)">
+                                                                <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                                    class="img img-fluid"
+                                                                    t-att-alt="product.name"/>
+                                                            </a>
+                                                        </div>
+                                                        <div class="o_wsale_product_information">
+                                                            <h6 class="text-break">
+                                                                <a t-att-href="'/shop/product/' + str(product.id)">
+                                                                    <t t-esc="product.name"/>
+                                                                </a>
+                                                            </h6>
+                                                            <div class="product_price">
+                                                                <span class="h6">$<t t-esc="'%.2f' % product.list_price"/></span>
+                                                                <div class="small text-muted">Productos similares</div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </t>
                                 </t>
                             </section>
                         </div>
