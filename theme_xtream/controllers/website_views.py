@@ -7,8 +7,8 @@ _logger = logging.getLogger(__name__)
 class WebsiteShop(http.Controller):
 
     @http.route('/lg', auth='public', website=True)
-    def marcas_lg(self, **kw):
-        return http.request.render('theme_xtream.marcas_lg')
+    def lg_products(self, **kw):
+        return http.request.render('theme_xtream.lg_products_page')
 
     @http.route(['/shop/visited_products'], type='http', auth="public", website=True)
     def visited_products(self, **kwargs):
