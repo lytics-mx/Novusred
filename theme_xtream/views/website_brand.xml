@@ -1,35 +1,73 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <template id="lg_products_page" name="LG Products">
+    <template id="lg_products_page" name="LG Products" t-name="website_sale.lg_products">
         <t t-call="website.layout">
-            <div id="wrap" class="js_sale">
-                <div class="oe_structure"/>
-                <div class="container oe_website_sale">
-                    <div class="row">
-                        <div class="col-12">
-                            <div style="text-align: left;">
-                                <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">LG</h2>
+            <t t-set="grid_block_name">Grid</t>
+            <t t-set="product_block_name">Product</t>
+            <t t-set="navClass">light</t>
+
+            <!-- Check for active options -->
+            <t t-set="opt_wsale_categories" t-value="is_view_active('website_sale.products_categories')"/>
+            <t t-set="opt_wsale_attributes" t-value="is_view_active('website_sale.products_attributes')"/>
+            <t t-set="opt_wsale_filter_price" t-value="is_view_active('website_sale.filter_products_price')"/>
+            <t t-set="opt_wsale_filter_tags" t-value="is_view_active('website_sale.filter_products_tags')"/>
+            <t t-set="opt_wsale_categories_top" t-value="is_view_active('website_sale.products_categories_top')"/>
+            <t t-set="opt_wsale_attributes_top" t-value="is_view_active('website_sale.products_attributes_top')"/>
+
+            <t t-set="website_sale_pricelists" t-value="website.get_pricelist_available(show_visible=True)"/>
+            <t t-set="website_sale_sortable" t-value="website._get_product_sort_mapping()"/>
+            <t t-set="hasLeftColumn" t-value="opt_wsale_categories or opt_wsale_attributes"/>
+
+            <!-- Filter products for LG brand -->
+            <t t-set="products" t-value="request.env['product.template'].sudo().search([
+                ('website_published', '=', True),
+                ('brand_type_id.name', '=', 'LG')
+            ])"/>
+
+            <div id="wrap" class="js_sale o_wsale_products_page">
+                <div class="oe_structure" id="oe_structure_website_sale_products_1"/>
+                <div class="container oe_website_sale pt-2">
+                    <div class="row o_wsale_products_main_row align-items-start flex-nowrap">
+                        <aside t-if="hasLeftColumn" id="products_grid_before" class="d-none d-lg-block position-sticky col-3 px-3 clearfix">
+                            <!-- Left column content -->
+                            <div class="o_wsale_products_grid_before_rail vh-100 ms-n2 mt-n2 pt-2 p-lg-2 pb-lg-5 ps-2 overflow-y-scroll">
+                                <t t-if="opt_wsale_categories" t-call="website_sale.products_categories_list"/>
+                                <t t-if="opt_wsale_filter_price and opt_wsale_attributes" t-call="website_sale.filter_products_price"/>
                             </div>
-                            <div class="o_wsale_products_grid_table_wrapper">
-                                <div class="products_pager form-inline justify-content-center">
-                                    <t t-call="website_sale.products_categories"/>
-                                </div>
-                                <div id="products_grid" class="o_wsale_products_grid_table_wrapper">
-                                    <t t-set="products" t-value="request.env['product.template'].sudo().search([
-                                        ('website_published', '=', True),
-                                        ('brand_type_id.name', '=', 'LG')
-                                    ])" />
-                                    <div class="row">
-                                        <t t-foreach="products" t-as="product">
-                                            <t t-call="website_sale.products_item"/>
-                                        </t>
-                                    </div>
-                                </div>
+                        </aside>
+
+                        <div id="products_grid" t-attf-class="#{'o_wsale_layout_list' if layout_mode == 'list' else ''} {{'col-lg-9' if hasLeftColumn else 'col-12'}}">
+                            <div class="products_header mb-3">
+                                <h1>LG Products</h1>
+                            </div>
+
+                            <!-- Products Grid -->
+                            <div t-if="products" class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
+                                <section class="o_wsale_products_grid_table grid">
+                                    <t t-foreach="products" t-as="product">
+                                        <div class="oe_product g-col-6 g-col-md-4 g-col-lg-3">
+                                            <div class="o_wsale_product_grid_wrapper position-relative h-100">
+                                                <t t-call="website_sale.products_item"/>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </section>
+                            </div>
+
+                            <!-- No products message -->
+                            <div t-if="not products" class="text-center text-muted mt128 mb256">
+                                <h3 class="mt8">No LG Products Found</h3>
+                                <p>There are currently no LG products available.</p>
+                            </div>
+
+                            <!-- Pager -->
+                            <div class="products_pager d-flex justify-content-center pt-5 pb-3">
+                                <t t-call="website.pager"/>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="oe_structure"/>
+                <div class="oe_structure" id="oe_structure_website_sale_products_2"/>
             </div>
         </t>
     </template>
