@@ -13,11 +13,6 @@
                         <div id="products_grid" class="col-12">
                             <div class="products_header btn-toolbar flex-nowrap align-items-center justify-content-between gap-3 mb-3">
                                 <h1>LG Products</h1>
-                                
-                                <!-- Elimina esta línea si no es necesaria -->
-                                <!-- <t t-if="is_view_active('website_sale.add_grid_or_list_option')" t-call="website_sale.add_grid_or_list_option">
-                                    <t t-set="_classes" t-value="d-flex"/>
-                                </t> -->
                             </div>
 
                             <div class="o_wsale_products_grid_table_wrapper pt-3">
@@ -42,8 +37,9 @@
                                 <p>There are currently no LG products available.</p>
                             </div>
                             
-                            <div class="products_pager d-flex justify-content-center pt-5 pb-3">
-                                <t t-call="website.pager"/>
+                            <!-- Verifica si el objeto pager existe antes de llamarlo -->
+                            <div t-if="products and products.pager" class="products_pager d-flex justify-content-center pt-5 pb-3">
+                                <t t-call="website.pager" t-options="{'pager': products.pager}"/>
                             </div>
                         </div>
                     </div>
