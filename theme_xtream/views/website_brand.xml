@@ -86,10 +86,16 @@
                             
                             <div class="o_wsale_products_grid_table_wrapper">
                                 <section id="o_wsale_products_grid" class="o_wsale_products_grid_table">
-                                    <t t-set="pager" t-value="request.website.pager(url='/shop/lg', total=request.env['product.template'].sudo().search_count([
+                                    <t t-set="ppg" t-value="20"/>
+                                    <t t-set="pager" t-value="request.website.pager(
+                                        url='/shop/lg',
+                                        total=request.env['product.template'].sudo().search_count([
+                                            ('website_published', '=', True),
+                                    <t t-set="lg_products" t-value="request.env['product.template'].sudo().search([
                                         ('website_published', '=', True),
                                         ('brand_type_id.name', '=', 'LG')
-                                    ]), page=request.params.get('page', 1), step=20)"/>
+                                    ], limit=ppg, offset=(pager['page'] - 1) * ppg)" />
+                                    )"/>
                                     
                                     <t t-set="lg_products" t-value="request.env['product.template'].sudo().search([
                                         ('website_published', '=', True),
