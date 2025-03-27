@@ -1,0 +1,43 @@
+<odoo>
+    <template id="products_epson" name="Epson Products">
+        <t t-call="website.layout">
+            <t t-set="additional_title">Epson Products</t>
+            <t t-set="grid_block_name">Grid</t>
+            <t t-set="product_block_name">Product</t>
+
+            <div id="wrap" class="js_sale o_wsale_products_page">
+                <div class="container oe_website_sale pt-2">
+                    <div class="row">
+                        <div class="col-12">
+                            <h1 class="text-center mb-4">Epson Products</h1>
+                            
+                            <!-- Products Grid -->
+                            <div t-if="products" class="o_wsale_products_grid_table_wrapper">
+                                <section id="o_wsale_products_grid" class="o_wsale_products_grid_table grid">
+                                    <t t-foreach="products.filtered(lambda p: p.brand_id.name == 'Epson')" t-as="product">
+                                        <div class="oe_product col-lg-3 col-md-4 col-6">
+                                            <div class="o_wsale_product_grid_wrapper position-relative h-100">
+                                                <t t-call="website_sale.products_item"/>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </section>
+                            </div>
+                            
+                            <!-- No Products Message -->
+                            <div t-else="" class="text-center text-muted mt-5">
+                                <h3>No Epson products found</h3>
+                                <p>Currently there are no Epson products available.</p>
+                            </div>
+
+                            <!-- Pager -->
+                            <div class="products_pager d-flex justify-content-center pt-5 pb-3">
+                                <t t-call="website.pager"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>
