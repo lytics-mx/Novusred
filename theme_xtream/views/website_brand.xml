@@ -1,94 +1,38 @@
 <odoo>
     <template id="lg_products_page" name="LG Products">
         <t t-call="website.layout">
+            <t t-set="additional_title">LG Products</t>
+            <t t-set="grid_block_name">Grid</t>
+            <t t-set="product_block_name">Product</t>
+
             <div id="wrap" class="js_sale o_wsale_products_page">
                 <div class="container oe_website_sale pt-2">
-                    <div class="row o_wsale_products_main_row align-items-start flex-nowrap">
-                        <!-- Barra lateral izquierda -->
-                        <aside class="d-none d-lg-block position-sticky col-3 px-3 clearfix">
-                            <div class="o_wsale_products_grid_before_rail vh-100 ms-n2 mt-n2 pt-2 p-lg-2 pb-lg-5 ps-2 overflow-y-scroll">
-                                <div class="list-group">
-                                    <a href="#" class="list-group-item list-group-item-action">Inicio</a>
-                                    <a href="#" class="list-group-item list-group-item-action">Oferta</a>
-                                    <a href="#" class="list-group-item list-group-item-action">Nuevo</a>
-                                    <a href="#" class="list-group-item list-group-item-action">Descubre</a>
-                                </div>
-                            </div>
-                        </aside>
-
-                        <!-- Contenido principal -->
-                        <div class="col-lg-9 col-md-8">
-                            <div class="products_header btn-toolbar flex-nowrap align-items-center justify-content-between gap-3 mb-3">
-                                <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">LG</h2>
-                                <div class="btn-group">
-                                    <button 
-                                        class="btn btn-outline-secondary" 
-                                        data-view="grid" 
-                                        t-att-class="view_mode == 'grid' and 'active' or ''" 
-                                        t-on-click="view_mode = 'grid'">
-                                        <i class="fa fa-th-large"/>
-                                    </button>
-                                    <button 
-                                        class="btn btn-outline-secondary" 
-                                        data-view="list" 
-                                        t-att-class="view_mode == 'list' and 'active' or ''" 
-                                        t-on-click="view_mode = 'list'">
-                                        <i class="fa fa-list"/>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="o_wsale_products_grid_table_wrapper">
-                                <section id="o_wsale_products_grid" class="o_wsale_products_grid_table">
-                                    <!-- Inicializa el modo de vista en 'grid' -->
-                                    <t t-set="view_mode" t-value="'grid'" />
-                                    <t t-set="lg_products" t-value="request.env['product.template'].sudo().search([
-                                        ('website_published', '=', True),
-                                        ('brand_type_id.name', '=', 'LG')
-                                    ], order='list_price desc', limit=100)" />
-
-                                    <!-- Vista Grid -->
-                                    <div t-if="view_mode == 'grid'" class="products-grid row">
-                                        <t t-foreach="lg_products" t-as="product">
-                                            <div class="col-12 col-sm-6 col-lg-4 mb-3">
-                                                <div class="card h-100">
-                                                    <a t-att-href="'/shop/product/' + str(product.id)">
-                                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
-                                                             class="card-img-top" t-att-alt="product.name"/>
-                                                    </a>
-                                                    <div class="card-body">
-                                                        <h5 class="card-title">
-                                                            <t t-esc="product.name"/>
-                                                        </h5>
-                                                        <p class="card-text">
-                                                            $<t t-esc="'%.2f' % product.list_price"/>
-                                                        </p>
-                                                    </div>
-                                                </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <h1 class="text-center mb-4">LG Products</h1>
+                            
+                            <!-- Products Grid -->
+                            <div t-if="products" class="o_wsale_products_grid_table_wrapper">
+                                <section id="o_wsale_products_grid" class="o_wsale_products_grid_table grid">
+                                    <t t-foreach="products.filtered(lambda p: p.brand_id.name == 'LG')" t-as="product">
+                                        <div class="oe_product col-lg-3 col-md-4 col-6">
+                                            <div class="o_wsale_product_grid_wrapper position-relative h-100">
+                                                <t t-call="website_sale.products_item"/>
                                             </div>
-                                        </t>
-                                    </div>
-
-                                    <!-- Vista Lista -->
-                                    <div t-if="view_mode == 'list'" class="products-list">
-                                        <t t-foreach="lg_products" t-as="product">
-                                            <div class="d-flex align-items-center mb-3">
-                                                <a t-att-href="'/shop/product/' + str(product.id)" class="me-3">
-                                                    <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
-                                                         class="img-fluid" t-att-alt="product.name" style="width: 100px;"/>
-                                                </a>
-                                                <div>
-                                                    <h5>
-                                                        <a t-att-href="'/shop/product/' + str(product.id)" class="text-decoration-none">
-                                                            <t t-esc="product.name"/>
-                                                        </a>
-                                                    </h5>
-                                                    <p class="mb-0">$<t t-esc="'%.2f' % product.list_price"/></p>
-                                                </div>
-                                            </div>
-                                        </t>
-                                    </div>
+                                        </div>
+                                    </t>
                                 </section>
+                            </div>
+                            
+                            <!-- No Products Message -->
+                            <div t-else="" class="text-center text-muted mt-5">
+                                <h3>No LG products found</h3>
+                                <p>Currently there are no LG products available.</p>
+                            </div>
+
+                            <!-- Pager -->
+                            <div class="products_pager d-flex justify-content-center pt-5 pb-3">
+                                <t t-call="website.pager"/>
                             </div>
                         </div>
                     </div>
