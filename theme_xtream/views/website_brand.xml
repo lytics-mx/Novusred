@@ -1,27 +1,26 @@
 <odoo>
     <template id="lg_products_page" name="LG Products">
         <t t-call="website.layout">
-            <div id="wrap" class="js_sale">
-                <div class="oe_structure"/>
-                <div class="container-fluid mt-4">
-                    <div class="row">
+            <div id="wrap" class="js_sale o_wsale_products_page">
+                <div class="container oe_website_sale pt-2">
+                    <div class="row o_wsale_products_main_row align-items-start flex-nowrap">
                         <!-- Barra lateral izquierda -->
-                        <div class="col-lg-3 col-md-4">
-                            <div class="list-group">
-                                <a href="#" class="list-group-item list-group-item-action">Inicio</a>
-                                <a href="#" class="list-group-item list-group-item-action">Oferta</a>
-                                <a href="#" class="list-group-item list-group-item-action">Nuevo</a>
-                                <a href="#" class="list-group-item list-group-item-action">Descubre</a>
+                        <aside class="d-none d-lg-block position-sticky col-3 px-3 clearfix">
+                            <div class="o_wsale_products_grid_before_rail vh-100 ms-n2 mt-n2 pt-2 p-lg-2 pb-lg-5 ps-2 overflow-y-scroll">
+                                <div class="list-group">
+                                    <a href="#" class="list-group-item list-group-item-action">Inicio</a>
+                                    <a href="#" class="list-group-item list-group-item-action">Oferta</a>
+                                    <a href="#" class="list-group-item list-group-item-action">Nuevo</a>
+                                    <a href="#" class="list-group-item list-group-item-action">Descubre</a>
+                                </div>
                             </div>
-                        </div>
-                        
+                        </aside>
+
                         <!-- Contenido principal -->
                         <div class="col-lg-9 col-md-8">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="products_header btn-toolbar flex-nowrap align-items-center justify-content-between gap-3 mb-3">
                                 <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">LG</h2>
-                                <!-- Botones para cambiar vista -->
                                 <div class="btn-group">
-                                    <!-- Botón para vista Grid -->
                                     <button 
                                         class="btn btn-outline-secondary" 
                                         data-view="grid" 
@@ -29,8 +28,6 @@
                                         t-on-click="view_mode = 'grid'">
                                         <i class="fa fa-th-large"/>
                                     </button>
-                                    
-                                    <!-- Botón para vista List -->
                                     <button 
                                         class="btn btn-outline-secondary" 
                                         data-view="list" 
@@ -40,7 +37,7 @@
                                     </button>
                                 </div>
                             </div>
-                            
+
                             <div class="o_wsale_products_grid_table_wrapper">
                                 <section id="o_wsale_products_grid" class="o_wsale_products_grid_table">
                                     <!-- Inicializa el modo de vista en 'grid' -->
@@ -49,11 +46,11 @@
                                         ('website_published', '=', True),
                                         ('brand_type_id.name', '=', 'LG')
                                     ], order='list_price desc', limit=100)" />
-                                    
+
                                     <!-- Vista Grid -->
                                     <div t-if="view_mode == 'grid'" class="products-grid row">
                                         <t t-foreach="lg_products" t-as="product">
-                                            <div class="col-12 col-sm-6 col-lg-4 mb-3 float-right">
+                                            <div class="col-12 col-sm-6 col-lg-4 mb-3">
                                                 <div class="card h-100">
                                                     <a t-att-href="'/shop/product/' + str(product.id)">
                                                         <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
@@ -71,65 +68,31 @@
                                             </div>
                                         </t>
                                     </div>
-                                    
+
                                     <!-- Vista Lista -->
                                     <div t-if="view_mode == 'list'" class="products-list">
                                         <t t-foreach="lg_products" t-as="product">
-                                            <form action="/shop/cart/update" method="post" class="oe_product_cart h-100 d-flex" itemscope="itemscope" itemtype="http://schema.org/Product">
-                                                <div class="oe_product_image position-relative flex-grow-0 overflow-hidden">
-                                                    <a t-att-href="'/shop/product/' + str(product.id)" class="oe_product_image_link d-block position-relative">
-                                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
-                                                             class="img img-fluid h-100 w-100 position-absolute" t-att-alt="product.name"/>
-                                                    </a>
+                                            <div class="d-flex align-items-center mb-3">
+                                                <a t-att-href="'/shop/product/' + str(product.id)" class="me-3">
+                                                    <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                         class="img-fluid" t-att-alt="product.name" style="width: 100px;"/>
+                                                </a>
+                                                <div>
+                                                    <h5>
+                                                        <a t-att-href="'/shop/product/' + str(product.id)" class="text-decoration-none">
+                                                            <t t-esc="product.name"/>
+                                                        </a>
+                                                    </h5>
+                                                    <p class="mb-0">$<t t-esc="'%.2f' % product.list_price"/></p>
                                                 </div>
-                                                <div class="o_wsale_product_information position-relative d-flex flex-column flex-grow-1 flex-shrink-1">
-                                                    <div class="o_wsale_product_information_text">
-                                                        <h6 class="o_wsale_products_item_title mb-2 text-break">
-                                                            <a t-att-href="'/shop/product/' + str(product.id)" class="text-primary text-decoration-none">
-                                                                <t t-esc="product.name"/>
-                                                            </a>
-                                                        </h6>
-                                                    </div>
-                                                    <div class="o_wsale_product_sub d-flex justify-content-between align-items-end gap-2 flex-wrap">
-                                                        <div class="o_wsale_product_btn d-flex gap-2">
-                                                            <button type="button" class="btn btn-light o_add_wishlist" title="Agregar a la lista de deseos">
-                                                                <span class="fa fa-heart" role="img" aria-label="Agregar a la lista de deseos"></span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="product_price" itemprop="offers" itemscope="itemscope" itemtype="http://schema.org/Offer">
-                                                            <span class="h6 mb-0">$<t t-esc="'%.2f' % product.list_price"/></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </form>
+                                            </div>
                                         </t>
-                                    </div>
-                                    
-                                    <!-- Paginación -->
-                                    <div class="d-flex justify-content-center mt-4">
-                                        <nav>
-                                            <ul class="pagination">
-                                                <li class="page-item">
-                                                    <a class="page-link" href="#">Anterior</a>
-                                                </li>
-                                                <li class="page-item active">
-                                                    <a class="page-link" href="#">1</a>
-                                                </li>
-                                                <li class="page-item">
-                                                    <a class="page-link" href="#">2</a>
-                                                </li>
-                                                <li class="page-item">
-                                                    <a class="page-link" href="#">Siguiente</a>
-                                                </li>
-                                            </ul>
-                                        </nav>
                                     </div>
                                 </section>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="oe_structure"/>
             </div>
         </t>
     </template>
