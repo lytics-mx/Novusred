@@ -2,20 +2,26 @@
     <template id="lg_products_page" name="LG Products">
         <t t-call="website.layout">
             <t t-set="additional_title">LG Products</t>
-            <t t-set="grid_block_name">Grid</t>
-            <t t-set="product_block_name">Product</t>
+            <!-- ... other t-set elements remain the same ... -->
 
             <div id="wrap" class="js_sale o_wsale_products_page">
                 <div class="container oe_website_sale pt-2">
-                    <div class="row">
-                        <div class="col-12">
+                    <div class="row o_wsale_products_main_row">
+                        <!-- Left sidebar remains the same -->
+                        <aside t-if="hasLeftColumn" id="products_grid_before" class="d-none d-lg-block col-lg-3">
+                            <div t-if="opt_wsale_categories" class="products_categories"/>
+                            <div t-if="opt_wsale_attributes" class="products_attributes"/>
+                        </aside>
+
+                        <!-- Main content -->
+                        <div id="products_grid" t-attf-class="{{'col-lg-9' if hasLeftColumn else 'col-12'}}">
                             <h1 class="text-center mb-4">LG Products</h1>
-                            
-                            <!-- Products Grid -->
+
+                            <!-- Products Grid with updated filter -->
                             <div t-if="products" class="o_wsale_products_grid_table_wrapper">
                                 <section id="o_wsale_products_grid" class="o_wsale_products_grid_table grid">
-                                    <t t-foreach="products.filtered(lambda p: p.brand_id.name == 'LG')" t-as="product">
-                                        <div class="oe_product col-lg-3 col-md-4 col-6">
+                                    <t t-foreach="products.filtered(lambda p: p.brand_type_id.name == 'LG')" t-as="product">
+                                        <div class="oe_product g-col-6 g-col-md-4 g-col-lg-3">
                                             <div class="o_wsale_product_grid_wrapper position-relative h-100">
                                                 <t t-call="website_sale.products_item"/>
                                             </div>
@@ -23,14 +29,13 @@
                                     </t>
                                 </section>
                             </div>
-                            
-                            <!-- No Products Message -->
+
+                            <!-- Rest of the code remains the same -->
                             <div t-else="" class="text-center text-muted mt-5">
                                 <h3>No LG products found</h3>
                                 <p>Currently there are no LG products available.</p>
                             </div>
 
-                            <!-- Pager -->
                             <div class="products_pager d-flex justify-content-center pt-5 pb-3">
                                 <t t-call="website.pager"/>
                             </div>
