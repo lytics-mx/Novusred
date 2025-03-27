@@ -65,6 +65,7 @@
         # 'views/report_excel_views.xml',
 
         'views/website_brand.xml',
+        'views/marca_web.xml',
 
 
 
