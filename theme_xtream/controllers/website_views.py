@@ -1,21 +1,37 @@
 from odoo import http
 from odoo.http import request
 
-import logging
-_logger = logging.getLogger(__name__)
-
 class WebsiteShop(http.Controller):
 
-    @http.route('/lg', auth='public', website=True)
-    def lg_products(self, **kw):
-        return http.request.render('theme_xtream.lg_products_page')
+    @http.route('/shop', auth='public', website=True)
+    def shop_products(self, brand=None, category=None, **kwargs):
+        """
+        Renderiza la página de productos con filtros opcionales por marca y categoría.
+        """
+        domain = [('website_published', '=', True)]  # Solo productos publicados en el sitio web
 
-    @http.route('/epson', auth='public', website=True)
-    def epson_products(self, **kw):
-        return http.request.render('theme_xtream.products_epson')
+        # Filtrar por marca si se proporciona
+        if brand:
+            domain.append(('brand_type_id', '=', int(brand)))
 
-    @http.route(['/shop/visited_products'], type='http', auth="public", website=True)
-    def visited_products(self, **kwargs):
-        visited_product_ids = http.request.session.get('visited_product_ids', [])
-        visited_products = request.env['product.template'].browse(visited_product_ids)
-        return http.request.render("theme_xtream.visited_products", {'visited_products': visited_products})
+        # Filtrar por categoría si se proporciona
+        if category:
+            domain.append(('public_categ_ids', 'child_of', int(category)))
+
+        # Obtener los productos filtrados
+        products = request.env['product.template'].sudo().search(domain, order='list_price desc')
+
+        # Obtener todas las marcas disponibles
+        brands = request.env['product.brand'].sudo().search([])
+
+        # Obtener todas las categorías principales y sus subcategorías
+        categories = request.env['product.public.category'].sudo().search([('parent_id', '=', False)])
+
+        # Renderizar la plantilla con los productos filtrados, marcas y categorías
+        return request.render('website_sale.products', {
+            'products': products,
+            'selected_brand': int(brand) if brand else None,
+            'selected_category': int(category) if category else None,
+            'brands': brands,
+            'categories': categories,
+        })
