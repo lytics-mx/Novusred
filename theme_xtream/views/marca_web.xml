@@ -1,56 +1,29 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<odoo>
-    <template id="products" inherit_id="website_sale.products">
-        <xpath expr="//div[@id='products_grid']" position="replace">
+<template id="products_epson_inherit" inherit_id="website_sale.products">
+    <xpath expr="//div[@id='wrap']" position="before">
+        <div class="container">
             <div class="row">
-                <!-- Sidebar de filtros -->
+                <!-- Sidebar con categorías y marcas -->
                 <div class="col-lg-3 col-md-4">
-                    <!-- Filtro por categorías -->
-                    <div class="filters">
-                        <h4>Filtrar por Categorías</h4>
-                        <ul>
-                            <t t-foreach="categories" t-as="category">
-                                <li>
-                                    <a t-att-href="'/shop?category=' + str(category.id)">
-                                        <t t-esc="category.name" />
-                                    </a>
-                                    <ul>
-                                        <t t-foreach="category.child_id" t-as="sub_category">
-                                            <li>
-                                                <a t-att-href="'/shop?category=' + str(sub_category.id)">
-                                                    <t t-esc="sub_category.name" />
-                                                </a>
-                                            </li>
-                                        </t>
-                                    </ul>
-                                </li>
-                            </t>
-                        </ul>
+                    <div class="list-group">
+                        <h5 class="mb-3">Categories</h5>
+                        <t t-foreach="categories" t-as="category">
+                            <a t-att-href="'/shop?category=' + str(category.id)" 
+                               t-att-class="'list-group-item list-group-item-action' + (' active' if selected_category == category.id else '')">
+                                <t t-esc="category.name"/>
+                            </a>
+                        </t>
                     </div>
-
-                    <!-- Filtro por marcas -->
-                    <div class="filters">
-                        <h4>Filtrar por Marcas</h4>
-                        <ul>
-                            <t t-foreach="brands" t-as="brand">
-                                <li>
-                                    <a t-att-href="'/shop?brand=' + str(brand.id)">
-                                        <t t-esc="brand.name" />
-                                    </a>
-                                </li>
-                            </t>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Área principal de productos -->
-                <div class="col-lg-9 col-md-8">
-                    <div id="products_grid">
-                        <!-- Cambiar la referencia aquí para evitar conflictos -->
-                        <t t-call="website_sale.products" />
+                    <div class="list-group mt-4">
+                        <h5 class="mb-3">Brands</h5>
+                        <t t-foreach="brands" t-as="brand">
+                            <a t-att-href="'/shop?brand=' + str(brand.id)" 
+                               t-att-class="'list-group-item list-group-item-action' + (' active' if selected_brand == brand.id else '')">
+                                <t t-esc="brand.name"/>
+                            </a>
+                        </t>
                     </div>
                 </div>
             </div>
-        </xpath>
-    </template>
-</odoo>
+        </div>
+    </xpath>
+</template>
