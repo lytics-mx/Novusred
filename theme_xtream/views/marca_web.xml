@@ -1,42 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <template id="products" inherit_id="website_sale.products">
-        <xpath expr="//div[@id='products_grid']" position="before">
-            <!-- Filtro por categorías -->
-            <div class="filters">
-                <h4>Filtrar por Categorías</h4>
-                <ul>
-                    <t t-foreach="categories" t-as="category">
-                        <li>
-                            <a t-att-href="'/shop?category=' + str(category.id)">
-                                <t t-esc="category.name" />
-                            </a>
-                            <ul>
-                                <t t-foreach="category.child_id" t-as="sub_category">
-                                    <li>
-                                        <a t-att-href="'/shop?category=' + str(sub_category.id)">
-                                            <t t-esc="sub_category.name" />
-                                        </a>
-                                    </li>
-                                </t>
-                            </ul>
-                        </li>
-                    </t>
-                </ul>
-            </div>
+        <xpath expr="//div[@id='products_grid']" position="replace">
+            <div class="row">
+                <!-- Sidebar de filtros -->
+                <div class="col-lg-3 col-md-4">
+                    <!-- Filtro por categorías -->
+                    <div class="filters">
+                        <h4>Filtrar por Categorías</h4>
+                        <ul>
+                            <t t-foreach="categories" t-as="category">
+                                <li>
+                                    <a t-att-href="'/shop?category=' + str(category.id)">
+                                        <t t-esc="category.name" />
+                                    </a>
+                                    <ul>
+                                        <t t-foreach="category.child_id" t-as="sub_category">
+                                            <li>
+                                                <a t-att-href="'/shop?category=' + str(sub_category.id)">
+                                                    <t t-esc="sub_category.name" />
+                                                </a>
+                                            </li>
+                                        </t>
+                                    </ul>
+                                </li>
+                            </t>
+                        </ul>
+                    </div>
 
-            <!-- Filtro por marcas -->
-            <div class="filters">
-                <h4>Filtrar por Marcas</h4>
-                <ul>
-                    <t t-foreach="brands" t-as="brand">
-                        <li>
-                            <a t-att-href="'/shop?brand=' + str(brand.id)">
-                                <t t-esc="brand.name" />
-                            </a>
-                        </li>
-                    </t>
-                </ul>
+                    <!-- Filtro por marcas -->
+                    <div class="filters">
+                        <h4>Filtrar por Marcas</h4>
+                        <ul>
+                            <t t-foreach="brands" t-as="brand">
+                                <li>
+                                    <a t-att-href="'/shop?brand=' + str(brand.id)">
+                                        <t t-esc="brand.name" />
+                                    </a>
+                                </li>
+                            </t>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Área principal de productos -->
+                <div class="col-lg-9 col-md-8">
+                    <div id="products_grid">
+                        <t t-call="website_sale.products_grid" />
+                    </div>
+                </div>
             </div>
         </xpath>
     </template>
