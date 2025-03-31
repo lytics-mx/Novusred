@@ -21,5 +21,14 @@ class ProductCategory(models.Model):
                 ]
             })
         # Agrega un log para verificar los datos
-        _logger.info(f"Visible Categories: {result}")
+        _logger = self.env['ir.logging']
+        _logger.create({
+            'name': 'Visible Categories',
+            'type': 'server',
+            'level': 'info',
+            'message': f"Visible Categories: {result}",
+            'path': 'product_category.py',
+            'line': 15,
+            'func': 'get_visible_categories',
+        })
         return result
