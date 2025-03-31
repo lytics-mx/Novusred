@@ -1,4 +1,6 @@
+import logging
 from odoo import models, fields
+
 _logger = logging.getLogger(__name__)
 
 class ProductCategory(models.Model):
@@ -6,7 +8,6 @@ class ProductCategory(models.Model):
 
     icon = fields.Binary(string="Category Icon")  # Campo para subir el ícono
     is_visible_in_menu = fields.Boolean(string="Visible", default=False)  # Campo booleano para habilitar visibilidad
-
 
     def get_visible_categories(self):
         """Obtiene las categorías principales y subcategorías visibles."""
@@ -21,14 +22,5 @@ class ProductCategory(models.Model):
                 ]
             })
         # Agrega un log para verificar los datos
-        _logger = self.env['ir.logging']
-        _logger.create({
-            'name': 'Visible Categories',
-            'type': 'server',
-            'level': 'info',
-            'message': f"Visible Categories: {result}",
-            'path': 'product_category.py',
-            'line': 15,
-            'func': 'get_visible_categories',
-        })
+        _logger.info(f"Visible Categories: {result}")
         return result
