@@ -19,20 +19,21 @@
                                             Categorías
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="dropdownCategorias">
-                                            <!-- Iterar sobre las categorías principales visibles -->
+                                            <!-- Iterar sobre las categorías visibles -->
                                             <t t-foreach="request.env['product.category'].search([('is_visible_in_menu', '=', True), ('parent_id', '=', False)])" t-as="category">
-                                                <t t-log="category.name"/> <!-- Esto imprimirá los nombres de las categorías principales en los logs del servidor -->
+                                                <t t-log="category.name"/> <!-- Esto imprimirá los nombres de las categorías en los logs del servidor -->
                                                 <li class="dropdown-item">
                                                     <div class="d-flex align-items-center">
-                                                        <span t-esc="category.name"/> <!-- Mostrar el nombre de la categoría principal -->
+                                                        <img t-if="category.icon" t-att-src="image_data_uri(category.icon)" class="me-2" style="width: 24px; height: 24px;"/>
+                                                        <span t-esc="category.name"/>
                                                     </div>
                                                     <!-- Subcategorías -->
                                                     <ul class="dropdown-submenu">
                                                         <t t-foreach="category.child_id.filtered(lambda c: c.is_visible_in_menu)" t-as="subcategory">
-                                                            <t t-log="subcategory.name"/> <!-- Esto imprimirá los nombres de las subcategorías en los logs del servidor -->
                                                             <li class="dropdown-item">
                                                                 <div class="d-flex align-items-center">
-                                                                    <span t-esc="subcategory.name"/> <!-- Mostrar el nombre de la subcategoría -->
+                                                                    <img t-if="subcategory.icon" t-att-src="image_data_uri(subcategory.icon)" class="me-2" style="width: 24px; height: 24px;"/>
+                                                                    <span t-esc="subcategory.name"/>
                                                                 </div>
                                                             </li>
                                                         </t>
@@ -41,8 +42,7 @@
                                             </t>
                                         </ul>
                                     </div>
-                            </div>
-                            <a href="/shop" class="nav-link mx-3 my-2 my-md-0" style="color: white; text-decoration: none; font-family: 'Questrial', sans-serif;">Tienda</a>
+                                    <a href="/shop" class="nav-link mx-3 my-2 my-md-0" style="color: white; text-decoration: none; font-family: 'Questrial', sans-serif;">Tienda</a>
                                     <a href="/" class="nav-link mx-3 my-2 my-md-0" style="color: white; text-decoration: none; font-family: 'Questrial', sans-serif;">Ofertas</a>
                                     <a href="/" class="nav-link mx-3 my-2 my-md-0" style="color: white; text-decoration: none; font-family: 'Questrial', sans-serif;">Marcas</a>
                                     <t t-if="user_id != website.user_id">
@@ -104,10 +104,10 @@
                                             Iniciar Sesión
                                         </a>
                                     </t>
-                                    </t>
                                 </div>
                             </div>
                         </nav>
+                    </div>
                 </div>
             </div>
         </xpath>
