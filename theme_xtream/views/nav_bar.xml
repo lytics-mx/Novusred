@@ -21,6 +21,7 @@
                                         <ul class="dropdown-menu" aria-labelledby="dropdownCategorias">
                                             <!-- Iterar sobre las categorías principales visibles -->
                                             <t t-foreach="request.env['product.category'].search([('is_visible_in_menu', '=', True), ('parent_id', '=', False)])" t-as="category">
+                                                <t t-log="category.name"/> <!-- Esto imprimirá los nombres de las categorías principales en los logs del servidor -->
                                                 <li class="dropdown-item">
                                                     <div class="d-flex align-items-center">
                                                         <span t-esc="category.name"/> <!-- Mostrar el nombre de la categoría principal -->
@@ -28,6 +29,7 @@
                                                     <!-- Subcategorías -->
                                                     <ul class="dropdown-submenu">
                                                         <t t-foreach="category.child_id.filtered(lambda c: c.is_visible_in_menu)" t-as="subcategory">
+                                                            <t t-log="subcategory.name"/> <!-- Esto imprimirá los nombres de las subcategorías en los logs del servidor -->
                                                             <li class="dropdown-item">
                                                                 <div class="d-flex align-items-center">
                                                                     <span t-esc="subcategory.name"/> <!-- Mostrar el nombre de la subcategoría -->
