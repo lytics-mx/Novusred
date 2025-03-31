@@ -7,10 +7,9 @@ class ProductCategory(models.Model):
     is_visible_in_menu = fields.Boolean(string="Visible", default=False)  # Campo booleano para habilitar visibilidad
 
 
-    @classmethod
-    def get_visible_categories(cls):
+    def get_visible_categories(self):
         """Obtiene las categorías principales y subcategorías visibles."""
-        categories = cls.env['product.category'].search([('is_visible_in_menu', '=', True), ('parent_id', '=', False)])
+        categories = self.env['product.category'].search([('is_visible_in_menu', '=', True), ('parent_id', '=', False)])
         result = []
         for category in categories:
             result.append({

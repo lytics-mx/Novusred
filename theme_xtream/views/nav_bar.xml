@@ -19,21 +19,15 @@
                                             Categorías
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="dropdownCategorias">
-                                            <!-- Usar el método get_visible_categories -->
+                                            <!-- Iterar sobre las categorías principales visibles -->
                                             <t t-foreach="request.env['product.category'].get_visible_categories()" t-as="category">
                                                 <li class="dropdown-item">
-                                                    <div class="d-flex align-items-center">
-                                                        <img t-if="category.get('icon')" t-att-src="image_data_uri(category.get('icon'))" class="me-2" style="width: 24px; height: 24px;"/>
-                                                        <span t-esc="category.get('name')"/>
-                                                    </div>
+                                                    <span t-esc="category['name']"/> <!-- Mostrar el nombre de la categoría principal -->
                                                     <!-- Subcategorías -->
                                                     <ul class="dropdown-submenu">
-                                                        <t t-foreach="category.get('subcategories', [])" t-as="subcategory">
+                                                        <t t-foreach="category['subcategories']" t-as="subcategory">
                                                             <li class="dropdown-item">
-                                                                <div class="d-flex align-items-center">
-                                                                    <img t-if="subcategory.get('icon')" t-att-src="image_data_uri(subcategory.get('icon'))" class="me-2" style="width: 24px; height: 24px;"/>
-                                                                    <span t-esc="subcategory.get('name')"/>
-                                                                </div>
+                                                                <span t-esc="subcategory['name']"/> <!-- Mostrar el nombre de la subcategoría -->
                                                             </li>
                                                         </t>
                                                     </ul>
@@ -41,7 +35,7 @@
                                             </t>
                                         </ul>
                                     </div>
-                                    <a href="/shop" class="nav-link mx-3 my-2 my-md-0" style="color: white; text-decoration: none; font-family: 'Questrial', sans-serif;">Tienda</a>
+                                </div>
                                     <a href="/" class="nav-link mx-3 my-2 my-md-0" style="color: white; text-decoration: none; font-family: 'Questrial', sans-serif;">Ofertas</a>
                                     <a href="/" class="nav-link mx-3 my-2 my-md-0" style="color: white; text-decoration: none; font-family: 'Questrial', sans-serif;">Marcas</a>
                                     <t t-if="user_id != website.user_id">
