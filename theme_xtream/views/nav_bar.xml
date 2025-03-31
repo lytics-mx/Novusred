@@ -64,11 +64,22 @@
 
                                     <div class="d-none d-lg-flex">
 
-                                        <a href="/my/notifications" class="nav-link">
-                                            <img src="/theme_xtream/static/src/img/logos/noti.png" alt="Icon 2" class="mx-2" style="height: 24px;"/>
-                                        </a>
-                                        <a href="/shop/cart" class="nav-link">
-                                            <img src="/theme_xtream/static/src/img/logos/carrito.png" alt="Icon 3" class="mx-2" style="height: 24px;"/>
+                                        <t t-if="request.env.user != request.website.user_id">
+                                            <a href="/my/notifications" class="nav-link position-relative">
+                                                <img src="/theme_xtream/static/src/img/logos/noti.png" alt="Notifications" class="mx-2" style="height: 24px;"/>
+                                                <t t-set="notification_count" t-value="request.env['mail.message'].sudo().search_count([('model', '=', 'res.partner'), ('res_id', '=', request.env.user.partner_id.id), ('message_type', 'in', ['email', 'notification']), ('is_read', '=', False)])"/>
+                                                <t t-set="wishlist_count" t-value="request.env['product.wishlist'].sudo().search_count([('partner_id', '=', request.env.user.partner_id.id)])"/>
+                                                <span t-if="notification_count > 0 or wishlist_count > 0" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                                    <t t-esc="notification_count + wishlist_count"/>
+                                                </span>
+                                            </a>
+                                        </t>
+                                        <a href="/shop/cart" class="nav-link position-relative">
+                                            <img src="/web/static/img/cart.png" alt="Cart" class="mx-2" style="height: 24px;"/>
+                                            <t t-set="cart_values" t-value="website_sale_order and website_sale_order.cart_quantity or 0"/>
+                                            <span t-if="cart_values" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                                <t t-esc="cart_values"/>
+                                            </span>
                                         </a>
                                     </div>
                                     <div class="d-lg-none d-flex justify-content-center w-100">
