@@ -66,7 +66,7 @@
 
         'views/website_brand.xml',
         'views/marca_web.xml',
-        'views/category.xml',
+        'views/category/category.xml',
 
 
 
