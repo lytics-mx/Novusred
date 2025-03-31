@@ -19,4 +19,15 @@ class ProductCategory(models.Model):
                     for subcategory in category.child_id.filtered(lambda c: c.is_visible_in_menu)
                 ]
             })
+        # Agrega un log para verificar los datos
+        _logger = self.env['ir.logging']
+        _logger.create({
+            'name': 'Visible Categories',
+            'type': 'server',
+            'level': 'info',
+            'message': f"Visible Categories: {result}",
+            'path': 'product_category.py',
+            'line': 15,
+            'func': 'get_visible_categories',
+        })
         return result
