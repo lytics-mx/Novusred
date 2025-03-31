@@ -21,3 +21,4 @@
 #############################################################################
 from . import theme_xtream
 from . import website_views
+from . import historial_views
