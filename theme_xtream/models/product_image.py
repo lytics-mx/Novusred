@@ -1,11 +1,7 @@
 from odoo import models, fields
 
-class ProductImage(models.Model):
-    _name = 'product.image'
-    _description = 'Product Additional Image'
+class ProductCategory(models.Model):
+    _inherit = 'product.category'
 
-    product_tmpl_id = fields.Many2one(
-        'product.template', string="Product Template", required=True
-    )
-    image = fields.Binary(string="Image", required=True)
-    name = fields.Char(string="Image Name")
+    icon = fields.Binary(string="Category Icon")  # Campo para subir el ícono
+    is_visible_in_menu = fields.Boolean(string="Visible in Menu", default=False)  # Checkbox para habilitar visibilidad
