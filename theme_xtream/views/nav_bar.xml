@@ -30,20 +30,33 @@
                                     <a href="/contactus" class="nav-link mx-3 my-2 my-md-0" style="color: white; text-decoration: none; font-family: 'Questrial', sans-serif;">Contacto</a>
                                     
                                     <span class="nav-item" style="margin: 0 30px;"></span>
-                                    
-                                    <t t-if="user_id != website.user_id">
-                                        <div class="dropdown nav-item">
-                                            <button class="btn dropdown-toggle mx-2" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: white; font-family: 'Questrial', sans-serif;">
-                                                <t t-esc="user_id.name"/>
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" href="/web">Aplicaciones</a></li>
-                                                <li><a class="dropdown-item" href="/web/session/logout">Cerrar Sesión</a></li>
-                                            </ul>
+                                    <div class="nav-item dropdown">
+                                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" style="color: white; font-family: 'Questrial', sans-serif;">
+                                            <i class="fa fa-th-large"/> Aplicaciones
+                                        </a>
+                                        <div class="dropdown-menu" role="menu">
+                                            <t t-foreach="website.get_apps_menu()" t-as="menu">
+                                                <a t-att-href="menu['href']" t-att-target="menu.get('target')" class="dropdown-item">
+                                                    <i t-att-class="menu['icon']"/> <t t-esc="menu['name']"/>
+                                                </a>
+                                            </t>
                                         </div>
+                                    </div>
+
+                                    <t t-if="user_id != website.user_id">
+                                        <li class="nav-item dropdown">
+                                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" style="color: white; font-family: 'Questrial', sans-serif;">
+                                                <t t-esc="user_id.name"/>
+                                            </a>
+                                            <div class="dropdown-menu" role="menu">
+                                                <a href="/my/home" class="dropdown-item">Mi Cuenta</a>
+                                                <div class="dropdown-divider"/>
+                                                <a t-attf-href="/web/session/logout?redirect=/" class="dropdown-item">Cerrar Sesión</a>
+                                            </div>
+                                        </li>
                                     </t>
                                     <t t-else="">
-                                        <a href="/web/login" class="nav-link mx-2" style="color: white; font-family: 'Questrial', sans-serif;">Usuario</a>
+                                        <a href="/web/login" class="nav-link mx-2" style="color: white; font-family: 'Questrial', sans-serif;">Iniciar Sesión</a>
                                     </t>
 
                                     <div class="d-none d-lg-flex">
