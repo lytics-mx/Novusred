@@ -33,7 +33,25 @@
                                     
                                     <span class="nav-item" style="margin: 0 30px;"></span>
 
+                                
+
                                     <t t-if="user_id != website.user_id">
+                                        <div class="d-none d-lg-flex">
+                                            <a href="/mail/inbox" class="nav-link position-relative">
+                                                <i class="fa fa-bell"/>
+                                                <t t-if="request.env.user.notification_type != 'email' and request.env.user.partner_id.has_message">
+                                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                                        <t t-esc="request.env.user.partner_id.message_unread_counter"/>
+                                                    </span>
+                                                </t>
+                                            </a>
+                                            <a href="/shop/cart" class="nav-link mx-2">
+                                                <i class="fa fa-shopping-cart"/>
+                                                <sup t-if="website_sale_order and website_sale_order.cart_quantity" class="my_cart_quantity badge badge-primary"><t t-esc="website_sale_order.cart_quantity"/></sup>
+                                            </a>
+                                        </div>
+                                    </t>
+                                     <t t-if="user_id != website.user_id">
                                         <li class="nav-item dropdown">
                                             <a href="#" class="nav-link dropdown-toggle-no-caret d-flex align-items-center" 
                                                data-bs-toggle="dropdown" 
@@ -66,24 +84,6 @@
                                             Iniciar Sesión
                                         </a>
                                     </t>
-
-                                    <t t-if="user_id != website.user_id">
-                                        <div class="d-none d-lg-flex">
-                                            <a href="/mail/inbox" class="nav-link position-relative">
-                                                <i class="fa fa-bell"/>
-                                                <t t-if="request.env.user.notification_type != 'email' and request.env.user.partner_id.has_message">
-                                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                                        <t t-esc="request.env.user.partner_id.message_unread_counter"/>
-                                                    </span>
-                                                </t>
-                                            </a>
-                                            <a href="/shop/cart" class="nav-link mx-2">
-                                                <i class="fa fa-shopping-cart"/>
-                                                <sup t-if="website_sale_order and website_sale_order.cart_quantity" class="my_cart_quantity badge badge-primary"><t t-esc="website_sale_order.cart_quantity"/></sup>
-                                            </a>
-                                        </div>
-                                    </t>
-                                   
                                 </div>
                             </div>
                         </nav>
