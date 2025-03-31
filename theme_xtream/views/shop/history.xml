@@ -2,30 +2,20 @@
     <template id="history_template" name="Historial de Productos Vistos">
         <section class="container mt-5">
             <h2>Historial de Productos Vistos</h2>
-            <div class="row">
-                <t t-if="history">
+            <t t-if="history">
+                <div class="row">
                     <t t-foreach="history" t-as="entry">
-                        <div class="col-md-4 mb-4">
-                            <div class="card">
-                                <img t-att-src="entry.product_id.image_1920 and '/web/image/product.product/' + str(entry.product_id.id) + '/image_1920'" class="card-img-top" alt="Imagen del producto"/>
-                                <div class="card-body">
-                                    <h5 class="card-title">
-                                        <a t-att-href="'/shop/product/' + str(entry.product_id.id)">
-                                            <t t-esc="entry.product_id.name"/>
-                                        </a>
-                                    </h5>
-                                    <p class="card-text">
-                                        Visto en: <t t-esc="entry.viewed_at"/>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                        <t t-set="product" t-value="entry.product_id"/>
+                        <!-- Reutiliza el diseño de website_sale.products -->
+                        <t t-call="website_sale.products_item">
+                            <t t-set="product" t-value="product"/>
+                        </t>
                     </t>
-                </t>
-                <t t-else="">
-                    <p>No has visto ningún producto recientemente.</p>
-                </t>
-            </div>
+                </div>
+            </t>
+            <t t-else="">
+                <p>No has visto ningún producto recientemente.</p>
+            </t>
         </section>
     </template>
 </odoo>
