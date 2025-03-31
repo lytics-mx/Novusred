@@ -74,14 +74,6 @@ class WebsiteProduct(http.Controller):
         return True
     
 
-    def _get_product_template(self, product_id):
-        """Sobrescribe el método para registrar el producto visto."""
-        product = super(WebsiteProduct, self)._get_product_template(product_id)
-        if request.env.user.id:
-            request.env['product.view.history'].sudo().add_product_to_history(product.id)
-        return product
-
-
     @http.route('/about', auth='public', website=True)
     def about(self, **kw):
         return http.request.render('theme_xtream.xtream_about')

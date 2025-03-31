@@ -67,7 +67,7 @@
         'views/website_brand.xml',
         'views/marca_web.xml',
         'views/category/category.xml',
-        'views/shop/history.xml',
+        # 'views/shop/history.xml',
 
 
 
