@@ -66,11 +66,11 @@
 
                                     <t t-if="user_id != website.user_id">
                                         <div class="d-none d-lg-flex">
-                                            <a href="/my/notifications" class="nav-link position-relative">
-                                                <img src="/theme_xtream/static/src/img/logos/noti.png" alt="Notifications" class="mx-2" style="height: 24px;"/>
-                                                <t t-if="request.env['mail.notification'].sudo().search_count([('res_partner_id', '=', user_id.partner_id.id), ('is_read', '=', False)])">
+                                            <a href="/mail/inbox" class="nav-link position-relative">
+                                                <i class="fa fa-bell"/>
+                                                <t t-if="request.env.user.notification_type != 'email' and request.env.user.partner_id.has_message">
                                                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                                        <t t-esc="request.env['mail.notification'].sudo().search_count([('res_partner_id', '=', user_id.partner_id.id), ('is_read', '=', False)])"/>
+                                                        <t t-esc="request.env.user.partner_id.message_unread_counter"/>
                                                     </span>
                                                 </t>
                                             </a>
