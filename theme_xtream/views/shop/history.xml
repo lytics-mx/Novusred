@@ -3,15 +3,21 @@
         <section class="container mt-5">
             <h2>Historial de Productos Vistos</h2>
             <t t-if="history">
-                <div class="row o_wsale_products_grid_table_wrapper">
-                    <t t-foreach="history" t-as="entry">
-                        <t t-set="product" t-value="entry.product_id"/>
-                        <div class="col-lg-4 col-md-6 col-6">
-                            <t t-call="website_sale.products_item">
-                                <t t-set="product" t-value="product"/>
-                            </t>
+                <div class="o_wsale_products_grid_table_wrapper">
+                    <form class="js_products" action="" method="post">
+                        <div class="products_pager">
+                            <div class="row">
+                                <t t-foreach="history" t-as="entry">
+                                    <t t-set="product" t-value="entry.product_id"/>
+                                    <div t-attf-class="oe_product oe_list col-lg-12">
+                                        <t t-call="website_sale.products_list_view">
+                                            <t t-set="product" t-value="product"/>
+                                        </t>
+                                    </div>
+                                </t>
+                            </div>
                         </div>
-                    </t>
+                    </form>
                 </div>
             </t>
             <t t-else="">
