@@ -1,13 +1,12 @@
-from odoo import models, fields
+from odoo import models, fields, api
 
 class ProductViewHistory(models.Model):
     _name = 'product.view.history'
-    _description = 'Historial de Productos Vistos'
+    _description = 'Historial de productos vistos'
 
-    user_id = fields.Many2one('res.users', string='Usuario', required=True)
-    product_id = fields.Many2one('product.template', string='Producto', required=True)
-    viewed_at = fields.Datetime(string='Visto el', default=fields.Datetime.now)
-    purchased = fields.Boolean(string='Comprado', default=False)
+    user_id = fields.Many2one('res.users', string="Usuario", required=True, ondelete='cascade')
+    product_id = fields.Many2one('product.product', string="Producto", required=True, ondelete='cascade')
+    viewed_at = fields.Datetime(string="Visto en", default=fields.Datetime.now)
 
     @api.model
     def add_product_to_history(self, product_id):
