@@ -68,7 +68,7 @@
         'views/marca_web.xml',
         'views/category/category.xml',
         'views/shop/history.xml',
-        'views/header_logo.xml',
+        # 'views/header_logo.xml',
 
 
 
