@@ -1,42 +1,33 @@
 <odoo>
     <template id="products_sidebar" inherit_id="website_sale.products">
-        <xpath expr="//div[@id='wrap']" position="inside">
+        <xpath expr="//div[@id='wrap']" position="before">
             <div class="container">
                 <div class="row">
-                    <!-- Sidebar en el lado izquierdo -->
+                    <!-- Sidebar con categorías y marcas -->
                     <div class="col-lg-3 col-md-4">
-                        <div class="d-flex flex-column">
-                            <!-- Categorías -->
-                            <div class="mb-4">
-                                <h5 class="mb-3">Categories:</h5>
-                                <div class="d-flex flex-wrap">
-                                    <t t-foreach="categories" t-as="category">
-                                        <a t-att-href="'/shop?category=' + str(category.id)" 
-                                           t-att-class="'btn btn-outline-primary me-2 mb-2' + (' active' if selected_category == category.id else '')">
-                                            <t t-esc="category.name"/>
-                                        </a>
-                                    </t>
-                                </div>
-                            </div>
-                            
-                            <!-- Marcas -->
-                            <div>
-                                <h5 class="mb-3">Brands:</h5>
-                                <div class="d-flex flex-wrap">
-                                    <t t-foreach="brands" t-as="brand">
-                                        <a t-att-href="'/shop?brand=' + str(brand.id)" 
-                                           t-att-class="'btn btn-outline-secondary me-2 mb-2'">
-                                            <t t-esc="brand.name"/>
-                                        </a>
-                                    </t>
-                                </div>
-                            </div>
+                        <!-- La sección de rango de precios irá primero -->
+                        
+                        <!-- Categorías (ahora después del rango de precios) -->
+                        <div class="list-group mt-4">
+                            <h5 class="mb-3">Categories</h5>
+                            <t t-foreach="categories" t-as="category">
+                                <a t-att-href="'/shop?category=' + str(category.id)" 
+                                   t-att-class="'list-group-item list-group-item-action' + (' active' if selected_category == category.id else '')">
+                                    <t t-esc="category.name"/>
+                                </a>
+                            </t>
                         </div>
-                    </div>
-                    
-                    <!-- Productos -->
-                    <div class="col-lg-9 col-md-8">
-                        <t t-call="website_sale.products_list"/>
+                        
+                        <!-- Marcas (después de categorías) -->
+                        <div class="list-group mt-4">
+                            <h5 class="mb-3">Brands</h5>
+                            <t t-foreach="brands" t-as="brand">
+                                <a t-att-href="'/shop?brand=' + str(brand.id)" 
+                                   t-att-class="'list-group-item list-group-item-action' + (' active' if selected_brand == brand.id else '')">
+                                    <t t-esc="brand.name"/>
+                                </a>
+                            </t>
+                        </div>
                     </div>
                 </div>
             </div>
