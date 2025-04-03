@@ -26,7 +26,7 @@ class ProductTemplate(models.Model):
      )
      
      brand_type_id = fields.Many2many(
-          'brand.type',
+          'product.tags',  # Relacionado con product.tags
           string='Marca',
           help='Selecciona las marcas asociadas con este producto.'
      )
@@ -34,13 +34,14 @@ class ProductTemplate(models.Model):
      @api.depends('brand_type_id')
      def _compute_brand_website(self):
           for product in self:
-               product.brand_website = product.brand_type_id.name if product.brand_type_id else ''
+               # Concatenar los nombres de las marcas seleccionadas
+               product.brand_website = ', '.join(product.brand_type_id.mapped('name')) if product.brand_type_id else ''
 
      brand_website = fields.Char(
           string='Marca en el sitio web',
           compute='_compute_brand_website',
           store=True,
-          help='Displays the brand type on the website'
+          help='Muestra las marcas asociadas en el sitio web.'
      )
 
      # additional_images = fields.One2many(
