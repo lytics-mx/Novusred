@@ -25,23 +25,23 @@ class ProductTemplate(models.Model):
           help="Sube documentos técnicos o fichas técnicas para este producto."
      )
      
-     # brand_type_id = fields.Many2many(
-     #      'product.tags',  # Relacionado con product.tags
-     #      string='Marca',
-     #      help='Selecciona las marcas asociadas con este producto.'
-     # )
+     brand_type_id = fields.Many2many(
+          'product.tags',  # Relacionado con product.tags
+          string='Marca',
+          help='Selecciona las marcas asociadas con este producto.'
+     )
 
-     # @api.depends('brand_type_id')
-     # def _compute_brand_website(self):
-     #      for product in self:
-     #           product.brand_website = product.brand_type_id.name if product.brand_type_id else ''
+     @api.depends('brand_type_id')
+     def _compute_brand_website(self):
+          for product in self:
+               product.brand_website = product.brand_type_id.name if product.brand_type_id else ''
 
-     # brand_website = fields.Char(
-     #      string='Marca en el sitio web',
-     #      compute='_compute_brand_website',
-     #      store=True,
-     #      help='Displays the brand type on the website'
-     # )
+     brand_website = fields.Char(
+          string='Marca en el sitio web',
+          compute='_compute_brand_website',
+          store=True,
+          help='Displays the brand type on the website'
+     )
 
      # additional_images = fields.One2many(
      #      'product.image', 'product_tmpl_id', string="Additional Images"
