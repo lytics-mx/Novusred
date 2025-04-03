@@ -1,13 +1,36 @@
 <odoo>
-    <record id="view_product_template_form_inherit" model="ir.ui.view">
-        <field name="name">product.template.form.inherit.brand</field>
-        <field name="model">product.template</field>
-        <field name="inherit_id" ref="product.product_template_only_form_view"/>
-        <field name="arch" type="xml">
-            <!-- Insertar debajo del campo de categorías públicas -->
-            <xpath expr="//field[@name='public_categ_ids']" position="after">
-                <field name="brand_type_id" widget="many2many_tags" placeholder="Seleccionar marca"/>
-            </xpath>
-        </field>
-    </record>
+    <template id="products_sidebar" inherit_id="website_sale.products">
+        <xpath expr="//div[@id='wrap']" position="before">
+            <div class="container">
+                <div class="row">
+                    <!-- Sidebar con categorías y marcas -->
+                    <div class="col-lg-3 col-md-4">
+                        <!-- La sección de rango de precios irá primero -->
+                        
+                        <!-- Categorías (ahora después del rango de precios) -->
+                        <div class="list-group mt-4">
+                            <h5 class="mb-3">Categories</h5>
+                            <t t-foreach="categories" t-as="category">
+                                <a t-att-href="'/shop?category=' + str(category.id)" 
+                                   t-att-class="'list-group-item list-group-item-action' + (' active' if selected_category == category.id else '')">
+                                    <t t-esc="category.name"/>
+                                </a>
+                            </t>
+                        </div>
+                        
+                        <!-- Marcas (después de categorías) -->
+                        <div class="list-group mt-4">
+                            <h5 class="mb-3">Brands</h5>
+                            <t t-foreach="brands" t-as="brand">
+                                <a t-att-href="'/shop?brand=' + str(brand.id)" 
+                                   t-att-class="'list-group-item list-group-item-action' + (' active' if selected_brand == brand.id else '')">
+                                    <t t-esc="brand.name"/>
+                                </a>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
 </odoo>
