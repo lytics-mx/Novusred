@@ -70,6 +70,8 @@
         'views/shop/history.xml',
         # 'views/header_logo.xml',
         # 'views/shop/brand.xml',
+        'views/shop/brand_views.xml',
+        'views/shop/brand_menu.xml',
 
 
 

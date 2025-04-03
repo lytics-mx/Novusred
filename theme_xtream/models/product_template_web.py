@@ -28,6 +28,7 @@ class ProductTemplate(models.Model):
      brand_type_id = fields.Many2many(
           'brand.type',
           string='Marca',
+          domain="[('id', 'in', brand_ids)]",  # Filtra solo las marcas asociadas al producto
           help='Selecciona las marcas asociadas con este producto.'
      )
 
