@@ -25,10 +25,10 @@ class ProductTemplate(models.Model):
           help="Sube documentos técnicos o fichas técnicas para este producto."
      )
      
-     brand_type_id = fields.Many2one(
-          comodel_name='brand.type',
+     brand_type_id = fields.Many2many(
+          'brand.type',
           string='Marca',
-          help='Select the brand type for this product'
+          help='Selecciona las marcas asociadas con este producto.'
      )
 
      @api.depends('brand_type_id')
