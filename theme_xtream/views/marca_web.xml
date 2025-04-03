@@ -2,46 +2,56 @@
     <template id="custom_products_sidebar" inherit_id="website_sale.products">
         <!-- Cambiar la posición del contenido -->
         <xpath expr="//aside[@id='products_grid_before']" position="before">
-            <div class="sidebar-sections compact-sidebar" style="width: 250px; margin-right: 20px; padding: 15px; float: left;"> <!-- Ajustar ancho y margen -->
-                <!-- Categorías -->
-                <div class="list-group mt-3">
-                    <h6 class="mb-3">Categorías</h6>
-                    <t t-foreach="categories" t-as="category">
-                        <a t-att-href="'/shop?category=' + str(category.id)" 
-                           t-att-class="'list-group-item list-group-item-action py-2' + (' active' if selected_category == category.id else '')">
-                            <t t-esc="category.name"/>
-                        </a>
-                    </t>
+            <div class="row" style="margin: 0;"> <!-- Eliminar márgenes generales -->
+                <!-- Barra lateral -->
+                <div class="col-lg-3 col-md-4" style="padding-right: 10px;"> <!-- Reducir el margen derecho -->
+                    <div class="sidebar-sections compact-sidebar" style="padding: 15px;"> 
+                        <!-- Categorías -->
+                        <div class="list-group mt-3">
+                            <h6 class="mb-3">Categorías</h6>
+                            <t t-foreach="categories" t-as="category">
+                                <a t-att-href="'/shop?category=' + str(category.id)" 
+                                   t-att-class="'list-group-item list-group-item-action py-2' + (' active' if selected_category == category.id else '')">
+                                    <t t-esc="category.name"/>
+                                </a>
+                            </t>
+                        </div>
+
+                        <!-- Ofertas -->
+                        <div class="list-group mt-4">
+                            <h6 class="mb-3">Ofertas</h6>
+                            <a href="/shop?offer=true" class="list-group-item list-group-item-action py-2">
+                                Productos en oferta
+                            </a>
+                        </div>
+
+                        <!-- Marcas -->
+                        <div class="list-group mt-4">
+                            <h6 class="mb-3">Marcas</h6>
+                            <t t-foreach="brands" t-as="brand">
+                                <a t-att-href="'/shop?brand=' + str(brand.id)" 
+                                   t-att-class="'list-group-item list-group-item-action py-2' + (' active' if selected_brand == brand.id else '')">
+                                    <t t-esc="brand.name"/>
+                                </a>
+                            </t>
+                        </div>
+
+                        <!-- Etiquetas -->
+                        <div class="list-group mt-4">
+                            <h6 class="mb-3">Etiquetas</h6>
+                            <t t-foreach="tags" t-as="tag">
+                                <a t-att-href="'/shop?tag=' + str(tag.id)" 
+                                   t-att-class="'list-group-item list-group-item-action py-2' + (' active' if selected_tag == tag.id else '')">
+                                    <t t-esc="tag.name"/>
+                                </a>
+                            </t>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Ofertas -->
-                <div class="list-group mt-4">
-                    <h6 class="mb-3">Ofertas</h6>
-                    <a href="/shop?offer=true" class="list-group-item list-group-item-action py-2">
-                        Productos en oferta
-                    </a>
-                </div>
-
-                <!-- Marcas -->
-                <div class="list-group mt-4">
-                    <h6 class="mb-3">Marcas</h6>
-                    <t t-foreach="brands" t-as="brand">
-                        <a t-att-href="'/shop?brand=' + str(brand.id)" 
-                           t-att-class="'list-group-item list-group-item-action py-2' + (' active' if selected_brand == brand.id else '')">
-                            <t t-esc="brand.name"/>
-                        </a>
-                    </t>
-                </div>
-
-                <!-- Etiquetas -->
-                <div class="list-group mt-4">
-                    <h6 class="mb-3">Etiquetas</h6>
-                    <t t-foreach="tags" t-as="tag">
-                        <a t-att-href="'/shop?tag=' + str(tag.id)" 
-                           t-att-class="'list-group-item list-group-item-action py-2' + (' active' if selected_tag == tag.id else '')">
-                            <t t-esc="tag.name"/>
-                        </a>
-                    </t>
+                <!-- Contenido principal -->
+                <div class="col-lg-9 col-md-8" style="padding-left: 10px;"> <!-- Reducir el margen izquierdo -->
+                    <t t-call="website_sale.products_grid"/>
                 </div>
             </div>
         </xpath>
