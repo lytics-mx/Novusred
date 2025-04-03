@@ -3,30 +3,32 @@
         <xpath expr="//div[@id='wrap']" position="before">
             <div class="container">
                 <div class="row">
-                    <!-- Sidebar con categorías y marcas -->
-                    <div class="col-lg-3 col-md-4">
-                        <!-- La sección de rango de precios irá primero -->
-                        
-                        <!-- Categorías (ahora después del rango de precios) -->
-                        <div class="list-group mt-4">
-                            <h5 class="mb-3">Categories</h5>
-                            <t t-foreach="categories" t-as="category">
-                                <a t-att-href="'/shop?category=' + str(category.id)" 
-                                   t-att-class="'list-group-item list-group-item-action' + (' active' if selected_category == category.id else '')">
-                                    <t t-esc="category.name"/>
-                                </a>
-                            </t>
+                    <!-- Categorías y marcas en la misma línea -->
+                    <div class="col-12 d-flex justify-content-between align-items-center flex-wrap">
+                        <!-- Categorías -->
+                        <div class="d-flex align-items-center me-4">
+                            <h5 class="me-3 mb-0">Categories:</h5>
+                            <div class="d-flex flex-wrap">
+                                <t t-foreach="categories" t-as="category">
+                                    <a t-att-href="'/shop?category=' + str(category.id)" 
+                                       t-att-class="'btn btn-outline-primary me-2 mb-2' + (' active' if selected_category == category.id else '')">
+                                        <t t-esc="category.name"/>
+                                    </a>
+                                </t>
+                            </div>
                         </div>
                         
-                        <!-- Marcas (después de categorías) -->
-                        <div class="list-group mt-4">
-                            <h5 class="mb-3">Brands</h5>
-                            <t t-foreach="brands" t-as="brand">
-                                <a t-att-href="'/shop?brand=' + str(brand.id)" 
-                                   t-att-class="'list-group-item list-group-item-action' + (' active' if selected_brand == brand.id else '')">
-                                    <t t-esc="brand.name"/>
-                                </a>
-                            </t>
+                        <!-- Marcas -->
+                        <div class="d-flex align-items-center">
+                            <h5 class="me-3 mb-0">Brands:</h5>
+                            <div class="d-flex flex-wrap">
+                                <t t-foreach="brands" t-as="brand">
+                                    <a t-att-href="'/shop?brand=' + str(brand.id)" 
+                                       t-att-class="'btn btn-outline-secondary me-2 mb-2' + (' active' if selected_brand == brand.id else '')">
+                                        <t t-esc="brand.name"/>
+                                    </a>
+                                </t>
+                            </div>
                         </div>
                     </div>
                 </div>
