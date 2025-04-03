@@ -1,26 +1,15 @@
 <odoo>
     <template id="products_sidebar" inherit_id="website_sale.products">
-        <xpath expr="//div[@id='wrap']" position="after">
-            <div class="container">
-                <div class="row">
-                    <!-- Sidebar con categorías en el lado izquierdo -->
-                    <div class="col-lg-3 col-md-4">
-                        <!-- Categorías -->
-                        <div class="list-group mt-4">
-                            <h5 class="mb-3">Categories</h5>
-                            <t t-foreach="categories" t-as="category">
-                                <a t-att-href="'/shop?category=' + str(category.id)" 
-                                   t-att-class="'list-group-item list-group-item-action' + (' active' if selected_category == category.id else '')">
-                                    <t t-esc="category.name"/>
-                                </a>
-                            </t>
-                        </div>
-                    </div>
-                    <!-- Contenido principal -->
-                    <div class="col-lg-9 col-md-8">
-                        <!-- Aquí iría el contenido principal -->
-                    </div>
-                </div>
+        <xpath expr="//div[@id='products_grid_before']" position="inside">
+            <!-- Categorías movidas al lado derecho -->
+            <div class="products_categories mt-4">
+                <h5 class="mb-3">Categories</h5>
+                <t t-foreach="categories" t-as="category">
+                    <a t-att-href="'/shop?category=' + str(category.id)" 
+                       t-att-class="'list-group-item list-group-item-action' + (' active' if selected_category == category.id else '')">
+                        <t t-esc="category.name"/>
+                    </a>
+                </t>
             </div>
         </xpath>
     </template>
