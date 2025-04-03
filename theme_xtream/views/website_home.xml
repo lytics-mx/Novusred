@@ -206,54 +206,21 @@
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Marcas</h2>
                     </div>
                     <div class="d-flex justify-content-center gap-3 flex-wrap">
-                        <a href="/epson">
-                            <div style="text-align: center;">
-                                <img src="/theme_xtream/static/src/img/marcas_productos/epson.png" 
-                                    class="d-block" 
-                                    alt="Epson" 
-                                    style="width: 100px; height: auto; object-fit: contain;" />
-                                <img src="/theme_xtream/static/src/img/marcas_productos/epson_portada.png" 
-                                    class="d-block mt-2" 
-                                    alt="Epson Portada" 
-                                    style="width: 250px; height: auto; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
-                            </div>
-                        </a>
-                        <a href="/lenovo">
-                            <div style="text-align: center;">
-                                <img src="/theme_xtream/static/src/img/marcas_productos/lenovo.png" 
-                                    class="d-block" 
-                                    alt="Lenovo" 
-                                    style="width: 100px; height: auto; object-fit: contain;" />
-                                <img src="/theme_xtream/static/src/img/marcas_productos/lenovo_portada.png" 
-                                    class="d-block mt-2" 
-                                    alt="Lenovo Portada" 
-                                    style="width: 250px; height: auto; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
-                            </div>
-                        </a>
-                        <a href="/lg">
-                            <div style="text-align: center;">
-                                <img src="/theme_xtream/static/src/img/marcas_productos/lg.png" 
-                                    class="d-block" 
-                                    alt="LG" 
-                                    style="width: 100px; height: auto; object-fit: contain;" />
-                                <img src="/theme_xtream/static/src/img/marcas_productos/lg_portada.png" 
-                                    class="d-block mt-2" 
-                                    alt="LG Portada" 
-                                    style="width: 250px; height: auto; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
-                            </div>
-                        </a>
-                        <a href="/microsoft">
-                            <div style="text-align: center;">
-                                <img src="/theme_xtream/static/src/img/marcas_productos/microsoft.png" 
-                                    class="d-block" 
-                                    alt="Microsoft" 
-                                    style="width: 100px; height: auto; object-fit: contain;" />
-                                <img src="/theme_xtream/static/src/img/marcas_productos/microsoft_portada.png" 
-                                    class="d-block mt-2" 
-                                    alt="Microsoft Portada" 
-                                    style="width: 250px; height: auto; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
-                            </div>
-                        </a>
+                        <t t-set="tags" t-value="request.env['product.tag'].sudo().search([])" />
+                        <t t-foreach="tags" t-as="tag">
+                            <a t-att-href="'/shop/tag/' + str(tag.id)">
+                                <div style="text-align: center;">
+                                    <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'" 
+                                        class="d-block" 
+                                        t-att-alt="tag.name" 
+                                        style="width: 100px; height: auto; object-fit: contain;" />
+                                    <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image_1920'" 
+                                        class="d-block mt-2" 
+                                        t-att-alt="tag.name + ' Portada'" 
+                                        style="width: 250px; height: auto; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
+                                </div>
+                            </a>
+                        </t>
                     </div>
                 </div>
 
