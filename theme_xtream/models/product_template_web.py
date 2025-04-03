@@ -34,14 +34,13 @@ class ProductTemplate(models.Model):
      @api.depends('brand_type_id')
      def _compute_brand_website(self):
           for product in self:
-               # Concatenar los nombres de las marcas seleccionadas
-               product.brand_website = ', '.join(product.brand_type_id.mapped('name')) if product.brand_type_id else ''
+               product.brand_website = product.brand_type_id.name if product.brand_type_id else ''
 
      brand_website = fields.Char(
           string='Marca en el sitio web',
           compute='_compute_brand_website',
           store=True,
-          help='Muestra las marcas asociadas en el sitio web.'
+          help='Displays the brand type on the website'
      )
 
      # additional_images = fields.One2many(
