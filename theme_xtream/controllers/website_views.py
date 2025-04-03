@@ -1,37 +1,45 @@
 from odoo import http
 from odoo.http import request
 
-class WebsiteShop(http.Controller):
+class CustomShopController(http.Controller):
 
-    @http.route('/shop', auth='public', website=True)
-    def shop_products(self, brand=None, category=None, **kwargs):
-        """
-        Renderiza la página de productos con filtros opcionales por marca y categoría.
-        """
-        domain = [('website_published', '=', True)]  # Solo productos publicados en el sitio web
+    @http.route(['/shop'], type='http', auth="public", website=True)
+    def shop(self, category=None, brand=None, tag=None, offer=False, **kwargs):
+        # Obtener categorías
+        categories = request.env['product.public.category'].sudo().search([])
 
-        # Filtrar por marca si se proporciona
-        if brand:
-            domain.append(('brand_type_id', '=', int(brand)))
-
-        # Filtrar por categoría si se proporciona
-        if category:
-            domain.append(('public_categ_ids', 'child_of', int(category)))
-
-        # Obtener los productos filtrados
-        products = request.env['product.template'].sudo().search(domain, order='list_price desc')
-
-        # Obtener todas las marcas disponibles
+        # Obtener marcas
         brands = request.env['product.brand'].sudo().search([])
 
-        # Obtener todas las categorías principales y sus subcategorías
-        categories = request.env['product.public.category'].sudo().search([('parent_id', '=', False)])
+        # Obtener etiquetas
+        tags = request.env['product.tag'].sudo().search([])
 
-        # Renderizar la plantilla con los productos filtrados, marcas y categorías
-        return request.render('website_sale.products', {
-            'products': products,
-            'selected_brand': int(brand) if brand else None,
-            'selected_category': int(category) if category else None,
-            'brands': brands,
+        # Filtrar productos en oferta
+        domain = []
+        if offer:
+            domain.append(('is_discounted', '=', True))
+
+        # Filtrar por categoría
+        if category:
+            domain.append(('public_categ_ids', 'in', int(category)))
+
+        # Filtrar por marca
+        if brand:
+            domain.append(('brand_id', '=', int(brand)))
+
+        # Filtrar por etiqueta
+        if tag:
+            domain.append(('tag_ids', 'in', int(tag)))
+
+        # Obtener productos filtrados
+        products = request.env['product.template'].sudo().search(domain)
+
+        return request.render("theme_xtream.custom_products_sidebar", {
             'categories': categories,
+            'brands': brands,
+            'tags': tags,
+            'products': products,
+            'selected_category': int(category) if category else None,
+            'selected_brand': int(brand) if brand else None,
+            'selected_tag': int(tag) if tag else None,
         })
