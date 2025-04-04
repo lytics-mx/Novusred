@@ -2,116 +2,117 @@
     <data>
         <!-- Template for Product Grid List Toggle -->
         <template id="product_grid_list_toggle" inherit_id="website_sale.products" name="Product Grid List Toggle">
-        <xpath expr="//div[@id='products_grid_before']" position="before">
-            <div class="row">
-                <!-- Filtros -->
-                <div class="col-lg-3 col-md-4 col-sm-12">
-                    <div class="o_wsale_filter_panel">
-                        <!-- Categorías -->
-                        <div class="o_wsale_filter_category mb-4">
-                            <h5>Categorías</h5>
-                            <ul>
-                                <li>
-                                    <a t-att-href="keep('/shop', category=0, attribute_value=0, tags=0)">All</a>
-                                </li>
-                                <t t-foreach="categories" t-as="category">
+            <xpath expr="//div[@id='products_grid_before']" position="before">
+                <div class="row">
+                    <!-- Filtros -->
+                    <div class="col-lg-3 col-md-4 col-sm-12">
+                        <div class="o_wsale_filter_panel">
+                            <!-- Categorías -->
+                            <div class="o_wsale_filter_category mb-4">
+                                <h5>Categorías</h5>
+                                <ul>
                                     <li>
-                                        <a t-att-href="keep('/shop/category/%s' % slug(category), category=0, attribute_value=0, tags=0)">
-                                            <t t-esc="category.name"/>
-                                        </a>
+                                        <a t-att-href="keep('/shop', category=0, attribute_value=0, tags=0)">All</a>
                                     </li>
-                                </t>
-                            </ul>
-                        </div>
-                        <!-- Etiquetas -->
-                        <div class="o_wsale_filter_tags">
-                            <h5>Etiquetas</h5>
-                            <ul>
-                                <t t-foreach="tags" t-as="tag">
-                                    <li>
-                                        <label>
-                                            <input type="checkbox" t-att-value="tag.id" name="tags"/>
-                                            <t t-esc="tag.name"/>
-                                        </label>
-                                    </li>
-                                </t>
-                            </ul>
+                                    <t t-foreach="categories" t-as="category">
+                                        <li>
+                                            <a t-att-href="keep('/shop/category/%s' % slug(category), category=0, attribute_value=0, tags=0)">
+                                                <t t-esc="category.name"/>
+                                            </a>
+                                        </li>
+                                    </t>
+                                </ul>
+                            </div>
+                            <!-- Etiquetas -->
+                            <div class="o_wsale_filter_tags">
+                                <h5>Etiquetas</h5>
+                                <ul>
+                                    <t t-foreach="tags" t-as="tag">
+                                        <li>
+                                            <label>
+                                                <input type="checkbox" t-att-value="tag.id" name="tags"/>
+                                                <t t-esc="tag.name"/>
+                                            </label>
+                                        </li>
+                                    </t>
+                                </ul>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Productos -->
-                <div class="col-lg-9 col-md-8 col-sm-12">
-                    <div class="d-flex justify-content-end mb-3">
-                        <button class="btn btn-outline-secondary me-2 js_view_toggle" data-view="grid" t-att-class="'active' if view_type == 'grid' else ''">
-                            <i class="fa fa-th"></i>
-                        </button>
-                        <button class="btn btn-outline-secondary js_view_toggle" data-view="list" t-att-class="'active' if view_type == 'list' else ''">
-                            <i class="fa fa-bars"></i>
-                        </button>
-                    </div>
+                    <!-- Productos -->
+                    <div class="col-lg-9 col-md-8 col-sm-12">
+                        <div class="d-flex justify-content-end mb-3">
+                            <button class="btn btn-outline-secondary me-2 js_view_toggle" data-view="grid" t-att-class="'active' if view_type == 'grid' else ''">
+                                <i class="fa fa-th"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary js_view_toggle" data-view="list" t-att-class="'active' if view_type == 'list' else ''">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                        </div>
 
-                    <div id="products_grid" t-att-class="'row' if view_type == 'grid' else 'list-view'">
-                        <t t-foreach="products" t-as="product">
-                            <div t-att-class="'col-12 col-sm-6 col-md-4 col-lg-3 mb-4' if view_type == 'grid' else 'col-12 mb-3'">
-                                <div class="product_card">
-                                    <img t-att-src="product.image_url" alt="Product Image" class="img-fluid"/>
-                                    <div class="product_info">
-                                        <h6><a t-att-href="product.url"><t t-esc="product.name"/></a></h6>
-                                        <p class="text-muted"><t t-esc="product.description_short"/></p>
-                                        <p class="text-primary"><t t-esc="product.price"/> $</p>
+                        <div id="products_grid" t-att-class="'row' if view_type == 'grid' else 'list-view'">
+                            <t t-foreach="products" t-as="product">
+                                <div t-att-class="'col-12 col-sm-6 col-md-4 col-lg-3 mb-4' if view_type == 'grid' else 'col-12 mb-3'">
+                                    <div class="product_card">
+                                        <img t-att-src="product.image_url" alt="Product Image" class="img-fluid"/>
+                                        <div class="product_info">
+                                            <h6><a t-att-href="product.url"><t t-esc="product.name"/></a></h6>
+                                            <p class="text-muted"><t t-esc="product.description_short"/></p>
+                                            <p class="text-primary"><t t-esc="product.price"/> $</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </t>
+                            </t>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </xpath>
-    </template>
+            </xpath>
+        </template>
 
-    <!-- Template for Custom Product View Toggle -->
-    <template id="assets_frontend" inherit_id="website.assets_frontend" name="Custom Product View Toggle" inherit_mode="primary">
-        <xpath expr="." position="inside">
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    const buttons = document.querySelectorAll('.js_view_toggle');
-                    buttons.forEach(button => {
-                        button.addEventListener('click', function () {
-                            const view = this.dataset.view;
-                            document.cookie = `view_type=${view}; path=/`;
-                            location.reload();
+        <!-- Template for Custom Product View Toggle -->
+        <template id="assets_frontend" inherit_id="website.assets_frontend" name="Custom Product View Toggle" inherit_mode="primary">
+            <xpath expr="." position="inside">
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const buttons = document.querySelectorAll('.js_view_toggle');
+                        buttons.forEach(button => {
+                            button.addEventListener('click', function () {
+                                const view = this.dataset.view;
+                                document.cookie = `view_type=${view}; path=/`;
+                                location.reload();
+                            });
                         });
                     });
-                });
-            </script>
-            <style>
-                .list-view .product_card {
-                    display: flex;
-                    align-items: center;
-                    border: 1px solid #ddd;
-                    padding: 10px;
-                    border-radius: 5px;
-                }
-                .list-view .product_card img {
-                    max-width: 150px;
-                    margin-right: 20px;
-                }
-                .list-view .product_card .product_info {
-                    flex: 1;
-                }
-                .product_card {
-                    text-align: center;
-                    border: 1px solid #ddd;
-                    padding: 10px;
-                    border-radius: 5px;
-                }
-                .product_card img {
-                    max-width: 100%;
-                    height: auto;
-                    margin-bottom: 10px;
-                }
-            </style>
-    </template>
+                </script>
+                <style>
+                    .list-view .product_card {
+                        display: flex;
+                        align-items: center;
+                        border: 1px solid #ddd;
+                        padding: 10px;
+                        border-radius: 5px;
+                    }
+                    .list-view .product_card img {
+                        max-width: 150px;
+                        margin-right: 20px;
+                    }
+                    .list-view .product_card .product_info {
+                        flex: 1;
+                    }
+                    .product_card {
+                        text-align: center;
+                        border: 1px solid #ddd;
+                        padding: 10px;
+                        border-radius: 5px;
+                    }
+                    .product_card img {
+                        max-width: 100%;
+                        height: auto;
+                        margin-bottom: 10px;
+                    }
+                </style>
+            </xpath>
+        </template>
     </data>
 </odoo>
