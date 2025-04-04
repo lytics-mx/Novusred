@@ -4,7 +4,7 @@
             <div class="oe_structure" id="sugerencia_custom_block"/>
             <div class="container mt-5">
                 <h2>Historial de Productos Vistos</h2>
-                <t t-if="history">
+                <!-- <t t-if="history">
                     <ul class="list-group">
                         <t t-foreach="history" t-as="product">
                             <li class="list-group-item">
@@ -20,9 +20,45 @@
                 </t>
                 <t t-else="">
                     <p>No has visto ningún producto recientemente.</p>
-                </t>
+                </t> -->
             </div>
             <div class="oe_structure" id="sugerencia_custom_block"/>
+            <div class="container">
+                <div class="products_pager">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="o_wsale_layout_toggle">
+                                <button class="btn btn-secondary o_wsale_apply_layout" data-view-type="grid">
+                                    <i class="fa fa-th-large"/>
+                                </button>
+                                <button class="btn btn-secondary o_wsale_apply_layout" data-view-type="list">
+                                    <i class="fa fa-list"/>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <select class="form-control" id="date_filter">
+                                    <option value="">Todos</option>
+                                    <t t-foreach="history_dates" t-as="date">
+                                        <option t-att-value="date.strftime('%Y-%m')">
+                                            <t t-esc="date.strftime('%B %Y')"/>
+                                        </option>
+                                    </t>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <t t-foreach="history" t-as="product">
+                        <div t-attf-class="product_entry" t-att-data-date="product.viewed_at.strftime('%Y-%m')">
+                            <!-- Product content here -->
+                        </div>
+                    </t>
+                </div>
+            </div>
+
         </t>
     </template>
 </odoo>
