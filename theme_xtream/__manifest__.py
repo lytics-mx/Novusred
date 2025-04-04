@@ -64,7 +64,7 @@
         'views/nav_bar.xml',
         # 'views/report_excel_views.xml',
 
-        # 'views/website_brand.xml',
+        'views/website_brand.xml',
         'views/marca_web.xml',
         'views/category/category.xml',
         'views/shop/history.xml',
