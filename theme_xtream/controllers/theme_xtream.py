@@ -128,5 +128,12 @@ class WebsiteProduct(http.Controller):
         Renderiza la página de inicio.
         """
         return http.request.render('theme_xtream.xtream_inicio')
+    
+    @http.route('/brand', auth='public', website=True)
+    def brand(self, **kw):
+        """
+        Renderiza la página de marca con contenido dinámico.
+        """
+        return http.request.render('theme_xtream.website_brand')
 
 
