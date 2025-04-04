@@ -5,5 +5,5 @@ class BrandController(http.Controller):
 
 
     @http.route('/brand', auth='public', website=True)
-    def about(self, **kw):
+    def brand_page(self, **kw):
         return http.request.render('theme_xtream.website_sale.product_custom')
