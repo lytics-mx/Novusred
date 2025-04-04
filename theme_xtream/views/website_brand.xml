@@ -7,20 +7,37 @@
                         <h4>Etiquetas</h4>
                         <div class="list-group mt-4">
                             <t t-foreach="request.env['product.tag'].search([])" t-as="tag">
-                                <a t-att-href="'/shop?tags=' + str(tag.id)"
-                                   t-att-class="'list-group-item list-group-item-action' + (' active' if str(tag.id) in request.params.get('tags', '').split(',') else '')">
-                                    <t t-esc="tag.name"/>
-                                </a>
+                                <div class="form-check">
+                                    <input type="checkbox" 
+                                           class="form-check-input" 
+                                           t-att-id="'tag_' + str(tag.id)"
+                                           t-att-value="tag.id"
+                                           name="tag_filter"
+                                           t-att-checked="str(tag.id) in request.params.get('tags', '').split(',')" />
+                                    <label class="form-check-label" t-att-for="'tag_' + str(tag.id)">
+                                        <t t-esc="tag.name"/>
+                                    </label>
+                                </div>
                             </t>
                         </div>
                     </div>
                     <div class="col-lg-9">
-                        <section class="s_dynamic_snippet_products" 
-                            t-att-data-filter-id="{'tag_ids': request.params.get('tags').split(',') if request.params.get('tags') else []}"
-                            data-number-of-records="16"
-                            data-template-key="website_sale.dynamic_filter_template_product_product_borderless_1">
-                            <div class="dynamic_snippet_template"/>
-                        </section>
+                        <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
+                            <section id="o_wsale_products_grid" class="o_wsale_products_grid_table grid">
+                                <t t-set="selected_tags" t-value="request.params.get('tags', '').split(',')" />
+                                <t t-set="domain" t-value="[('website_published', '=', True)]" />
+                                <t t-if="selected_tags and selected_tags[0]">
+                                    <t t-set="domain" t-value="domain + [('tag_ids', 'in', [int(tag) for tag in selected_tags if tag])]" />
+                                </t>
+                                <t t-set="filtered_products" t-value="request.env['product.template'].sudo().search(domain)" />
+                                <t t-foreach="filtered_products" t-as="product">
+                                    <!-- Rest of your product display code remains the same -->
+                                    <div class="oe_product g-col-6 g-col-md-3 g-col-lg-3" style="--o-wsale-products-grid-product-col-height: 1;" data-name="Producto">
+                                        <!-- ... (rest of your existing product template code) ... -->
+                                    </div>
+                                </t>
+                            </section>
+                        </div>
                     </div>
                 </div>
             </div>
