@@ -1,90 +1,31 @@
 <odoo>
     <template id="website_brand" name="Brand Page">
         <t t-call="website.layout">
-            <div class="container py-3">                              
+            <div class="container">                              
                 <div class="row">
-                    <!-- Filtros de etiquetas -->
                     <div class="col-lg-3">
-                        <h4>Etiquetas</h4>
+                        <h4>Marcas</h4>
                         <div class="list-group mt-4">
-                            <t t-foreach="request.env['product.tag'].sudo().search([])" t-as="tag">
+                            <t t-foreach="request.env['product.tag'].search([])" t-as="tag">
                                 <div class="form-check">
                                     <input type="checkbox" 
-                                           class="form-check-input tag-filter" 
-                                           t-att-id="'tag_%s' % tag.id"
+                                           class="form-check-input" 
+                                           t-att-id="'tag_' + str(tag.id)"
                                            t-att-value="tag.id"
-                                           name="tag_filter"/>
-                                    <label class="form-check-label" t-att-for="'tag_%s' % tag.id">
+                                           name="tag_filter"
+                                           t-att-checked="str(tag.id) in request.params.get('tags', '').split(',')" />
+                                    <label class="form-check-label" t-att-for="'tag_' + str(tag.id)">
                                         <t t-esc="tag.name"/>
                                     </label>
                                 </div>
                             </t>
                         </div>
                     </div>
-                    <!-- Contenedor de productos -->
                     <div class="col-lg-9">
-                        <div id="products-container" class="row row-cols-1 row-cols-md-3 g-4">
-                            <t t-foreach="request.env['product.template'].sudo().search([('website_published', '=', True)])" t-as="product">
-                                <div class="col product-item">
-                                    <div class="card h-100 oe_product_cart">
-                                        <img t-if="product.image_1920"
-                                             t-att-src="image_data_uri(product.image_1920)"
-                                             class="card-img-top"
-                                             t-att-alt="product.name"/>
-                                        <div class="card-body">
-                                            <h5 class="card-title"><t t-esc="product.name"/></h5>
-                                            <p class="card-text">
-                                                <span t-field="product.list_price" 
-                                                      t-options='{"widget": "monetary", "display_currency": request.env.company.currency_id}'/>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </t>
-                        </div>
+                        <div class="oe_structure" id="oe_structure_website_brand_1"/>
                     </div>
                 </div>
             </div>
         </t>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const checkboxes = document.querySelectorAll('.tag-filter');
-                const productsContainer = document.getElementById('products-container');
-
-                checkboxes.forEach(checkbox => {
-                    checkbox.addEventListener('change', function () {
-                        const selectedTags = Array.from(checkboxes)
-                            .filter(cb => cb.checked)
-                            .map(cb => cb.value);
-
-                        fetch('/brand/products', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({ tag_ids: selectedTags }),
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            productsContainer.innerHTML = '';
-                            data.forEach(product => {
-                                const productHTML = `
-                                    <div class="col product-item">
-                                        <div class="card h-100 oe_product_cart">
-                                            ${product.image ? `<img src="${product.image}" class="card-img-top" alt="${product.name}"/>` : ''}
-                                            <div class="card-body">
-                                                <h5 class="card-title">${product.name}</h5>
-                                                <p class="card-text">${product.price}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `;
-                                productsContainer.insertAdjacentHTML('beforeend', productHTML);
-                            });
-                        });
-                    });
-                });
-            });
-        </script>
     </template>
 </odoo>
