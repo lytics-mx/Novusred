@@ -54,11 +54,18 @@
 
                     checkboxes.forEach(checkbox => {
                         checkbox.addEventListener('change', function () {
+                            // Obtener las etiquetas seleccionadas
                             const selectedTags = Array.from(checkboxes)
                                 .filter(cb => cb.checked)
                                 .map(cb => cb.value)
                                 .join(',');
 
+                            // Actualizar la URL con los parámetros seleccionados
+                            const url = new URL(window.location.href);
+                            url.searchParams.set('tags', selectedTags);
+                            window.history.pushState({}, '', url);
+
+                            // Realizar la solicitud AJAX para filtrar los productos
                             fetch(`/brand/filter?tags=${selectedTags}`, {
                                 method: 'GET',
                                 headers: {
