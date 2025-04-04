@@ -3,7 +3,7 @@ from odoo.http import request
 
 class BrandController(http.Controller):
 
-    @http.route(['/shop'], type='http', auth="public", website=True)
+    @http.route(['/brand'], type='http', auth="public", website=True)
     def shop_page(self, **kwargs):
         # Obtener todas las marcas disponibles
         brands = request.env['product.brand'].sudo().search([])
