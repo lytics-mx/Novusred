@@ -15,7 +15,8 @@ class WebsiteBrand(http.Controller):
             products_data.append({
                 'id': product.id,
                 'name': product.name,
-                'price': request.env['ir.qweb.field.monetary'].value_to_html(product.list_price, {'display_currency': request.env.company.currency_id}),
+                'price': request.env['ir.qweb.field.monetary'].value_to_html(
+                    product.list_price, {'display_currency': request.env.company.currency_id}),
                 'image': product.image_1920 and f"data:image/png;base64,{product.image_1920.decode('utf-8')}" or None,
             })
-        return {'data': products_data}
+        return products_data
