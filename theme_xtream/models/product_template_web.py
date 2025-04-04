@@ -30,6 +30,7 @@ class ProductTemplate(models.Model):
           string='Marca',
           help='Select the brand type for this product'
      )
+     is_discounted = fields.Boolean(string="En Oferta", default=False, help="Indica si el producto está en oferta.") 
 
      @api.depends('brand_type_id')
      def _compute_brand_website(self):
