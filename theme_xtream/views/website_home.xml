@@ -185,19 +185,27 @@
                     <div style="text-align: left;">
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Descubre</h2>
                     </div>
-                    <div class="d-flex justify-content-center gap-3">
-                        <a href="/descubre">
-                            <img src="/theme_xtream/static/src/img/home/Descubre5.png" 
-                                class="d-block" 
-                                alt="Imagen 1" 
-                                style="width: 100%; height: auto; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
-                        </a>
-                        <a href="/events">
-                            <img src="/theme_xtream/static/src/img/home/Descrubre3.png" 
-                                class="d-block" 
-                                alt="Imagen 2" 
-                                style="width: 100%; height: auto; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
-                        </a>
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <a href="/descubre" class="d-block">
+                                <img src="/theme_xtream/static/src/img/home/Descubre5.png" 
+                                    alt="Imagen 1" 
+                                    class="img-fluid w-100"
+                                    style="transition: transform 0.3s ease;" 
+                                    onmouseover="this.style.transform='scale(1.02)'" 
+                                    onmouseout="this.style.transform='scale(1)'" />
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <a href="/events" class="d-block">
+                                <img src="/theme_xtream/static/src/img/home/Descrubre3.png" 
+                                    alt="Imagen 2" 
+                                    class="img-fluid w-100"
+                                    style="transition: transform 0.3s ease;" 
+                                    onmouseover="this.style.transform='scale(1.02)'" 
+                                    onmouseout="this.style.transform='scale(1)'" />
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -224,7 +232,7 @@
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Categorías</h2>
                     </div>
                     <div class="d-flex justify-content-center gap-3 flex-wrap">
-                        <t t-set="categories" t-value="request.env['product.public.category'].sudo().search([('parent_id', '=', False)])" />
+                        <t t-set="categories" t-value="request.env['product.public.category'].sudo().search([('parent_id', '=', False)], limit=5)" />
                         <t t-foreach="categories" t-as="category">
                             <div style="text-align: center;">
                                 <a t-att-href="'/shop/category/' + str(category.id)">
@@ -237,7 +245,7 @@
                                     </p>
                                 </a>
                                 <div class="d-flex justify-content-center gap-2 flex-wrap mt-2">
-                                    <t t-set="subcategories" t-value="request.env['product.public.category'].sudo().search([('parent_id', '=', category.id)])" />
+                                    <t t-set="subcategories" t-value="request.env['product.public.category'].sudo().search([('parent_id', '=', category.id)], limit=5)" />
                                     <t t-foreach="subcategories" t-as="subcategory">
                                         <a t-att-href="'/shop/category/' + str(subcategory.id)">
                                             <img t-att-src="'/web/image/product.public.category/' + str(subcategory.id) + '/image_1920'" 
