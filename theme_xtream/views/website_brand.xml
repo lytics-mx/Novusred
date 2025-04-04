@@ -12,8 +12,7 @@
                                            class="form-check-input tag-filter" 
                                            t-att-id="'tag_' + str(tag.id)"
                                            t-att-value="tag.id"
-                                           name="tag_filter"
-                                           t-att-checked="str(tag.id) in request.params.get('tags', '').split(',')"/>
+                                           name="tag_filter"/>
                                     <label class="form-check-label" t-att-for="'tag_' + str(tag.id)">
                                         <t t-esc="tag.name"/>
                                     </label>
@@ -22,38 +21,21 @@
                         </div>
                     </div>
                     <div class="col-lg-9">
-                        <div class="oe_structure" id="oe_structure_website_brand_1"/>
-                        <div class="row row-cols-1 row-cols-md-3 g-4">
-                            <t t-set="selected_tags" t-value="[int(tag) for tag in request.params.get('tags', '').split(',') if tag]"/>
-                            <t t-foreach="request.env['product.template'].search([
-                                ('product_tag_ids', 'in', selected_tags),
-                                ('website_published', '=', True)
-                            ], limit=25) if selected_tags else []" t-as="product">
+                        <div id="products-container" class="row row-cols-1 row-cols-md-3 g-4">
+                            <t t-foreach="request.env['product.template'].search([('website_published', '=', True)])" t-as="product">
                                 <div class="col">
-                                    <div class="card h-100">
-                                        <img t-att-src="'/web/image/product.template/%s/image_1024' % product.id" class="card-img-top" alt="Product Image"/>
+                                    <div class="card h-100 oe_product_cart">
+                                        <t t-if="product.image_1920">
+                                            <img t-att-src="'/web/image/product.template/%s/image_1920' % product.id" class="card-img-top" alt="Product Image"/>
+                                        </t>
                                         <div class="card-body">
                                             <h5 class="card-title"><t t-esc="product.name"/></h5>
-                                            <p class="card-text"><t t-esc="product.description_sale or ''"/></p>
-                                            <p class="card-text"><strong>Precio:</strong> <t t-esc="product.list_price"/> €</p>
+                                            <p class="card-text">
+                                                <span t-field="product.list_price" t-options="{'widget': 'monetary', 'display_currency': request.env.company.currency_id}"/>
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
                             </t>
                         </div>
                     </div>
-                </div>
-            </div>
-            <script>
-                $(document).ready(function() {
-                    $('.tag-filter').change(function() {
-                        var selectedTags = $('.tag-filter:checked').map(function() {
-                            return this.value;
-                        }).get().join(',');
-                        window.location.href = window.location.pathname + '?tags=' + selectedTags;
-                    });
-                });
-            </script>
-        </t>
-    </template>
-</odoo>
