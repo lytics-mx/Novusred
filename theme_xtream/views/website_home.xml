@@ -224,26 +224,20 @@
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Categorías</h2>
                     </div>
                     <div class="d-flex justify-content-center gap-3 flex-wrap">
-                    <t t-set="categories" t-value="request.env['product.public.category'].sudo().search([
-                            ('parent_id', '=', False),
-                            ('id', 'in', request.env['product.template'].sudo().search([('website_published', '=', True)]).mapped('public_categ_ids').ids)
-                        ])" />
+                        <t t-set="categories" t-value="request.env['product.public.category'].sudo().search([('parent_id', '=', False)])" />
                         <t t-foreach="categories" t-as="category">
                             <div style="text-align: center;">
                                 <a t-att-href="'/shop/category/' + str(category.id)">
-                                    <img t-if="category.image_1920" t-att-src="'/web/image/product.public.category/' + str(category.id) + '/image_1920'" 
+                                    <img t-att-src="'/web/image/product.public.category/' + str(category.id) + '/image_1920'" 
                                         class="d-block" 
                                         t-att-alt="category.name" 
                                         style="width: 150px; height: auto; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
                                 </a>
                                 <div class="d-flex justify-content-center gap-2 flex-wrap mt-2">
-                                    <t t-set="subcategories" t-value="request.env['product.public.category'].sudo().search([
-                                        ('parent_id', '=', category.id),
-                                        ('id', 'in', request.env['product.template'].sudo().search([('website_published', '=', True)]).mapped('public_categ_ids').ids)
-                                    ], limit=10)" />
-                                    <t t-foreach="subcategories[:5]" t-as="subcategory">
+                                    <t t-set="subcategories" t-value="request.env['product.public.category'].sudo().search([('parent_id', '=', category.id)])" />
+                                    <t t-foreach="subcategories" t-as="subcategory">
                                         <a t-att-href="'/shop/category/' + str(subcategory.id)">
-                                            <img t-if="subcategory.image_1920" t-att-src="'/web/image/product.public.category/' + str(subcategory.id) + '/image_1920'"
+                                            <img t-att-src="'/web/image/product.public.category/' + str(subcategory.id) + '/image_1920'" 
                                                 class="d-block" 
                                                 t-att-alt="subcategory.name" 
                                                 style="width: 100px; height: auto; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
@@ -254,7 +248,6 @@
                         </t>
                     </div>
                 </div>
-
                 <t t-if="request.env.user and request.env.user.id != request.env.ref('base.public_user').id">
                     <div class="container mt-4">
                         <div style="text-align: left;">
