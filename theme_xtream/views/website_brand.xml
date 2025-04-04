@@ -1,28 +1,43 @@
 <odoo>
     <template id="website_brand" name="Brand Page">
         <t t-call="website.layout">
-            <div class="container">                              
-                <div class="row">
-                    <div class="col-lg-3">
-                        <h4>Etiquetas</h4>
-                        <ul class="nav flex-column">
-                            <t t-foreach="request.env['product.tag'].search([])" t-as="tag">
-                                <li class="nav-item">
-                                    <a t-att-href="'/shop?tag=%s' % tag.id" 
-                                       t-attf-class="nav-link #{tag.id == int(request.params.get('tag', 0)) and 'active' or ''}">
-                                        <t t-esc="tag.name"/>
-                                    </a>
-                                </li>
-                            </t>
-                        </ul>
-                    </div>
-                    <div class="col-lg-9">
-                        <section class="s_dynamic_snippet_products" 
-                                 t-att-data-filter-id="request.params.get('tag')"
-                                 data-number-of-records="16"
-                                 data-template-key="website_sale.dynamic_filter_template_product_product_borderless_1">
-                            <div class="dynamic_snippet_template"/>
-                        </section>
+            <div id="wrap" class="js_sale">
+                <div class="container oe_website_sale pt-2">
+                    <div class="row o_wsale_products_main_row align-items-start flex-nowrap">
+                        <!-- Left Sidebar -->
+                        <aside id="products_grid_before" class="d-none d-lg-block position-sticky col-3 px-3 clearfix">
+                            <div class="o_wsale_products_grid_before_rail vh-100 ms-n2 mt-n2 pt-2 p-lg-2 pb-lg-5 ps-2 overflow-y-scroll">
+                                <div class="products_categories mb-3">
+                                    <h4>Etiquetas</h4>
+                                    <ul class="nav flex-column">
+                                        <t t-foreach="request.env['product.tag'].search([])" t-as="tag">
+                                            <li class="nav-item">
+                                                <a t-att-href="'/shop?tag=%s' % tag.id" 
+                                                   t-attf-class="nav-link #{tag.id == int(request.params.get('tag', 0)) and 'active' or ''}">
+                                                    <t t-esc="tag.name"/>
+                                                </a>
+                                            </li>
+                                        </t>
+                                    </ul>
+                                </div>
+                            </div>
+                        </aside>
+
+                        <!-- Main Content -->
+                        <div id="products_grid" class="col-lg-9">
+                            <div class="products_header btn-toolbar flex-nowrap align-items-center justify-content-between gap-3 mb-3">
+                                <!-- Add your header controls here if needed -->
+                            </div>
+
+                            <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
+                                <section class="s_dynamic_snippet_products" 
+                                         t-att-data-filter-id="request.params.get('tag')"
+                                         data-number-of-records="16"
+                                         data-template-key="website_sale.dynamic_filter_template_product_product_borderless_1">
+                                    <div class="dynamic_snippet_template"/>
+                                </section>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
