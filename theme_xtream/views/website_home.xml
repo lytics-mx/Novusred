@@ -224,20 +224,19 @@
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Categorías</h2>
                     </div>
                     <div class="d-flex justify-content-center gap-3 flex-wrap">
-                        <t t-set="categories" t-value="request.env['product.public.category'].sudo().search([('parent_id', '=', False)], limit=10)" />
+                        <t t-set="categories" t-value="request.env['product.public.category'].sudo().search([('parent_id', '!=', False)], limit=10)" />
                         <t t-foreach="categories" t-as="category">
-                            <a t-att-href="'/shop/category/' + str(category.id)" class="text-decoration-none">
-                                <div style="width: 200px; height: 250px; text-align: center;">
-                                    <div style="height: 200px; width: 200px; display: flex; align-items: center; justify-content: center; margin: auto;">
-                                        <img t-att-src="'/web/image/product.public.category/' + str(category.id) + '/image_1920'" 
-                                            t-att-alt="category.name" 
-                                            style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
-                                    </div>
-                                    <p style="font-family: 'Questrial', sans-serif; font-size: 16px; color: #333; margin-top: 10px;">
+                            <div class="col-6 col-md-2" style="text-align: center;">
+                                <a t-att-href="'/shop/category/' + str(category.id)">
+                                    <img t-att-src="'/web/image/product.public.category/' + str(category.id) + '/image_1920'" 
+                                        class="d-block" 
+                                        t-att-alt="category.name" 
+                                        style="width: 150px; height: 150px; object-fit: cover; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
+                                    <p style="font-family: 'Questrial', sans-serif; font-size: 14px; color: #666; margin-top: 5px;">
                                         <t t-esc="category.name" />
                                     </p>
-                                </div>
-                            </a>
+                                </a>
+                            </div>
                         </t>
                     </div>
                 </div>
