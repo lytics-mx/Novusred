@@ -186,18 +186,15 @@
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Descubre</h2>
                     </div>
                     <div class="d-flex justify-content-center gap-3">
-                        <a href="/descubre">
-                            <img src="/theme_xtream/static/src/img/home/Descubre5.png" 
-                                class="d-block" 
-                                alt="Imagen 1" 
-                                style="width: 100%; height: auto; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
-                        </a>
-                        <a href="/events">
-                            <img src="/theme_xtream/static/src/img/home/Descrubre3.png" 
-                                class="d-block" 
-                                alt="Imagen 2" 
-                                style="width: 100%; height: auto; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
-                        </a>
+                        <t t-set="discover_images" t-value="request.env['website.banner'].sudo().search([('category', '=', 'discover')], limit=2)" />
+                        <t t-foreach="discover_images" t-as="banner">
+                            <a t-att-href="banner.url or '#'">
+                                <img t-att-src="'/web/image/website.banner/' + str(banner.id) + '/image'" 
+                                    class="d-block" 
+                                    t-att-alt="banner.name" 
+                                    style="width: 100%; height: auto; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
+                            </a>
+                        </t>
                     </div>
                 </div>
 
@@ -254,60 +251,9 @@
                         </t>
                     </div>
                 </div>
-                <div class="oe_structure" id="sugerencia_custom_block"/>
-
-                <t t-if="request.env.user and request.env.user.id != request.env.ref('base.public_user').id">
-                    <div class="container mt-4">
-                        <div style="text-align: left;">
-                            <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Historial</h2>
-                        </div>
-                        <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
-                            <section id="o_wsale_products_grid" class="o_wsale_products_grid_table grid">
-                                <!-- Obtener el carrito actual -->
-                                <t t-set="cart" t-value="website.sale_get_order()" />
-                                <t t-if="cart and cart.order_line">
-                                    <t t-foreach="cart.order_line" t-as="line">
-                                        <div class="oe_product g-col-6 g-col-md-3 g-col-lg-3" style="--o-wsale-products-grid-product-col-height: 1;" data-name="Producto">
-                                            <div class="o_wsale_product_grid_wrapper position-relative h-100 o_wsale_product_grid_wrapper_1_1">
-                                                <form action="/shop/cart/update" method="post" class="oe_product_cart h-100 d-flex" itemscope="itemscope" itemtype="http://schema.org/Product">
-                                                    <div class="oe_product_image position-relative flex-grow-0 overflow-hidden">
-                                                        <a class="oe_product_image_link d-block position-relative" itemprop="url" t-att-href="'/shop/product/' + str(line.product_id.id)">
-                                                            <span class="oe_product_image_img_wrapper d-flex h-100 justify-content-center align-items-center position-absolute">
-                                                                <img t-att-src="'/web/image/product.product/' + str(line.product_id.id) + '/image_1920'" 
-                                                                    itemprop="image" 
-                                                                    class="img img-fluid h-100 w-100 position-absolute" 
-                                                                    t-att-alt="line.product_id.name" 
-                                                                    loading="lazy" />
-                                                            </span>
-                                                        </a>
-                                                    </div>
-                                                    <div class="o_wsale_product_information position-relative d-flex flex-column flex-grow-1 flex-shrink-1">
-                                                        <div class="o_wsale_product_information_text">
-                                                            <h6 class="o_wsale_products_item_title mb-2 text-break">
-                                                                <a t-att-href="'/shop/product/' + str(line.product_id.id)" class="text-primary text-decoration-none text-primary-emphasis cursor-pointer">
-                                                                    <t t-esc="line.product_id.name" />
-                                                                </a>
-                                                            </h6>
-                                                        </div>
-                                                        <div class="o_wsale_product_sub d-flex justify-content-between align-items-end gap-2 flex-wrap">
-                                                            <div class="product_price" itemprop="offers" itemscope="itemscope" itemtype="http://schema.org/Offer">
-                                                                <span class="h6 mb-0">$<t t-esc="'%.2f' % line.price_unit" /></span>
-                                                                <span class="text-muted">(Cantidad: <t t-esc="int(line.product_uom_qty)" />)</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </t>
-                                </t>
-                                <t t-else="">
-                                    <p style="font-family: 'Questrial', sans-serif; font-size: 16px; color: #666;">No hay historial.</p>
-                                </t>
-                            </section>
-                        </div>
-                    </div>
-                </t>
+                <div class="oe_structure container mt-4" id="sugerencia_custom_block">
+                    <!-- This empty div allows for customizable content blocks to be inserted -->
+                </div>
 
             </div>
         </t>
