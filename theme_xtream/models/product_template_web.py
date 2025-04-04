@@ -31,7 +31,26 @@ class ProductTemplate(models.Model):
           help='Select the brand type for this product'
      )
      is_discounted = fields.Boolean(string="En Oferta", default=False, help="Indica si el producto está en oferta.") 
+    
+     discount_percentage = fields.Float(
+          string="Descuento (%)",
+          help="Porcentaje de descuento aplicado al producto."
+     )
 
+     discounted_price = fields.Float(
+          string="Precio con Descuento",
+          compute="_compute_discounted_price",
+          store=True,
+          help="Precio del producto después de aplicar el descuento."
+     )
+
+     @api.depends('list_price', 'discount_percentage')
+     def _compute_discounted_price(self):
+          for product in self:
+               if product.discount_percentage:
+                    product.discounted_price = product.list_price * (1 - (product.discount_percentage / 100))
+               else:
+                    product.discounted_price = product.list_price
      @api.depends('brand_type_id')
      def _compute_brand_website(self):
           for product in self:

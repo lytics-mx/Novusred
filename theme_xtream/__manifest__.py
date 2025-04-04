@@ -69,6 +69,7 @@
         'views/category/category.xml',
         'views/shop/history.xml',
         'views/shop/ofertas.xml',
+        'views/shop/offers_views.xml'
         
 
 
