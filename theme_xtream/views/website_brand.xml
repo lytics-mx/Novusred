@@ -24,8 +24,8 @@
                     <div class="col-lg-9">
                         <div class="oe_structure" id="oe_structure_website_brand_1"/>
                         <div class="product-list mt-4">
-                            <t t-set="selected_tags" t-value="request.params.get('tags', '').split(',')"/>
-                            <t t-foreach="request.env['product.template'].search([('tag_ids', 'in', selected_tags)])" t-as="product">
+                            <t t-set="selected_tags" t-value="[int(tag) for tag in request.params.get('tags', '').split(',') if tag]"/>
+                            <t t-foreach="request.env['product.template'].search([('product_tag_ids', 'in', selected_tags)] if selected_tags else [])" t-as="product">
                                 <div class="product-item">
                                     <h5><t t-esc="product.name"/></h5>
                                     <p><t t-esc="product.description_sale or ''"/></p>
