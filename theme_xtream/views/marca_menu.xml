@@ -1,6 +1,7 @@
 <odoo>
-    <template id="product_grid_list_toggle" inherit_id="website_sale.products" name="Product Grid List Toggle">
-        <!-- Filtros en el lado izquierdo -->
+    <data>
+        <!-- Template for Product Grid List Toggle -->
+        <template id="product_grid_list_toggle" inherit_id="website_sale.products" name="Product Grid List Toggle">
         <xpath expr="//div[@id='products_grid_before']" position="before">
             <div class="row">
                 <!-- Filtros -->
@@ -41,7 +42,6 @@
 
                 <!-- Productos -->
                 <div class="col-lg-9 col-md-8 col-sm-12">
-                    <!-- Botones para alternar entre vista de cuadrícula y lista -->
                     <div class="d-flex justify-content-end mb-3">
                         <button class="btn btn-outline-secondary me-2 js_view_toggle" data-view="grid" t-att-class="'active' if view_type == 'grid' else ''">
                             <i class="fa fa-th"></i>
@@ -51,7 +51,6 @@
                         </button>
                     </div>
 
-                    <!-- Contenedor de productos -->
                     <div id="products_grid" t-att-class="'row' if view_type == 'grid' else 'list-view'">
                         <t t-foreach="products" t-as="product">
                             <div t-att-class="'col-12 col-sm-6 col-md-4 col-lg-3 mb-4' if view_type == 'grid' else 'col-12 mb-3'">
@@ -71,9 +70,9 @@
         </xpath>
     </template>
 
+    <!-- Template for Custom Product View Toggle -->
     <template id="assets_frontend" inherit_id="website.assets_frontend" name="Custom Product View Toggle" inherit_mode="primary">
         <xpath expr="." position="inside">
-            <!-- Script para manejar el cambio de vista -->
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
                     const buttons = document.querySelectorAll('.js_view_toggle');
@@ -87,7 +86,6 @@
                 });
             </script>
             <style>
-                /* Estilos para vista de lista */
                 .list-view .product_card {
                     display: flex;
                     align-items: center;
@@ -102,7 +100,6 @@
                 .list-view .product_card .product_info {
                     flex: 1;
                 }
-                /* Estilos para vista de cuadrícula */
                 .product_card {
                     text-align: center;
                     border: 1px solid #ddd;
@@ -115,6 +112,6 @@
                     margin-bottom: 10px;
                 }
             </style>
-        </xpath>
     </template>
+    </data>
 </odoo>
