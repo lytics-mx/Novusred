@@ -3,6 +3,7 @@
         <t t-call="website.layout">
             <div class="container">                              
                 <div class="row">
+                    <!-- Sidebar con etiquetas -->
                     <div class="col-lg-3">
                         <h4>Etiquetas</h4>
                         <ul class="nav flex-column">
@@ -12,7 +13,6 @@
                                         <input type="checkbox" 
                                                class="form-check-input tag-checkbox" 
                                                t-att-value="tag.id"
-                                               t-att-checked="str(tag.id) in request.params.get('tags', '').split(',')"
                                                t-att-id="'tag_%s' % tag.id"/>
                                         <label class="form-check-label" t-att-for="'tag_%s' % tag.id">
                                             <t t-esc="tag.name"/>
@@ -22,9 +22,10 @@
                             </t>
                         </ul>
                     </div>
+                    <!-- Contenedor de productos -->
                     <div class="col-lg-9">
-                        <div class="row">
-                            <t t-foreach="request.env['product.template'].search([('website_published', '=', True), ('product_tag_ids', 'in', [int(tag) for tag in request.params.get('tags', '').split(',') if tag])])" t-as="product">
+                        <div id="product-list" class="row">
+                            <t t-foreach="request.env['product.template'].search([('website_published', '=', True)])" t-as="product">
                                 <div class="col-lg-4 col-md-6 mb-4">
                                     <div class="card h-100">
                                         <a t-att-href="'/shop/product/%s' % slug(product)">
@@ -45,6 +46,33 @@
                     </div>
                 </div>
             </div>
+            <!-- Script para manejar el filtrado dinámico -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const checkboxes = document.querySelectorAll('.tag-checkbox');
+                    const productList = document.getElementById('product-list');
+
+                    checkboxes.forEach(checkbox => {
+                        checkbox.addEventListener('change', function () {
+                            const selectedTags = Array.from(checkboxes)
+                                .filter(cb => cb.checked)
+                                .map(cb => cb.value)
+                                .join(',');
+
+                            fetch(`/brand/filter?tags=${selectedTags}`, {
+                                method: 'GET',
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                }
+                            })
+                            .then(response => response.text())
+                            .then(html => {
+                                productList.innerHTML = html;
+                            });
+                        });
+                    });
+                });
+            </script>
         </t>
     </template>
 </odoo>
