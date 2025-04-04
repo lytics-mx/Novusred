@@ -1,79 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <template name="ProductUpdatedCustom" t-name="theme_xtream_product_custom">
-        <!-- Qweb variable defining the class suffix for navbar items.
-             Change accordingly to the desired visual result (e.g., `primary`, `dark`...) -->
-        <t t-set="navClass" t-valuef="light"/>
-
-        <t t-set="combination_info" t-value="product._get_combination_info()"/>
-        <t t-set="product_variant" t-value="product.env['product.product'].browse(combination_info['product_id'])"/>
-
         <t t-call="website.layout">
-            <t t-set="additional_title" t-value="product.name"/>
-            <div itemscope="itemscope" itemtype="http://schema.org/Product" id="wrap" class="js_sale o_wsale_product_page">
-                <t t-set="editor_message">DROP BUILDING BLOCKS HERE TO MAKE THEM AVAILABLE ACROSS ALL PRODUCTS</t>
-                <div class="oe_structure oe_empty oe_structure_not_nearest" id="oe_structure_website_sale_product_1" t-att-data-editor-message="editor_message"/>
-                <section id="product_detail" t-attf-class="oe_website_sale container my-3 my-lg-4 #{'discount' if combination_info['has_discounted_price'] else ''}" t-att-data-view-track="view_track and '1' or '0'" t-att-data-product-tracking-info="'product_tracking_info' in combination_info and json.dumps(combination_info['product_tracking_info'])">
-                    <div class="row align-items-center">
-                        <div class="col d-flex align-items-center order-1 order-lg-0">
-                            <ol class="o_wsale_breadcrumb breadcrumb p-0 mb-4 m-lg-0">
-                                <li class="o_not_editable breadcrumb-item d-none d-lg-inline-block">
-                                    <a t-att-href="keep(category=0, attribute_value=0, tags=0)">
-                                        <i class="oi oi-chevron-left d-lg-none me-1" role="presentation"/>Inicios
-                                    </a>
-                                </li>
-                                <li t-nocache="The category does not have to be cached, as the product can be accessed via different paths." t-if="category" class="breadcrumb-item">
-                                    <a class="py-2 py-lg-0" t-att-href="keep('/shop/category/%s' % slug(category), category=0, attribute_value=0, tags=0)">
-                                        <i class="oi oi-chevron-left d-lg-none me-1" role="presentation"/><t t-out="category.name"/>
-                                    </a>
-                                </li>
-                                <li t-else="" class="o_not_editable breadcrumb-item d-lg-none">
-                                    <a class="py-2 py-lg-0" t-att-href="keep(category=0, attribute_value=0, tags=0)">
-                                        <i class="oi oi-chevron-left me-1" role="presentation"/>All Products
-                                    </a>
-                                </li>
-                                <li class="breadcrumb-item d-none d-lg-inline-block active">
-                                    <span t-field="product.name"/>
-                                </li>
-                            </ol>
-                        </div>
-                        <div class="col-lg-4 d-flex align-items-center">
-                            <div class="d-flex justify-content-between w-100">
-                                <t t-if="is_view_active('website_sale.search')" t-call="website_sale.search">
-                                    <t t-set="search" t-value="False"/>
-                                    <t t-set="_form_classes" t-valuef="mb-4 mb-lg-0"/>
-                                    <t t-set="_classes" t-value="'me-sm-2'"/>
-                                </t>
-                                <t t-call="website_sale.pricelist_list">
-                                    <t t-set="_classes" t-valuef="d-lg-inline ms-2"/>
-                                </t>
+            <div class="container my-5">
+                <h1 class="text-center mb-4">Productos Publicados</h1>
+                <div class="row">
+                    <t t-foreach="products" t-as="product">
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card">
+                                <img t-att-src="website.image_url(product, 'image_1920')" class="card-img-top" t-att-alt="product.name"/>
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <a t-att-href="product.website_url" class="text-decoration-none">
+                                            <t t-esc="product.name"/>
+                                        </a>
+                                    </h5>
+                                    <p class="card-text text-muted">
+                                        <t t-esc="product.description_sale or 'Sin descripción disponible'"/>
+                                    </p>
+                                    <p class="card-text text-primary">
+                                        <t t-esc="product.list_price"/> $
+                                    </p>
+                                    <a t-att-href="product.website_url" class="btn btn-primary">Ver Producto</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row" id="product_detail_main" data-name="Product Page" t-att-data-image_width="website.product_page_image_width" t-att-data-image_layout="website.product_page_image_layout">
-                        <t t-set="image_cols" t-value="website._get_product_page_proportions()"/>
-                        <div t-attf-class="col-lg-#{image_cols[0]} mt-lg-4 o_wsale_product_images position-relative" t-if="website.product_page_image_width != 'none'" t-att-data-image-amount="len(product_variant._get_images() if product_variant else product._get_images())">
-                            <t t-call="website_sale.shop_product_images"/>
-                        </div>
-                        <div t-attf-class="col-lg-#{image_cols[1]} mt-md-4" id="product_details">
-                            <t t-set="base_url" t-value="website.get_base_url()"/>
-                            <h1 itemprop="name" t-field="product.name">Product Name</h1>
-                            <span itemprop="url" style="display:none;" t-esc="base_url + product.website_url"/>
-                            <span itemprop="image" style="display:none;" t-esc="base_url + website.image_url(product, 'image_1920')"/>
-                            <t t-if="is_view_active('website_sale.product_comment')">
-                                <a href="#o_product_page_reviews" class="o_product_page_reviews_link text-decoration-none">
-                                    <t t-call="portal_rating.rating_widget_stars_static">
-                                        <t t-set="rating_avg" t-value="product.rating_avg"/>
-                                        <t t-set="trans_text_plural">%s reviews</t>
-                                        <t t-set="trans_text_singular">%s review</t>
-                                        <t t-set="rating_count" t-value="(trans_text_plural if product.rating_count > 1 else trans_text_singular) % product.rating_count"/>
-                                    </t>
-                                </a>
-                            </t>
-                            <div t-field="product.description_ecommerce" class="oe_structure" placeholder="A detailed, formatted description to promote your product on this page. Use '/' to discover more features."/>
-                        </div>
-                    </div>
-                </section>
+                    </t>
+                </div>
             </div>
         </t>
     </template>

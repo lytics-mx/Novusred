@@ -4,4 +4,6 @@ from odoo.http import request
 class BrandController(http.Controller):
     @http.route('/brand', auth='public', website=True)
     def brand_page(self, **kw):
-        return http.request.render('theme_xtream.website_sale.product_custom')
+        # Obtener productos publicados
+        products = request.env['product.template'].sudo().search([('website_published', '=', True)])
+        return request.render('theme_xtream_product_custom', {'products': products})
