@@ -2,37 +2,29 @@
     <template id="website_brand" name="Brand Page">
         <t t-call="website.layout">
             <div class="container">                              
-                <section data-snippet="s_dynamic_snippet_products" class="s_dynamic_snippet_products s_dynamic s_dynamic_empty pt32 pb32 o_colored_level s_product_product_borderless_1 o_snippet_invisible o_dynamic_snippet_empty o_conditional_hidden" data-custom-template-data="{}" data-name="Productos" data-product-category-id="all" data-show-variants="true" data-number-of-records="16" data-filter-id="1" data-template-key="website_sale.dynamic_filter_template_product_product_borderless_1" data-carousel-interval="5000" data-visibility="conditional">
-                    <div class="container">
-                        <div class="row s_nb_column_fixed">
-                            <section class="s_dynamic_snippet_title oe_unremovable oe_unmovable d-flex flex-column flex-md-row mb-lg-0 pb-3 pb-md-0 o_colored_level s_dynamic_snippet_title_aside col-lg-3 justify-content-between flex-lg-column justify-content-lg-start">
-                                <div>
-                                    <h4 class="o_default_snippet_text">Etiquetas</h4>
-                                    <ul class="nav flex-column">
-                                        <t t-foreach="request.env['product.tag'].search([])" t-as="tag">
-                                            <li class="nav-item">
-                                                <a t-att-href="'/shop/tag/%s' % tag.id" class="nav-link">
-                                                    <t t-esc="tag.name"/>
-                                                </a>
-                                            </li>
-                                        </t>
-                                    </ul>
-                                </div>
-                                <div>
-                                    <a title="Ver todo" class="s_dynamic_snippet_main_page_url o_default_snippet_text" href="/shop">Ver todo <i class="fa fa-long-arrow-right ms-2"/></a>
-                                </div>
-                            </section>
-                            <section class="s_dynamic_snippet_content oe_unremovable oe_unmovable o_not_editable col o_colored_level">
-                                <div class="css_non_editable_mode_hidden">
-                                    <div class="missing_option_warning alert alert-info fade show d-none d-print-none rounded-0 o_default_snippet_text">
-                                        Su snippet dinámico aparecerá aquí... Este mensaje aparece porque no proporcionó ni el filtro ni la plantilla a usar.<br/>
-                                    </div>
-                                </div>
-                                <div class="dynamic_snippet_template"/>
-                            </section>
-                        </div>
+                <div class="row">
+                    <div class="col-lg-3">
+                        <h4>Etiquetas</h4>
+                        <ul class="nav flex-column">
+                            <t t-foreach="request.env['product.tag'].search([])" t-as="tag">
+                                <li class="nav-item">
+                                    <a t-att-href="'/shop?tag=%s' % tag.id" 
+                                       t-attf-class="nav-link #{tag.id == int(request.params.get('tag', 0)) and 'active' or ''}">
+                                        <t t-esc="tag.name"/>
+                                    </a>
+                                </li>
+                            </t>
+                        </ul>
                     </div>
-                </section>
+                    <div class="col-lg-9">
+                        <section class="s_dynamic_snippet_products" 
+                                 t-att-data-filter-id="request.params.get('tag')"
+                                 data-number-of-records="16"
+                                 data-template-key="website_sale.dynamic_filter_template_product_product_borderless_1">
+                            <div class="dynamic_snippet_template"/>
+                        </section>
+                    </div>
+                </div>
             </div>
         </t>
     </template>
