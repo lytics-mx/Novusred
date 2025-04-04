@@ -68,7 +68,7 @@
         'views/marca_web.xml',
         'views/category/category.xml',
         'views/shop/history.xml',
-        'views/ofertas.xml',
+        'views/shop/ofertas.xml',
         
 
 
