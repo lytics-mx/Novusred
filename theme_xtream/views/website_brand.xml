@@ -3,7 +3,6 @@
         <t t-call="website.layout">
             <div class="container">                              
                 <div class="row">
-                    <!-- Sidebar con etiquetas -->
                     <div class="col-lg-3">
                         <h4>Etiquetas</h4>
                         <ul class="nav flex-column">
@@ -13,6 +12,7 @@
                                         <input type="checkbox" 
                                                class="form-check-input tag-checkbox" 
                                                t-att-value="tag.id"
+                                               t-att-checked="str(tag.id) in request.params.get('tags', '').split(',')"
                                                t-att-id="'tag_%s' % tag.id"/>
                                         <label class="form-check-label" t-att-for="'tag_%s' % tag.id">
                                             <t t-esc="tag.name"/>
@@ -22,65 +22,17 @@
                             </t>
                         </ul>
                     </div>
-                    <!-- Contenedor de productos -->
                     <div class="col-lg-9">
-                        <div id="product-list" class="row">
-                            <!-- Productos iniciales -->
-                            <t t-foreach="request.env['product.template'].search([('website_published', '=', True)])" t-as="product">
-                                <div class="col-lg-4 col-md-6 mb-4">
-                                    <div class="card h-100">
-                                        <a t-att-href="'/shop/product/%s' % slug(product)">
-                                            <img class="card-img-top" t-att-src="'/web/image/product.template/%s/image_1024' % product.id" t-att-alt="product.name"/>
-                                        </a>
-                                        <div class="card-body">
-                                            <h5 class="card-title">
-                                                <a t-att-href="'/shop/product/%s' % slug(product)" t-esc="product.name"/>
-                                            </h5>
-                                            <p class="card-text">
-                                                <span t-field="product.list_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </t>
-                        </div>
+                        <section class="s_dynamic_snippet_products" 
+                            t-att-data-filter-id="{'tag_ids': request.params.get('tags').split(',') if request.params.get('tags') else []}"
+                            data-number-of-records="16"
+                            data-template-key="website_sale.dynamic_filter_template_product_product_borderless_1">
+                        <div class="dynamic_snippet_template"/>
+                    </section>
+
                     </div>
                 </div>
             </div>
-            <!-- Script para manejar el filtrado dinámico -->
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    const checkboxes = document.querySelectorAll('.tag-checkbox');
-                    const productList = document.getElementById('product-list');
-
-                    checkboxes.forEach(checkbox => {
-                        checkbox.addEventListener('change', function () {
-                            // Obtener las etiquetas seleccionadas
-                            const selectedTags = Array.from(checkboxes)
-                                .filter(cb => cb.checked)
-                                .map(cb => cb.value)
-                                .join(',');
-
-                            // Actualizar la URL con los parámetros seleccionados
-                            const url = new URL(window.location.href);
-                            url.searchParams.set('tags', selectedTags);
-                            window.history.pushState({}, '', url);
-
-                            // Realizar la solicitud AJAX para filtrar los productos
-                            fetch(`/shop?tags=${selectedTags}`, {
-                                method: 'GET',
-                                headers: {
-                                    'X-Requested-With': 'XMLHttpRequest'
-                                }
-                            })
-                            .then(response => response.text())
-                            .then(html => {
-                                productList.innerHTML = html;
-                            });
-                        });
-                    });
-                });
-            </script>
         </t>
     </template>
 </odoo>
