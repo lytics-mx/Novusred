@@ -5,8 +5,8 @@ class BrandController(http.Controller):
 
     @http.route(['/brand'], type='http', auth="public", website=True)
     def shop_page(self, **kwargs):
-        # Obtener todas las etiquetas disponibles (en lugar de marcas)
-        tags = request.env['product.tags'].sudo().search([])
+        # Obtener todas las etiquetas disponibles (usadas como marcas)
+        brands = request.env['product.tag'].sudo().search([])  # Correct model name
 
         # Obtener todas las categorías disponibles
         categories = request.env['product.public.category'].sudo().search([])
@@ -27,7 +27,7 @@ class BrandController(http.Controller):
 
         # Renderizar la plantilla con los datos
         return request.render('theme_xtream.product_grid_list_toggle', {
-            'tags': tags,
+            'brands': brands,  # Pasar las etiquetas como "marcas"
             'categories': categories,
             'products': products,
             'view_type': view_type,
