@@ -25,7 +25,7 @@
                     <div class="col-lg-9">
                         <div id="products-container" class="row row-cols-1 row-cols-md-3 g-4">
                             <t t-foreach="request.env['product.template'].sudo().search([('website_published', '=', True)])" t-as="product">
-                                <div class="col">
+                                <div class="col product-item">
                                     <div class="card h-100 oe_product_cart">
                                         <img t-if="product.image_1920"
                                              t-att-src="image_data_uri(product.image_1920)"
@@ -46,5 +46,45 @@
                 </div>
             </div>
         </t>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const checkboxes = document.querySelectorAll('.tag-filter');
+                const productsContainer = document.getElementById('products-container');
+
+                checkboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', function () {
+                        const selectedTags = Array.from(checkboxes)
+                            .filter(cb => cb.checked)
+                            .map(cb => cb.value);
+
+                        fetch('/brand/products', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ tag_ids: selectedTags }),
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            productsContainer.innerHTML = '';
+                            data.forEach(product => {
+                                const productHTML = `
+                                    <div class="col product-item">
+                                        <div class="card h-100 oe_product_cart">
+                                            ${product.image ? `<img src="${product.image}" class="card-img-top" alt="${product.name}"/>` : ''}
+                                            <div class="card-body">
+                                                <h5 class="card-title">${product.name}</h5>
+                                                <p class="card-text">${product.price}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                                productsContainer.insertAdjacentHTML('beforeend', productHTML);
+                            });
+                        });
+                    });
+                });
+            });
+        </script>
     </template>
 </odoo>
