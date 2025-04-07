@@ -47,10 +47,13 @@ class ProductTemplate(models.Model):
      @api.depends('list_price', 'discount_percentage')
      def _compute_discounted_price(self):
           for product in self:
-               if product.discount_percentage:
+               if product.discount_percentage > 0:
                     product.discounted_price = product.list_price * (1 - (product.discount_percentage / 100))
+                    product.is_discounted = True
                else:
                     product.discounted_price = product.list_price
+                    product.is_discounted = False
+
      @api.depends('brand_type_id')
      def _compute_brand_website(self):
           for product in self:
