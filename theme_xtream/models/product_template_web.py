@@ -33,10 +33,10 @@ class ProductTemplate(models.Model):
      is_discounted = fields.Boolean(string="En Oferta", default=False, help="Indica si el producto está en oferta.") 
     
      discount_percentage = fields.Float(
-         string="Descuento (%)",
-         compute="_compute_discount_percentage_from_tags",
-         help="Porcentaje de descuento aplicado al producto."
+          string="Descuento (%)",
+          help="Porcentaje de descuento aplicado al producto."
      )
+
 
      discounted_price = fields.Float(
          string="Precio con Descuento",
