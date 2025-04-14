@@ -15,5 +15,5 @@ class ProductTag(models.Model):
             for tag in self:
                 products = self.env['product.template'].search([('tag_ids', 'in', tag.id)])
                 for product in products:
-                    product._onchange_tag_ids()
+                    product.discount_percentage = max(product.tag_ids.mapped('discount_percentage'), default=0)
         return res
