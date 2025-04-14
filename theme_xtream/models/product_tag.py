@@ -14,6 +14,5 @@ class ProductTag(models.Model):
         if 'discount_percentage' in vals:
             for tag in self:
                 products = self.env['product.template'].search([('tag_ids', 'in', tag.id)])
-                for product in products:
-                    product.discount_percentage = max(product.tag_ids.mapped('discount_percentage'), default=0)
+                products._compute_discount_percentage_from_tags()
         return res
