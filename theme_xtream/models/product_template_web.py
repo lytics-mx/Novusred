@@ -35,7 +35,6 @@ class ProductTemplate(models.Model):
      discount_percentage = fields.Float(
          string="Descuento (%)",
          compute="_compute_discount_percentage_from_tags",
-         store=True,
          help="Porcentaje de descuento aplicado al producto."
      )
 
