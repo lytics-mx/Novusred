@@ -73,9 +73,9 @@
 # OFERTAS        
         'views/shop/ofertas.xml',
         'views/shop/offers_views.xml',
+        'views/shop/ofertas/product_template_tree_view.xml',
         'views/shop/ofertas/action_offers.xml',
-        'views/shop/ofertas/menu_offers.xml',
-        'views/shop/ofertas/product_template_tree_view.xml',        
+        'views/shop/ofertas/menu_offers.xml',      
 
 
 
