@@ -51,15 +51,14 @@ class ProductTemplate(models.Model):
           string="Etiquetas",
           help="Etiquetas asociadas con este producto."
      )
-     
+
      @api.depends('list_price', 'discount_percentage')
      def _compute_discounted_price(self):
-         for product in self:
-             if product.discount_percentage > 0:
-                 product.discounted_price = product.list_price * (1 - (product.discount_percentage / 100))
-             else:
-                 product.discounted_price = product.list_price
-
+          for product in self:
+               if product.discount_percentage > 0:
+                    product.discounted_price = product.list_price * (1 - (product.discount_percentage / 100))
+               else:
+                    product.discounted_price = product.list_price
     
     
     
