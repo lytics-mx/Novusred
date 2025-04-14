@@ -15,4 +15,5 @@ class ProductTag(models.Model):
             for tag in self:
                 products = self.env['product.template'].search([('tag_ids', 'in', tag.id)])
                 products._compute_discount_percentage_from_tags()
+                products._compute_discounted_price()
         return res
