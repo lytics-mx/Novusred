@@ -68,9 +68,14 @@
         'views/marca_web.xml',
         'views/category/category.xml',
         'views/shop/history.xml',
+
+
+# OFERTAS        
         'views/shop/ofertas.xml',
-        'views/shop/offers_views.xml'
-        
+        'views/shop/offers_views.xml',
+        'views/ofertas/action_offers.xml',
+        'views/ofertas/menu_offers.xml',
+        'views/ofertas/product_template_tree_view.xml',        
 
 
 
