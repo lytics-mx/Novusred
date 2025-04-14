@@ -15,5 +15,5 @@ class ProductTag(models.Model):
             for tag in self:
                 products = self.env['product.template'].search([('tag_ids', 'in', tag.id)])
                 for product in products:
-                    product.discount_percentage = tag.discount_percentage
+                    product._onchange_tag_ids()
         return res
