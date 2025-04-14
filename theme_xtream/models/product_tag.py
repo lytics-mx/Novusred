@@ -8,15 +8,6 @@ class ProductTag(models.Model):
         help="Porcentaje de descuento aplicado a los productos con esta etiqueta."
     )
 
-    @api.onchange('discount_percentage')
-    def _onchange_discount_percentage(self):
-        """Aplica el descuento automáticamente a las plantillas de producto relacionadas."""
-        for tag in self:
-            if tag.discount_percentage >= 0:
-                products = self.env['product.template'].search([('tag_ids', 'in', tag.id)])
-                for product in products:
-                    product.discount_percentage = tag.discount_percentage
-
     def write(self, vals):
         """Aplica el descuento a los productos relacionados al guardar."""
         res = super(ProductTag, self).write(vals)
@@ -26,3 +17,13 @@ class ProductTag(models.Model):
                 for product in products:
                     product.discount_percentage = tag.discount_percentage
         return res
+
+    @api.model
+    def create(self, vals):
+        """Aplica el descuento a los productos relacionados al crear una etiqueta."""
+        tag = super(ProductTag, self).create(vals)
+        if 'discount_percentage' in vals:
+            products = self.env['product.template'].search([('tag_ids', 'in', tag.id)])
+            for product in products:
+                product.discount_percentage = tag.discount_percentage
+        return tag
