@@ -43,7 +43,15 @@ class ProductTemplate(models.Model):
           store=True,
           help="Precio del producto después de aplicar el descuento."
      )
-
+     tag_ids = fields.Many2many(
+          'product.tag',
+          'product_template_tag_rel',  # Nombre de la tabla de relación
+          'product_id',  # Campo de relación al producto
+          'tag_id',  # Campo de relación a la etiqueta
+          string="Etiquetas",
+          help="Etiquetas asociadas con este producto."
+     )
+     
      @api.depends('list_price', 'discount_percentage')
      def _compute_discounted_price(self):
          for product in self:
