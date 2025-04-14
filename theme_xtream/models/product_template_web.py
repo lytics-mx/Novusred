@@ -32,18 +32,9 @@ class ProductTemplate(models.Model):
      )
      is_discounted = fields.Boolean(string="En Oferta", default=False, help="Indica si el producto está en oferta.") 
     
-     product_tag_id = fields.Many2one(
-          'product.tag',
-          string="Etiqueta de Producto",
-          help="Selecciona una etiqueta de producto para aplicar el descuento."
-     )
-
      discount_percentage = fields.Float(
           string="Descuento (%)",
-          related='product_tag_id.discount_percentage',
-          store=True,
-          readonly=True,
-          help="Porcentaje de descuento aplicado al producto desde la etiqueta."
+          help="Porcentaje de descuento aplicado al producto."
      )
 
      discounted_price = fields.Float(
@@ -62,7 +53,6 @@ class ProductTemplate(models.Model):
                else:
                     product.discounted_price = product.list_price
                     product.is_discounted = False
-
 
      @api.depends('brand_type_id')
      def _compute_brand_website(self):
