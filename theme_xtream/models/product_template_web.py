@@ -37,41 +37,23 @@ class ProductTemplate(models.Model):
           help="Porcentaje de descuento aplicado al producto."
      )
 
-
      discounted_price = fields.Float(
-         string="Precio con Descuento",
-         compute="_compute_discounted_price",
-         store=True,
-         help="Precio del producto después de aplicar el descuento."
-     )
-     tag_ids = fields.Many2many(
-          'product.tag',
-          'product_template_tag_rel',  # Nombre de la tabla de relación
-          'product_id',  # Campo de relación al producto
-          'tag_id',  # Campo de relación a la etiqueta
-          string="Etiquetas",
-          help="Etiquetas asociadas con este producto."
+          string="Precio con Descuento",
+          compute="_compute_discounted_price",
+          store=True,
+          help="Precio del producto después de aplicar el descuento."
      )
 
      @api.depends('list_price', 'discount_percentage')
      def _compute_discounted_price(self):
-         """Calcula el precio ajustado basado en el descuento."""
-         for product in self:
-             if product.discount_percentage > 0:
-                 product.discounted_price = product.list_price * (1 - (product.discount_percentage / 100))
-             else:
-                 product.discounted_price = product.list_price
-    
-     @api.depends('tag_ids.discount_percentage')
-     def _compute_discount_percentage_from_tags(self):
-         """Actualiza el descuento basado en las etiquetas relacionadas."""
-         for product in self:
-             if product.tag_ids:
-                 # Toma el mayor descuento de las etiquetas relacionadas
-                 product.discount_percentage = max(product.tag_ids.mapped('discount_percentage'), default=0)
-             else:
-                 product.discount_percentage = 0
-    
+          for product in self:
+               if product.discount_percentage > 0:
+                    product.discounted_price = product.list_price * (1 - (product.discount_percentage / 100))
+                    product.is_discounted = True
+               else:
+                    product.discounted_price = product.list_price
+                    product.is_discounted = False
+
      @api.depends('brand_type_id')
      def _compute_brand_website(self):
           for product in self:
