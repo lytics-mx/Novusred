@@ -64,16 +64,35 @@ class ProductTemplate(models.Model):
              else:
                  product.discounted_price = product.list_price
 
-     @api.depends('tag_ids.discount_percentage')
+     # @api.depends('tag_ids.discount_percentage')
+     # def _compute_discount_percentage_from_tags(self):
+     #     """Obtiene el porcentaje de descuento más alto de las etiquetas asociadas."""
+     #     for product in self:
+     #         # Busca el mayor descuento entre todas las etiquetas
+     #         max_discount = 0
+     #         if product.tag_ids:
+     #             max_discount = max(tag.discount_percentage for tag in product.tag_ids)
+     #         product.discount_percentage = max_discount
+
+
+     @api.onchange('tag_ids')
      def _compute_discount_percentage_from_tags(self):
-         """Obtiene el porcentaje de descuento más alto de las etiquetas asociadas."""
+         """Recalcula el descuento y el precio con descuento al cambiar las etiquetas."""
          for product in self:
-             # Busca el mayor descuento entre todas las etiquetas
+             # Recalcula el porcentaje de descuento
              max_discount = 0
              if product.tag_ids:
                  max_discount = max(tag.discount_percentage for tag in product.tag_ids)
              product.discount_percentage = max_discount
-                 
+     
+             # Recalcula el precio con descuento
+             if product.discount_percentage > 0:
+                 discount_amount = product.list_price * (product.discount_percentage / 100)
+                 product.discounted_price = product.list_price - discount_amount
+             else:
+                 product.discounted_price = product.list_price
+
+
      @api.depends('brand_type_id')
      def _compute_brand_website(self):
           for product in self:
