@@ -33,8 +33,10 @@ class ProductTemplate(models.Model):
      is_discounted = fields.Boolean(string="En Oferta", default=False, help="Indica si el producto está en oferta.") 
     
      discount_percentage = fields.Float(
-          string="Descuento (%)",
-          help="Porcentaje de descuento aplicado al producto."
+         string="Descuento (%)",
+         compute="_compute_discount_percentage_from_tags",
+         store=True,
+         help="Porcentaje de descuento aplicado al producto."
      )
 
      discounted_price = fields.Float(
@@ -68,7 +70,7 @@ class ProductTemplate(models.Model):
                  # Toma el mayor descuento de las etiquetas relacionadas
                  product.discount_percentage = max(product.tag_ids.mapped('discount_percentage'), default=0)
              else:
-                 product.discount_percentage = 0       
+                 product.discount_percentage = 0
 
      @api.depends('brand_type_id')
      def _compute_brand_website(self):
