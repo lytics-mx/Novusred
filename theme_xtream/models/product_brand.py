@@ -1,4 +1,4 @@
-from odoo import models, fields
+from odoo import models, fields,api
 
 class BrandType(models.Model):
     _name = 'brand.type'
@@ -9,10 +9,12 @@ class BrandType(models.Model):
 
     
     product_count = fields.Integer(
-            string="Cantidad de Productos",
-            compute="_compute_product_count"
-        )
-    
+        string="Cantidad de Productos",
+        compute="_compute_product_count",
+        store=True
+    )
+
+    @api.depends('product_tmpl_ids')
     def _compute_product_count(self):
-        for brand in self:
-            brand.product_count = self.env['product.template'].search_count([('brand_type_id', '=', brand.id)])   
+        for category in self:
+            category.product_count = len(category.product_tmpl_ids)
