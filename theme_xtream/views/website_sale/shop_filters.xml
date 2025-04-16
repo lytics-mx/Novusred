@@ -1,30 +1,14 @@
 <odoo>
     <template id="products_grid_filters" inherit_id="website_sale.products">
         <xpath expr="//div[@id='products_grid']" position="before">
-            <div class="o_wsale_filters">
-                <!-- Filtro de Categorías -->
-                <div class="o_wsale_filter_section">
-                    <h5>Categorías</h5>
-                    <ul>
-                        <t t-foreach="categories" t-as="category">
-                            <li>
-                                <a t-att-href="'?category_id=%s' % category.id" t-esc="category.name"/>
-                            </li>
-                        </t>
-                    </ul>
-                </div>
-
-                <!-- Filtro de Marcas -->
-                <div class="o_wsale_filter_section">
-                    <h5>Marcas</h5>
-                    <ul>
-                        <t t-foreach="request.env['brand.type'].search([])" t-as="brand">
-                            <li>
-                                <a t-att-href="'?brand_id=%s' % brand.id" t-esc="brand.name"/>
-                            </li>
-                        </t>
-                    </ul>
-                </div>
+            <div>
+                <label>Filtrar por Marca:</label>
+                <select name="brand" id="brand_filter" class="form-control">
+                    <option value="">Todas las marcas</option>
+                    <t t-foreach="request.env['brand.type'].search([])" t-as="brand">
+                        <option t-att-value="brand.id" t-esc="brand.name"/>
+                    </t>
+                </select>
             </div>
         </xpath>
     </template>
