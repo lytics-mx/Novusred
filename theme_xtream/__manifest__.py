@@ -80,7 +80,6 @@
         'views/website_sale/product_template.xml',
         'views/website_sale/shop_filters.xml',
 
-        'static/src/css/custom.css',
 
     ],
     'assets': {
@@ -94,6 +93,9 @@
           '/theme_xtream/static/src/js/new_arrivals.js',
           '/theme_xtream/static/src/js/testimonials.js',
           '/theme_xtream/static/src/js/custom.js',
+          '/theme_xtream/static/src/css/custom.css',
+
+
       ]
     },
     'images': [
