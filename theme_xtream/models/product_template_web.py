@@ -1,8 +1,5 @@
 from odoo import models, fields, api
 
-
-
-
 class ProductTemplate(models.Model):
      _inherit = 'product.template'
 #Elimninar el campo de la marca el de brand_id     
