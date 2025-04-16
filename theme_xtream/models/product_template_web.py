@@ -27,20 +27,18 @@ class ProductTemplate(models.Model):
           string='Marca',
           help='Select the brand type for this product'
      )
-     is_discounted = fields.Boolean(string="En Oferta", default=False, help="Indica si el producto está en oferta.") 
-    
-     discount_value = fields.Float(
-          string="Valor del Descuento",
-          compute="_compute_discount_from_tags",
-          store=True,
-          help="Valor del descuento aplicado al producto. Puede ser un porcentaje o una cantidad fija."
-     )
-
      is_fixed_discount = fields.Boolean(
           string="¿Descuento Fijo?",
           compute="_compute_discount_from_tags",
           store=True,
-          help="Indica si el descuento aplicado es fijo o porcentual."
+          help="Si está activado, el descuento será una cantidad fija. Si no, será un porcentaje."
+     )
+
+     discount_value = fields.Float(
+          string="Valor del Descuento",
+          compute="_compute_discount_from_tags",
+          store=True,
+          help="Valor del descuento aplicado al producto. Puede ser un porcentaje o una cantidad fija dependiendo de la configuración."
      )
 
      discounted_price = fields.Float(
