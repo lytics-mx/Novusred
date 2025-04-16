@@ -7,7 +7,18 @@ class ProductTag(models.Model):
         string="Descuento (%)",
         help="Porcentaje de descuento aplicado a los productos con esta etiqueta."
     )
+    discount_value = fields.Float(
+        string="Descuento",
+        help="Valor del descuento. Si es < 1, se interpreta como porcentaje. Si es >= 1, se interpreta como descuento fijo (en pesos)."
+    )
 
+    @api.constrains('discount_value')
+    def _check_discount_value(self):
+        """Valida que el descuento sea un valor positivo."""
+        for tag in self:
+            if tag.discount_value < 0:
+                raise ValueError("El valor del descuento no puede ser negativo.")
+            
     def write(self, vals):
         """Aplica el descuento a los productos relacionados al guardar."""
         res = super(ProductTag, self).write(vals)
