@@ -44,24 +44,42 @@ class ProductTemplate(models.Model):
 
      # Eliminar el campo tag_ids y usar product_tag_ids directamente
      
-     @api.depends('product_tag_ids.discount_percentage')
+     @api.depends('product_tag_ids.discount_percentage', 'product_tag_ids.is_percentage')
      def _compute_discount_percentage_from_tags(self):
-         """Calcula el porcentaje de descuento basado en las etiquetas asignadas."""
-         for product in self:
-             if product.product_tag_ids:
-                 # Toma el porcentaje de descuento más alto entre las etiquetas asignadas
-                 product.discount_percentage = max(tag.discount_percentage for tag in product.product_tag_ids)
-             else:
-                 product.discount_percentage = 0
+          """Calcula el descuento basado en las etiquetas asignadas."""
+          for product in self:
+               if product.product_tag_ids:
+                    percentage_discounts = [
+                         tag.discount_percentage for tag in product.product_tag_ids if tag.is_percentage
+                    ]
+                    fixed_discounts = [
+                         tag.discount_percentage for tag in product.product_tag_ids if not tag.is_percentage
+                    ]
+                    # Toma el mayor porcentaje si hay descuentos porcentuales
+                    product.discount_percentage = max(percentage_discounts) if percentage_discounts else 0
+                    # Suma los descuentos fijos
+                    product.fixed_discount = sum(fixed_discounts)
+               else:
+                    product.discount_percentage = 0
+                    product.fixed_discount = 0
 
-     @api.depends('list_price', 'discount_percentage')
+     @api.depends('list_price', 'discount_percentage', 'fixed_discount')
      def _compute_discounted_price(self):
           """Calcula el precio ajustado basado en el descuento."""
           for product in self:
+               price = product.list_price
                if product.discount_percentage > 0:
-                    product.discounted_price = product.list_price * (1 - (product.discount_percentage / 100))
-               else:
-                    product.discounted_price = product.list_price
+                    price *= (1 - (product.discount_percentage / 100))
+               if product.fixed_discount > 0:
+                    price -= product.fixed_discount
+               product.discounted_price = max(price, 0)  # Evita precios negativos
+
+     fixed_discount = fields.Float(
+          string="Descuento Fijo",
+          compute="_compute_discount_percentage_from_tags",
+          store=True,
+          help="Cantidad fija de descuento aplicada al producto."
+     )
 
      @api.depends('brand_type_id')
      def _compute_brand_website(self):
