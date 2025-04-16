@@ -34,6 +34,8 @@ class ProductTemplate(models.Model):
     
      discount_percentage = fields.Float(
           string="Descuento (%)",
+          compute="_compute_discount_percentage_from_tags",
+          store=True,
           help="Porcentaje de descuento aplicado al producto."
      )
 
@@ -53,13 +55,13 @@ class ProductTemplate(models.Model):
           help="Etiquetas asociadas con este producto."
      )
 
-     @api.depends('tag_ids')
+     @api.depends('tag_ids.discount_percentage')
      def _compute_discount_percentage_from_tags(self):
-          """Replica el porcentaje de descuento de la etiqueta en el producto."""
+          """Calcula el porcentaje de descuento basado en las etiquetas asignadas."""
           for product in self:
                if product.tag_ids:
-                    # Toma el porcentaje de la primera etiqueta asignada
-                    product.discount_percentage = product.tag_ids[0].discount_percentage
+                    # Toma el porcentaje de descuento más alto entre las etiquetas asignadas
+                    product.discount_percentage = max(tag.discount_percentage for tag in product.tag_ids)
                else:
                     product.discount_percentage = 0
 
@@ -71,17 +73,6 @@ class ProductTemplate(models.Model):
                     product.discounted_price = product.list_price * (1 - (product.discount_percentage / 100))
                else:
                     product.discounted_price = product.list_price
-    
-    
-     @api.depends('tag_ids.discount_percentage')
-     def _compute_discount_percentage_from_tags(self):
-          """Replica el porcentaje de descuento de la etiqueta en el producto."""
-          for product in self:
-               if product.tag_ids:
-                    # Toma el porcentaje de la primera etiqueta asignada
-                    product.discount_percentage = product.tag_ids[0].discount_percentage
-               else:
-                    product.discount_percentage = 0
 
      @api.depends('brand_type_id')
      def _compute_brand_website(self):
