@@ -51,44 +51,42 @@ class ProductTemplate(models.Model):
           string="Etiquetas",
           help="Etiquetas asociadas con este producto."
      )
+     
      @api.depends('list_price', 'discount_percentage')
      def _compute_discounted_price(self):
-         """Calcula el precio ajustado basado en el descuento."""
-         for product in self:
-             if product.discount_percentage > 0:
-                 product.discounted_price = product.list_price * (1 - (product.discount_percentage / 100))
-             else:
-                 product.discounted_price = product.list_price
+          """Calcula el precio ajustado basado en el descuento."""
+          for product in self:
+               if product.discount_percentage > 0:
+                    product.discounted_price = product.list_price * (1 - (product.discount_percentage / 100))
+               else:
+                    product.discounted_price = product.list_price
 
      @api.depends('tag_ids.discount_percentage')
      def _compute_discount_percentage_from_tags(self):
-         """Actualiza el descuento basado en las etiquetas relacionadas."""
-         for product in self:
-             if product.tag_ids:
-                 # Toma el mayor descuento de las etiquetas relacionadas
-                 product.discount_percentage = max(product.tag_ids.mapped('discount_percentage'), default=0)
-             else:
-                 product.discount_percentage = 0
-
-                 
-
+          """Actualiza el descuento basado en las etiquetas relacionadas."""
+          for product in self:
+               if product.tag_ids:
+                    # Toma el mayor descuento de las etiquetas relacionadas
+                    product.discount_percentage = max(product.tag_ids.mapped('discount_percentage'), default=0)
+               else:
+                    product.discount_percentage = 0
 
      @api.onchange('tag_ids')
      def _onchange_tag_ids(self):
-         """Recalcula el descuento y el precio con descuento al cambiar las etiquetas."""
-         for product in self:
-             # Recalcula el porcentaje de descuento
-             max_discount = 0
-             if product.tag_ids:
-                 max_discount = max(tag.discount_percentage for tag in product.tag_ids)
-             product.discount_percentage = max_discount
-     
-             # Recalcula el precio con descuento
-             if product.discount_percentage > 0:
-                 discount_amount = product.list_price * (product.discount_percentage / 100)
-                 product.discounted_price = product.list_price - discount_amount
-             else:
-                 product.discounted_price = product.list_price
+          """Recalcula el descuento y el precio con descuento al cambiar las etiquetas."""
+          for product in self:
+               # Recalcula el porcentaje de descuento
+               max_discount = 0
+               if product.tag_ids:
+                    max_discount = max(tag.discount_percentage for tag in product.tag_ids)
+               product.discount_percentage = max_discount
+
+               # Recalcula el precio con descuento
+               if product.discount_percentage > 0:
+                    discount_amount = product.list_price * (product.discount_percentage / 100)
+                    product.discounted_price = product.list_price - discount_amount
+               else:
+                    product.discounted_price = product.list_price
 
 
      @api.depends('brand_type_id')
