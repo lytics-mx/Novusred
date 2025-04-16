@@ -47,13 +47,21 @@ class ProductTemplate(models.Model):
      )
 
      tag_ids = fields.Many2many(
-          'product.tag',
-          'product_template_tag_rel',  # Nombre de la tabla de relación
-          'product_id',  # Campo de relación al producto
-          'tag_id',  # Campo de relación a la etiqueta
-          string="Etiquetas",
-          help="Etiquetas asociadas con este producto."
+         'product.tag',
+         'product_template_tag_rel',  # Nombre de la tabla de relación
+         'product_id',  # Campo de relación al producto
+         'tag_id',  # Campo de relación a la etiqueta
+         string="Etiquetas",
+         compute="_compute_combined_tags",
+         store=True,
+         help="Etiquetas asociadas con este producto, incluyendo las de product_tag_ids."
      )
+     
+     @api.depends('product_tag_ids')
+     def _compute_combined_tags(self):
+         """Replica las etiquetas de product_tag_ids en tag_ids."""
+         for product in self:
+             product.tag_ids = product.product_tag_ids
 
      @api.depends('tag_ids.discount_percentage')
      def _compute_discount_percentage_from_tags(self):
