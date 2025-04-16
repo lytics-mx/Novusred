@@ -56,7 +56,6 @@
         'views/policies/payment_policies.xml',
 
 
-        # 'views/inventory_control/product_views.xml',
         'views/inventory_control/brand_type.xml',
         # 'views/marca_menu.xml',
         'views/website_descubre.xml',
@@ -76,7 +75,10 @@
         # 'views/shop/ofertas/action_offers.xml',
         # 'views/shop/ofertas/menu_offers.xml',
         'views/shop/ofertas/product_template_tree_view.xml',
-
+        
+        
+        'views/website_sale/product_template.xml',
+        'views/website_sale/shop_filters.xml',
 
     ],
     'assets': {
