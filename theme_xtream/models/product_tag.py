@@ -19,7 +19,8 @@ class ProductTag(models.Model):
         res = super(ProductTag, self).write(vals)
         if 'discount_percentage' in vals or 'is_percentage' in vals:
             for tag in self:
-                products = self.env['product.template'].search([('tag_ids', 'in', tag.id)])
+                # Cambiar 'tag_ids' por 'product_tag_ids'
+                products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
                 products._compute_discount_percentage_from_tags()
                 products._compute_discounted_price()
         return res
