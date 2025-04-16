@@ -80,6 +80,8 @@
         'views/website_sale/product_template.xml',
         'views/website_sale/shop_filters.xml',
 
+        'static/src/css/custom.css',
+
     ],
     'assets': {
       'web.assets_frontend': [

@@ -1,14 +1,51 @@
 <odoo>
     <template id="products_grid_filters" inherit_id="website_sale.products">
-        <xpath expr="//div[@id='products_grid']" position="before">
-            <div>
-                <label>Filtrar por Marca:</label>
-                <select name="brand" id="brand_filter" class="form-control">
-                    <option value="">Todas las marcas</option>
-                    <t t-foreach="request.env['brand.type'].search([])" t-as="brand">
-                        <option t-att-value="brand.id" t-esc="brand.name"/>
-                    </t>
-                </select>
+        <xpath expr="//div[@id='products_grid_wrapper']" position="before">
+            <div class="o_wsale_filters">
+                <!-- Filtro de Categorías -->
+                <div class="o_wsale_filter_section">
+                    <h5>Categorías</h5>
+                    <ul>
+                        <t t-foreach="categories" t-as="category">
+                            <li>
+                                <a t-att-href="'?category_id=%s' % category.id" t-esc="category.name"/>
+                                <span t-esc="'(%s)' % category.product_count"/>
+                            </li>
+                        </t>
+                    </ul>
+                </div>
+
+                <!-- Filtro de Marcas -->
+                <div class="o_wsale_filter_section">
+                    <h5>Marcas</h5>
+                    <ul>
+                        <t t-foreach="request.env['brand.type'].search([])" t-as="brand">
+                            <li>
+                                <a t-att-href="'?brand_id=%s' % brand.id" t-esc="brand.name"/>
+                                <span t-esc="'(%s)' % brand.product_count"/>
+                            </li>
+                        </t>
+                    </ul>
+                </div>
+
+                <!-- Filtro de Ofertas -->
+                <div class="o_wsale_filter_section">
+                    <h5>Tipos de Oferta</h5>
+                    <ul>
+                        <li>
+                            <a href="?offer=day">Oferta del día</a>
+                            <span>(30)</span>
+                        </li>
+                        <li>
+                            <a href="?offer=flash">Oferta relámpago</a>
+                            <span>(10)</span>
+                        </li>
+                        <li>
+                            <a href="?offer=hour">Oferta hasta esta hora</a>
+                            <span>(50)</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </xpath>
     </template>
