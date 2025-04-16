@@ -1,18 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <record id="view_product_template_form_inherit" model="ir.ui.view">
         <field name="name">product.template.form.inherit</field>
         <field name="model">product.template</field>
-        <field name="inherit_id" ref="product.product_template_only_form_view" />
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='public_categ_ids']" position="after">
-                <!-- Campo para seleccionar etiquetas -->
-                <!-- <field name="tag_ids" widget="many2many_tags" /> -->
-
                 <!-- Campo de porcentaje de descuento (calculado automáticamente) -->
-                <field name="discount_percentage" readonly="1" />
-
+                <field name="discount_percentage" readonly="1"/>
                 <!-- Campo de precio con descuento (calculado automáticamente) -->
-                <field name="discounted_price" readonly="1" />
+                <field name="discounted_price" readonly="1"/>
+            </xpath>
+            
+            <!-- Campo de documentos técnicos -->
+            <xpath expr="//sheet/notebook" position="inside">
+                <page string="Documentos técnicos">
+                    <group>
+                        <field name="technical_document_ids" widget="many2many_binary" options="{'mimetype': 'application/*'}"/>
+                    </group>
+                </page>
+            </xpath>
+            
+            <!-- Mover campo de marca al formulario principal -->
+            <xpath expr="//field[@name='invoice_policy']" position="after">
+                <field name="brand_type_id"/>
             </xpath>
         </field>
     </record>
