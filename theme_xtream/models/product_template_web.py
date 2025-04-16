@@ -46,24 +46,17 @@ class ProductTemplate(models.Model):
           help="Precio del producto después de aplicar el descuento."
      )
 
-     tag_ids = fields.Many2many(
-          'product.tag',
-          'product_template_tag_rel',  # Nombre de la tabla de relación
-          'product_id',  # Campo de relación al producto
-          'tag_id',  # Campo de relación a la etiqueta
-          string="Etiquetas",
-          help="Etiquetas asociadas con este producto."
-     )
-
-     @api.depends('tag_ids.discount_percentage')
+     # Eliminar el campo tag_ids y usar product_tag_ids directamente
+     
+     @api.depends('product_tag_ids.discount_percentage')
      def _compute_discount_percentage_from_tags(self):
-          """Calcula el porcentaje de descuento basado en las etiquetas asignadas."""
-          for product in self:
-               if product.tag_ids:
-                    # Toma el porcentaje de descuento más alto entre las etiquetas asignadas
-                    product.discount_percentage = max(tag.discount_percentage for tag in product.tag_ids)
-               else:
-                    product.discount_percentage = 0
+         """Calcula el porcentaje de descuento basado en las etiquetas asignadas."""
+         for product in self:
+             if product.product_tag_ids:
+                 # Toma el porcentaje de descuento más alto entre las etiquetas asignadas
+                 product.discount_percentage = max(tag.discount_percentage for tag in product.product_tag_ids)
+             else:
+                 product.discount_percentage = 0
 
      @api.depends('list_price', 'discount_percentage')
      def _compute_discounted_price(self):
