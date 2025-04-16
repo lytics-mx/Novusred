@@ -71,7 +71,17 @@ class ProductTemplate(models.Model):
                     product.discounted_price = product.list_price * (1 - (product.discount_percentage / 100))
                else:
                     product.discounted_price = product.list_price
-
+    
+    
+     @api.depends('tag_ids.discount_percentage')
+     def _compute_discount_percentage_from_tags(self):
+          """Replica el porcentaje de descuento de la etiqueta en el producto."""
+          for product in self:
+               if product.tag_ids:
+                    # Toma el porcentaje de la primera etiqueta asignada
+                    product.discount_percentage = product.tag_ids[0].discount_percentage
+               else:
+                    product.discount_percentage = 0
 
      @api.depends('brand_type_id')
      def _compute_brand_website(self):
