@@ -41,35 +41,15 @@ class ProductTag(models.Model):
         return res
 
     @api.model
-    def _update_discounts(self):
-        """Actualiza los descuentos según las fechas y condiciones."""
-        current_time = fields.Datetime.now()
+    def update_discount_percentage(self):
+        """Actualiza el descuento a 0 si está fuera de las fechas o no es fin de semana."""
+        current_datetime = datetime.now()
         for tag in self.search([]):
-            products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
-            
-            if tag.start_date and tag.end_date:
-                # Verificar si está dentro del rango de fechas
-                if tag.start_date <= current_time <= tag.end_date:
-                    # Si aplica solo fines de semana, verificar el día
-                    if tag.weekend_only and current_time.weekday() not in (5, 6):
-                        # Quitar la etiqueta si no es fin de semana
-                        for product in products:
-                            product.write({'product_tag_ids': [(3, tag.id)]})
-                    else:
-                        # Asegurarse de que la etiqueta esté aplicada
-                        for product in products:
-                            if tag.id not in product.product_tag_ids.ids:
-                                product.write({'product_tag_ids': [(4, tag.id)]})
-                else:
-                    # Quitar la etiqueta si está fuera del rango de fechas
-                    for product in products:
-                        product.write({'product_tag_ids': [(3, tag.id)]})
-            else:
-                # Si no hay rango de fechas, quitar la etiqueta
-                for product in products:
-                    product.write({'product_tag_ids': [(3, tag.id)]})
-    
-            # Actualizar los productos relacionados
-            products._compute_discount_percentage_from_tags()
-            products._compute_discounted_price()
+            if tag.end_date and current_datetime > tag.end_date:
+                # Si la fecha actual es posterior a la fecha de fin
+                tag.discount_percentage = 0
+            elif tag.weekend_only:
+                # Si es solo para fines de semana y no es fin de semana
+                if current_datetime.weekday() not in (5, 6):  # 5 = sábado, 6 = domingo
+                    tag.discount_percentage = 0
            
