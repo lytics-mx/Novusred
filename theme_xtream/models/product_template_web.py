@@ -107,3 +107,11 @@ class ProductTemplate(models.Model):
           # Combina los filtros con los argumentos existentes
           args = AND([args, OR([supplier_filter, category_filter])])
           return super(ProductTemplate, self).search(args, offset=offset, limit=limit, order=order, count=count)
+     
+
+     seller_partner_id = fields.Many2one(
+          'res.partner',
+          string="Proveedor (Relacionado)",
+          related='seller_ids.partner_id',
+          store=True
+     )    
