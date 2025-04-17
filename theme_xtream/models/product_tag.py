@@ -1,6 +1,6 @@
 from odoo import models, fields, api
 from datetime import datetime
-import pytz  # Importamos pytz para manejar zonas horarias
+import pytz
 
 class ProductTag(models.Model):
     _inherit = 'product.tag'
@@ -16,20 +16,27 @@ class ProductTag(models.Model):
         help="Si está activado, el descuento se interpreta como un porcentaje. Si no, como una cantidad fija."
     )
 
-    start_date = fields.Datetime(
-        string="Fecha de inicio",
-        help="Fecha y hora en la que la etiqueta comienza a aplicar el descuento."
-    )
-
-    end_date = fields.Datetime(
-        string="Fecha de fin",
-        help="Fecha y hora en la que la etiqueta deja de aplicar el descuento."
+    date_range = fields.Datetime(
+        string="Rango de fechas",
+        help="Seleccione el rango de fechas para aplicar el descuento.",
     )
 
     weekend_only = fields.Boolean(
         string="Solo fines de semana",
         help="Si está activado, el descuento solo se aplicará durante los fines de semana."
     )
+
+    @api.onchange('date_range')
+    def _onchange_date_range(self):
+        """Actualiza el descuento a 0 si se selecciona una fecha de fin."""
+        if self.date_range:
+            # Configuramos la zona horaria de México
+            mexico_tz = pytz.timezone('America/Mexico_City')
+            current_datetime = datetime.now(mexico_tz)
+
+            # Si la fecha de fin es menor o igual a la actual, se pone el descuento en 0
+            if self.date_range and self.date_range <= current_datetime:
+                self.discount_percentage = 0
 
     def write(self, vals):
         """Aplica el descuento a los productos relacionados al guardar."""
@@ -40,22 +47,3 @@ class ProductTag(models.Model):
                 products._compute_discount_percentage_from_tags()
                 products._compute_discounted_price()
         return res
-
-    @api.model
-    def update_discount_percentage(self):
-        """Actualiza el descuento a 0 si está fuera de las fechas o no es fin de semana."""
-        # Configuramos la zona horaria de México
-        mexico_tz = pytz.timezone('America/Mexico_City')
-        current_datetime = datetime.now(mexico_tz)  # Fecha y hora actual en México
-
-        for tag in self.search([]):
-            if tag.end_date:
-                # Convertimos la fecha de fin a la zona horaria de México
-                end_date_local = tag.end_date.astimezone(mexico_tz)
-                if current_datetime >= end_date_local:
-                    # Si la fecha actual es posterior o igual a la fecha de fin
-                    tag.discount_percentage = 0
-            elif tag.weekend_only:
-                # Si es solo para fines de semana y no es fin de semana
-                if current_datetime.weekday() not in (5, 6):  # 5 = sábado, 6 = domingo
-                    tag.discount_percentage = 0
