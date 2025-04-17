@@ -1,3 +1,4 @@
+from venv import logger
 from odoo import models, fields, api
 from datetime import datetime
 import pytz
@@ -16,30 +17,47 @@ class ProductTag(models.Model):
         help="Si está activado, el descuento se interpreta como un porcentaje. Si no, como una cantidad fija."
     )
 
-    date_range = fields.Datetime(
-        string="Rango de fechas",
-        help="Seleccione el rango de fechas para aplicar el descuento.",
+    start_date = fields.Datetime(
+        string="Fecha de inicio",
+        help="Seleccione la fecha de inicio para aplicar el descuento."
     )
 
-    weekend_only = fields.Boolean(
-        string="Solo fines de semana",
-        help="Si está activado, el descuento solo se aplicará durante los fines de semana."
+    end_date = fields.Datetime(
+        string="Fecha de fin",
+        help="Seleccione la fecha de fin para aplicar el descuento."
     )
 
-    @api.onchange('date_range')
+    @api.onchange('start_date', 'end_date')
     def _onchange_date_range(self):
-        """Actualiza el descuento a 0 si se selecciona una fecha de fin."""
-        if self.date_range:
-            # Configuramos la zona horaria de México
-            mexico_tz = pytz.timezone('America/Mexico_City')
-            current_datetime = datetime.now(mexico_tz)
-    
-            # Convertimos date_range a la misma zona horaria
-            date_range_with_tz = pytz.utc.localize(self.date_range).astimezone(mexico_tz)
-    
-            # Si la fecha de fin es menor o igual a la actual, se pone el descuento en 0
-            if date_range_with_tz <= current_datetime:
-                self.discount_percentage = 0
+        """Valida que las fechas sean correctas y actualiza el descuento si el rango ya pasó."""
+        if self.start_date and self.end_date:
+            try:
+                # Configuramos la zona horaria de México
+                mexico_tz = pytz.timezone('America/Mexico_City')
+                current_datetime = datetime.now(mexico_tz)
+
+                # Convertimos las fechas a la misma zona horaria
+                start_date_with_tz = pytz.utc.localize(self.start_date).astimezone(mexico_tz)
+                end_date_with_tz = pytz.utc.localize(self.end_date).astimezone(mexico_tz)
+
+                # Validamos que la fecha de inicio sea menor o igual a la fecha de fin
+                if start_date_with_tz > end_date_with_tz:
+                    self.start_date = False
+                    self.end_date = False
+                    return {
+                        'warning': {
+                            'title': "Error en el rango de fechas",
+                            'message': "La fecha de inicio no puede ser mayor que la fecha de fin.",
+                        }
+                    }
+
+                # Si el rango de fechas ya pasó, se pone el descuento en 0
+                if end_date_with_tz <= current_datetime:
+                    self.discount_percentage = 0
+            except Exception as e:
+                # Manejo de errores para evitar que el sistema falle
+                _logger.error(f"Error en _onchange_date_range: {e}")
+
     def write(self, vals):
         """Aplica el descuento a los productos relacionados al guardar."""
         res = super(ProductTag, self).write(vals)
