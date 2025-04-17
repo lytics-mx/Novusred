@@ -115,3 +115,5 @@ class ProductTemplate(models.Model):
      #      related='seller_ids.partner_id',
      #      store=True
      # )    
+
+     
