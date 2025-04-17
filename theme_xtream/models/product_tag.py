@@ -67,3 +67,6 @@ class ProductTag(models.Model):
                 products._compute_discount_percentage_from_tags()
                 products._compute_discounted_price()
         return res
+    
+
+
