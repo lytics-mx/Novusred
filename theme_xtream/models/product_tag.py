@@ -1,5 +1,5 @@
 from odoo import models, fields, api
-from datetime import date, datetime, timedelta
+from datetime import date
 
 class ProductTag(models.Model):
     _inherit = 'product.tag'
@@ -18,11 +18,6 @@ class ProductTag(models.Model):
     expiration_date = fields.Date(
         string="Fecha de expiración",
         help="Fecha en la que esta etiqueta será eliminada automáticamente de los productos."
-    )
-
-    apply_weekend = fields.Boolean(
-        string="Aplicar en fines de semana",
-        help="Si está activado, el descuento se aplicará automáticamente los fines de semana."
     )
 
     def write(self, vals):
@@ -44,21 +39,3 @@ class ProductTag(models.Model):
             products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
             for product in products:
                 product.write({'product_tag_ids': [(3, tag.id)]})  # Elimina la etiqueta del producto
-
-    @api.model
-    def _apply_weekend_discounts(self):
-        """Aplica descuentos automáticamente los fines de semana."""
-        today = date.today()
-        if today.weekday() in (5, 6):  # 5 = Sábado, 6 = Domingo
-            weekend_tags = self.search([('apply_weekend', '=', True)])
-            for tag in weekend_tags:
-                products = self.env['product.template'].search([('product_tag_ids', 'not in', tag.id)])
-                for product in products:
-                    product.write({'product_tag_ids': [(4, tag.id)]})  # Agrega la etiqueta al producto
-        else:
-            # Si no es fin de semana, elimina las etiquetas de fin de semana
-            weekend_tags = self.search([('apply_weekend', '=', True)])
-            for tag in weekend_tags:
-                products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
-                for product in products:
-                    product.write({'product_tag_ids': [(3, tag.id)]})  # Elimina la etiqueta del producto
