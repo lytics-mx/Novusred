@@ -45,8 +45,8 @@ class ProductTag(models.Model):
         """Actualiza el descuento a 0 si está fuera de las fechas o no es fin de semana."""
         current_datetime = datetime.now()
         for tag in self.search([]):
-            if tag.end_date and current_datetime > tag.end_date:
-                # Si la fecha actual es posterior a la fecha de fin
+            if tag.end_date and current_datetime >= tag.end_date:
+                # Si la fecha actual es posterior o igual a la fecha de fin
                 tag.discount_percentage = 0
             elif tag.weekend_only:
                 # Si es solo para fines de semana y no es fin de semana
