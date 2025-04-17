@@ -1,13 +1,36 @@
 <odoo>
-    <record id="view_product_tag_form_inherit" model="ir.ui.view">
-        <field name="name">product.tag.form.inherit</field>
+    <record id="view_product_tag_form" model="ir.ui.view">
+        <field name="name">product.tag.form</field>
         <field name="model">product.tag</field>
-        <field name="inherit_id" ref="product.product_tag_form_view" />
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='visible_on_ecommerce']" position="after">
-                <field name="discount_percentage" />
-                <field name="is_percentage" />
-            </xpath>
+            <form string="Etiqueta de Producto">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="discount_percentage"/>
+                        <field name="is_percentage"/>
+                        <field name="expiration_date"/>
+                        <field name="apply_weekend" widget="boolean_toggle"/>
+                    </group>
+                </sheet>
+            </form>
         </field>
+    </record>
+
+    <record id="view_product_tag_calendar" model="ir.ui.view">
+        <field name="name">product.tag.calendar</field>
+        <field name="model">product.tag</field>
+        <field name="arch" type="xml">
+            <calendar string="Calendario de Etiquetas" date_start="expiration_date">
+                <field name="name"/>
+                <field name="discount_percentage"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="action_product_tag_calendar" model="ir.actions.act_window">
+        <field name="name">Calendario de Etiquetas</field>
+        <field name="res_model">product.tag</field>
+        <field name="view_mode">calendar,tree,form</field>
     </record>
 </odoo>
