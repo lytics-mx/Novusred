@@ -1,51 +1,26 @@
 from odoo import models, fields, api
-from datetime import date, datetime, timedelta
 
 class ProductTag(models.Model):
     _inherit = 'product.tag'
 
-    # Campos nuevos
-    apply_weekends = fields.Boolean(
-        string="Aplicar solo fines de semana",
-        help="Si está activado, esta etiqueta solo aplica los fines de semana."
-    )
-    duration_hours = fields.Integer(
-        string="Duración en horas",
-        help="Duración en horas después de la cual la etiqueta será eliminada automáticamente."
-    )
-    start_date = fields.Datetime(
-        string="Fecha de inicio",
-        help="Fecha y hora de inicio para aplicar esta etiqueta."
-    )
-    end_date = fields.Datetime(
-        string="Fecha de fin",
-        help="Fecha y hora de fin para aplicar esta etiqueta."
+    discount_percentage = fields.Float(
+        string="Descuento",
+        help="Porcentaje o cantidad de descuento aplicado a los productos con esta etiqueta."
     )
 
-    @api.model
-    def _remove_expired_tags(self):
-        """Elimina etiquetas expiradas de los productos."""
-        today = datetime.now()
-        expired_tags = self.search([
-            '|', '|',
-            ('expiration_date', '<=', today.date()),
-            ('end_date', '<=', today),
-            ('duration_hours', '>', 0)
-        ])
-        for tag in expired_tags:
-            if tag.duration_hours > 0:
-                creation_time = tag.create_date
-                if creation_time + timedelta(hours=tag.duration_hours) <= today:
-                    self._remove_tag_from_products(tag)
-            elif tag.end_date and tag.end_date <= today:
-                self._remove_tag_from_products(tag)
-            elif tag.expiration_date and tag.expiration_date <= today.date():
-                self._remove_tag_from_products(tag)
+    is_percentage = fields.Boolean(
+        string="¿Es porcentaje?",
+        default=True,
+        help="Si está activado, el descuento se interpreta como un porcentaje. Si no, como una cantidad fija."
+    )
 
-    def _remove_tag_from_products(self, tag):
-        """Elimina una etiqueta específica de los productos relacionados."""
-        products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
-        for product in products:
-            product.write({'product_tag_ids': [(3, tag.id)]})  # Elimina la etiqueta del producto
-            if 'discount_percentage' in product._fields:  # Verifica si el campo existe
-                product.write({'discount_percentage': 0})  # Opcional: Reinicia el descuento
+    def write(self, vals):
+        """Aplica el descuento a los productos relacionados al guardar."""
+        res = super(ProductTag, self).write(vals)
+        if 'discount_percentage' in vals or 'is_percentage' in vals:
+            for tag in self:
+                # Cambiar 'tag_ids' por 'product_tag_ids'
+                products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
+                products._compute_discount_percentage_from_tags()
+                products._compute_discounted_price()
+        return res
