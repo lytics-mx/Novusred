@@ -109,14 +109,4 @@ class ProductTemplate(models.Model):
           return super(ProductTemplate, self).search(args, offset=offset, limit=limit, order=order, count=count)     
      
 
-     seller_names = fields.Char(
-        string="Nombres de Proveedores",
-        compute="_compute_seller_names",
-        store=True,
-        help="Nombres de los proveedores asociados al producto, separados por comas."
-    )
-
-     @api.depends('seller_ids.name')
-     def _compute_seller_names(self):
-          for product in self:
-               product.seller_names = ', '.join(product.seller_ids.mapped('name')) if product.seller_ids else ''   
+    
