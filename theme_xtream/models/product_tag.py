@@ -47,4 +47,5 @@ class ProductTag(models.Model):
         products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
         for product in products:
             product.write({'product_tag_ids': [(3, tag.id)]})  # Elimina la etiqueta del producto
-            product.write({'discount_percentage': 0})  # Opcional: Reinicia el descuento
+            if 'discount_percentage' in product._fields:  # Verifica si el campo existe
+                product.write({'discount_percentage': 0})  # Opcional: Reinicia el descuento
