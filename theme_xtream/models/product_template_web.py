@@ -44,51 +44,35 @@ class ProductTemplate(models.Model):
 
      # Eliminar el campo tag_ids y usar product_tag_ids directamente
      
-     @api.depends('product_tag_ids.discount_percentage', 'product_tag_ids.is_percentage', 
-                  'product_tag_ids.start_date', 'product_tag_ids.end_date', 'product_tag_ids.weekend_only')
+     @api.depends('product_tag_ids.discount_percentage', 'product_tag_ids.is_percentage')
      def _compute_discount_percentage_from_tags(self):
-         """Calcula el descuento basado en las etiquetas asignadas, considerando fechas y fines de semana."""
-         current_time = fields.Datetime.now()
-         for product in self:
-             if product.product_tag_ids:
-                 percentage_discounts = []
-                 fixed_discounts = []
-     
-                 for tag in product.product_tag_ids:
-                     # Verificar si la etiqueta está activa según las fechas
-                     if tag.start_date and tag.end_date:
-                         if not (tag.start_date <= current_time <= tag.end_date):
-                             continue  # Saltar etiquetas fuera del rango de fechas
-     
-                     # Verificar si aplica solo fines de semana
-                     if tag.weekend_only:
-                         if current_time.weekday() not in (5, 6):  # 5 = Sábado, 6 = Domingo
-                             continue  # Saltar etiquetas que no aplican fuera del fin de semana
-     
-                     # Agregar descuentos válidos
-                     if tag.is_percentage:
-                         percentage_discounts.append(tag.discount_percentage)
-                     else:
-                         fixed_discounts.append(tag.discount_percentage)
-     
-                 # Toma el mayor porcentaje si hay descuentos porcentuales
-                 product.discount_percentage = max(percentage_discounts) if percentage_discounts else 0
-                 # Suma los descuentos fijos
-                 product.fixed_discount = sum(fixed_discounts)
-             else:
-                 product.discount_percentage = 0
-                 product.fixed_discount = 0
+          """Calcula el descuento basado en las etiquetas asignadas."""
+          for product in self:
+               if product.product_tag_ids:
+                    percentage_discounts = [
+                         tag.discount_percentage for tag in product.product_tag_ids if tag.is_percentage
+                    ]
+                    fixed_discounts = [
+                         tag.discount_percentage for tag in product.product_tag_ids if not tag.is_percentage
+                    ]
+                    # Toma el mayor porcentaje si hay descuentos porcentuales
+                    product.discount_percentage = max(percentage_discounts) if percentage_discounts else 0
+                    # Suma los descuentos fijos
+                    product.fixed_discount = sum(fixed_discounts)
+               else:
+                    product.discount_percentage = 0
+                    product.fixed_discount = 0
 
      @api.depends('list_price', 'discount_percentage', 'fixed_discount')
      def _compute_discounted_price(self):
-         """Calcula el precio ajustado basado en el descuento."""
-         for product in self:
-             price = product.list_price
-             if product.discount_percentage > 0:
-                 price *= (1 - (product.discount_percentage / 100))
-             if product.fixed_discount > 0:
-                 price -= product.fixed_discount
-             product.discounted_price = max(price, 0)  # Evita precios negativos
+          """Calcula el precio ajustado basado en el descuento."""
+          for product in self:
+               price = product.list_price
+               if product.discount_percentage > 0:
+                    price *= (1 - (product.discount_percentage / 100))
+               if product.fixed_discount > 0:
+                    price -= product.fixed_discount
+               product.discounted_price = max(price, 0)  # Evita precios negativos
 
      fixed_discount = fields.Float(
           string="Descuento Fijo",

@@ -47,38 +47,29 @@ class ProductTag(models.Model):
         for tag in self.search([]):
             products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
             
-            if tag.weekend_only:
-                # Verificar si es fin de semana
-                if current_time.weekday() in (5, 6):  # 5 = Sábado, 6 = Domingo
-                    # Asegurarse de que la etiqueta esté aplicada
-                    for product in products:
-                        if tag.id not in product.product_tag_ids.ids:
-                            product.write({'product_tag_ids': [(4, tag.id)]})  # Agregar la etiqueta
-                    tag.discount_percentage = tag.discount_percentage or 0
-                else:
-                    # Quitar la etiqueta si no es fin de semana
-                    for product in products:
-                        product.write({'product_tag_ids': [(3, tag.id)]})  # Quitar la etiqueta
-                    tag.discount_percentage = 0
-            elif tag.start_date and tag.end_date:
+            if tag.start_date and tag.end_date:
                 # Verificar si está dentro del rango de fechas
                 if tag.start_date <= current_time <= tag.end_date:
-                    # Asegurarse de que la etiqueta esté aplicada
-                    for product in products:
-                        if tag.id not in product.product_tag_ids.ids:
-                            product.write({'product_tag_ids': [(4, tag.id)]})  # Agregar la etiqueta
-                    tag.discount_percentage = tag.discount_percentage or 0
+                    # Si aplica solo fines de semana, verificar el día
+                    if tag.weekend_only and current_time.weekday() not in (5, 6):
+                        # Quitar la etiqueta si no es fin de semana
+                        for product in products:
+                            product.write({'product_tag_ids': [(3, tag.id)]})
+                    else:
+                        # Asegurarse de que la etiqueta esté aplicada
+                        for product in products:
+                            if tag.id not in product.product_tag_ids.ids:
+                                product.write({'product_tag_ids': [(4, tag.id)]})
                 else:
                     # Quitar la etiqueta si está fuera del rango de fechas
                     for product in products:
-                        product.write({'product_tag_ids': [(3, tag.id)]})  # Quitar la etiqueta
-                    tag.discount_percentage = 0
+                        product.write({'product_tag_ids': [(3, tag.id)]})
             else:
-                # Si no hay condiciones, mantener el descuento actual
-                continue
+                # Si no hay rango de fechas, quitar la etiqueta
+                for product in products:
+                    product.write({'product_tag_ids': [(3, tag.id)]})
     
             # Actualizar los productos relacionados
             products._compute_discount_percentage_from_tags()
             products._compute_discounted_price()
-
            
