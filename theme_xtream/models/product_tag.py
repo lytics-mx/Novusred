@@ -15,19 +15,19 @@ class ProductTag(models.Model):
         help="Si está activado, el descuento se interpreta como un porcentaje. Si no, como una cantidad fija."
     )
 
-    apply_weekends = fields.Boolean(
-        string="Aplicar solo fines de semana",
-        help="Si está activado, esta etiqueta aplicará el descuento solo los fines de semana."
-    )
-
     start_date = fields.Datetime(
         string="Fecha de inicio",
-        help="Fecha y hora de inicio para aplicar el descuento."
+        help="Fecha y hora en la que la etiqueta comienza a aplicar el descuento."
     )
 
     end_date = fields.Datetime(
         string="Fecha de fin",
-        help="Fecha y hora de fin para aplicar el descuento."
+        help="Fecha y hora en la que la etiqueta deja de aplicar el descuento."
+    )
+
+    weekend_only = fields.Boolean(
+        string="Solo fines de semana",
+        help="Si está activado, el descuento solo se aplicará durante los fines de semana."
     )
 
     def write(self, vals):
@@ -41,27 +41,27 @@ class ProductTag(models.Model):
         return res
 
     @api.model
-    def _check_expired_discounts(self):
-        """Verifica y elimina descuentos expirados."""
-        now = datetime.now()
+    def _update_discounts(self):
+        """Actualiza los descuentos según las fechas y condiciones."""
+        current_time = fields.Datetime.now()
         for tag in self.search([]):
-            if tag.apply_weekends:
-                # Si es fin de semana, no se hace nada
-                if now.weekday() in [5, 6]:  # 5 = Sábado, 6 = Domingo
-                    continue
+            if tag.weekend_only:
+                # Verificar si es fin de semana
+                if current_time.weekday() in (5, 6):  # 5 = Sábado, 6 = Domingo
+                    tag.discount_percentage = tag.discount_percentage or 0
                 else:
-                    # Si no es fin de semana, restablece el descuento
-                    self._reset_discount(tag)
+                    tag.discount_percentage = 0
             elif tag.start_date and tag.end_date:
-                # Si hay un rango de fechas definido
-                if not (tag.start_date <= now <= tag.end_date):
-                    self._reset_discount(tag)
-            elif tag.end_date and now > tag.end_date:
-                # Si solo hay una fecha de fin
-                self._reset_discount(tag)
+                # Verificar si está dentro del rango de fechas
+                if tag.start_date <= current_time <= tag.end_date:
+                    tag.discount_percentage = tag.discount_percentage or 0
+                else:
+                    tag.discount_percentage = 0
+            else:
+                # Si no hay condiciones, mantener el descuento actual
+                continue
 
-    def _reset_discount(self, tag):
-        """Restablece el descuento a 0 en los productos relacionados."""
-        products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
-        for product in products:
-            product.write({'discount_percentage': 0})
+            # Actualizar los productos relacionados
+            products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
+            products._compute_discount_percentage_from_tags()
+            products._compute_discounted_price()
