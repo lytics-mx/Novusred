@@ -33,11 +33,13 @@ class ProductTag(models.Model):
             # Configuramos la zona horaria de México
             mexico_tz = pytz.timezone('America/Mexico_City')
             current_datetime = datetime.now(mexico_tz)
-
+    
+            # Convertimos date_range a la misma zona horaria
+            date_range_with_tz = pytz.utc.localize(self.date_range).astimezone(mexico_tz)
+    
             # Si la fecha de fin es menor o igual a la actual, se pone el descuento en 0
-            if self.date_range and self.date_range <= current_datetime:
+            if date_range_with_tz <= current_datetime:
                 self.discount_percentage = 0
-
     def write(self, vals):
         """Aplica el descuento a los productos relacionados al guardar."""
         res = super(ProductTag, self).write(vals)
