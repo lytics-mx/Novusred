@@ -1,5 +1,6 @@
 from odoo import models, fields, api
-from datetime import datetime, timedelta
+from datetime import datetime
+import pytz  # Importamos pytz para manejar zonas horarias
 
 class ProductTag(models.Model):
     _inherit = 'product.tag'
@@ -43,13 +44,18 @@ class ProductTag(models.Model):
     @api.model
     def update_discount_percentage(self):
         """Actualiza el descuento a 0 si está fuera de las fechas o no es fin de semana."""
-        current_datetime = datetime.now()
+        # Configuramos la zona horaria de México
+        mexico_tz = pytz.timezone('America/Mexico_City')
+        current_datetime = datetime.now(mexico_tz)  # Fecha y hora actual en México
+
         for tag in self.search([]):
-            if tag.end_date and current_datetime >= tag.end_date:
-                # Si la fecha actual es posterior o igual a la fecha de fin
-                tag.discount_percentage = 0
+            if tag.end_date:
+                # Convertimos la fecha de fin a la zona horaria de México
+                end_date_local = tag.end_date.astimezone(mexico_tz)
+                if current_datetime >= end_date_local:
+                    # Si la fecha actual es posterior o igual a la fecha de fin
+                    tag.discount_percentage = 0
             elif tag.weekend_only:
                 # Si es solo para fines de semana y no es fin de semana
                 if current_datetime.weekday() not in (5, 6):  # 5 = sábado, 6 = domingo
                     tag.discount_percentage = 0
-           
