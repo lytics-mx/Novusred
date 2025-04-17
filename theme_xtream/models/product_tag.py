@@ -67,19 +67,4 @@ class ProductTag(models.Model):
             products._compute_discounted_price()
 
 
-    @api.model
-    def check_expiration_and_update_tags(self):
-        today = datetime.today().date()
-        is_weekend = today.weekday() in (5, 6)  # 5 = Sábado, 6 = Domingo
-
-        tags = self.search([
-            '|',
-            ('end_date', '<', today),
-            ('weekend_only', '=', True)
-        ])
-
-        for tag in tags:
-            if tag.weekend_only and not is_weekend:
-                continue  # No eliminar si es fin de semana y está activo
-            # Eliminar la etiqueta o desactivarla
-            tag.unlink()  # O usa otra lógica para desactivarla           
+           
