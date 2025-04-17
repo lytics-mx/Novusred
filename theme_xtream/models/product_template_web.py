@@ -100,11 +100,10 @@ class ProductTemplate(models.Model):
      @api.model
      def search(self, args, offset=0, limit=None, order=None, count=False):
           """Modifica la búsqueda para filtrar por proveedores o categorías."""
-          # Filtrar por proveedores registrados (partner_id en product.supplierinfo)
-          supplier_filter = [('seller_ids.name', '!=', False)]
-          # Filtrar por categorías registradas
+          # Filtrar por productos que tienen proveedores registrados
+          supplier_filter = [('seller_ids', '!=', [])]
+          # Filtrar por productos que tienen categorías registradas
           category_filter = [('categ_id', '!=', False)]
           # Combina los filtros con los argumentos existentes
           args = AND([args, OR([supplier_filter, category_filter])])
           return super(ProductTemplate, self).search(args, offset=offset, limit=limit, order=order, count=count)
-     
