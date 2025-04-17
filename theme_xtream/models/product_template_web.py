@@ -97,21 +97,21 @@ class ProductTemplate(models.Model):
      #      'product.image', 'product_tmpl_id', string="Additional Images"
      # )
 
-     @api.model
-     def search(self, args, offset=0, limit=None, order=None, count=False):
-          """Modifica la búsqueda para filtrar por proveedores o categorías."""
-          # Filtrar por productos que tienen proveedores registrados
-          supplier_filter = [('seller_ids', '!=', [])]
-          # Filtrar por productos que tienen categorías registradas
-          category_filter = [('categ_id', '!=', False)]
-          # Combina los filtros con los argumentos existentes
-          args = AND([args, OR([supplier_filter, category_filter])])
-          return super(ProductTemplate, self).search(args, offset=offset, limit=limit, order=order, count=count)
+     # @api.model
+     # def search(self, args, offset=0, limit=None, order=None, count=False):
+     #      """Modifica la búsqueda para filtrar por proveedores o categorías."""
+     #      # Filtrar por productos que tienen proveedores registrados
+     #      supplier_filter = [('seller_ids', '!=', [])]
+     #      # Filtrar por productos que tienen categorías registradas
+     #      category_filter = [('categ_id', '!=', False)]
+     #      # Combina los filtros con los argumentos existentes
+     #      args = AND([args, OR([supplier_filter, category_filter])])
+     #      return super(ProductTemplate, self).search(args, offset=offset, limit=limit, order=order, count=count)
      
 
-     seller_partner_id = fields.Many2one(
-          'res.partner',
-          string="Proveedor (Relacionado)",
-          related='seller_ids.partner_id',
-          store=True
-     )    
+     # seller_partner_id = fields.Many2one(
+     #      'res.partner',
+     #      string="Proveedor (Relacionado)",
+     #      related='seller_ids.partner_id',
+     #      store=True
+     # )    
