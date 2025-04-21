@@ -112,5 +112,19 @@ class ProductTag(models.Model):
                 products._compute_discounted_price()
         return res
     
+    def _remove_expired_tags(self):
+        """Elimina etiquetas de productos cuando la fecha de fin ha pasado."""
+        mexico_tz = pytz.timezone('America/Mexico_City')
+        current_datetime = datetime.now(mexico_tz)
 
+        # Buscar etiquetas cuya fecha de fin ya haya pasado
+        expired_tags = self.search([('end_date', '<=', current_datetime)])
+        for tag in expired_tags:
+            # Poner el descuento en 0
+            tag.discount_percentage = 0
+
+            # Buscar productos relacionados y eliminar la etiqueta
+            products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
+            for product in products:
+                product.product_tag_ids = [(3, tag.id)]  # Quitar la etiqueta
 
