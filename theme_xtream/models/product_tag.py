@@ -119,20 +119,20 @@ class ProductTag(models.Model):
         """Elimina etiquetas de productos cuando la fecha de fin ha pasado."""
         mexico_tz = pytz.timezone('America/Mexico_City')
         current_datetime = datetime.now(mexico_tz)
-
+    
         # Buscar etiquetas cuya fecha de fin ya haya pasado
         expired_tags = self.search([('end_date', '<=', current_datetime)])
         _logger.info(f"Etiquetas expiradas encontradas: {expired_tags}")
-
+    
         for tag in expired_tags:
             # Poner el descuento en 0
             tag.discount_percentage = 0
             _logger.info(f"Procesando etiqueta: {tag.name}")
-
+    
             # Buscar productos relacionados y eliminar la etiqueta
             products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
             _logger.info(f"Productos relacionados encontrados: {products}")
-
+    
             for product in products:
-                product.product_tag_ids = [(3, tag.id)]  # Quitar la etiqueta
+                product.write({'product_tag_ids': [(3, tag.id)]})  # Quitar la etiqueta
                 _logger.info(f"Etiqueta {tag.id} eliminada del producto {product.name}")
