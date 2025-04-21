@@ -103,14 +103,30 @@ class ProductTag(models.Model):
                     tag.discount_percentage = 0
 
     def write(self, vals):
-        """Aplica el descuento a los productos relacionados al guardar."""
+        """Aplica el descuento a los productos relacionados y elimina etiquetas expiradas."""
         res = super(ProductTag, self).write(vals)
+        if 'end_date' in vals:
+            for tag in self:
+                if tag.end_date and tag.end_date <= fields.Datetime.now():
+                    # Buscar productos relacionados con esta etiqueta
+                    products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
+                    for product in products:
+                        product.write({'product_tag_ids': [(3, tag.id)]})  # Eliminar la etiqueta
         if 'discount_percentage' in vals or 'is_percentage' in vals:
             for tag in self:
                 products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
                 products._compute_discount_percentage_from_tags()
                 products._compute_discounted_price()
         return res
-    
 
 
+    @api.model
+    def remove_expired_tags(self):
+        """Elimina etiquetas expiradas de los productos relacionados."""
+        now = fields.Datetime.now()
+        expired_tags = self.search([('end_date', '<=', now)])
+        for tag in expired_tags:
+            # Buscar productos relacionados con esta etiqueta
+            products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
+            for product in products:
+                product.write({'product_tag_ids': [(3, tag.id)]})  # Eliminar la etiqueta
