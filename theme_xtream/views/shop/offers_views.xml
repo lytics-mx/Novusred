@@ -2,27 +2,54 @@
     <template id="offers_template" name="Productos en Oferta">
         <t t-call="website.layout">
             <div class="container mt-4">
-                <!-- <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Productos en Oferta</h2> -->
-                <div class="oe_structure container mt-4" id="ofertas_custom_block">
-                    <!-- This empty div allows for customizable content blocks to be inserted -->
-                </div>
-                <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
-                    <section id="o_wsale_products_grid" class="o_wsale_products_grid_table grid">
-                        <t t-foreach="discounted_products" t-as="product">
-                            <div class="oe_product g-col-6 g-col-md-3 g-col-lg-3">
-                                <div class="o_wsale_product_grid_wrapper">
-                                    <a t-att-href="'/shop/product/' + str(product.id)">
-                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" />
-                                    </a>
-                                    <h6><t t-esc="product.name" /></h6>
-                                    <div>
-                                        <span class="text-decoration-line-through">$<t t-esc="'%.2f' % product.list_price" /></span>
-                                        <span class="text-success">$<t t-esc="'%.2f' % product.discounted_price" /></span>
+                <h2 class="text-center" style="font-family: 'Questrial', sans-serif; font-size: 25px;">Productos en Oferta</h2>
+                <div class="row">
+                    <!-- Filtros de la izquierda -->
+                    <div class="col-lg-3 col-md-4">
+                        <div class="filters">
+                            <h5>Tipos de oferta</h5>
+                            <ul>
+                                <li><a href="#">Oferta del día (30)</a></li>
+                                <li><a href="#">Oferta relámpago (10)</a></li>
+                                <li><a href="#">Oferta hasta esta hora (50)</a></li>
+                            </ul>
+                            <h5>Categorías</h5>
+                            <ul>
+                                <li><a href="#">Cámaras de Seguridad (10)</a></li>
+                                <li><a href="#">Computadoras y Accesorios (30)</a></li>
+                                <li><a href="#">Redes Informáticas (10)</a></li>
+                                <li><a href="#">Productos Nuevos (30)</a></li>
+                            </ul>
+                            <h5>Precio</h5>
+                            <div>
+                                <input type="range" min="0" max="1000" step="50" />
+                                <span>Hasta $500</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Productos en oferta -->
+                    <div class="col-lg-9 col-md-8">
+                        <div class="row">
+                            <t t-foreach="discounted_products" t-as="product">
+                                <div class="col-6 col-md-4 col-lg-3 mb-4">
+                                    <div class="card">
+                                        <a t-att-href="'/shop/product/' + str(product.id)">
+                                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" class="card-img-top" />
+                                        </a>
+                                        <div class="card-body text-center">
+                                            <h6 class="card-title"><t t-esc="product.name" /></h6>
+                                            <div>
+                                                <span class="text-decoration-line-through text-muted">$<t t-esc="'%.2f' % product.list_price" /></span>
+                                                <span class="text-success">$<t t-esc="'%.2f' % product.discounted_price" /></span>
+                                            </div>
+                                            <span class="badge bg-primary">Oferta del día</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </t>
-                    </section>
+                            </t>
+                        </div>
+                    </div>
                 </div>
             </div>
         </t>
