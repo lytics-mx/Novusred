@@ -22,30 +22,34 @@
                                 <t t-foreach="categories" t-as="category">
                                     <li>
                                         <!-- Categoría principal -->
-                                        <a href="javascript:void(0);" t-att-data-category-id="category.id" class="category-toggle">
+                                        <a t-att-href="'/shop/category/' + category.name.replace(' ', '-').lower() + '-' + str(category.id)">
                                             <t t-esc="category.name" />
                                         </a>
                                         <!-- Subcategorías -->
-                                        <ul class="subcategories" style="display: none;" t-att-id="'subcategory-' + str(category.id)">
-                                            <t t-foreach="category.child_id" t-as="sub_category">
-                                                <li>
-                                                    <!-- Subcategoría -->
-                                                    <a href="javascript:void(0);" t-att-data-category-id="sub_category.id" class="category-toggle">
-                                                        <t t-esc="sub_category.name" />
-                                                    </a>
-                                                    <!-- Sub-subcategorías -->
-                                                    <ul class="subcategories" style="display: none;" t-att-id="'subcategory-' + str(sub_category.id)">
-                                                        <t t-foreach="sub_category.child_id" t-as="sub_sub_category">
-                                                            <li>
-                                                                <a t-att-href="'/shop/category/' + sub_sub_category.name.replace(' ', '-').lower() + '-' + str(sub_sub_category.id)">
-                                                                    <t t-esc="sub_sub_category.name" />
-                                                                </a>
-                                                            </li>
+                                        <t t-if="category.child_id">
+                                            <ul>
+                                                <t t-foreach="category.child_id" t-as="sub_category">
+                                                    <li>
+                                                        <!-- Subcategoría -->
+                                                        <a t-att-href="'/shop/category/' + sub_category.name.replace(' ', '-').lower() + '-' + str(sub_category.id)">
+                                                            <t t-esc="sub_category.name" />
+                                                        </a>
+                                                        <!-- Sub-subcategorías -->
+                                                        <t t-if="sub_category.child_id">
+                                                            <ul>
+                                                                <t t-foreach="sub_category.child_id" t-as="sub_sub_category">
+                                                                    <li>
+                                                                        <a t-att-href="'/shop/category/' + sub_sub_category.name.replace(' ', '-').lower() + '-' + str(sub_sub_category.id)">
+                                                                            <t t-esc="sub_sub_category.name" />
+                                                                        </a>
+                                                                    </li>
+                                                                </t>
+                                                            </ul>
                                                         </t>
-                                                    </ul>
-                                                </li>
-                                            </t>
-                                        </ul>
+                                                    </li>
+                                                </t>
+                                            </ul>
+                                        </t>
                                     </li>
                                 </t>
                             </ul>                     
