@@ -15,7 +15,11 @@ class OffersController(http.Controller):
         # Obtener todas las marcas relacionadas con productos
         brands = request.env['brand.type'].sudo().search([])
 
+        # Obtener todas las categorías relacionadas con productos
+        categories = request.env['product.category'].sudo().search([])
+
         return request.render('theme_xtream.offers_template', {
             'discounted_products': tagged_products,
-            'brands': brands
+            'brands': brands,
+            'categories': categories
         })
