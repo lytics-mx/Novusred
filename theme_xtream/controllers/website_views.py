@@ -3,8 +3,8 @@ from odoo.http import request
 
 class OffersController(http.Controller):
 
-    @http.route('/offers', type='http', auth='public', website=True)
-    def offers(self, brand_id=None, category_id=None, **kwargs):
+    @http.route('shop/offers', type='http', auth='public', website=True)
+    def offers_page(self, brand_id=None, category_id=None, **kwargs):
         # Filtrar productos publicados con descuento
         domain = [('website_published', '=', True), ('discount_price', '>', 0)]
         if brand_id:
