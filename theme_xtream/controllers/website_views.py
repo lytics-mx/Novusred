@@ -6,25 +6,22 @@ class OffersController(http.Controller):
     @http.route('/offers', type='http', auth='public', website=True)
     def offers(self, **kwargs):
         """Renderiza la página de productos en oferta."""
-        # Obtener categorías principales (categorías sin padre)
-        main_categories = request.env['product.public.category'].sudo().search([('parent_id', '=', False)])
-        
-        # Agregar el conteo de productos publicados a cada categoría
-        for category in main_categories:
-            category.product_count = request.env['product.template'].sudo().search_count([
-                ('website_published', '=', True),
-                ('public_categ_ids', 'child_of', category.id)
-            ])
-    
-        # Obtener productos en oferta
-        discounted_products = request.env['product.template'].sudo().search([
+        # Filtrar productos publicados que tengan al menos una etiqueta
+        tagged_products = request.env['product.template'].sudo().search([
             ('website_published', '=', True),
-            ('discounted_price', '>', 0)
+            ('product_tag_ids', '!=', False)  # Productos relacionados con etiquetas
         ])
-
+    
+        # Obtener categorías principales (categorías sin padre)
+        main_categories = request.env['product.category'].sudo().search([('parent_id', '=', False)])
+    
+        # Calcular el total de productos publicados
+        total_products = request.env['product.template'].sudo().search_count([('website_published', '=', True)])
+    
         return request.render('theme_xtream.offers_template', {
+            'discounted_products': tagged_products,
             'categories': main_categories,
-            'discounted_products': discounted_products,
+            'total_products': total_products,  # Total de productos publicados
         })
 
     @http.route(['/shop/category/<model("product.public.category"):category>', '/shop/category/all'], type='http', auth="public", website=True)
