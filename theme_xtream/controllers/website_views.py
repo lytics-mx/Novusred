@@ -6,7 +6,7 @@ class OffersController(http.Controller):
     @http.route('/shop/offers', type='http', auth='public', website=True)
     def offers_page(self, brand_id=None, category_id=None, **kwargs):
         # Filtrar productos publicados con descuento
-        domain = [('website_published', '=', True), ('discount_price', '>', 0)]
+        domain = [('website_published', '=', True), ('list_price', '>', 0)]
         if brand_id:
             domain.append(('brand_id', '=', int(brand_id)))
         if category_id:
