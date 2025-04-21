@@ -1,9 +1,7 @@
+from venv import logger
 from odoo import models, fields, api
-from datetime import datetime, timedelta
+from datetime import datetime
 import pytz
-import logging
-_logger = logging.getLogger(__name__)
-
 
 class ProductTag(models.Model):
     _inherit = 'product.tag'
@@ -29,24 +27,9 @@ class ProductTag(models.Model):
         help="Seleccione la fecha de fin para aplicar el descuento."
     )
 
-    recurrence_type = fields.Selection(
-        [('none', 'Sin recurrencia'),
-         ('weekly', 'Semanal'),
-         ('biweekly', 'Quincenal'),
-         ('monthly', 'Mensual')],
-        string="Recurrencia",
-        default='none',
-        help="Define si el descuento se aplica de forma recurrente."
-    )
-
-    stored_discount = fields.Float(
-        string="Descuento almacenado",
-        help="Almacena el valor del descuento para activarlo nuevamente según la recurrencia."
-    )
-
     @api.onchange('start_date', 'end_date')
     def _onchange_date_range(self):
-        """Valida las fechas y actualiza el descuento o elimina etiquetas al finalizar el rango."""
+        """Valida que las fechas sean correctas y actualiza el descuento si el rango ya pasó."""
         if self.start_date and self.end_date:
             try:
                 # Configuramos la zona horaria de México
@@ -68,76 +51,16 @@ class ProductTag(models.Model):
                         }
                     }
 
-                # Si el rango de fechas ya pasó, se pone el descuento en 0 y se eliminan las etiquetas
+                # Si el rango de fechas ya pasó, se pone el descuento en 0
                 if end_date_with_tz <= current_datetime:
                     self.discount_percentage = 0
-                    products = self.env['product.template'].search([('product_tag_ids', 'in', self.id)])
-                    for product in products:
-                        product.product_tag_ids = [(3, self.id)]  # Quitar la etiqueta
             except Exception as e:
+                # Manejo de errores para evitar que el sistema falle
                 _logger.error(f"Error en _onchange_date_range: {e}")
 
-    def _apply_recurrent_discount(self):
-        """Aplica o desactiva descuentos según la recurrencia."""
-        mexico_tz = pytz.timezone('America/Mexico_City')
-        current_datetime = datetime.now(mexico_tz)
-
-        for tag in self.search([('recurrence_type', '!=', 'none')]):
-            if tag.recurrence_type == 'weekly':
-                # Activar descuento solo los fines de semana
-                if current_datetime.weekday() in (5, 6):  # Sábado (5) o Domingo (6)
-                    tag.discount_percentage = tag.stored_discount
-                else:
-                    tag.stored_discount = tag.discount_percentage
-                    tag.discount_percentage = 0
-            elif tag.recurrence_type == 'biweekly':
-                # Activar descuento cada dos semanas
-                if (current_datetime - tag.start_date).days % 14 == 0:
-                    tag.discount_percentage = tag.stored_discount
-                else:
-                    tag.stored_discount = tag.discount_percentage
-                    tag.discount_percentage = 0
-            elif tag.recurrence_type == 'monthly':
-                # Activar descuento una vez al mes
-                if current_datetime.day == tag.start_date.day:
-                    tag.discount_percentage = tag.stored_discount
-                else:
-                    tag.stored_discount = tag.discount_percentage
-                    tag.discount_percentage = 0
-    
-    def _remove_expired_tags(self):
-        """Elimina etiquetas de productos cuando la fecha de fin ha pasado."""
-        mexico_tz = pytz.timezone('America/Mexico_City')
-        current_datetime = datetime.now(mexico_tz)
-    
-        # Buscar etiquetas cuya fecha de fin ya haya pasado
-        expired_tags = self.search([('end_date', '<=', current_datetime)])
-        _logger.info(f"Etiquetas expiradas encontradas: {expired_tags}")
-    
-        for tag in expired_tags:
-            # Poner el descuento en 0
-            tag.discount_percentage = 0
-            _logger.info(f"Procesando etiqueta: {tag.name}")
-    
-            # Buscar productos relacionados con la etiqueta
-            products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
-            _logger.info(f"Productos relacionados encontrados: {products}")
-    
-            # Eliminar la etiqueta de los productos relacionados
-            for product in products:
-                product.write({'product_tag_ids': [(3, tag.id)]})
-                _logger.info(f"Etiqueta {tag.id} eliminada del producto {product.name}")
-    
-            # Confirmar que la etiqueta fue eliminada
-            _logger.info(f"Etiqueta {tag.id} procesada y eliminada de los productos relacionados.")
-
     def write(self, vals):
-        """Aplica el descuento a los productos relacionados al guardar y elimina etiquetas expiradas."""
+        """Aplica el descuento a los productos relacionados al guardar."""
         res = super(ProductTag, self).write(vals)
-
-        # Verificar si las fechas de fin han pasado y eliminar etiquetas expiradas
-        self._remove_expired_tags()
-
         if 'discount_percentage' in vals or 'is_percentage' in vals:
             for tag in self:
                 products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
@@ -147,4 +70,3 @@ class ProductTag(models.Model):
     
 
 
-    
