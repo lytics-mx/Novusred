@@ -92,18 +92,20 @@ class ProductTemplate(models.Model):
           help='Displays the brand type on the website'
      )
 
-     @api.depends('categ_id', 'public_categ_ids')
-     def _compute_categories_sync(self):
-         """Sincroniza entre categ_id y public_categ_ids."""
+     @api.onchange('categ_id')
+     def _onchange_categ_id(self):
+         """Sincroniza public_categ_ids con categ_id."""
          for product in self:
-             # Si categ_id cambia, actualiza public_categ_ids
-             if product.categ_id and not product.categ_id.id in product.public_categ_ids.ids:
-                 product.public_categ_ids = [(4, product.categ_id.id, 0)]
-             
-             # Si public_categ_ids cambia, actualiza categ_id (tomando el primero)
-             if product.public_categ_ids and product.categ_id != product.public_categ_ids[:1]:
-                 product.categ_id = product.public_categ_ids[:1].id
-
+             if product.categ_id:
+                 product.public_categ_ids = [(6, 0, [product.categ_id.id])]
+             else:
+                 product.public_categ_ids = [(5, 0)]  # Elimina las categorías públicas si categ_id está vacío
+     
+     @api.onchange('public_categ_ids')
+     def _onchange_public_categ_ids(self):
+         """Sincroniza categ_id con public_categ_ids."""
+         for product in self:
+             product.categ_id = product.public_categ_ids[:1].id if product.public_categ_ids else False
 
      offer_end_time = fields.Datetime(
           string="Fecha de fin de la oferta",
@@ -121,6 +123,16 @@ class ProductTemplate(models.Model):
                # Selecciona la fecha más cercana (si hay varias etiquetas)
                product.offer_end_time = min(end_dates) if end_dates else False
 
+
+     def write(self, vals):
+          """Sincroniza categ_id y public_categ_ids al guardar."""
+          res = super(ProductTemplate, self).write(vals)
+          for product in self:
+               if 'categ_id' in vals and product.categ_id:
+                    product.public_categ_ids = [(6, 0, [product.categ_id.id])]
+               if 'public_categ_ids' in vals and product.public_categ_ids:
+                    product.categ_id = product.public_categ_ids[:1].id
+          return res
      # additional_images = fields.One2many(
      #      'product.image', 'product_tmpl_id', string="Additional Images"
      # )
