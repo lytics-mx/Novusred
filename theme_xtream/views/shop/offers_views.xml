@@ -2,7 +2,32 @@
     <template id="offers_template" name="Productos en Oferta">
         <t t-call="website.layout">
             <div class="container mt-4">
-                <h2 class="text-center" style="font-family: 'Questrial', sans-serif; font-size: 25px;">Productos en Oferta</h2>
+                <!-- Sección de encabezado con texto e íconos -->
+                <div class="d-flex align-items-center justify-content-between p-4 mb-4" style="background-color: #f8f9fa; border-radius: 8px;">
+                    <!-- Texto a la izquierda -->
+                    <div>
+                        <h2 class="mb-2" style="font-family: 'Questrial', sans-serif; font-size: 25px;">Ofertas</h2>
+                        <p style="font-size: 16px; color: #6c757d;">¡Aquí verás las mejores ofertas!</p>
+                    </div>
+                    
+                    <!-- Imágenes a la derecha -->
+                    <div class="d-flex align-items-center">
+                        <t t-foreach="[
+                            {'src': '/theme_xtream/static/src/img/ofertas/todas_las_ofertas.svg', 'alt': 'Todas las ofertas', 'text': 'Todas las ofertas'},
+                            {'src': '/theme_xtream/static/src/img/ofertas/ofertas_relampago.svg', 'alt': 'Ofertas relámpago', 'text': 'Ofertas relámpago'},
+                            {'src': '/theme_xtream/static/src/img/ofertas/menos_de_500.svg', 'alt': 'Menos de $500', 'text': 'Menos de $500'},
+                            {'src': '/theme_xtream/static/src/img/ofertas/hasta_las_3_del_dia.svg', 'alt': 'Hasta las 3 del día', 'text': 'Hasta las 3 del día'}
+                        ]" t-as="icon">
+                            <div class="text-center mx-3">
+                                <a href="#" class="text-decoration-none">
+                                    <img t-att-src="icon.src" t-att-alt="icon.alt" class="img-fluid mb-2" style="height: 50px;" />
+                                    <p class="mb-0" style="font-size: 14px; color: #000;"><t t-esc="icon.text" /></p>
+                                </a>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+                
                 <div class="row">
                     <!-- Filtros de la izquierda -->
                     <div class="col-lg-3 col-md-4">
@@ -35,7 +60,6 @@
                                 <ul class="list-unstyled">
                                     <li><a t-att-href="'/shop/category/all?offers=true&amp;type=day'">Oferta del día</a></li>
                                     <li><a t-att-href="'/shop/category/all?offers=true&amp;type=flash'">Oferta relámpago</a></li>
-                                    <li><a t-att-href="'/shop/category/all?offers=true&amp;type=hour'">Oferta hasta esta hora</a></li>
                                 </ul>
                             </div>
                         
