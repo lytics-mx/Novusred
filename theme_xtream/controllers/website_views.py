@@ -29,7 +29,7 @@ class OffersController(http.Controller):
         offer_type = kwargs.get('type')
         min_price = kwargs.get('min_price')
         max_price = kwargs.get('max_price')
-
+    
         domain = [('website_published', '=', True)]
         
         if category:
@@ -58,13 +58,13 @@ class OffersController(http.Controller):
         # Buscar productos y categorías
         products = request.env['product.template'].sudo().search(domain)
         categories = request.env['product.public.category'].sudo().search([])
-        total_products = request.env['product.template'].sudo().search_count([('website_published', '=', True), ('discounted_price', '>', 0)])
-
+        total_products = request.env['product.template'].sudo().search_count([('website_published', '=', True)])
+    
         return request.render('theme_xtream.offers_template', {
             'categories': categories,
             'discounted_products': products,
             'current_category': category,
             'offers': offers,
             'free_shipping': free_shipping,
-            'total_products': total_products,
+            'total_products': total_products,  # Total de productos publicados
         })
