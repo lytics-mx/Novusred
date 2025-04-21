@@ -21,16 +21,26 @@
                             <ul>
                                 <t t-foreach="categories" t-as="category">
                                     <li>
-                                        <a t-att-href="'/shop/offers?category_id=' + str(category.id)">
+                                        <a href="javascript:void(0);" t-att-data-category-id="category.id" class="category-toggle">
                                             <t t-esc="category.name" />
                                         </a>
                                         <!-- Subcategorías -->
-                                        <ul>
+                                        <ul class="subcategories" style="display: none;" t-att-id="'subcategory-' + str(category.id)">
                                             <t t-foreach="category.child_id" t-as="sub_category">
                                                 <li>
-                                                    <a t-att-href="'/shop/offers?category_id=' + str(sub_category.id)">
+                                                    <a href="javascript:void(0);" t-att-data-category-id="sub_category.id" class="category-toggle">
                                                         <t t-esc="sub_category.name" />
                                                     </a>
+                                                    <!-- Sub-subcategorías -->
+                                                    <ul class="subcategories" style="display: none;" t-att-id="'subcategory-' + str(sub_category.id)">
+                                                        <t t-foreach="sub_category.child_id" t-as="sub_sub_category">
+                                                            <li>
+                                                                <a t-att-href="'/shop/offers?category_id=' + str(sub_sub_category.id)">
+                                                                    <t t-esc="sub_sub_category.name" />
+                                                                </a>
+                                                            </li>
+                                                        </t>
+                                                    </ul>
                                                 </li>
                                             </t>
                                         </ul>
