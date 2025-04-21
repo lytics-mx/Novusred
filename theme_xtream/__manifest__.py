@@ -96,6 +96,8 @@
           '/theme_xtream/static/src/js/testimonials.js',
           '/theme_xtream/static/src/js/custom.js',
           '/theme_xtream/static/src/css/custom.css',
+          '/theme_xtream/static/src/css/category_styles.css',  # Agregar el archivo CSS
+          '/theme_xtream/static/src/js/category_toggle.js',    # Agregar el archivo JS          
 
 
       ]
