@@ -92,6 +92,14 @@ class ProductTemplate(models.Model):
           help='Displays the brand type on the website'
      )
 
+     @api.depends('public_categ_ids')
+     def _compute_categ_id(self):
+         """Sincroniza categ_id con public_categ_ids."""
+         for product in self:
+             product.categ_id = product.public_categ_ids[:1].id if product.public_categ_ids else False
+
+
+
      # additional_images = fields.One2many(
      #      'product.image', 'product_tmpl_id', string="Additional Images"
      # )
