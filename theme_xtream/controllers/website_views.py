@@ -21,25 +21,50 @@ class OffersController(http.Controller):
         })
     
 
-    @http.route(['/shop/category/<model("product.public.category"):category>'], type='http', auth="public", website=True)
-    def shop_by_category(self, category, **kwargs):
-        """Renderiza productos filtrados por categoría y descuentos."""
-        discounts = kwargs.get('discounts', 'false').lower() == 'true'  # Verifica si 'discounts=true' está en la URL
-        domain = [('public_categ_ids', 'child_of', category.id), ('website_published', '=', True)]
+    @http.route(['/shop/category/<model("product.public.category"):category>', '/shop/category/all'], type='http', auth="public", website=True)
+    def shop_by_category(self, category=None, **kwargs):
+        """Renderiza productos filtrados por categoría y ofertas."""
+        offers = kwargs.get('offers', 'false').lower() == 'true'
+        free_shipping = kwargs.get('free_shipping', 'false').lower() == 'true'
+        offer_type = kwargs.get('type')
+        min_price = kwargs.get('min_price')
+        max_price = kwargs.get('max_price')
+
+        domain = [('website_published', '=', True)]
         
-        if discounts:
-            # Filtrar productos que tengan etiquetas
-            domain.extend([
-                ('product_tag_ids', '!=', False)
-            ])
+        if category:
+            domain.append(('public_categ_ids', 'child_of', category.id))
+        
+        if offers:
+            domain.append(('discounted_price', '>', 0))
+        
+        if free_shipping:
+            domain.append(('free_shipping', '=', True))
+        
+        if offer_type:
+            if offer_type == 'day':
+                domain.append(('offer_type', '=', 'day'))
+            elif offer_type == 'flash':
+                domain.append(('offer_type', '=', 'flash'))
+            elif offer_type == 'hour':
+                domain.append(('offer_type', '=', 'hour'))
+        
+        if min_price:
+            domain.append(('discounted_price', '>=', float(min_price)))
+        
+        if max_price:
+            domain.append(('discounted_price', '<=', float(max_price)))
         
         # Buscar productos y categorías
         products = request.env['product.template'].sudo().search(domain)
         categories = request.env['product.public.category'].sudo().search([])
+        total_products = request.env['product.template'].sudo().search_count([('website_published', '=', True), ('discounted_price', '>', 0)])
 
         return request.render('theme_xtream.offers_template', {
             'categories': categories,
             'discounted_products': products,
             'current_category': category,
-            'discounts': discounts,
+            'offers': offers,
+            'free_shipping': free_shipping,
+            'total_products': total_products,
         })

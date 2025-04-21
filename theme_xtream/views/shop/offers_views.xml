@@ -7,27 +7,63 @@
                     <!-- Filtros de la izquierda -->
                     <div class="col-lg-3 col-md-4">
                         <div class="filters">
-                            <!-- <h5>Marcas</h5>
+                            <!-- Todos -->
+                            <h5>Todos</h5>
                             <ul>
-                                <t t-foreach="brands" t-as="brand">
-                                    <li>
-                                        <a t-att-href="'/shop/offers?brand_id=' + str(brand.id)">
-                                            <t t-esc="brand.name" />
-                                        </a>
-                                    </li>
-                                </t>
-                            </ul> -->
+                                <li>
+                                    <a t-att-href="'/shop/category/all?offers=true'">
+                                        Todos <small> (<t t-esc="len(discounted_products)" />) </small>
+                                    </a>
+                                </li>
+                            </ul>
+                        
+                            <!-- Envío gratis -->
+                            <h5>Envío gratis</h5>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="freeShippingToggle" t-att-data-url="'/shop/category/all?offers=true&free_shipping=' + ('true' if free_shipping else 'false')" />
+                                <label class="form-check-label" for="freeShippingToggle">Todo en tu carrito de compras</label>
+                            </div>
+                        
+                            <!-- Tipos de oferta -->
+                            <h5>Tipos de oferta</h5>
+                            <ul>
+                                <li>
+                                    <a t-att-href="'/shop/category/all?offers=true&type=day'">Oferta del día</a>
+                                </li>
+                                <li>
+                                    <a t-att-href="'/shop/category/all?offers=true&type=flash'">Oferta relámpago</a>
+                                </li>
+                                <li>
+                                    <a t-att-href="'/shop/category/all?offers=true&type=hour'">Oferta hasta esta hora</a>
+                                </li>
+                            </ul>
+                        
+                            <!-- Categorías -->
                             <h5>Categorías</h5>
                             <ul>
                                 <t t-foreach="categories" t-as="category">
                                     <li>
-                                        <a t-att-href="'/shop/category/' + str(category.id) + '?discounts=' + str(discounts).lower()">
-                                            <t t-esc="category.name" />
+                                        <a t-att-href="'/shop/category/' + str(category.id) + '?offers=true'">
+                                            <t t-esc="category.name" /> <small> (<t t-esc="category.product_count" />) </small>
                                         </a>
                                     </li>
                                 </t>
                             </ul>
-                         </div>
+                        
+                            <!-- Filtro por precio -->
+                            <h5>Precio</h5>
+                            <form method="get" action="/shop/category/all">
+                                <div class="mb-2">
+                                    <label for="minPrice" class="form-label">Desde</label>
+                                    <input type="number" class="form-control" id="minPrice" name="min_price" placeholder="0" />
+                                </div>
+                                <div class="mb-2">
+                                    <label for="maxPrice" class="form-label">Hasta</label>
+                                    <input type="number" class="form-control" id="maxPrice" name="max_price" placeholder="1000" />
+                                </div>
+                                <button type="submit" class="btn btn-primary">Buscar</button>
+                            </form>
+                        </div>
                     </div>
 
                     <!-- Productos en oferta -->
