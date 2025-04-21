@@ -19,3 +19,18 @@ class OffersController(http.Controller):
             'discounted_products': tagged_products,
             'categories': main_categories
         })
+    
+
+    @http.route(['/shop/category/<model("product.public.category"):category>'], type='http', auth="public", website=True)
+    def shop_by_category(self, category, **kwargs):
+        offers = kwargs.get('offers', False)
+        domain = [('public_categ_ids', 'child_of', category.id)]
+        
+        if offers:
+            domain.append(('discounted_price', '>', 0))  # Filtrar productos con descuento
+        
+        products = request.env['product.template'].search(domain)
+        return request.render('theme_xtream.offers_template', {
+            'categories': request.env['product.public.category'].search([]),
+            'discounted_products': products,
+        })
