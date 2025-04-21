@@ -42,7 +42,6 @@ class ProductTemplate(models.Model):
           help="Precio del producto después de aplicar el descuento."
      )
 
-     # Eliminar el campo tag_ids y usar product_tag_ids directamente
      
      @api.depends('product_tag_ids.discount_percentage', 'product_tag_ids.is_percentage')
      def _compute_discount_percentage_from_tags(self):
