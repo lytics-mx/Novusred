@@ -14,6 +14,12 @@ class OffersController(http.Controller):
 
         # Obtener todas las marcas relacionadas con productos
         brands = request.env['brand.type'].sudo().search([])
+        for brand in brands:
+            # Contar productos relacionados con cada marca
+            brand.product_count = request.env['product.template'].sudo().search_count([
+                ('brand_type_id', '=', brand.id),
+                ('website_published', '=', True)
+            ])
 
         return request.render('theme_xtream.offers_template', {
             'discounted_products': tagged_products,
