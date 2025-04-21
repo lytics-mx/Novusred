@@ -1,6 +1,9 @@
 from odoo import models, fields, api
 from datetime import datetime, timedelta
 import pytz
+import logging
+_logger = logging.getLogger(__name__)
+
 
 class ProductTag(models.Model):
     _inherit = 'product.tag'
@@ -119,12 +122,17 @@ class ProductTag(models.Model):
 
         # Buscar etiquetas cuya fecha de fin ya haya pasado
         expired_tags = self.search([('end_date', '<=', current_datetime)])
+        _logger.info(f"Etiquetas expiradas encontradas: {expired_tags}")
+
         for tag in expired_tags:
             # Poner el descuento en 0
             tag.discount_percentage = 0
+            _logger.info(f"Procesando etiqueta: {tag.name}")
 
             # Buscar productos relacionados y eliminar la etiqueta
             products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
+            _logger.info(f"Productos relacionados encontrados: {products}")
+
             for product in products:
                 product.product_tag_ids = [(3, tag.id)]  # Quitar la etiqueta
-
+                _logger.info(f"Etiqueta {tag.id} eliminada del producto {product.name}")
