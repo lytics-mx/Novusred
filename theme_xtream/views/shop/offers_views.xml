@@ -106,17 +106,33 @@
                                                 <span class="text-success fw-bold d-block" style="font-size: 1.5rem;">
                                                     $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
                                                 </span>
-                                                <span class="text-danger fw-bold d-block" style="font-size: 0.9rem;">21% OFF</span>
+                                                <span class="text-danger fw-bold d-block" style="font-size: 0.9rem;">
+                                                    <t t-if="product.discount_percentage">
+                                                        <t t-esc="product.discount_percentage" />% OFF
+                                                    </t>
+                                                    <t t-else>
+                                                        $<t t-esc="'{:,}'.format(int(product.discount_fixed))" /> de descuento
+                                                    </t>
+                                                </span>
                                             </div>
                                             
-                                            <!-- Descuento -->
+                                            <!-- Descuento adicional -->
                                             <div class="mb-2">
-                                                <span class="text-muted" style="font-size: 0.9rem;">120 de descuento</span>
+                                                <span class="text-muted" style="font-size: 0.9rem;">
+                                                    <t t-if="product.discount_percentage">
+                                                        <t t-esc="product.discount_percentage" />% de descuento
+                                                    </t>
+                                                    <t t-else>
+                                                        $<t t-esc="'{:,}'.format(int(product.discount_fixed))" /> de descuento
+                                                    </t>
+                                                </span>
                                             </div>
                                             
                                             <!-- Envío gratis -->
                                             <div class="mb-2">
-                                                <span class="text-success fw-bold" style="font-size: 0.9rem;">Envío gratis</span>
+                                                <span class="text-orange fw-bold" style="font-size: 0.9rem; font-style: italic; color: #FF5207;">
+                                                    Envío gratis
+                                                </span>
                                             </div>
                                             
                                             <!-- Nombre del producto -->
