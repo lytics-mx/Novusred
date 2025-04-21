@@ -7,24 +7,26 @@
                     <!-- Filtros de la izquierda -->
                     <div class="col-lg-3 col-md-4">
                         <div class="filters">
-                            <h5>Tipos de oferta</h5>
+                            <h5>Marcas</h5>
                             <ul>
-                                <li><a href="#">Oferta del día (30)</a></li>
-                                <li><a href="#">Oferta relámpago (10)</a></li>
-                                <li><a href="#">Oferta hasta esta hora (50)</a></li>
+                                <t t-foreach="brands" t-as="brand">
+                                    <li>
+                                        <a t-att-href="'/shop/offers?brand_id=' + str(brand.id)">
+                                            <t t-esc="brand.name" /> (<t t-esc="brand.product_count" />)
+                                        </a>
+                                    </li>
+                                </t>
                             </ul>
                             <h5>Categorías</h5>
                             <ul>
-                                <li><a href="#">Cámaras de Seguridad (10)</a></li>
-                                <li><a href="#">Computadoras y Accesorios (30)</a></li>
-                                <li><a href="#">Redes Informáticas (10)</a></li>
-                                <li><a href="#">Productos Nuevos (30)</a></li>
+                                <t t-foreach="categories" t-as="category">
+                                    <li>
+                                        <a t-att-href="'/shop/offers?category_id=' + str(category.id)">
+                                            <t t-esc="category.name" /> (<t t-esc="category.product_count" />)
+                                        </a>
+                                    </li>
+                                </t>
                             </ul>
-                            <h5>Precio</h5>
-                            <div>
-                                <input type="range" min="0" max="1000" step="50" />
-                                <span>Hasta $500</span>
-                            </div>
                         </div>
                     </div>
 
@@ -41,9 +43,9 @@
                                             <h6 class="card-title"><t t-esc="product.name" /></h6>
                                             <div>
                                                 <span class="text-decoration-line-through text-muted">$<t t-esc="'%.2f' % product.list_price" /></span>
-                                                <span class="text-success">$<t t-esc="'%.2f' % product.discounted_price" /></span>
+                                                <span class="text-success">$<t t-esc="'%.2f' % product.discount_price" /></span>
                                             </div>
-                                            <span class="badge bg-primary">Oferta del día</span>
+                                            <span class="badge bg-primary">Oferta</span>
                                         </div>
                                     </div>
                                 </div>
