@@ -92,11 +92,17 @@ class ProductTemplate(models.Model):
           help='Displays the brand type on the website'
      )
 
-     @api.depends('public_categ_ids')
-     def _compute_categ_id(self):
-         """Sincroniza categ_id con public_categ_ids."""
+     @api.depends('categ_id', 'public_categ_ids')
+     def _compute_categories_sync(self):
+         """Sincroniza entre categ_id y public_categ_ids."""
          for product in self:
-             product.categ_id = product.public_categ_ids[:1].id if product.public_categ_ids else False
+             # Si categ_id cambia, actualiza public_categ_ids
+             if product.categ_id and not product.categ_id.id in product.public_categ_ids.ids:
+                 product.public_categ_ids = [(4, product.categ_id.id, 0)]
+             
+             # Si public_categ_ids cambia, actualiza categ_id (tomando el primero)
+             if product.public_categ_ids and product.categ_id != product.public_categ_ids[:1]:
+                 product.categ_id = product.public_categ_ids[:1].id
 
 
      offer_end_time = fields.Datetime(
