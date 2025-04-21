@@ -1,11 +1,11 @@
 <odoo>
     <template id="website_recursive_categories" name="Recursive Categories">
-        <t t-foreach="children" t-as="child">
+        <t t-foreach="children.filtered(lambda c: c.product_tmpl_ids.filtered(lambda p: p.website_published))" t-as="child">
             <div class="category-item">
                 <div class="d-flex align-items-center">
                     <!-- Enlace a la categoría -->
                     <a t-att-href="'/shop/category/' + str(child.id) + '?offers=true'" class="category-link">
-                        <t t-esc="child.name"/> <small>(<t t-esc="child.product_count"/>)</small>
+                        <t t-esc="child.name"/>
                     </a>
                 </div>
             </div>
