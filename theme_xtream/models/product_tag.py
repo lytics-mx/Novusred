@@ -134,8 +134,8 @@ class ProductTag(models.Model):
             _logger.info(f"Productos relacionados encontrados: {products}")
     
             for product in products:
-                # Eliminar la etiqueta del producto
-                product.product_tag_ids = [(3, tag.id)]
+                # Usar write para eliminar la etiqueta del producto
+                product.write({'product_tag_ids': [(3, tag.id)]})
                 _logger.info(f"Etiqueta {tag.id} eliminada del producto {product.name}")
     
             # Confirmar que la etiqueta fue eliminada
