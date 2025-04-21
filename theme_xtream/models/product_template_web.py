@@ -74,7 +74,7 @@ class ProductTemplate(models.Model):
                product.discounted_price = max(price, 0)  # Evita precios negativos
 
      fixed_discount = fields.Float(
-          string="Descuento Fijo",
+          string="Monto Fijo",
           compute="_compute_discount_percentage_from_tags",
           store=True,
           help="Cantidad fija de descuento aplicada al producto."
