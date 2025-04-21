@@ -5,23 +5,26 @@ class OffersController(http.Controller):
 
     @http.route('/offers', type='http', auth='public', website=True)
     def offers(self, **kwargs):
-        """Renderiza la página de productos en oferta."""
-        # Filtrar productos publicados que tengan al menos una etiqueta
-        tagged_products = request.env['product.template'].sudo().search([
+        """Renderiza la página de productos en oferta con categorías dinámicas."""
+        # Obtener categorías principales (sin padre)
+        categories = request.env['product.public.category'].sudo().search([])
+        
+        # Obtener productos en oferta
+        discounted_products = request.env['product.template'].sudo().search([
             ('website_published', '=', True),
-            ('product_tag_ids', '!=', False)  # Productos relacionados con etiquetas
+            ('discounted_price', '>', 0)
         ])
-    
-        # Obtener categorías principales (categorías sin padre)
-        main_categories = request.env['product.category'].sudo().search([('parent_id', '=', False)])
-    
-        # Calcular el total de productos publicados
+
+        # Calcular total de productos publicados
         total_products = request.env['product.template'].sudo().search_count([('website_published', '=', True)])
-    
+
         return request.render('theme_xtream.offers_template', {
-            'discounted_products': tagged_products,
-            'categories': main_categories,
-            'total_products': total_products,  # Total de productos publicados
+            'categories': categories,
+            'discounted_products': discounted_products,
+            'total_products': total_products,
+            'offers': True,
+            'free_shipping': False,
+            'current_category': None
         })
 
     @http.route(['/shop/category/<model("product.public.category"):category>', '/shop/category/all'], type='http', auth="public", website=True)
