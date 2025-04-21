@@ -3,16 +3,19 @@
         <t t-foreach="children" t-as="child">
             <div class="category-item">
                 <div class="d-flex align-items-center">
-                    <!-- Eliminamos el ícono ">" -->
-                    <a t-att-href="'/shop/category/' + str(child.id) + '?offers=true'">
+                    <!-- Enlace a la categoría -->
+                    <a t-att-href="'/shop/category/' + str(child.id) + '?offers=true'" class="category-link">
                         <t t-esc="child.name"/> <small>(<t t-esc="child.product_count"/>)</small>
                     </a>
                 </div>
-                <div class="subcategories ms-4" style="display: none;">
-                    <t t-call="theme_xtream.website_recursive_categories">
-                        <t t-set="children" t-value="child.child_id"/>
-                    </t>
-                </div>
+                <!-- Subcategorías (se muestran solo si hay productos publicados) -->
+                <t t-if="child.child_id and child.product_count > 0">
+                    <div class="subcategories ms-4">
+                        <t t-call="theme_xtream.website_recursive_categories">
+                            <t t-set="children" t-value="child.child_id"/>
+                        </t>
+                    </div>
+                </t>
             </div>
         </t>
     </template>
