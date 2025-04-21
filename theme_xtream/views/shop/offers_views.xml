@@ -86,7 +86,7 @@
                         <div class="row">
                             <t t-foreach="discounted_products" t-as="product">
                                 <div class="col-6 col-md-4 col-lg-3 mb-4">
-                                    <div class="card shadow-sm">
+                                    <div class="card shadow-sm bg-white">
                                         <!-- Imagen del producto -->
                                         <a t-att-href="'/shop/product/' + str(product.id)">
                                             <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
@@ -94,9 +94,13 @@
                                                  alt="Imagen del producto" 
                                                  style="height: 180px; object-fit: cover;" />
                                         </a>
-                                        <div class="card-body">
+                                        <div class="card-body bg-white">
                                             <!-- Etiqueta de oferta -->
-                                            <span class="badge bg-primary mb-2" style="font-size: 0.8rem;">OFERTA DEL DÍA</span>
+                                            <t t-if="product.website_ribbon_id">
+                                                <span class="badge bg-primary mb-2" style="font-size: 0.8rem;">
+                                                    <t t-esc="product.website_ribbon_id.name"/>
+                                                </span>
+                                            </t>
                                             
                                             <!-- Precio del producto -->
                                             <div class="mb-2">
