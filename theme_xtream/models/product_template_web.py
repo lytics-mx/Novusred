@@ -80,17 +80,17 @@ class ProductTemplate(models.Model):
           help="Cantidad fija de descuento aplicada al producto."
      )
 
-     # @api.depends('brand_type_id')
-     # def _compute_brand_website(self):
-     #      for product in self:
-     #           product.brand_website = product.brand_type_id.name if product.brand_type_id else ''
+     @api.depends('brand_type_id')
+     def _compute_brand_website(self):
+          for product in self:
+               product.brand_website = product.brand_type_id.name if product.brand_type_id else ''
 
-     # brand_website = fields.Char(
-     #      string='Marca en el sitio web',
-     #      compute='_compute_brand_website',
-     #      store=True,
-     #      help='Displays the brand type on the website'
-     # )
+     brand_website = fields.Char(
+          string='Marca en el sitio web',
+          compute='_compute_brand_website',
+          store=True,
+          help='Displays the brand type on the website'
+     )
 
      @api.depends('public_categ_ids')
      def _compute_categ_id(self):
