@@ -99,6 +99,21 @@ class ProductTemplate(models.Model):
              product.categ_id = product.public_categ_ids[:1].id if product.public_categ_ids else False
 
 
+     offer_end_time = fields.Datetime(
+          string="Fecha de fin de la oferta",
+          compute="_compute_offer_end_time",
+          store=True,
+          help="Fecha y hora en que termina la oferta más cercana para este producto."
+     )
+
+     @api.depends('product_tag_ids.end_date')
+     def _compute_offer_end_time(self):
+          """Calcula la fecha de fin de la oferta basada en las etiquetas relacionadas."""
+          for product in self:
+               # Obtén todas las fechas de fin de las etiquetas relacionadas
+               end_dates = product.product_tag_ids.mapped('end_date')
+               # Selecciona la fecha más cercana (si hay varias etiquetas)
+               product.offer_end_time = min(end_dates) if end_dates else False
 
      # additional_images = fields.One2many(
      #      'product.image', 'product_tmpl_id', string="Additional Images"
