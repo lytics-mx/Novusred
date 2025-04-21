@@ -90,4 +90,18 @@ class OffersController(http.Controller):
             'total_products': total_products,  # Total de productos publicados
         })
     
-    
+    def offers_by_category(self, category_id, **kwargs):
+        """Renderiza los productos que pertenecen a una categoría específica."""
+        # Obtener la categoría seleccionada
+        category = request.env['product.public.category'].sudo().browse(category_id)
+
+        # Filtrar productos publicados que pertenecen a la categoría seleccionada
+        products = request.env['product.template'].sudo().search([
+            ('website_published', '=', True),
+            ('public_categ_ids', 'in', [category_id])
+        ])
+
+        return request.render('theme_xtream.offers_template', {
+            'discounted_products': products,
+            'selected_category': category,
+        })    
