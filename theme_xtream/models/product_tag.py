@@ -129,10 +129,14 @@ class ProductTag(models.Model):
             tag.discount_percentage = 0
             _logger.info(f"Procesando etiqueta: {tag.name}")
     
-            # Buscar productos relacionados y eliminar la etiqueta
+            # Buscar productos relacionados con la etiqueta
             products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
             _logger.info(f"Productos relacionados encontrados: {products}")
     
             for product in products:
-                product.write({'product_tag_ids': [(3, tag.id)]})  # Quitar la etiqueta
+                # Eliminar la etiqueta del producto
+                product.product_tag_ids = [(3, tag.id)]
                 _logger.info(f"Etiqueta {tag.id} eliminada del producto {product.name}")
+    
+            # Confirmar que la etiqueta fue eliminada
+            _logger.info(f"Etiqueta {tag.id} procesada y eliminada de los productos relacionados.")
