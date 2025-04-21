@@ -23,12 +23,15 @@ class OffersController(http.Controller):
 
     @http.route(['/shop/category/<model("product.public.category"):category>'], type='http', auth="public", website=True)
     def shop_by_category(self, category, **kwargs):
-        """Renderiza productos filtrados por categoría y ofertas."""
-        offers = kwargs.get('offers', 'false').lower() == 'true'  # Verifica si 'offers=true' está en la URL
+        """Renderiza productos filtrados por categoría y descuentos."""
+        discounts = kwargs.get('discounts', 'false').lower() == 'true'  # Verifica si 'discounts=true' está en la URL
         domain = [('public_categ_ids', 'child_of', category.id), ('website_published', '=', True)]
         
-        if offers:
-            domain.append(('discounted_price', '>', 0))  # Filtrar productos con descuento
+        if discounts:
+            # Filtrar productos que tengan etiquetas
+            domain.extend([
+                ('product_tag_ids', '!=', False)
+            ])
         
         # Buscar productos y categorías
         products = request.env['product.template'].sudo().search(domain)
@@ -38,5 +41,5 @@ class OffersController(http.Controller):
             'categories': categories,
             'discounted_products': products,
             'current_category': category,
-            'offers': offers,
+            'discounts': discounts,
         })
