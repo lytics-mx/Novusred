@@ -106,16 +106,3 @@ class OffersController(http.Controller):
             'selected_category': category,
         })    
     
-        @api.onchange('website_ribbon_id')
-        def _onchange_website_ribbon_id(self):
-            """Sincroniza el ribbon seleccionado con el modelo website.ribbon."""
-            if self.website_ribbon_id:
-                # Crear o buscar un ribbon en website.ribbon con el mismo nombre
-                ribbon = self.env['website.ribbon'].search([('name', '=', self.website_ribbon_id.name)], limit=1)
-                if not ribbon:
-                    ribbon = self.env['website.ribbon'].create({
-                        'name': self.website_ribbon_id.name,
-                        'bg_color': self.website_ribbon_id.bg_color or '#007bff',  # Color predeterminado
-                        'text_color': self.website_ribbon_id.text_color or '#ffffff'  # Color predeterminado
-                    })
-                self.website_ribbon_id = ribbon.id    

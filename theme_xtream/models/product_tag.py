@@ -145,25 +145,6 @@ class ProductTag(models.Model):
                 products._compute_discounted_price()
         return res
     
-    @api.model
-    def create(self, vals):
-        """Sincroniza el campo name al crear un product.tag."""
-        res = super(ProductTag, self).create(vals)
-        if 'name' in vals:
-            self.env['website.ribbon'].create({
-                'name': vals['name'],
-                'bg_color': '#007bff',  # Color de fondo predeterminado
-                'text_color': '#ffffff'  # Color de texto predeterminado
-            })
-        return res
 
-    def writes(self, vals):
-        """Sincroniza el campo name al actualizar un product.tag."""
-        res = super(ProductTag, self).write(vals)
-        if 'name' in vals:
-            for tag in self:
-                ribbon = self.env['website.ribbon'].search([('name', '=', tag.name)], limit=1)
-                if ribbon:
-                    ribbon.name = vals['name']
-        return res
 
+    
