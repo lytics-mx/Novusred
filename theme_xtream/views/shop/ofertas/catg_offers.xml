@@ -1,15 +1,19 @@
 <odoo>
     <template id="website_recursive_categories" name="Recursive Categories">
         <t t-foreach="children" t-as="child">
-            <t t-if="child.parent_id">  <!-- Only show categories with a parent -->
-                <div class="category-item">
-                    <div class="d-flex align-items-center">
-                        <!-- Enlace a la categoría -->
-                        <a t-att-href="'/offers?category_id=' + str(child.id)" class="category-link">
-                            <t t-esc="child.name"/> <small>(<t t-esc="child.product_count"/>)</small>
-                        </a>
-                    </div>
+            <div class="category-item">
+                <div class="d-flex align-items-center">
+                    <!-- Enlace a la categoría -->
+                    <a t-att-href="'/shop/category/' + str(child.id) + '?offers=true'" class="category-link">
+                        <t t-esc="child.name"/> <small>(<t t-esc="child.product_count"/>)</small>
+                    </a>
                 </div>
+            </div>
+            <!-- Renderizar subcategorías al mismo nivel -->
+            <t t-if="child.child_id">
+                <t t-call="theme_xtream.website_recursive_categories">
+                    <t t-set="children" t-value="child.child_id"/>
+                </t>
             </t>
         </t>
     </template>
