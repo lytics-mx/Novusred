@@ -1,6 +1,5 @@
-from venv import logger
 from odoo import models, fields, api
-from datetime import datetime
+from datetime import datetime, timedelta
 import pytz
 
 class ProductTag(models.Model):
@@ -27,9 +26,24 @@ class ProductTag(models.Model):
         help="Seleccione la fecha de fin para aplicar el descuento."
     )
 
+    recurrence_type = fields.Selection(
+        [('none', 'Sin recurrencia'),
+         ('weekly', 'Semanal'),
+         ('biweekly', 'Quincenal'),
+         ('monthly', 'Mensual')],
+        string="Recurrencia",
+        default='none',
+        help="Define si el descuento se aplica de forma recurrente."
+    )
+
+    stored_discount = fields.Float(
+        string="Descuento almacenado",
+        help="Almacena el valor del descuento para activarlo nuevamente según la recurrencia."
+    )
+
     @api.onchange('start_date', 'end_date')
     def _onchange_date_range(self):
-        """Valida que las fechas sean correctas y actualiza el descuento si el rango ya pasó."""
+        """Valida las fechas y actualiza el descuento o elimina etiquetas al finalizar el rango."""
         if self.start_date and self.end_date:
             try:
                 # Configuramos la zona horaria de México
@@ -51,12 +65,42 @@ class ProductTag(models.Model):
                         }
                     }
 
-                # Si el rango de fechas ya pasó, se pone el descuento en 0
+                # Si el rango de fechas ya pasó, se pone el descuento en 0 y se eliminan las etiquetas
                 if end_date_with_tz <= current_datetime:
                     self.discount_percentage = 0
+                    products = self.env['product.template'].search([('product_tag_ids', 'in', self.id)])
+                    for product in products:
+                        product.product_tag_ids = [(3, self.id)]  # Quitar la etiqueta
             except Exception as e:
-                # Manejo de errores para evitar que el sistema falle
                 _logger.error(f"Error en _onchange_date_range: {e}")
+
+    def _apply_recurrent_discount(self):
+        """Aplica o desactiva descuentos según la recurrencia."""
+        mexico_tz = pytz.timezone('America/Mexico_City')
+        current_datetime = datetime.now(mexico_tz)
+
+        for tag in self.search([('recurrence_type', '!=', 'none')]):
+            if tag.recurrence_type == 'weekly':
+                # Activar descuento solo los fines de semana
+                if current_datetime.weekday() in (5, 6):  # Sábado (5) o Domingo (6)
+                    tag.discount_percentage = tag.stored_discount
+                else:
+                    tag.stored_discount = tag.discount_percentage
+                    tag.discount_percentage = 0
+            elif tag.recurrence_type == 'biweekly':
+                # Activar descuento cada dos semanas
+                if (current_datetime - tag.start_date).days % 14 == 0:
+                    tag.discount_percentage = tag.stored_discount
+                else:
+                    tag.stored_discount = tag.discount_percentage
+                    tag.discount_percentage = 0
+            elif tag.recurrence_type == 'monthly':
+                # Activar descuento una vez al mes
+                if current_datetime.day == tag.start_date.day:
+                    tag.discount_percentage = tag.stored_discount
+                else:
+                    tag.stored_discount = tag.discount_percentage
+                    tag.discount_percentage = 0
 
     def write(self, vals):
         """Aplica el descuento a los productos relacionados al guardar."""
