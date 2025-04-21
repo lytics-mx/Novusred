@@ -1,10 +1,5 @@
 from odoo import http
 from odoo.http import request
-import logging
-_logger = logging.getLogger(__name__)
-
-total_products = request.env['product.template'].sudo().search_count([('website_published', '=', True)])
-_logger.info("Total products published: %s", total_products)
 
 class OffersController(http.Controller):
 
@@ -16,15 +11,18 @@ class OffersController(http.Controller):
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False)  # Productos relacionados con etiquetas
         ])
-
+    
         # Obtener categorías principales (categorías sin padre)
         main_categories = request.env['product.category'].sudo().search([('parent_id', '=', False)])
-
+    
+        # Calcular el total de productos publicados
+        total_products = request.env['product.template'].sudo().search_count([('website_published', '=', True)])
+    
         return request.render('theme_xtream.offers_template', {
             'discounted_products': tagged_products,
-            'categories': main_categories
+            'categories': main_categories,
+            'total_products': total_products,  # Total de productos publicados
         })
-    
 
     @http.route(['/shop/category/<model("product.public.category"):category>', '/shop/category/all'], type='http', auth="public", website=True)
     def shop_by_category(self, category=None, **kwargs):
