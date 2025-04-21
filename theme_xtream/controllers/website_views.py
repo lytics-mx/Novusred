@@ -1,5 +1,10 @@
 from odoo import http
 from odoo.http import request
+import logging
+_logger = logging.getLogger(__name__)
+
+total_products = request.env['product.template'].sudo().search_count([('website_published', '=', True)])
+_logger.info("Total products published: %s", total_products)
 
 class OffersController(http.Controller):
 
@@ -68,3 +73,5 @@ class OffersController(http.Controller):
             'free_shipping': free_shipping,
             'total_products': total_products,  # Total de productos publicados
         })
+    
+    
