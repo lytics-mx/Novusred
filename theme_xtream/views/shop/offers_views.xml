@@ -21,35 +21,9 @@
                             <ul>
                                 <t t-foreach="categories" t-as="category">
                                     <li>
-                                        <!-- Categoría principal -->
-                                        <a t-att-href="'/shop/category/' + category.name.replace(' ', '-').lower() + '-' + str(category.id) + '?offers=true'">
+                                        <a t-att-href="'/shop/category/' + category.name.replace(' ', '-').lower() + '-' + str(category.id) + ('?offers=true' if offers else '')">
                                             <t t-esc="category.name" />
                                         </a>
-                                        <!-- Subcategorías -->
-                                        <t t-if="category.child_id">
-                                            <ul>
-                                                <t t-foreach="category.child_id" t-as="sub_category">
-                                                    <li>
-                                                        <!-- Subcategoría -->
-                                                        <a t-att-href="'/shop/category/' + sub_category.name.replace(' ', '-').lower() + '-' + str(sub_category.id) + '?offers=true'">
-                                                            <t t-esc="sub_category.name" />
-                                                        </a>
-                                                        <!-- Sub-subcategorías -->
-                                                        <t t-if="sub_category.child_id">
-                                                            <ul>
-                                                                <t t-foreach="sub_category.child_id" t-as="sub_sub_category">
-                                                                    <li>
-                                                                        <a t-att-href="'/shop/category/' + sub_sub_category.name.replace(' ', '-').lower() + '-' + str(sub_sub_category.id) + '?offers=true'">
-                                                                            <t t-esc="sub_sub_category.name" />
-                                                                        </a>
-                                                                    </li>
-                                                                </t>
-                                                            </ul>
-                                                        </t>
-                                                    </li>
-                                                </t>
-                                            </ul>
-                                        </t>
                                     </li>
                                 </t>
                             </ul>                     
