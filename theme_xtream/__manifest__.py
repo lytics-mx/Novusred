@@ -77,7 +77,7 @@
         'views/shop/ofertas/product_template_tree_view.xml',
         
         
-        'views/website_sale/product_template.xml',
+        # 'views/website_sale/product_template.xml',
         # 'views/website_sale/shop_filters.xml',
 
         'data/ir_cron_data.xml',
