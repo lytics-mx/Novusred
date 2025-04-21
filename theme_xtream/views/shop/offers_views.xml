@@ -3,7 +3,7 @@
         <t t-call="website.layout">
             <div class="container mt-4">
                 <!-- Sección de encabezado con texto e íconos -->
-                <div class="d-flex align-items-center justify-content-between p-4 mb-4 w-100" style="background-color:rgb(0, 0, 0); border-radius: 8px; margin-left: -15px; margin-right: -15px; width: calc(100% + 30px) !important;">
+                <div class="d-flex align-items-center justify-content-between p-4 mb-4" style="background-color:rgb(255, 255, 255); border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin: 0 -15px; width: calc(100% + 30px);">
                     <div class="ps-2">
                         <h2 class="mb-2" style="font-family: 'Questrial', sans-serif; font-size: 25px;">Ofertas</h2>
                         <p style="font-size: 16px; color: #6c757d;">¡Aquí verás las mejores ofertas!</p>
@@ -18,14 +18,54 @@
                             {'src': '/theme_xtream/static/src/img/ofertas-barra/relampago.png', 'alt': 'Ofertas relámpago', 'text': 'Ofertas relámpago'},
                             {'src': '/theme_xtream/static/src/img/ofertas-barra/reloj.png', 'alt': 'Hasta las 3 del día', 'text': 'Hasta las 3 del día'},
                             {'src': '/theme_xtream/static/src/img/ofertas-barra/reloj3.png', 'alt': 'Hasta las 3 del día', 'text': 'Hasta las 3 del día'}
-
                         ]" t-as="icon">
-                            <div class="text-center mx-3">
-                                <a href="#" class="text-decoration-none">
+                            <div class="text-center mx-3 offer-icon-container">
+                                <a href="#" class="text-decoration-none offer-icon-link">
                                     <img t-att-src="icon['src']" t-att-alt="icon['alt']" class="img-fluid mb-2" style="height: 50px;" />
                                     <p class="mb-0" style="font-size: 14px; color: #000;"><t t-esc="icon['text']" /></p>
                                 </a>
                             </div>
+                        </t>
+                    </div>
+
+                    <style>
+                        .offer-icon-container {
+                            position: relative;
+                            transition: transform 0.2s;
+                        }
+                        
+                        .offer-icon-container:hover {
+                            transform: translateY(-3px);
+                        }
+                        
+                        .offer-icon-link {
+                            position: relative;
+                        }
+                        
+                        .offer-icon-link::after {
+                            content: '';
+                            position: absolute;
+                            width: 0;
+                            height: 3px;
+                            bottom: -5px;
+                            left: 50%;
+                            background-color: #007bff;
+                            transform: translateX(-50%);
+                            transition: width 0.3s;
+                        }
+                        
+                        .offer-icon-container:hover .offer-icon-link::after {
+                            width: 100%;
+                        }
+                        
+                        .offer-icon-container:active {
+                            transform: translateY(0);
+                        }
+                        
+                        .offer-icon-container:active .offer-icon-link::after {
+                            background-color: #0056b3;
+                        }
+                    </style>
                         </t>
                     </div>
                 </div>
