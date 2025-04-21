@@ -41,15 +41,47 @@
                         
                             <!-- Categorías -->
                             <h5>Categorías</h5>
-                            <ul>
+                            <div class="category-tree">
                                 <t t-foreach="categories" t-as="category">
-                                    <li>
-                                        <a t-att-href="'/shop/category/' + str(category.id) + '?offers=true'">
-                                            <t t-esc="category.name" /> <small> (<t t-esc="category.product_count" />) </small>
-                                        </a>
-                                    </li>
+                                    <t t-if="not category.parent_id">
+                                        <div class="category-item">
+                                            <div class="d-flex align-items-center">
+                                                <t t-if="category.child_id">
+                                                    <i class="fa fa-chevron-right me-2 toggle-icon" role="button"></i>
+                                                </t>
+                                                <a t-att-href="'/shop/category/' + str(category.id) + '?offers=true'">
+                                                    <t t-esc="category.name"/> <small>(<t t-esc="category.product_count"/>)</small>
+                                                </a>
+                                            </div>
+                                            <div class="subcategories ms-4" style="display: none;">
+                                                <t t-call="website.recursive_categories">
+                                                    <t t-set="children" t-value="category.child_id"/>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </t>
                                 </t>
-                            </ul>
+                            </div>
+
+                            <template id="recursive_categories">
+                                <t t-foreach="children" t-as="child">
+                                    <div class="category-item">
+                                        <div class="d-flex align-items-center">
+                                            <t t-if="child.child_id">
+                                                <i class="fa fa-chevron-right me-2 toggle-icon" role="button"></i>
+                                            </t>
+                                            <a t-att-href="'/shop/category/' + str(child.id) + '?offers=true'">
+                                                <t t-esc="child.name"/> <small>(<t t-esc="child.product_count"/>)</small>
+                                            </a>
+                                        </div>
+                                        <div class="subcategories ms-4" style="display: none;">
+                                            <t t-call="website.recursive_categories">
+                                                <t t-set="children" t-value="child.child_id"/>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </t>
+                            </template>
                         
                             <!-- Filtro por precio -->
                             <h5>Precio</h5>
