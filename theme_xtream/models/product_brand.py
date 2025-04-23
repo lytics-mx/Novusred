@@ -6,3 +6,14 @@ class BrandType(models.Model):
 
     name = fields.Char(string='Nombre de la marca', required=True)
     description = fields.Text(string='Descripción')
+
+    icon_image = fields.Binary(
+        string="Ícono del Producto",
+        attachment=True,
+        help="Sube un ícono representativo del producto."
+    )
+    cover_image = fields.Binary(
+        string="Portada del Producto",
+        attachment=True,
+        help="Sube una imagen de portada para el producto."
+    )    
