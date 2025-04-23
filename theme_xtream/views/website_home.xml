@@ -463,25 +463,101 @@
                     <div style="text-align: left;">
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Sugerencias de productos relacionados</h2>
                     </div>
-                    <div class="d-flex justify-content-center gap-3 flex-wrap mt-2">
-                        <t t-set="viewed_products" t-value="request.env['website.track'].sudo().search([
-                            ('visitor_id', '=', request.env['website.visitor']._get_visitor_from_request().id),
-                            ('product_id', '!=', False)
-                        ], order='id desc', limit=5).mapped('product_id.product_tmpl_id')" />
-                        <t t-foreach="viewed_products" t-as="related_product" t-key="related_product.id">
-                            <a t-att-href="'/shop/product/' + str(related_product.id)" class="text-center" style="text-decoration: none;">
-                                <img t-att-src="'/web/image/product.template/' + str(related_product.id) + '/image_1920'"
-                                     class="d-block"
-                                     t-att-alt="related_product.name"
-                                     style="width: 150px; height: 150px; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
-                                <p style="font-family: 'Questrial', sans-serif; font-size: 14px; color: #666; margin-top: 5px;">
-                                    <t t-esc="related_product.name" />
-                                </p>
-                                <p style="font-family: 'Questrial', sans-serif; font-size: 14px; color: #333; font-weight: bold;">
-                                    <t t-esc="related_product.list_price" /> <span>USD</span>
-                                </p>
-                            </a>
-                        </t>
+                    <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
+                        <div id="suggestionsCarousel2" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <t t-set="viewed_products" t-value="request.env['website.track'].sudo().search([
+                                    ('visitor_id', '=', request.env['website.visitor']._get_visitor_from_request().id),
+                                    ('product_id', '!=', False)
+                                ], order='id desc', limit=10).mapped('product_id.product_tmpl_id')" />
+
+                                <div class="carousel-item active">
+                                    <div class="row row-cols-2 row-cols-md-5 g-3">
+                                        <t t-foreach="viewed_products[:5]" t-as="product">
+                                            <div class="col">
+                                                <div class="card h-100 shadow-sm" style="background-color: #ffffff; border-radius: 8px; padding: 15px; border: 1px solid #ffffff;">
+                                                    <a t-att-href="'/shop/product/' + str(product.id)">
+                                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                             class="card-img-top"
+                                                             style="height: 200px; object-fit: contain; padding: 10px;" />
+                                                    </a>
+                                                    <div class="card-body d-flex flex-column" style="background-color: #ffffff;">
+                                                        <t t-if="product.product_tag_ids">
+                                                            <span class="badge bg-primary mb-2">
+                                                                <t t-esc="product.product_tag_ids[0].name if product.product_tag_ids else ''"/>
+                                                            </span>
+                                                            <h6 class="card-title text-truncate mb-2">
+                                                                <t t-esc="product.name" />
+                                                            </h6>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <h6 class="card-title mb-2" style="max-height: 4.8em; overflow: hidden;">
+                                                                <t t-esc="product.name" />
+                                                            </h6>
+                                                        </t>
+                                                        <div class="mt-auto">
+                                                            <span class="fw-bold d-block">
+                                                                $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                            </span>
+                                                            <span class="text-orange" style="color: #FF5207; font-size: 0.9rem; font-weight: bold; font-style: italic;">
+                                                                Envío gratis
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+
+                                <div class="carousel-item">
+                                    <div class="row row-cols-2 row-cols-md-5 g-3">
+                                        <t t-foreach="viewed_products[5:]" t-as="product">
+                                            <div class="col">
+                                                <div class="card h-100 shadow-sm" style="background-color: #ffffff; border-radius: 8px; padding: 15px; border: 1px solid #ffffff;">
+                                                    <a t-att-href="'/shop/product/' + str(product.id)">
+                                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                             class="card-img-top"
+                                                             style="height: 200px; object-fit: contain; padding: 10px;" />
+                                                    </a>
+                                                    <div class="card-body d-flex flex-column" style="background-color: #ffffff;">
+                                                        <t t-if="product.product_tag_ids">
+                                                            <span class="badge bg-primary mb-2">
+                                                                <t t-esc="product.product_tag_ids[0].name if product.product_tag_ids else ''"/>
+                                                            </span>
+                                                            <h6 class="card-title text-truncate mb-2">
+                                                                <t t-esc="product.name" />
+                                                            </h6>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <h6 class="card-title mb-2" style="max-height: 4.8em; overflow: hidden;">
+                                                                <t t-esc="product.name" />
+                                                            </h6>
+                                                        </t>
+                                                        <div class="mt-auto">
+                                                            <span class="fw-bold d-block">
+                                                                $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                            </span>
+                                                            <span class="text-orange" style="color: #FF5207; font-size: 0.9rem; font-weight: bold; font-style: italic;">
+                                                                Envío gratis
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#suggestionsCarousel2" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#suggestionsCarousel2" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
