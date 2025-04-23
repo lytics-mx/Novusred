@@ -33,49 +33,40 @@
                             <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Sugerencias basadas en tu historial</h2>
                         </div>
                         <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
-                            <section id="o_wsale_products_grid" class="o_wsale_products_grid_table grid">
+                            <section id="o_wsale_products_grid" class="o_wsale_products_grid_table">
                                 <!-- Obtener productos vistos recientemente -->
                                 <t t-set="viewed_products" t-value="request.env['website.track'].sudo().search([
                                     ('visitor_id.partner_id', '=', request.env.user.partner_id.id),
                                     ('product_id', '!=', False)
-                                ], limit=10).mapped('product_id.product_tmpl_id')" />
-                                <div class="row">
+                                ], order='create_date desc', limit=8).mapped('product_id.product_tmpl_id')" />
+                                <div class="row row-cols-2 row-cols-md-4 g-3">
                                     <t t-foreach="viewed_products" t-as="product">
-                                        <div class="col-6 col-md-4 col-lg-3 mb-4">
-                                            <div class="card shadow-sm bg-white">
-                                                <!-- Imagen del producto -->
+                                        <div class="col">
+                                            <div class="card h-100 shadow-sm">
                                                 <a t-att-href="'/shop/product/' + str(product.id)">
                                                     <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
-                                                         class="card-img-top" 
-                                                         alt="Imagen del producto" 
-                                                         style="height: 180px; object-fit: cover;" />
+                                                         class="card-img-top"
+                                                         style="height: 200px; object-fit: contain; padding: 10px;" />
                                                 </a>
-                                                <div class="card-body bg-white">
-                                                    <!-- Etiqueta de oferta -->
+                                                <div class="card-body d-flex flex-column">
                                                     <t t-if="product.product_tag_ids">
-                                                        <span class="badge bg-primary mb-2" style="font-size: 0.8rem;">
+                                                        <span class="badge bg-primary mb-2">
                                                             <t t-esc="product.product_tag_ids[0].name if product.product_tag_ids else ''"/>
                                                         </span>
                                                     </t>
                                                     
-                                                    <!-- Precio del producto -->
-                                                    <div class="mb-2">
-                                                        <span class="text-success fw-bold d-block" style="font-size: 1.5rem;">
+                                                    <h6 class="card-title text-truncate mb-2">
+                                                        <t t-esc="product.name" />
+                                                    </h6>
+                                                    
+                                                    <div class="mt-auto">
+                                                        <span class="text-success fw-bold d-block">
                                                             $<t t-esc="'{:,}'.format(int(product.list_price))" />
                                                         </span>
-                                                    </div>
-                                                    
-                                                    <!-- Envío gratis -->
-                                                    <div class="mb-2">
-                                                        <span class="text-orange fw-bold" style="font-size: 0.9rem; font-style: italic; color: #FF5207;">
+                                                        <span class="text-orange" style="color: #FF5207; font-size: 0.9rem;">
                                                             Envío gratis
                                                         </span>
                                                     </div>
-                                                    
-                                                    <!-- Nombre del producto -->
-                                                    <h6 class="card-title text-truncate" style="font-size: 0.9rem;">
-                                                        <t t-esc="product.name" />
-                                                    </h6>
                                                 </div>
                                             </div>
                                         </div>
