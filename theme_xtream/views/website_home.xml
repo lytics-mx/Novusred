@@ -197,10 +197,10 @@
                     <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
                         <div id="offersCarousel" class="carousel slide" data-bs-ride="carousel">
                             <div class="carousel-inner">
-                                <t t-set="popular_products" t-value="request.env['website.track'].sudo().search([
-                                    ('product_id.discounted_price', '!=', False),
-                                    ('product_id.discounted_price', '&lt;', product_id.list_price)
-                                ], order='visit_count desc', limit=10).mapped('product_id.product_tmpl_id')" />
+                                <t t-set="popular_products" t-value="request.env['product.template'].sudo().search([
+                                    ('discounted_price', '!=', False),
+                                    ('discounted_price', '&lt;', 'list_price')
+                                ], order='website_views desc', limit=10)" />
                                 <!-- First slide with first 5 products -->
                                 <div class="carousel-item active">
                                     <div class="row row-cols-2 row-cols-md-5 g-3">
