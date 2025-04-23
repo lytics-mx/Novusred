@@ -336,6 +336,8 @@
                         </div>
                     </div>
                 </div>
+
+
                 <div class="oe_structure container mt-4" id="interes_custom_block">
                     <!-- This empty div allows for customizable content blocks to be inserted -->
                 </div>
@@ -386,9 +388,8 @@
                                             <div class="position-relative text-center" style="width: 250px; height: 250px; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);">
                                                 <!-- Imagen de portada (cover_image) como fondo -->
                                                 <img t-att-src="'data:image/png;base64,' + brand.cover_image.decode('utf-8')"
-                                                    alt="Portada de la Marca"
-                                                    class="w-100 h-100"
-                                                    style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" />
+                                                     alt="Portada de la Marca"
+                                                     style="width: 100%; height: 100%; object-fit: cover;" />
                                                 <!-- Ícono de la marca (icon_image) al frente -->
                                                 <img t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')"
                                                      alt="Ícono de la Marca"
@@ -458,7 +459,32 @@
                     <!-- This empty div allows for customizable content blocks to be inserted -->
                 </div>
 
-
+                <div class="container mt-4">
+                    <div style="text-align: left;">
+                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Sugerencias de productos relacionados</h2>
+                    </div>
+                    <div class="d-flex justify-content-center gap-3 flex-wrap mt-2">
+                        <t t-set="related_products" t-value="request.env['product.template'].sudo().search([
+                            ('public_categ_ids', 'in', product.public_categ_ids.ids),
+                            ('id', '!=', product.id),
+                            ('website_published', '=', True)
+                        ], limit=5)" />
+                        <t t-foreach="related_products" t-as="related_product" t-key="related_product.id">
+                            <a t-att-href="'/shop/product/' + str(related_product.id)" class="text-center" style="text-decoration: none;">
+                                <img t-att-src="'/web/image/product.template/' + str(related_product.id) + '/image_1920'"
+                                    class="d-block"
+                                    t-att-alt="related_product.name"
+                                    style="width: 150px; height: 150px; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
+                                <p style="font-family: 'Questrial', sans-serif; font-size: 14px; color: #666; margin-top: 5px;">
+                                    <t t-esc="related_product.name" />
+                                </p>
+                                <p style="font-family: 'Questrial', sans-serif; font-size: 14px; color: #333; font-weight: bold;">
+                                    <t t-esc="related_product.website_price" /> <span>USD</span>
+                                </p>
+                            </a>
+                        </t>
+                    </div>
+                </div>
 
             </div>
         </t>
