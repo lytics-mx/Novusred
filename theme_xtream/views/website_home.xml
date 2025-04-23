@@ -200,9 +200,8 @@
                                 <t t-set="discounted_products" t-value="request.env['product.template'].sudo().search([
                                     ('website_published', '=', True),
                                     ('list_price', '>', 0),
-                                    ('discounted_price', '>', 0),
-                                    ('discounted_price', '&lt;', 'list_price')
-                                ], limit=10)" />
+                                    ('discounted_price', '>', 0)
+                                ], limit=10).filtered(lambda p: p.discounted_price &lt; p.list_price)" />
                                 
                                 <div class="carousel-item active">
                                     <div class="row row-cols-2 row-cols-md-5 g-3">
