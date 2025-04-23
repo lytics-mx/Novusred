@@ -35,11 +35,13 @@
                         <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
                             <div id="suggestionsCarousel" class="carousel slide" data-bs-ride="carousel">
                                 <div class="carousel-inner">
+                                    <!-- Obtener productos vistos recientemente -->
                                     <t t-set="viewed_products" t-value="request.env['website.track'].sudo().search([
                                         ('visitor_id.partner_id', '=', request.env.user.partner_id.id),
                                         ('product_id', '!=', False)
                                     ], order='id desc', limit=10).mapped('product_id.product_tmpl_id')" />
                                     
+                                    <!-- Primera página del carrusel -->
                                     <div class="carousel-item active">
                                         <div class="row row-cols-2 row-cols-md-5 g-3">
                                             <t t-foreach="viewed_products[:5]" t-as="product">
@@ -49,14 +51,6 @@
                                                             <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
                                                                  class="card-img-top"
                                                                  style="height: 200px; object-fit: contain; padding: 10px;" />
-                                                            <t t-if="product.offer_active and product.offer_expiration">
-                                                                <div class="position-absolute top-0 end-0 m-2">
-                                                                    <span class="badge bg-danger">Oferta</span>
-                                                                    <div class="small text-danger">
-                                                                        Expira: <t t-esc="product.offer_expiration"/>
-                                                                    </div>
-                                                                </div>
-                                                            </t>
                                                         </a>
                                                         <div class="card-body d-flex flex-column">
                                                             <t t-if="product.product_tag_ids">
@@ -68,12 +62,15 @@
                                                                 <t t-esc="product.name" />
                                                             </h6>
                                                             <div class="mt-auto">
-                                                                <t t-if="product.has_discounted_price">
+                                                                <t t-if="product.discounted_price">
                                                                     <span class="text-decoration-line-through text-muted">
                                                                         $<t t-esc="'{:,}'.format(int(product.list_price))" />
                                                                     </span>
                                                                     <span class="text-success fw-bold d-block">
                                                                         $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
+                                                                    </span>
+                                                                    <span class="badge bg-danger">
+                                                                        <t t-esc="'{:.0f}%'.format((1 - product.discounted_price/product.list_price) * 100)"/> OFF
                                                                     </span>
                                                                 </t>
                                                                 <t t-else="">
@@ -84,6 +81,11 @@
                                                                 <span class="text-orange" style="color: #FF5207; font-size: 0.9rem;">
                                                                     Envío gratis
                                                                 </span>
+                                                                <div class="mt-2">
+                                                                    <small class="text-muted">
+                                                                        Visto hace <t t-esc="request.env['website.track'].sudo().search([('product_id.product_tmpl_id', '=', product.id), ('visitor_id.partner_id', '=', request.env.user.partner_id.id)], limit=1).create_date.strftime('%d/%m/%Y')" />
+                                                                    </small>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -92,9 +94,57 @@
                                         </div>
                                     </div>
                                     
-                                    <!-- Segunda página similar con los mismos cambios -->
+                                    <!-- Segunda página del carrusel -->
                                     <div class="carousel-item">
-                                        <!-- Contenido similar al anterior pero con viewed_products[5:] -->
+                                        <div class="row row-cols-2 row-cols-md-5 g-3">
+                                            <t t-foreach="viewed_products[5:]" t-as="product">
+                                                <div class="col">
+                                                    <div class="card h-100 shadow-sm" style="background-color: white;">
+                                                        <a t-att-href="'/shop/product/' + str(product.id)">
+                                                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                                 class="card-img-top"
+                                                                 style="height: 200px; object-fit: contain; padding: 10px;" />
+                                                        </a>
+                                                        <div class="card-body d-flex flex-column">
+                                                            <t t-if="product.product_tag_ids">
+                                                                <span class="badge bg-primary mb-2">
+                                                                    <t t-esc="product.product_tag_ids[0].name if product.product_tag_ids else ''"/>
+                                                                </span>
+                                                            </t>
+                                                            <h6 class="card-title text-truncate mb-2">
+                                                                <t t-esc="product.name" />
+                                                            </h6>
+                                                            <div class="mt-auto">
+                                                                <t t-if="product.discounted_price">
+                                                                    <span class="text-decoration-line-through text-muted">
+                                                                        $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                                    </span>
+                                                                    <span class="text-success fw-bold d-block">
+                                                                        $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
+                                                                    </span>
+                                                                    <span class="badge bg-danger">
+                                                                        <t t-esc="'{:.0f}%'.format((1 - product.discounted_price/product.list_price) * 100)"/> OFF
+                                                                    </span>
+                                                                </t>
+                                                                <t t-else="">
+                                                                    <span class="text-success fw-bold d-block">
+                                                                        $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                                    </span>
+                                                                </t>
+                                                                <span class="text-orange" style="color: #FF5207; font-size: 0.9rem;">
+                                                                    Envío gratis
+                                                                </span>
+                                                                <div class="mt-2">
+                                                                    <small class="text-muted">
+                                                                        Visto hace <t t-esc="request.env['website.track'].sudo().search([('product_id.product_tmpl_id', '=', product.id), ('visitor_id.partner_id', '=', request.env.user.partner_id.id)], limit=1).create_date.strftime('%d/%m/%Y')" />
+                                                                    </small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </div>
                                     </div>
                                 </div>
                                 <button class="carousel-control-prev" type="button" data-bs-target="#suggestionsCarousel" data-bs-slide="prev">
