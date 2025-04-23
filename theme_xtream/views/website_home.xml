@@ -472,11 +472,19 @@
                                     ('visitor_id', '=', request.env['website.visitor']._get_visitor_from_request().id),
                                     ('product_id', '!=', False)
                                 ]).mapped('product_id.categ_id')" />
+
+                                <t t-set="viewed_tags" t-value="request.env['website.track'].sudo().search([
+                                    ('visitor_id', '=', request.env['website.visitor']._get_visitor_from_request().id),
+                                    ('product_id', '!=', False)
+                                ]).mapped('product_id.product_tmpl_id.product_tag_ids')" />
                 
-                                <!-- Obtener productos de las categorías vistas -->
+                                <!-- Obtener productos de las categorías vistas y tags -->
                                 <t t-set="suggested_products" t-value="request.env['product.template'].sudo().search([
+                                    '|',
                                     ('categ_id', 'in', viewed_categories.ids),
-                                    ('website_published', '=', True)
+                                    ('product_tag_ids', 'in', viewed_tags.ids),
+                                    ('website_published', '=', True),
+                                    ('product_tag_ids', '!=', False)
                                 ], limit=10)" />
 
                                 <!-- Primera slide del carrusel -->
