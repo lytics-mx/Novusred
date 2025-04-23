@@ -371,42 +371,48 @@
                     <div style="text-align: left;">
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Marcas</h2>
                     </div>
-                    <div class="d-flex justify-content-center gap-3 flex-wrap">
-                        <t t-set="brands" t-value="request.env['brand.type'].sudo().search([])" />
-                        <t t-foreach="brands" t-as="brand">
-                            <div class="position-relative text-center" style="width: 250px; height: 250px; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);">
-                                <!-- Imagen de portada (cover_image) como fondo -->
-                                <img t-if="brand.cover_image"
-                                     t-att-src="'data:image/png;base64,' + brand.cover_image.decode('utf-8')"
-                                     alt="Portada de la Marca"
-                                     style="width: 100%; height: 100%; object-fit: cover;" />
-                                <t t-else="">
-                                    <img src="/theme_xtream/static/src/img/default_cover_image.png"
-                                         alt="Imagen predeterminada"
-                                         style="width: 100%; height: 100%; object-fit: cover;" />
-                                </t>
-                            
-                                <!-- Ícono de la marca (icon_image) al frente -->
-                                <img t-if="brand.icon_image"
-                                     t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')"
-                                     alt="Ícono de la Marca"
-                                     class="position-absolute"
-                                     style="top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80px; height: 80px; border-radius: 50%; background-color: white; padding: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);" />
-                                <t t-else="">
-                                    <img src="/theme_xtream/static/src/img/default_icon_image.png"
-                                         alt="Ícono predeterminado"
-                                         class="position-absolute"
-                                         style="top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80px; height: 80px; border-radius: 50%; background-color: white; padding: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);" />
-                                </t>
-                            
-                                <!-- Nombre de la marca debajo del ícono -->
-                                <div class="position-absolute" style="bottom: 10px; left: 50%; transform: translateX(-50%); background-color: rgba(255, 255, 255, 0.8); padding: 5px 10px; border-radius: 5px;">
-                                    <span style="font-family: 'Questrial', sans-serif; font-size: 16px; font-weight: bold;">
-                                        <t t-esc="brand.name" />
-                                    </span>
+                    <div id="brandsCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <t t-set="brands" t-value="request.env['brand.type'].sudo().search([
+                                ('icon_image', '!=', False),
+                                ('cover_image', '!=', False)
+                            ], limit=15)" />
+                            <t t-set="chunks" t-value="[brands[i:i+5] for i in range(0, len(brands), 5)]" />
+                            <t t-foreach="chunks" t-as="chunk" t-key="chunk_index">
+                                <div t-att-class="'carousel-item' + (' active' if chunk_index == 0 else '')">
+                                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                                        <t t-foreach="chunk" t-as="brand" t-key="brand.id">
+                                            <div class="position-relative text-center" style="width: 250px; height: 250px; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);">
+                                                <!-- Imagen de portada (cover_image) como fondo -->
+                                                <img t-att-src="'data:image/png;base64,' + brand.cover_image.decode('utf-8')"
+                                                     alt="Portada de la Marca"
+                                                     style="width: 100%; height: 100%; object-fit: cover;" />
+                                                <!-- Ícono de la marca (icon_image) al frente -->
+                                                <img t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')"
+                                                     alt="Ícono de la Marca"
+                                                     class="position-absolute"
+                                                     style="top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80px; height: 80px; border-radius: 50%; background-color: white; padding: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);" />
+                                                <!-- Nombre de la marca debajo del ícono -->
+                                                <div class="position-absolute" style="bottom: 10px; left: 50%; transform: translateX(-50%); background-color: rgba(255, 255, 255, 0.8); padding: 5px 10px; border-radius: 5px;">
+                                                    <span style="font-family: 'Questrial', sans-serif; font-size: 16px; font-weight: bold;">
+                                                        <t t-esc="brand.name" />
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
                                 </div>
-                            </div>
-                        </t>
+                            </t>
+                        </div>
+                        <!-- Controles del carrusel -->
+                        <button class="carousel-control-prev" type="button" data-bs-target="#brandsCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#brandsCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
                     </div>
                 </div>
 
