@@ -75,8 +75,8 @@
                                                                                 <t t-esc="int(product.discount_percentage)" />% OFF
                                                                             </t>
                                                                             <t t-elif="product.fixed_discount">
-                                                                                $<t t-esc="'{:,}'.format(int(product.fixed_discount))" />
-                                                                            </t>
+                                                                                $<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN de descuento
+                                                                            </t>   
                                                                         </span>
                                                                     </div>
                                                                     <span class="text-success fw-bold d-block">
@@ -142,8 +142,8 @@
                                                                                 <t t-esc="int(product.discount_percentage)" />% OFF
                                                                             </t>
                                                                             <t t-elif="product.fixed_discount">
-                                                                                $<t t-esc="'{:,}'.format(int(product.fixed_discount))" />
-                                                                            </t>
+                                                                                $<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN de descuento
+                                                                            </t>   
                                                                         </span>
                                                                     </div>
                                                                     <span class="text-success fw-bold d-block">
@@ -192,28 +192,106 @@
                 
                 <div class="container mt-4">
                     <div style="text-align: left;">
-                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Ofertas</h2>
+                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Ofertas más populares</h2>
                     </div>
                     <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
-                        <section id="o_wsale_products_grid" class="o_wsale_products_grid_table grid">
-                            <t t-set="discounted_products" t-value="request.env['product.template'].sudo().search([('website_published', '=', True), ('list_price', '>', 0), ('discounted_price', '>', 0)], limit=10)" />
-                            <t t-foreach="discounted_products" t-as="product">
-                                <div class="oe_product g-col-6 g-col-md-3 g-col-lg-3">
-                                    <div class="o_wsale_product_grid_wrapper">
-                                        <a t-att-href="'/shop/product/' + str(product.id)">
-                                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" />
-                                        </a>
-                                        <h6><t t-esc="product.name" /></h6>
-                                        <div>
-                                            <span class="text-decoration-line-through">$<t t-esc="'%.2f' % product.list_price" /></span>
-                                            <span class="text-success">$<t t-esc="'%.2f' % product.discounted_price" /></span>
-                                        </div>
+                        <div id="offersCarousel" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <t t-set="popular_products" t-value="request.env['website.track'].sudo().search([
+                                    ('product_id.discounted_price', '!=', False),
+                                    ('product_id.discounted_price', '&lt;', 'product_id.list_price')
+                                ], order='visit_count desc', limit=10).mapped('product_id.product_tmpl_id')" />
+
+                                <!-- First slide with first 5 products -->
+                                <div class="carousel-item active">
+                                    <div class="row row-cols-2 row-cols-md-5 g-3">
+                                        <t t-foreach="popular_products[:5]" t-as="product">
+                                            <div class="col">
+                                                <div class="card h-100 shadow-sm" style="background-color: #ffffff; border-radius: 8px; padding: 15px; border: 1px solid #ffffff;">                                                        
+                                                    <a t-att-href="'/shop/product/' + str(product.id)">
+                                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                             class="card-img-top"
+                                                             style="height: 200px; object-fit: contain; padding: 10px;" />
+                                                    </a>
+                                                    <div class="card-body d-flex flex-column">
+                                                        <h6 class="card-title text-truncate mb-2">
+                                                            <t t-esc="product.name"/>
+                                                        </h6>
+                                                        <div class="mt-auto">
+                                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                                <span class="text-decoration-line-through text-muted">
+                                                                    $<t t-esc="'{:,}'.format(int(product.list_price))"/>
+                                                                </span>
+                                                                <span class="text-danger fw-bold">
+                                                                    <t t-esc="int(((product.list_price - product.discounted_price) / product.list_price) * 100)"/>% OFF
+                                                                </span>
+                                                            </div>
+                                                            <span class="text-success fw-bold d-block">
+                                                                $<t t-esc="'{:,}'.format(int(product.discounted_price))"/>
+                                                            </span>
+                                                            <span class="text-orange" style="color: #FF5207; font-size: 0.9rem; font-weight: bold; font-style: italic;">
+                                                                Envío gratis
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
                                     </div>
                                 </div>
-                            </t>
-                        </section>
+
+                                <!-- Second slide with next 5 products -->
+                                <div class="carousel-item">
+                                    <div class="row row-cols-2 row-cols-md-5 g-3">
+                                        <t t-foreach="popular_products[5:]" t-as="product">
+                                            <div class="col">
+                                                <div class="card h-100 shadow-sm" style="background-color: #ffffff; border-radius: 8px; padding: 15px; border: 1px solid #ffffff;">                                                        
+                                                    <a t-att-href="'/shop/product/' + str(product.id)">
+                                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                             class="card-img-top"
+                                                             style="height: 200px; object-fit: contain; padding: 10px;" />
+                                                    </a>
+                                                    <div class="card-body d-flex flex-column">
+                                                        <h6 class="card-title text-truncate mb-2">
+                                                            <t t-esc="product.name"/>
+                                                        </h6>
+                                                        <div class="mt-auto">
+                                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                                <span class="text-decoration-line-through text-muted">
+                                                                    $<t t-esc="'{:,}'.format(int(product.list_price))"/>
+                                                                </span>
+                                                                <span class="text-danger fw-bold">
+                                                                    <t t-esc="int(((product.list_price - product.discounted_price) / product.list_price) * 100)"/>% OFF
+                                                                </span>
+                                                            </div>
+                                                            <span class="text-success fw-bold d-block">
+                                                                $<t t-esc="'{:,}'.format(int(product.discounted_price))"/>
+                                                            </span>
+                                                            <span class="text-orange" style="color: #FF5207; font-size: 0.9rem; font-weight: bold; font-style: italic;">
+                                                                Envío gratis
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Carousel controls -->
+                            <button class="carousel-control-prev" type="button" data-bs-target="#offersCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#offersCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
+
 
                 <div class="oe_structure container mt-4" id="interes_custom_block">
                     <!-- This empty div allows for customizable content blocks to be inserted -->
