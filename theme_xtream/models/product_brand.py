@@ -16,4 +16,9 @@ class BrandType(models.Model):
         string="Portada del Producto",
         attachment=True,
         help="Sube una imagen de portada para el producto."
-    )    
+    )
+    active = fields.Boolean(
+        string="Activo",
+        default=True,
+        help="Desactiva esta marca para que no se muestre en el carrusel."
+    )
