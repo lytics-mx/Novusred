@@ -1,15 +1,16 @@
 <odoo>
     <!-- List View -->
-    <record id="view_brand_type_tree" model="ir.ui.view">
-        <field name="name">brand.type.tree</field>
+    <record id="view_brand_type_list" model="ir.ui.view">
+        <field name="name">brand.type.list</field>
         <field name="model">brand.type</field>
         <field name="arch" type="xml">
-            <list editable="bottom" create="1" delete="1">
+            <list create="true" delete="true">
                 <field name="name"/>
                 <field name="description"/>
             </list>
         </field>
     </record>
+
     <!-- Search View -->
     <record id="view_brand_type_search" model="ir.ui.view">
         <field name="name">brand.type.search</field>
@@ -22,20 +23,15 @@
         </field>
     </record>
 
-
-    <!-- Form View with buttons -->
+    <!-- Form View -->
     <record id="view_brand_type_form" model="ir.ui.view">
         <field name="name">brand.type.form</field>
         <field name="model">brand.type</field>
         <field name="arch" type="xml">
             <form>
-                <!-- Removing header with invalid actions -->
                 <sheet>
-                    <div class="oe_button_box" name="button_box">
-                        <!-- Action buttons can be placed here if needed -->
-                    </div>
                     <div class="oe_title">
-                        <h1><field name="name" placeholder="Name"/></h1>
+                        <h1><field name="name" placeholder="Nombre de la Marca"/></h1>
                     </div>
                     <group>
                         <field name="description"/>
@@ -49,16 +45,16 @@
         </field>
     </record>
 
-    <!-- Kanban View - Fixed opening tag -->
+    <!-- Kanban View -->
     <record id="view_brand_type_kanban" model="ir.ui.view">
         <field name="name">brand.type.kanban</field>
         <field name="model">brand.type</field>
         <field name="arch" type="xml">
-            <kanban auto_save="1">
+            <kanban>
                 <templates>
                     <t t-name="kanban-box">
                         <div class="oe_kanban_card">
-                            <img t-if="record.icon_image and record.icon_image.raw_value" t-att-src="'data:image/png;base64,' + record.icon_image.raw_value" class="oe_kanban_avatar" style="width: 50px; height: 50px; border-radius: 50%;"/>
+                            <img t-if="record.icon_image.raw_value" t-att-src="'data:image/png;base64,' + record.icon_image.raw_value" class="oe_kanban_avatar" style="width: 50px; height: 50px; border-radius: 50%;"/>
                             <strong><field name="name"/></strong>
                             <div><field name="description"/></div>
                         </div>
@@ -68,12 +64,11 @@
         </field>
     </record>
 
-
     <!-- Action -->
     <record id="action_brand_type" model="ir.actions.act_window">
         <field name="name">Tipos de Marca</field>
         <field name="res_model">brand.type</field>
-        <field name="view_mode">kanban,list,form</field>
+        <field name="view_mode">list,form,kanban</field>
         <field name="context">{'auto_save': True}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
@@ -88,5 +83,4 @@
               action="action_brand_type"
               parent="stock.menu_stock_inventory_control" 
               sequence="3"/>
-
 </odoo>
