@@ -464,17 +464,16 @@
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Sugerencias de productos relacionados</h2>
                     </div>
                     <div class="d-flex justify-content-center gap-3 flex-wrap mt-2">
-                        <t t-set="related_products" t-value="request.env['product.template'].sudo().search([
-                            ('public_categ_ids', 'in', product.public_categ_ids.ids),
-                            ('id', '!=', product.id),
-                            ('website_published', '=', True)
-                        ], limit=5)" />
-                        <t t-foreach="related_products" t-as="related_product" t-key="related_product.id">
+                        <t t-set="viewed_products" t-value="request.env['website.track'].sudo().search([
+                            ('visitor_id', '=', request.env['website.visitor']._get_visitor_from_request().id),
+                            ('product_id', '!=', False)
+                        ], order='create_date desc', limit=5).mapped('product_id.product_tmpl_id')" />
+                        <t t-foreach="viewed_products" t-as="related_product" t-key="related_product.id">
                             <a t-att-href="'/shop/product/' + str(related_product.id)" class="text-center" style="text-decoration: none;">
                                 <img t-att-src="'/web/image/product.template/' + str(related_product.id) + '/image_1920'"
-                                    class="d-block"
-                                    t-att-alt="related_product.name"
-                                    style="width: 150px; height: 150px; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
+                                     class="d-block"
+                                     t-att-alt="related_product.name"
+                                     style="width: 150px; height: 150px; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
                                 <p style="font-family: 'Questrial', sans-serif; font-size: 14px; color: #666; margin-top: 5px;">
                                     <t t-esc="related_product.name" />
                                 </p>
@@ -485,7 +484,6 @@
                         </t>
                     </div>
                 </div>
-
             </div>
         </t>
     </template>
