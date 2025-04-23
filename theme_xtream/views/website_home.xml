@@ -197,12 +197,12 @@
                     <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
                         <div id="offersCarousel" class="carousel slide" data-bs-ride="carousel">
                             <div class="carousel-inner">
-                                <!-- Search for published products with valid discounts -->
                                 <t t-set="discounted_products" t-value="request.env['product.template'].sudo().search([
                                     ('website_published', '=', True),
-                                    ('discounted_price', '>', 0),
-                                    ('discounted_price', '&lt;', list_price)
-                                ], limit=10)" />
+                                    ('list_price', '>', 0),
+                                    ('discounted_price', '>', 0)
+                                ], limit=10).filtered(lambda p: p.discounted_price &lt; p.list_price)" />
+                                
                                 <div class="carousel-item active">
                                     <div class="row row-cols-2 row-cols-md-5 g-3">
                                         <t t-foreach="discounted_products[:5]" t-as="product">
