@@ -466,6 +466,7 @@
                     <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
                         <div id="suggestionsCarousel" class="carousel slide" data-bs-ride="carousel">
                             <div class="carousel-inner">
+
                                 <!-- Obtener las categorías de los productos vistos -->
                                 <t t-set="viewed_categories" t-value="request.env['website.track'].sudo().search([
                                     ('visitor_id', '=', request.env['website.visitor']._get_visitor_from_request().id),
@@ -477,7 +478,7 @@
                                     ('categ_id', 'in', viewed_categories.ids),
                                     ('website_published', '=', True)
                                 ], limit=10)" />
-                
+
                                 <!-- Primera slide del carrusel -->
                                 <div class="carousel-item active">
                                     <div class="row row-cols-2 row-cols-md-5 g-3">
@@ -490,13 +491,39 @@
                                                              style="height: 200px; object-fit: contain; padding: 10px;" />
                                                     </a>
                                                     <div class="card-body d-flex flex-column" style="background-color: #ffffff;">
+                                                        <!-- Mostrar etiqueta si existe -->
+                                                        <t t-if="product.product_tag_ids">
+                                                            <span class="badge bg-primary mb-2">
+                                                                <t t-esc="product.product_tag_ids[0].name if product.product_tag_ids else ''" />
+                                                            </span>
+                                                        </t>
                                                         <h6 class="card-title text-truncate mb-2">
                                                             <t t-esc="product.name" />
                                                         </h6>
                                                         <div class="mt-auto">
-                                                            <span class="fw-bold d-block">
-                                                                $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                                            </span>
+                                                            <t t-if="product.discounted_price and product.discounted_price &lt; product.list_price">
+                                                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                                                    <span class="text-decoration-line-through text-muted">
+                                                                        $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                                    </span>
+                                                                    <span class="text-danger fw-bold" style="font-size: 0.9rem;">
+                                                                        <t t-if="product.discount_percentage">
+                                                                            <t t-esc="int(product.discount_percentage)" />% OFF
+                                                                        </t>
+                                                                        <t t-elif="product.fixed_discount">
+                                                                            -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
+                                                                        </t>
+                                                                    </span>
+                                                                </div>
+                                                                <span class="text-success fw-bold d-block">
+                                                                    $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
+                                                                </span>
+                                                            </t>
+                                                            <t t-else="">
+                                                                <span class="fw-bold d-block" style="margin-top: auto;">
+                                                                    $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                                </span>
+                                                            </t>
                                                             <span class="text-orange" style="color: #FF5207; font-size: 0.9rem; font-weight: bold; font-style: italic;">
                                                                 Envío gratis
                                                             </span>
@@ -520,13 +547,39 @@
                                                              style="height: 200px; object-fit: contain; padding: 10px;" />
                                                     </a>
                                                     <div class="card-body d-flex flex-column" style="background-color: #ffffff;">
+                                                        <!-- Mostrar etiqueta si existe -->
+                                                        <t t-if="product.product_tag_ids">
+                                                            <span class="badge bg-primary mb-2">
+                                                                <t t-esc="product.product_tag_ids[0].name if product.product_tag_ids else ''" />
+                                                            </span>
+                                                        </t>
                                                         <h6 class="card-title text-truncate mb-2">
                                                             <t t-esc="product.name" />
                                                         </h6>
                                                         <div class="mt-auto">
-                                                            <span class="fw-bold d-block">
-                                                                $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                                            </span>
+                                                            <t t-if="product.discounted_price and product.discounted_price &lt; product.list_price">
+                                                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                                                    <span class="text-decoration-line-through text-muted">
+                                                                        $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                                    </span>
+                                                                    <span class="text-danger fw-bold" style="font-size: 0.9rem;">
+                                                                        <t t-if="product.discount_percentage">
+                                                                            <t t-esc="int(product.discount_percentage)" />% OFF
+                                                                        </t>
+                                                                        <t t-elif="product.fixed_discount">
+                                                                            -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
+                                                                        </t>
+                                                                    </span>
+                                                                </div>
+                                                                <span class="text-success fw-bold d-block">
+                                                                    $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
+                                                                </span>
+                                                            </t>
+                                                            <t t-else="">
+                                                                <span class="fw-bold d-block" style="margin-top: auto;">
+                                                                    $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                                </span>
+                                                            </t>
                                                             <span class="text-orange" style="color: #FF5207; font-size: 0.9rem; font-weight: bold; font-style: italic;">
                                                                 Envío gratis
                                                             </span>
