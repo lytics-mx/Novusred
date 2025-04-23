@@ -372,14 +372,25 @@
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Marcas</h2>
                     </div>
                     <div class="d-flex justify-content-center gap-3 flex-wrap">
-                        <t t-set="tags" t-value="request.env['product.tag'].sudo().search([])" />
-                        <t t-foreach="tags" t-as="tag">
-                            <a t-att-href="'/shop?tag_id=' + str(tag.id)">
-                                <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'" 
-                                    class="d-block mt-2" 
-                                    t-att-alt="tag.name + ' Portada'" 
-                                    style="width: 250px; height: auto; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
-                            </a>
+                        <t t-set="brands" t-value="request.env['brand.type'].sudo().search([])" />
+                        <t t-foreach="brands" t-as="brand">
+                            <div class="position-relative text-center" style="width: 250px; height: 250px; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);">
+                                <!-- Imagen de portada (cover_image) -->
+                                <img t-att-src="'data:image/png;base64,' + brand.cover_image.decode('utf-8')" 
+                                     alt="Portada de la Marca"
+                                     style="width: 100%; height: 100%; object-fit: cover;" />
+                                <!-- Ícono de la marca (icon_image) -->
+                                <img t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')" 
+                                     alt="Ícono de la Marca"
+                                     class="position-absolute"
+                                     style="top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80px; height: 80px; border-radius: 50%; background-color: white; padding: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);" />
+                                <!-- Nombre de la marca -->
+                                <div class="position-absolute" style="bottom: 10px; left: 50%; transform: translateX(-50%); background-color: rgba(255, 255, 255, 0.8); padding: 5px 10px; border-radius: 5px;">
+                                    <span style="font-family: 'Questrial', sans-serif; font-size: 16px; font-weight: bold;">
+                                        <t t-esc="brand.name" />
+                                    </span>
+                                </div>
+                            </div>
                         </t>
                     </div>
                 </div>
