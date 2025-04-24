@@ -15,8 +15,16 @@
 
                         <!-- Verifica si hay productos en el historial -->
                         <t t-if="viewed_products">
+                            <!-- Paginación -->
+                            <t t-set="page_size" t-value="10" />
+                            <t t-set="total_pages" t-value="(len(viewed_products) + page_size - 1) // page_size" />
+                            <t t-set="current_page" t-value="request.params.get('page', 1) | int" />
+                            <t t-set="start_index" t-value="(current_page - 1) * page_size" />
+                            <t t-set="end_index" t-value="start_index + page_size" />
+                            <t t-set="paged_products" t-value="viewed_products[start_index:end_index]" />
+
                             <div class="row row-cols-2 row-cols-md-5 g-3">
-                                <t t-foreach="viewed_products" t-as="product">
+                                <t t-foreach="paged_products" t-as="product">
                                     <div class="col">
                                         <div class="card h-100 shadow-sm" style="background-color: #ffffff; border-radius: 8px; padding: 15px; border: 1px solid #ffffff;">
                                             <a t-att-href="'/shop/product/' + str(product.id)">
@@ -25,24 +33,32 @@
                                                      style="height: 200px; object-fit: contain; padding: 10px;" />
                                             </a>
                                             <div class="card-body d-flex flex-column" style="background-color: #ffffff;">
+                                                <!-- Mostrar etiqueta si existe -->
+                                                <t t-if="product.product_tag_ids">
+                                                    <span class="badge bg-primary mb-2">
+                                                        <t t-esc="product.product_tag_ids[0].name" />
+                                                    </span>
+                                                </t>
+                                                <!-- Mostrar marca si existe -->
+                                                <t t-if="product.brand_id">
+                                                    <span class="text-muted" style="font-size: 0.8rem;">
+                                                        Marca: <t t-esc="product.brand_id.name" />
+                                                    </span>
+                                                </t>
                                                 <h6 class="card-title mb-2 text-truncate" style="max-height: 4.8em; overflow: hidden;">
                                                     <t t-esc="product.name" />
                                                 </h6>
                                                 <div class="mt-auto">
+                                                    <!-- Mostrar precio con descuento o precio de lista -->
                                                     <t t-if="product.discounted_price &lt; product.list_price">
                                                         <div class="d-flex align-items-center justify-content-between mb-2">
                                                             <span class="text-decoration-line-through text-muted">
                                                                 $<t t-esc="'{:,}'.format(int(product.list_price))" />
                                                             </span>
                                                             <span class="text-danger fw-bold" style="font-size: 0.9rem;">
-                                                                <t t-if="product.discount_percentage">
-                                                                    <t t-esc="int(product.discount_percentage)" />% OFF
-                                                                </t>
+                                                                $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
                                                             </span>
                                                         </div>
-                                                        <span class="text-success fw-bold d-block">
-                                                            $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
-                                                        </span>
                                                     </t>
                                                     <t t-else="">
                                                         <span class="fw-bold d-block">
@@ -62,6 +78,29 @@
                                     </div>
                                 </t>
                             </div>
+
+                            <!-- Navegación de paginación -->
+                            <nav class="mt-4">
+                                <ul class="pagination justify-content-center">
+                                    <t t-if="current_page > 1">
+                                        <li class="page-item">
+                                            <a class="page-link" t-att-href="'?page=' + str(current_page - 1)">Anterior</a>
+                                        </li>
+                                    </t>
+                                    <t t-foreach="range(1, total_pages + 1)" t-as="page">
+                                        <li class="page-item" t-att-class="'active' if page == current_page else ''">
+                                            <a class="page-link" t-att-href="'?page=' + str(page)">
+                                                <t t-esc="page" />
+                                            </a>
+                                        </li>
+                                    </t>
+                                    <t t-if="current_page < total_pages">
+                                        <li class="page-item">
+                                            <a class="page-link" t-att-href="'?page=' + str(current_page + 1)">Siguiente</a>
+                                        </li>
+                                    </t>
+                                </ul>
+                            </nav>
                         </t>
                         <!-- Mensaje si no hay productos en el historial -->
                         <t t-else="">
