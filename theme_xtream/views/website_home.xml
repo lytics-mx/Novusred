@@ -426,61 +426,35 @@
                     <div style="text-align: left;">
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Categorías</h2>
                     </div>
-                    <div id="categoriesCarousel" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            <!-- Obtener las categorías principales visibles en el menú -->
-                            <t t-set="categories" t-value="request.env['product.category'].sudo().search([('parent_id', '=', False), ('is_visible_in_menu', '=', True)], limit=15)" />
-                            <!-- Dividir las categorías en grupos de 5 -->
-                            <t t-set="chunks" t-value="[categories[i:i+5] for i in range(0, len(categories), 5)]" />
-                
-                            <!-- Crear las diapositivas del carrusel -->
-                            <t t-foreach="chunks" t-as="chunk" t-key="chunk_index">
-                                <div t-att-class="'carousel-item' + (' active' if chunk_index == 0 else '')">
-                                    <div class="d-flex justify-content-center gap-3 flex-wrap">
-                                        <t t-foreach="chunk" t-as="category" t-key="category.id">
-                                            <div style="text-align: center;">
-                                                <a t-att-href="'/shop/category/' + str(category.id)" class="d-block">
-                                                    <!-- Mostrar el ícono de la categoría -->
-                                                    <img t-att-src="'data:image/png;base64,' + category.icon" 
-                                                         t-if="category.icon"
-                                                         class="d-block mx-auto" 
-                                                         t-att-alt="category.name" 
-                                                         style="width: 150px; height: 150px; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
-                                                    <p style="font-family: 'Questrial', sans-serif; font-size: 16px; color: #333; margin-top: 10px;">
-                                                        <t t-esc="category.name" />
-                                                    </p>
-                                                </a>
-                                                <!-- Subcategorías visibles en el menú -->
-                                                <div class="d-flex justify-content-center gap-2 flex-wrap mt-2">
-                                                    <t t-set="subcategories" t-value="request.env['product.category'].sudo().search([('parent_id', '=', category.id), ('is_visible_in_menu', '=', True)], limit=5)" />
-                                                    <t t-foreach="subcategories" t-as="subcategory" t-key="subcategory.id">
-                                                        <a t-att-href="'/shop/category/' + str(subcategory.id)">
-                                                            <img t-att-src="'data:image/png;base64,' + subcategory.icon"
-                                                                 t-if="subcategory.icon" 
-                                                                 class="d-block" 
-                                                                 t-att-alt="subcategory.name" 
-                                                                 style="width: 100px; height: 100px; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
-                                                            <p style="font-family: 'Questrial', sans-serif; font-size: 14px; color: #666; margin-top: 5px;">
-                                                                <t t-esc="subcategory.name" />
-                                                            </p>
-                                                        </a>
-                                                    </t>
-                                                </div>
-                                            </div>
-                                        </t>
-                                    </div>
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <t t-set="categories" t-value="request.env['product.category'].sudo().search([('parent_id', '=', False), ('is_visible_in_menu', '=', True)], limit=5)" />
+                        <t t-foreach="categories" t-as="category">
+                            <div style="text-align: center;">
+                                <a t-att-href="'/shop/category/' + str(category.id)">
+                                    <img t-att-src="'data:image/png;base64,' + category.icon" 
+                                        class="d-block" 
+                                        t-att-alt="category.name" 
+                                        style="width: 150px; height: auto; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
+                                    <p style="font-family: 'Questrial', sans-serif; font-size: 16px; color: #333; margin-top: 10px;">
+                                        <t t-esc="category.name" />
+                                    </p>
+                                </a>
+                                <div class="d-flex justify-content-center gap-2 flex-wrap mt-2">
+                                    <t t-set="subcategories" t-value="request.env['product.category'].sudo().search([('parent_id', '=', category.id), ('is_visible_in_menu', '=', True)], limit=5)" />
+                                    <t t-foreach="subcategories" t-as="subcategory">
+                                        <a t-att-href="'/shop/category/' + str(subcategory.id)">
+                                            <img t-att-src="'data:image/png;base64,' + subcategory.icon" 
+                                                class="d-block" 
+                                                t-att-alt="subcategory.name" 
+                                                style="width: 100px; height: auto; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
+                                            <p style="font-family: 'Questrial', sans-serif; font-size: 14px; color: #666; margin-top: 5px;">
+                                                <t t-esc="subcategory.name" />
+                                            </p>
+                                        </a>
+                                    </t>
                                 </div>
-                            </t>
-                        </div>
-                        <!-- Controles del carrusel -->
-                        <button class="carousel-control-prev" type="button" data-bs-target="#categoriesCarousel" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#categoriesCarousel" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </button>
+                            </div>
+                        </t>
                     </div>
                 </div>
                 <div class="oe_structure container mt-4" id="sugerencia_custom_block">
