@@ -2,26 +2,80 @@
     <template id="history_template" name="Historial de Productos Vistos">
         <t t-call="website.layout">
             <div class="oe_structure" id="sugerencia_custom_block"/>
-            <!-- <div class="container mt-5">
-                <h2>Historial de Productos Vistos</h2>
-                <t t-if="history">
-                    <ul class="list-group">
-                        <t t-foreach="history" t-as="product">
-                            <li class="list-group-item">
-                                <a t-att-href="'/shop/product/%s' % product.product_id.id">
-                                    <t t-esc="product.product_id.name"/>
-                                </a>
-                                <span class="text-muted">
-                                    (Visto el <t t-esc="product.viewed_at.strftime('%d/%m/%Y %H:%M')"/>)
-                                </span>
-                            </li>
-                        </t>
-                    </ul>
-                </t>
-                <t t-else="">
-                    <p>No has visto ningún producto recientemente.</p>
-                </t>
-            </div> -->
+            <t t-if="request.env.user and request.env.user.id != request.env.ref('base.public_user').id">
+                <div class="container mt-4">
+                    <div style="text-align: left;">
+                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Historial</h2>
+                    </div>
+                    <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
+                        <div class="row row-cols-2 row-cols-md-5 g-3">
+                            <t t-set="viewed_products" t-value="request.env['website.track'].sudo().search([
+                                ('visitor_id.partner_id', '=', request.env.user.partner_id.id),
+                                ('product_id', '!=', False)
+                            ], order='id desc').mapped('product_id.product_tmpl_id').filtered(lambda p: p.website_published)" />
+                            
+                            <t t-foreach="viewed_products[:20]" t-as="product">
+                                <div class="col">
+                                    <div class="card h-100 shadow-sm" style="background-color: #ffffff; border-radius: 8px; padding: 15px; border: 1px solid #ffffff;">
+                                        <a t-att-href="'/shop/product/' + str(product.id)">
+                                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                 class="card-img-top"
+                                                 style="height: 200px; object-fit: contain; padding: 10px;" />
+                                        </a>
+                                        <div class="card-body d-flex flex-column" style="background-color: #ffffff;">
+                                            <h6 class="card-title mb-2 text-truncate" style="max-height: 4.8em; overflow: hidden;">
+                                                <t t-esc="product.name" />
+                                            </h6>
+                                            <div class="mt-auto">
+                                                <t t-if="product.discounted_price &lt; product.list_price">
+                                                    <div class="d-flex align-items-center justify-content-between mb-2">
+                                                        <span class="text-decoration-line-through text-muted">
+                                                            $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                        </span>
+                                                        <span class="text-danger fw-bold" style="font-size: 0.9rem;">
+                                                            <t t-if="product.discount_percentage">
+                                                                <t t-esc="int(product.discount_percentage)" />% OFF
+                                                            </t>
+                                                        </span>
+                                                    </div>
+                                                    <span class="text-success fw-bold d-block">
+                                                        $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
+                                                    </span>
+                                                </t>
+                                                <t t-else="">
+                                                    <span class="fw-bold d-block">
+                                                        $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                    </span>
+                                                </t>
+                                                <span class="text-orange" style="color: #FF5207; font-size: 0.9rem; font-weight: bold; font-style: italic;">
+                                                    Envío gratis
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                        <!-- Pagination -->
+                        <div class="mt-4 d-flex justify-content-center">
+                            <nav>
+                                <ul class="pagination">
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=1">1</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=2">2</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=3">3</a>
+                                    </li>
+                                    <!-- Add more pages dynamically if needed -->
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </t>
             <div class="oe_structure" id="sugerencia_custom_block"/>
         </t>
     </template>
