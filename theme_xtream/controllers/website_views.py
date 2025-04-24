@@ -90,22 +90,4 @@ class OffersController(http.Controller):
             'total_products': total_products,  # Total de productos publicados
         })
     
-    @http.route('/history/remove/<int:product_id>', type='http', auth='user', website=True)
-    def remove_from_history(self, product_id, **kwargs):
-        # Buscar el historial del usuario actual
-        user_partner_id = request.env.user.partner_id.id
-        track_entry = request.env['website.track'].sudo().search([
-            ('visitor_id.partner_id', '=', user_partner_id),
-            ('product_id.product_tmpl_id', '=', product_id)
-        ], limit=1)
-
-        # Eliminar la entrada del historial
-        if track_entry:
-            track_entry.unlink()
-
-        # Redirigir de vuelta al historial
-        return request.redirect('/history')
-        
-    @http.route('/history', type='http', auth='user', website=True)
-    def view_history(self, **kwargs):
-        return request.render('theme_xtream.history_template')    
+    

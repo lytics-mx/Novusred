@@ -1,77 +1,49 @@
 <odoo>
     <template id="history_template" name="Historial de Productos Vistos">
         <t t-call="website.layout">
-            <div class="oe_structure" id="sugerencia_custom_block"/>
-            <t t-if="request.env.user and request.env.user.id != request.env.ref('base.public_user').id">
-                <div class="container mt-4">
-                    <div style="text-align: left;">
-                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Historial</h2>
-                    </div>
-                    <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
-                        <t t-set="viewed_products" t-value="request.env['website.track'].sudo().search([
-                            ('visitor_id.partner_id', '=', request.env.user.partner_id.id),
-                            ('product_id', '!=', False)
-                        ], order='id desc').mapped('product_id.product_tmpl_id').filtered(lambda p: p.website_published)" />
-                        
-                        <!-- Group products by month -->
-                        <t t-set="grouped_products" t-value="{}" />
-                        <t t-foreach="viewed_products" t-as="product">
-                            <t t-set="month" t-value="product.create_date.strftime('%B %Y')" />
-                            <t t-if="month not in grouped_products">
-                                <t t-set="grouped_products[month]" t-value="[]" />
+            <div class="container mt-4">
+                <div style="text-align: left;">
+                    <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Historial</h2>
+                </div>
+                <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
+                    <!-- Verifica si hay productos en el historial -->
+                    <t t-if="history">
+                        <!-- Agrupa los productos por mes -->
+                        <t t-set="grouped_history" t-value="{}" />
+                        <t t-foreach="history" t-as="entry">
+                            <t t-set="month" t-value="entry.viewed_at.strftime('%B %Y')" />
+                            <t t-if="month not in grouped_history">
+                                <t t-set="grouped_history[month]" t-value="[]" />
                             </t>
-                            <t t-set="grouped_products[month]" t-value="grouped_products[month] + [product]" />
+                            <t t-set="grouped_history[month]" t-value="grouped_history[month] + [entry]" />
                         </t>
 
-                        <!-- Render products by month -->
-                        <t t-foreach="grouped_products.items()" t-as="group">
+                        <!-- Renderiza los productos agrupados por mes -->
+                        <t t-foreach="grouped_history.items()" t-as="group">
                             <div class="mt-4">
                                 <h3 style="font-family: 'Questrial', sans-serif; font-size: 20px; color: #333;">
                                     <t t-esc="group[0]" />
                                 </h3>
                                 <div class="row row-cols-2 row-cols-md-5 g-3">
-                                    <t t-foreach="group[1][:20]" t-as="product">
+                                    <t t-foreach="group[1]" t-as="entry">
                                         <div class="col">
                                             <div class="card h-100 shadow-sm" style="background-color: #ffffff; border-radius: 8px; padding: 15px; border: 1px solid #ffffff;">
-                                                <a t-att-href="'/shop/product/' + str(product.id)">
-                                                    <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                <a t-att-href="'/shop/product/' + str(entry.product_id.id)">
+                                                    <img t-att-src="'/web/image/product.template/' + str(entry.product_id.id) + '/image_1920'" 
                                                          class="card-img-top"
                                                          style="height: 200px; object-fit: contain; padding: 10px;" />
                                                 </a>
                                                 <div class="card-body d-flex flex-column" style="background-color: #ffffff;">
                                                     <h6 class="card-title mb-2 text-truncate" style="max-height: 4.8em; overflow: hidden;">
-                                                        <t t-esc="product.name" />
+                                                        <t t-esc="entry.product_id.name" />
                                                     </h6>
                                                     <div class="mt-auto">
-                                                        <t t-if="product.discounted_price &lt; product.list_price">
-                                                            <div class="d-flex align-items-center justify-content-between mb-2">
-                                                                <span class="text-decoration-line-through text-muted">
-                                                                    $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                                                </span>
-                                                                <span class="text-danger fw-bold" style="font-size: 0.9rem;">
-                                                                    <t t-if="product.discount_percentage">
-                                                                        <t t-esc="int(product.discount_percentage)" />% OFF
-                                                                    </t>
-                                                                </span>
-                                                            </div>
-                                                            <span class="text-success fw-bold d-block">
-                                                                $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
-                                                            </span>
-                                                        </t>
-                                                        <t t-else="">
-                                                            <span class="fw-bold d-block">
-                                                                $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                                            </span>
-                                                        </t>
-                                                        <span class="text-orange" style="color: #FF5207; font-size: 0.9rem; font-weight: bold; font-style: italic;">
-                                                            Envío gratis
-                                                        </span>
                                                         <span class="text-muted" style="font-size: 0.8rem;">
-                                                            Categoría: <t t-esc="product.categ_id.name" />
-                                                        </span>                                                        
+                                                            Visto el: <t t-esc="entry.viewed_at.strftime('%d/%m/%Y %H:%M:%S')" />
+                                                        </span>
                                                     </div>
-                                                    <!-- Eliminar button -->
-                                                    <a t-att-href="'/history/remove/' + str(product.id)" class="text-danger mt-2" style="font-size: 0.9rem;">
+                                                    <!-- Botón para eliminar -->
+                                                    <a t-att-href="'/shop/history/remove/' + str(entry.id)" class="text-danger mt-2" style="font-size: 0.9rem;">
                                                         Eliminar
                                                     </a>
                                                 </div>
@@ -79,29 +51,17 @@
                                         </div>
                                     </t>
                                 </div>
-                                <!-- Pagination for each month -->
-                                <t t-if="len(group[1]) > 20">
-                                    <div class="mt-4 d-flex justify-content-center">
-                                        <nav>
-                                            <ul class="pagination">
-                                                <t t-set="pages" t-value="range(1, (len(group[1]) // 20) + 2)" />
-                                                <t t-foreach="pages" t-as="page">
-                                                    <li class="page-item">
-                                                        <a class="page-link" t-att-href="'?month=' + group[0] + '&amp;page=' + str(page)">
-                                                            <t t-esc="page" />
-                                                        </a>
-                                                    </li>
-                                                </t>
-                                            </ul>
-                                        </nav>
-                                    </div>
-                                </t>
                             </div>
                         </t>
-                    </div>
+                    </t>
+                    <!-- Mensaje si no hay productos en el historial -->
+                    <t t-else="">
+                        <div class="text-center mt-5">
+                            <h4 style="font-family: 'Questrial', sans-serif; color: #666;">No hay productos en tu historial.</h4>
+                        </div>
+                    </t>
                 </div>
-            </t>
-            <div class="oe_structure" id="sugerencia_custom_block"/>
+            </div>
         </t>
     </template>
 </odoo>
