@@ -429,20 +429,32 @@
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Categorías</h2>
                     </div>
                     <div class="d-flex justify-content-center gap-3 flex-wrap">
-                        <t t-set="categories" t-value="request.env['product.category'].sudo().search([('parent_id', '=', False), ('is_visible_in_menu', '=', True)], limit=10)" />
+                        <t t-set="categories" t-value="request.env['product.category'].sudo().search([('parent_id', '=', False), ('is_visible_in_menu', '=', True)], limit=5)" />
                         <t t-foreach="categories" t-as="category">
-                            <div style="text-align: center; width: 120px;">
-                                <a t-att-href="'/shop/category/' + str(category.id)" style="text-decoration: none;">
-                                    <div style="border: 1px solid #ddd; border-radius: 10px; padding: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
-                                        <img t-att-src="'/web/image/product.category/' + str(category.id) + '/icon'" 
-                                             class="d-block mx-auto" 
-                                             t-att-alt="category.name" 
-                                             style="width: 80px; height: 80px; object-fit: contain;" />
-                                    </div>
-                                    <p style="font-family: 'Questrial', sans-serif; font-size: 14px; color: #333; margin-top: 10px;">
+                            <div style="text-align: center;">
+                                <a t-att-href="'/shop/category/' + str(category.id)">
+                                    <img t-att-src="'/web/image/product.category/' + str(category.id) + '/icon'" 
+                                        class="d-block" 
+                                        t-att-alt="category.name" 
+                                        style="width: 150px; height: auto; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
+                                    <p style="font-family: 'Questrial', sans-serif; font-size: 16px; color: #333; margin-top: 10px;">
                                         <t t-esc="category.name" />
                                     </p>
                                 </a>
+                                <div class="d-flex justify-content-center gap-2 flex-wrap mt-2">
+                                    <t t-set="subcategories" t-value="request.env['product.category'].sudo().search([('parent_id', '=', category.id), ('is_visible_in_menu', '=', True)], limit=5)" />
+                                    <t t-foreach="subcategories" t-as="subcategory">
+                                        <a t-att-href="'/shop/category/' + str(subcategory.id)">
+                                            <img t-att-src="'/web/image/product.category/' + str(subcategory.id) + '/icon'" 
+                                                class="d-block" 
+                                                t-att-alt="subcategory.name" 
+                                                style="width: 100px; height: auto; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
+                                            <p style="font-family: 'Questrial', sans-serif; font-size: 14px; color: #666; margin-top: 5px;">
+                                                <t t-esc="subcategory.name" />
+                                            </p>
+                                        </a>
+                                    </t>
+                                </div>
                             </div>
                         </t>
                     </div>
@@ -619,8 +631,39 @@
                 <div class="oe_structure container mt-4" id="espacio_custom_block">
                     <!-- This empty div allows for customizable content blocks to be inserted -->
                 </div>
-
-                
+                <div style="background-color: white; padding: 20px 0; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+                    <div class="container d-flex justify-content-between align-items-center flex-wrap gap-4">
+                        <!-- Recompensas por Comprar -->
+                        <div class="text-center" style="flex: 1; min-width: 200px;">
+                            <img src="/theme_xtream/static/src/img/home/carrito.png" alt="Recompensas por Comprar" style="width: 60px; height: auto; margin-bottom: 10px;" />
+                            <h5 style="font-family: 'Questrial', sans-serif; font-size: 18px; font-weight: bold; color: #333;">Recompensas por Comprar</h5>
+                            <p style="font-family: 'Questrial', sans-serif; font-size: 14px; color: #666;">
+                                Con el programa de lealtad compra y gana. Todas tus compras mayores a $2,000 MXN pueden hacer que obtengas una bonificación.
+                            </p>
+                        </div>
+                        <!-- Línea vertical -->
+                        <div style="width: 1px; background-color: #ddd; height: 100px;"></div>
+                        <!-- Pago Seguro -->
+                        <div class="text-center" style="flex: 1; min-width: 200px;">
+                            <img src="/theme_xtream/static/src/img/home/escudo.png" alt="Pago Seguro" style="width: 60px; height: auto; margin-bottom: 10px;" />
+                            <h5 style="font-family: 'Questrial', sans-serif; font-size: 18px; font-weight: bold; color: #333;">Pago Seguro</h5>
+                            <p style="font-family: 'Questrial', sans-serif; font-size: 14px; color: #666;">
+                                En Novusred hemos implementado varios métodos de pago muy seguros para su comodidad.
+                            </p>
+                        </div>
+                        <!-- Línea vertical -->
+                        <div style="width: 1px; background-color: #ddd; height: 100px;"></div>
+                        <!-- Envíos -->
+                        <div class="text-center" style="flex: 1; min-width: 200px;">
+                            <img src="/theme_xtream/static/src/img/home/mano.png" alt="Envíos" style="width: 60px; height: auto; margin-bottom: 10px;" />
+                            <h5 style="font-family: 'Questrial', sans-serif; font-size: 18px; font-weight: bold; color: #333;">Envíos</h5>
+                            <p style="font-family: 'Questrial', sans-serif; font-size: 14px; color: #666;">
+                                Somos un Ecommerce que garantiza seguridad en el envío de productos a nuestras oficinas.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                                
             </div>
         </t>
     </template>
