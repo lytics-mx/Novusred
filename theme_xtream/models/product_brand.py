@@ -19,6 +19,6 @@ class BrandType(models.Model):
     )
     active = fields.Boolean(
         string="Activo",
-        default=True,
+        default=False,
         help="Desactiva esta marca para que no se muestre en el carrusel."
     )
