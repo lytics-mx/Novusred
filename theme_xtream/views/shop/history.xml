@@ -7,17 +7,7 @@
                 </div>
                 <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
                     <!-- Verifica si hay productos en el historial -->
-                    <t t-if="history">
-                        <!-- Agrupa los productos por mes -->
-                        <t t-set="grouped_history" t-value="{}" />
-                        <t t-foreach="history" t-as="entry">
-                            <t t-set="month" t-value="entry.viewed_at.strftime('%B %Y')" />
-                            <t t-if="month not in grouped_history">
-                                <t t-set="grouped_history[month]" t-value="[]" />
-                            </t>
-                            <t t-set="grouped_history[month]" t-value="grouped_history[month] + [entry]" />
-                        </t>
-
+                    <t t-if="grouped_history">
                         <!-- Renderiza los productos agrupados por mes -->
                         <t t-foreach="grouped_history.items()" t-as="group">
                             <div class="mt-4">

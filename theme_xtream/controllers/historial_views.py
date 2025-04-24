@@ -1,5 +1,6 @@
 from odoo import http
 from odoo.http import request
+from collections import defaultdict
 
 class ProductHistoryController(http.Controller):
 
@@ -10,10 +11,16 @@ class ProductHistoryController(http.Controller):
         history = request.env['product.view.history'].sudo().search(
             [('user_id', '=', user_id)], order='viewed_at desc'
         )
-        # Agrega un print para depurar
-        print("Historial obtenido:", history)
+
+        # Agrupar productos por mes
+        grouped_history = defaultdict(list)
+        for entry in history:
+            month = entry.viewed_at.strftime('%B %Y')
+            grouped_history[month].append(entry)
+
+        # Pasar los datos agrupados al template
         return request.render('theme_xtream.history_template', {
-            'history': history,
+            'grouped_history': dict(grouped_history),
         })
 
     @http.route('/shop/history/remove/<int:history_id>', type='http', auth='user', website=True)
@@ -25,7 +32,4 @@ class ProductHistoryController(http.Controller):
         )
         if history_entry:
             history_entry.unlink()
-            print(f"Entrada del historial eliminada: {history_entry}")
-        else:
-            print(f"No se encontró la entrada del historial con ID: {history_id}")
         return request.redirect('/shop/history')
