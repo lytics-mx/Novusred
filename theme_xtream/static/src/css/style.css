@@ -1082,44 +1082,26 @@ template {
 }
 
 /* Inicialmente, todos los contenedores están colapsados */
-.product-card .product-title-container {
-    height: 2.4rem; /* Altura inicial para mostrar dos líneas */
-    overflow: hidden;
-    transition: height 0.3s ease; /* Transición suave */
+.product-name-container {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
 }
 
-/* Título del producto */
-.product-card .product-title {
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* Limita a 2 líneas inicialmente */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    transition: all 0.3s ease;
+/* Solo el contenedor del producto sobre el que se pasa el cursor se expande */
+.product-card:hover .product-name-container {
+  max-height: 6em; /* Ajusta la altura según sea necesario */
 }
 
-/* Expandir el contenedor al pasar el cursor */
-.product-card:hover .product-title-container {
-    height: auto; /* Permite mostrar todo el contenido */
-    overflow: visible;
+/* Limitar el nombre del producto a 3 líneas */
+.product-name {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Desactivar el recorte de líneas al expandir */
-.product-card:hover .product-title {
-    -webkit-line-clamp: unset; /* Desactiva el recorte de líneas */
-    overflow: visible;
-}
-
-.product-title-container {
-    height: 2.4rem;
-    overflow: hidden;
-    transition: height 0.3s ease;
-}
-
-.product-card:hover .product-title-container {
-    height: auto;
-    overflow: visible;
-}
 
 @media screen and (max-width: 992px) {
   .product .content .wrapper:hover{
