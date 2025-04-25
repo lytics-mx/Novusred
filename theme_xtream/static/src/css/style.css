@@ -1082,26 +1082,32 @@ template {
 }
 
 /* Inicialmente, todos los contenedores están colapsados */
-.product-name-container {
-  max-height: 0 !important; /* Asegura que el contenedor esté colapsado inicialmente */
-  overflow: hidden !important;
-  transition: max-height 0.3s ease !important;
+.product-title-container {
+    height: 2.4rem; /* Altura inicial para mostrar dos líneas */
+    overflow: hidden;
+    transition: height 0.3s ease; /* Transición suave */
 }
 
-/* Solo el contenedor del producto sobre el que se pasa el cursor se expande */
-.product-card:hover .product-name-container {
-  max-height: 6em !important; /* Ajusta la altura según sea necesario */
-  overflow: visible !important;
-  transition: max-height 0.3s ease !important;
+/* Título del producto */
+.product-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Limita a 2 líneas inicialmente */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 0.3s ease;
 }
 
-/* Limitar el nombre del producto a 3 líneas inicialmente */
-.product-name {
-  display: -webkit-box !important;
-  -webkit-line-clamp: 3 !important;
-  -webkit-box-orient: vertical !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
+/* Expandir el contenedor al pasar el cursor */
+.product-card:hover .product-title-container {
+    height: auto; /* Permite mostrar todo el contenido */
+    overflow: visible;
+}
+
+/* Desactivar el recorte de líneas al expandir */
+.product-card:hover .product-title {
+    -webkit-line-clamp: unset; /* Desactiva el recorte de líneas */
+    overflow: visible;
 }
 
 
