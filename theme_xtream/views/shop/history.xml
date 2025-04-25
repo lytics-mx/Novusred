@@ -85,8 +85,13 @@
                                                        t-att-data-product-id="product.id"
                                                        class="text-danger mt-2 delete-history-item" 
                                                        style="font-size: 0.9rem;"
-                                                       onclick="event.preventDefault();">
-
+                                                       onclick="event.preventDefault(); 
+                                                               fetch('/shop/history/remove/' + $(this).data('product-id'))
+                                                               .then(response => {
+                                                                   if (response.ok) {
+                                                                       $(this).closest('.col').fadeOut();
+                                                                   }
+                                                               });">
                                                         Eliminar
                                                     </a>
                                                 </div>
