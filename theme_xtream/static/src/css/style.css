@@ -1081,25 +1081,32 @@ template {
     transition: max-height 0.3s ease !important; /* Transición suave */
 }
 
-/* Inicialmente, todos los contenedores están colapsados */
+/* Inicialmente, el contenedor del nombre muestra solo 2 líneas */
 .product-name-container {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease;
+    max-height: 2.4rem; /* Altura para mostrar 2 líneas */
+    overflow: hidden;
+    transition: max-height 0.3s ease; /* Transición suave */
 }
 
-/* Solo el contenedor del producto sobre el que se pasa el cursor se expande */
-.product-card:hover .product-name-container {
-  max-height: 6em; /* Ajusta la altura según sea necesario */
-}
-
-/* Limitar el nombre del producto a 3 líneas */
+/* Título del producto con recorte inicial */
 .product-name {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Limita a 2 líneas */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Al pasar el cursor, el contenedor se expande para mostrar todo el nombre */
+.product-card:hover .product-name-container {
+    max-height: 100px; /* Ajusta según el tamaño máximo del texto */
+    overflow: visible;
+}
+
+/* Al expandirse, desactiva el recorte de líneas */
+.product-card:hover .product-name {
+    -webkit-line-clamp: unset; /* Desactiva el recorte */
+    overflow: visible;
 }
 
 
