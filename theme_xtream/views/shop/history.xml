@@ -10,8 +10,9 @@
                         <!-- Obtener productos vistos -->
                         <t t-set="viewed_products" t-value="request.env['website.track'].sudo().search([
                             ('visitor_id.partner_id', '=', request.env.user.partner_id.id),
-                            ('product_id', '!=', False)
-                        ], order='id desc').mapped('product_id.product_tmpl_id').filtered(lambda p: p.website_published)" />
+                            ('product_id', '!=', False),
+                            ('url', 'ilike', '/shop/product/')
+                        ], order='visit_datetime desc').mapped('product_id.product_tmpl_id').filtered(lambda p: p.website_published)" />
 
                         <!-- Verifica si hay productos en el historial -->
                         <t t-if="viewed_products">
