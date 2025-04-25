@@ -23,7 +23,7 @@ class ProductHistoryController(http.Controller):
             'grouped_history': dict(grouped_history),
         })
 
-    @http.route('/shop/history/remove/<int:product_id>', type='http', auth='user', methods=['POST'], website=True)
+    @http.route('/shop/history/remove/<int:product_id>', type='json', auth='user', website=True)
     def remove_from_history(self, product_id):
         """Elimina un producto del historial del usuario actual."""
         user_partner_id = request.env.user.partner_id.id
@@ -37,5 +37,4 @@ class ProductHistoryController(http.Controller):
         if track_entry:
             track_entry.unlink()
     
-        # Redirigir de vuelta al historial
-        return request.redirect('/shop/history')
+        return {'success': True}

@@ -68,12 +68,12 @@
                                                     <!-- <h6 class="card-title mb-2 text-truncate product-name" style="font-size: 0.9rem; white-space: normal; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
                                                         <t t-esc="product.name" />
                                                     </h6> -->
-                                                    <form t-att-action="'/shop/history/remove/' + str(product.id)" method="post" style="display: inline;">
-                                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
-                                                        <button type="submit" class="btn btn-link text-danger mt-2" style="font-size: 0.9rem; padding: 0; border: none; background: none;">
-                                                            Eliminar
-                                                        </button>
-                                                    </form>
+                                                    <a href="javascript:void(0);" 
+                                                       t-att-data-product-id="product.id" 
+                                                       class="text-danger mt-2 remove-history-item" 
+                                                       style="font-size: 0.9rem;">
+                                                        Eliminar
+                                                    </a>
                                                 </div>
 
                                             </div>
@@ -94,6 +94,32 @@
             <div class="oe_structure container mt-4" id="espacio_custom_block">
                 <!-- This empty div permite insertar bloques de contenido personalizados -->
             </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    document.querySelectorAll('.remove-history-item').forEach(function (button) {
+                        button.addEventListener('click', function () {
+                            const productId = this.getAttribute('data-product-id');
+                            fetch(`/shop/history/remove/${productId}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                },
+                            })
+                            .then(response => {
+                                if (response.ok) {
+                                    // Remove the product card from the DOM
+                                    this.closest('.col').remove();
+                                } else {
+                                    console.error('Failed to remove product from history.');
+                                }
+                            })
+                            .catch(error => console.error('Error:', error));
+                        });
+                    });
+                });
+            </script>
+
         </t>
     </template>
 </odoo>
