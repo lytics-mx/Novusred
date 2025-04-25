@@ -11,7 +11,7 @@
                         <t t-set="viewed_products" t-value="request.env['website.track'].sudo().search([
                             ('visitor_id.partner_id', '=', request.env.user.partner_id.id),
                             ('product_id', '!=', False)
-                        ], order='id desc').mapped('product_id.product_tmpl_id').filtered(lambda p: p.website_published)" />
+                        ], order='create_date desc').mapped('product_id.product_tmpl_id')" />
 
                         <!-- Verifica si hay productos en el historial -->
                         <t t-if="viewed_products">
@@ -26,7 +26,11 @@
                                             </a>
                                             <div class="card-body d-flex flex-column" style="background-color: #ffffff; position: relative;">
                                                 <!-- Información del producto -->
-
+                                                        <t t-if="product.product_tag_ids">
+                                                            <span class="badge bg-primary mb-2">
+                                                                <t t-esc="product.product_tag_ids[0].name if product.product_tag_ids else ''"/>
+                                                            </span>                                                           
+                                                        </t>
                                                         
 
                                                 <div class="mb-2">
