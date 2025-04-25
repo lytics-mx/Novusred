@@ -31,25 +31,33 @@
                                                         <t t-esc="product.brand_type_id.name"/>
                                                     </span>
                                                 </div>
+                                                <!-- Tags del producto -->
+                                                <div class="mb-2">
+                                                    <t t-foreach="product.tag_ids" t-as="tag">
+                                                        <span class="badge text-bg-secondary me-1" style="font-size: 0.8rem;">
+                                                            <t t-esc="tag.name"/>
+                                                        </span>
+                                                    </t>
+                                                </div>
                                                 <div class="mt-auto">
                                                     <t t-if="product.discounted_price &lt; product.list_price">
                                                         <div class="d-flex align-items-center justify-content-between mb-2">
                                                             <span class="text-decoration-line-through text-muted">
-                                                                $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                                -$<t t-esc="'{:,}'.format(int(product.list_price))" /> MXN
                                                             </span>
                                                             <span class="text-danger fw-bold" style="font-size: 0.9rem;">
                                                                 <t t-if="product.discount_percentage">
-                                                                    <t t-esc="int(product.discount_percentage)" />% OFF
+                                                                    -<t t-esc="int(product.discount_percentage)" />% OFF
                                                                 </t>
                                                             </span>
                                                         </div>
                                                         <span class="text-success fw-bold d-block">
-                                                            $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
+                                                            $<t t-esc="'{:,}'.format(int(product.discounted_price))" /> MXN
                                                         </span>
                                                     </t>
                                                     <t t-else="">
                                                         <span class="fw-bold d-block">
-                                                            $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                            $<t t-esc="'{:,}'.format(int(product.list_price))" /> MXN
                                                         </span>
                                                     </t>
                                                     <span class="text-orange" style="color: #FF5207; font-size: 0.9rem; font-weight: bold; font-style: italic;">
