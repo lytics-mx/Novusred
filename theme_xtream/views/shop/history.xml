@@ -8,20 +8,12 @@
                     </div>
                     <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
                         <!-- Obtener productos vistos -->
-                        <t t-set="page" t-value="int(request.params.get('page', 1))" />
-                        <t t-set="items_per_page" t-value="20" />
-                        <t t-set="offset" t-value="(page - 1) * items_per_page" />
                         
                         <t t-set="viewed_products" t-value="request.env['website.track'].sudo().search([
                             ('visitor_id.partner_id', '=', request.env.user.partner_id.id),
                             ('product_id', '!=', False)
-                        ], order='id desc', limit=items_per_page, offset=offset).mapped('product_id.product_tmpl_id').filtered(lambda p: p.website_published)" />
+                        ], order='id desc').mapped('product_id.product_tmpl_id').filtered(lambda p: p.website_published)" />
                         
-                        <t t-set="total_products" t-value="request.env['website.track'].sudo().search_count([
-                            ('visitor_id.partner_id', '=', request.env.user.partner_id.id),
-                            ('product_id', '!=', False)
-                        ])" />
-                        <t t-set="total_pages" t-value="(total_products + items_per_page - 1) // items_per_page" />
                         <!-- Verifica si hay productos en el historial -->
                         <t t-if="viewed_products">
                             <div class="row row-cols-2 row-cols-md-5 g-3">
@@ -95,7 +87,13 @@
                                                        t-att-data-product-id="product.id"
                                                        class="text-primary mt-2 delete-history-item" 
                                                        style="font-size: 0.9rem;"
-                                                       onclick="event.preventDefault(); fetch('/shop/history/remove/' + this.getAttribute('data-product-id')).then(function(response) { if (response.ok) { this.closest('.col').style.display = 'none'; }.bind(this); });">
+                                                       onclick="event.preventDefault(); 
+                                                               fetch('/shop/history/remove/' + $(this).data('product-id'))
+                                                               .then(response => {
+                                                                   if (response.ok) {
+                                                                       $(this).closest('.col').fadeOut();
+                                                                   }
+                                                               });">
                                                         Eliminar
                                                     </a>
                                                 </div>
@@ -106,33 +104,7 @@
                                 </t>
                             </div>
                             <!-- Agregar paginación aquí -->
-                            <t t-if="total_pages > 1">
-                                <nav aria-label="Page navigation" class="mt-4">
-                                    <ul class="pagination justify-content-center">
-                                        <t t-if="page > 1">
-                                            <li class="page-item">
-                                                <a class="page-link" t-att-href="'?page=' + str(page - 1)" aria-label="Previous">
-                                                    <span aria-hidden="true">«</span> <!-- Reemplazo de &laquo; -->
-                                                </a>
-                                            </li>
-                                        </t>
-                                        <t t-foreach="range(1, total_pages + 1)" t-as="p">
-                                            <li class="page-item" t-att-class="'active' if p == page else ''">
-                                                <a class="page-link" t-att-href="'?page=' + str(p)">
-                                                    <t t-esc="p" />
-                                                </a>
-                                            </li>
-                                        </t>
-                                        <t t-if="page < total_pages">
-                                            <li class="page-item">
-                                                <a class="page-link" t-att-href="'?page=' + str(page + 1)" aria-label="Next">
-                                                    <span aria-hidden="true">»</span> <!-- Reemplazo de &raquo; -->
-                                                </a>
-                                            </li>
-                                        </t>
-                                    </ul>
-                                </nav>
-                            </t>
+
 
                         </t>
                         <!-- Mensaje si no hay productos en el historial -->
