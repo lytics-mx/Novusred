@@ -6,41 +6,15 @@
                     <div style="text-align: left;">
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Historial</h2>
                     </div>
-                        <!-- Filtro por mes y botones de vista -->
-                        <div class="d-flex gap-3">
-                            <select class="form-select" id="monthFilter" style="width: auto;">
-                                <option value="">Todos los meses</option>
-                                <option value="1">Enero</option>
-                                <option value="2">Febrero</option>
-                                <option value="3">Marzo</option>
-                                <option value="4">Abril</option>
-                                <option value="5">Mayo</option>
-                                <option value="6">Junio</option>
-                                <option value="7">Julio</option>
-                                <option value="8">Agosto</option>
-                                <option value="9">Septiembre</option>
-                                <option value="10">Octubre</option>
-                                <option value="11">Noviembre</option>
-                                <option value="12">Diciembre</option>
-                            </select>
-                            <div class="btn-group">
-                                <button class="btn btn-outline-secondary active" id="gridView">
-                                    <i class="fa fa-th-large"></i>
-                                </button>
-                                <button class="btn btn-outline-secondary" id="listView">
-                                    <i class="fa fa-list"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
+                   
                     <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
+                        <!-- Obtener productos vistos -->
+                        
                         <t t-set="viewed_products" t-value="request.env['website.track'].sudo().search([
                             ('visitor_id.partner_id', '=', request.env.user.partner_id.id),
                             ('product_id', '!=', False)
                         ], order='id desc').mapped('product_id.product_tmpl_id').filtered(lambda p: p.website_published)" />
-                   
-                      
+                        
                         <!-- Verifica si hay productos en el historial -->
                         <t t-if="viewed_products">
                             <div class="row row-cols-2 row-cols-md-5 g-3">
@@ -154,10 +128,10 @@
                         </t>
                     </div>
                 </div>
-                <div class="oe_structure container mt-4" id="espacio_custom_block">
-                    <!-- This empty div permite insertar bloques de contenido personalizados -->
-                </div>
             </t>
+            <div class="oe_structure container mt-4" id="espacio_custom_block">
+                <!-- This empty div permite insertar bloques de contenido personalizados -->
+            </div>
         </t>
     </template>
 </odoo>
