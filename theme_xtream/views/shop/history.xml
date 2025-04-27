@@ -7,14 +7,16 @@
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Historial</h2>
                     </div>
                     <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
-                        <!-- Obtener productos vistos -->
-                        <t t-set="viewed_products" t-value="request.env['website.track'].sudo().search([
+                        <!-- Obtener productos vistos con fechas -->
+                        <t t-set="product_tracks" t-value="request.env['website.track'].sudo().search([
                             ('visitor_id.partner_id', '=', request.env.user.partner_id.id),
                             ('product_id', '!=', False)
-                        ], order='id desc').mapped('product_id.product_tmpl_id').filtered(lambda p: p.website_published)" />
+                        ], order='create_date desc')" />
+                        
+                        <t t-set="viewed_products" t-value="product_tracks.mapped('product_id.product_tmpl_id').filtered(lambda p: p.website_published)" />
 
-                        <!-- Agrupar productos por mes -->
-                        <t t-set="grouped_products" t-value="{
+                            'Hoy': [track.product_id.product_tmpl_id for track in product_tracks if track.create_date.date() == request.env['ir.qweb.field.date'].today()],
+                            'Enero': [track.product_id.product_tmpl_id for track in product_tracks if track.create_date.month == 1],
                             'Hoy': viewed_products.filtered(lambda p: p.last_viewed_date and p.last_viewed_date.date() == request.env['ir.qweb.field.date'].today()),
                             'Enero': viewed_products.filtered(lambda p: p.last_viewed_date and p.last_viewed_date.month == 1),
                             'Febrero': viewed_products.filtered(lambda p: p.last_viewed_date and p.last_viewed_date.month == 2),
