@@ -42,35 +42,40 @@
                                                     </span>
                                                 </div>
                                                         <div class="mt-auto">
-                                                            <t t-if="product.discounted_price &lt; product.list_price">
+                                                            <t t-if="product.discounted_price &lt; product.list_price">                                                                
                                                                 <div class="d-flex align-items-center justify-content-between mb-2">
-                                                                    <span class="text-decoration-line-through text-muted" style="font-size: 0.85rem;">
+                                                                    <span class="text-decoration-line-through text-muted">
                                                                         $<t t-esc="'{:,}'.format(int(product.list_price))" />
                                                                     </span>
-                                                                    <span class="text-danger fw-bold" style="font-size: 0.85rem;">
+                                                                    <span class="text-danger fw-bold" style="font-size: 0.9rem;">
                                                                         <t t-if="product.discount_percentage">
                                                                             <t t-esc="int(product.discount_percentage)" />% OFF
                                                                         </t>
                                                                         <t t-elif="product.fixed_discount">
                                                                             -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
-                                                                        </t>
+                                                                        </t>   
                                                                     </span>
                                                                 </div>
-                                                                <span class="text-success fw-bold d-block" style="font-size: 1rem;">
+                                                                <span class="text-success fw-bold d-block" style="font-size: 25px;">
                                                                     $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
                                                                 </span>
                                                             </t>
                                                             <t t-else="">
-                                                                <span class="fw-bold d-block" style="font-size: 1rem;">
+                                                                <span class="fw-bold d-block" style="margin-top: auto; font-size: 25px;">
                                                                     $<t t-esc="'{:,}'.format(int(product.list_price))" />
                                                                 </span>
                                                             </t>
-                                                            <span class="text-orange" style="color: #FF5207; font-size: 0.85rem; font-weight: bold; font-style: italic;">
+                                                            <t t-if="product.offer_end_time">
+                                                                <div class="countdown-timer" t-att-data-end-time="product.offer_end_time" style="font-size: 0.9rem; color: #FF5207;">
+                                                                    <span class="days">00</span>d :
+                                                                    <span class="hours">00</span>h :
+                                                                    <span class="minutes">00</span>m :
+                                                                    <span class="seconds">00</span>s
+                                                                </div>
+                                                            </t>
+                                                            <span class="text-orange" style="color: #FF5207; font-size: 0.9rem; font-weight: bold; font-style: italic;">
                                                                 Envío gratis
                                                             </span>
-                                                            <p class="text-muted mt-2" style="font-size: 0.85rem; line-height: 1.2;">
-                                                                <t t-esc="product.name" />
-                                                            </p>
                                                         </div>
 
                                                 <!-- Nombre del producto (oculto por defecto) -->
