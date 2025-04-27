@@ -7,22 +7,8 @@
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Historial</h2>
                     </div>
                     <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
-                        <!-- Obtener productos vistos -->
-                        <t t-set="viewed_products" t-value="request.env['website.track'].sudo().search([
-                            ('visitor_id.partner_id', '=', request.env.user.partner_id.id),
-                            ('product_id', '!=', False)
-                        ], order='id desc').mapped('product_id.product_tmpl_id').filtered(lambda p: p.website_published)" />
-
-                        <!-- Agrupar productos por "Hoy" y por mes -->
-                        <t t-set="grouped_products" t-value="{
-                            'Hoy': viewed_products.filtered(lambda p: p.last_viewed_date.date() == request.env['ir.qweb.field.date'].today()),
-                            'Enero': viewed_products.filtered(lambda p: p.last_viewed_date.month == 1 and p.last_viewed_date.date() != request.env['ir.qweb.field.date'].today()),
-                            'Febrero': viewed_products.filtered(lambda p: p.last_viewed_date.month == 2 and p.last_viewed_date.date() != request.env['ir.qweb.field.date'].today()),
-                            'Marzo': viewed_products.filtered(lambda p: p.last_viewed_date.month == 3 and p.last_viewed_date.date() != request.env['ir.qweb.field.date'].today()),
-                            'Abril': viewed_products.filtered(lambda p: p.last_viewed_date.month == 4 and p.last_viewed_date.date() != request.env['ir.qweb.field.date'].today()),
-                            'Mayo': viewed_products.filtered(lambda p: p.last_viewed_date.month == 5 and p.last_viewed_date.date() != request.env['ir.qweb.field.date'].today()),
-                            # Agrega más meses según sea necesario
-                        }" />
+                        <!-- Obtener productos agrupados -->
+                        <t t-set="grouped_products" t-value="request.env['website.track'].get_grouped_viewed_products()" />
 
                         <!-- Mostrar productos agrupados -->
                         <t t-foreach="grouped_products.items()" t-as="group">
@@ -62,7 +48,7 @@
                         </t>
 
                         <!-- Mensaje si no hay productos en el historial -->
-                        <t t-if="not viewed_products">
+                        <t t-if="not grouped_products['Hoy'] and not grouped_products['Enero'] and not grouped_products['Febrero']">
                             <div class="text-center mt-5">
                                 <h4 style="font-family: 'Questrial', sans-serif; color: #666;">No hay productos en tu historial.</h4>
                             </div>
