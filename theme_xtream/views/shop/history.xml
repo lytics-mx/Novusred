@@ -7,70 +7,134 @@
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Historial</h2>
                     </div>
                     <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
-                        <!-- Obtener productos vistos con fechas -->
-                        <t t-set="product_tracks" t-value="request.env['website.track'].sudo().search([
+                        <!-- Obtener productos vistos -->
+                        
+                        <t t-set="viewed_products" t-value="request.env['website.track'].sudo().search([
                             ('visitor_id.partner_id', '=', request.env.user.partner_id.id),
                             ('product_id', '!=', False)
-                        ], order='visit_datetime desc')" />
+                        ], order='id desc').mapped('product_id.product_tmpl_id').filtered(lambda p: p.website_published)" />
                         
-                        <t t-set="viewed_products" t-value="product_tracks.mapped('product_id.product_tmpl_id').filtered(lambda p: p.website_published)" />
-
-                        <t t-set="grouped_products" t-value="{
-                            'Hoy': viewed_products.filtered(lambda p: p.write_date.date() == request.env['ir.qweb.field.date'].today()),
-                            'Hoy': viewed_products.filtered(lambda p: p.last_viewed_date and p.last_viewed_date.date() == request.env['ir.qweb.field.date'].today()),
-                            'Enero': viewed_products.filtered(lambda p: p.last_viewed_date and p.last_viewed_date.month == 1),
-                            'Febrero': viewed_products.filtered(lambda p: p.last_viewed_date and p.last_viewed_date.month == 2),
-                            'Marzo': viewed_products.filtered(lambda p: p.last_viewed_date and p.last_viewed_date.month == 3),
-                            'Abril': viewed_products.filtered(lambda p: p.last_viewed_date and p.last_viewed_date.month == 4),
-                            'Mayo': viewed_products.filtered(lambda p: p.last_viewed_date and p.last_viewed_date.month == 5),
-                            'Junio': viewed_products.filtered(lambda p: p.last_viewed_date and p.last_viewed_date.month == 6),
-                            'Julio': viewed_products.filtered(lambda p: p.last_viewed_date and p.last_viewed_date.month == 7),
-                            'Agosto': viewed_products.filtered(lambda p: p.last_viewed_date and p.last_viewed_date.month == 8),
-                            'Septiembre': viewed_products.filtered(lambda p: p.last_viewed_date and p.last_viewed_date.month == 9),
-                            'Octubre': viewed_products.filtered(lambda p: p.last_viewed_date and p.last_viewed_date.month == 10),
-                            'Noviembre': viewed_products.filtered(lambda p: p.last_viewed_date and p.last_viewed_date.month == 11),
-                            'Diciembre': viewed_products.filtered(lambda p: p.last_viewed_date and p.last_viewed_date.month == 12)
-                        }" />
-
-                        <!-- Mostrar productos agrupados -->
-                        <t t-foreach="grouped_products.items()" t-as="group">
-                            <t t-if="group[1]">
-                                <div class="container mt-4">
-                                    <h3 style="font-family: 'Questrial', sans-serif; font-size: 20px;">
-                                        <t t-esc="group[0]" />
-                                    </h3>
-                                    <div class="row row-cols-2 row-cols-md-5 g-3">
-                                        <t t-foreach="group[1]" t-as="product">
-                                            <div class="col">
-                                                <div class="card h-100 shadow-sm product-card" style="background-color: #ffffff; border-radius: 8px; padding: 15px; border: 1px solid #ffffff; position: relative; overflow: hidden; transition: transform 0.3s ease;">
-                                                    <a t-att-href="'/shop/product/' + str(product.id)">
-                                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
-                                                             class="card-img-top"
-                                                             style="height: 200px; object-fit: contain; padding: 10px;" />
-                                                    </a>
-                                                    <div class="card-body d-flex flex-column">
-                                                        <h6 class="card-title mb-2 text-truncate" style="font-size: 0.9rem;">
-                                                            <t t-esc="product.name.upper()" />
-                                                        </h6>
-                                                        <span class="text-dark fw-bold d-block" style="font-size: 25px;">
-                                                            $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                                        </span>
-                                                        <a t-att-href="'/shop/history/remove/' + str(product.id)" 
-                                                           class="text-blue mt-2 delete-history-item" 
-                                                           style="font-size: 0.9rem; color: blue;">
-                                                            Eliminar
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </t>
-                                    </div>
-                                </div>
+                        <!-- Verifica si hay productos en el historial -->
+                        <t t-if="viewed_products">
+                            <!-- Group products by month -->
+                            <t t-set="products_by_month" t-value="{}"/>
+                            <t t-foreach="viewed_products" t-as="product">
+                                <t t-set="create_date" t-value="request.env['website.track'].sudo().search([('product_id.product_tmpl_id', '=', product.id)], limit=1).create_date"/>
+                                <t t-set="month_year" t-value="create_date.strftime('%B %Y')"/>
+                                <t t-if="not products_by_month.get(month_year)">
+                                    <t t-set="products_by_month" t-value="dict(products_by_month, **{month_year: []})"/>
+                                </t>
+                                <t t-set="_" t-value="products_by_month[month_year].append(product)"/>
                             </t>
-                        </t>
 
+                            <!-- Display products by month -->
+                            <t t-foreach="products_by_month" t-as="month">
+                                <h3 class="mt-4 mb-3" style="font-family: 'Questrial', sans-serif; font-size: 20px;"><t t-esc="month"/></h3>
+                            <div class="row row-cols-2 row-cols-md-5 g-3">
+                                <t t-foreach="viewed_products" t-as="product">
+                                    <div class="col">
+                                        <div class="card h-100 shadow-sm product-card" style="background-color: #ffffff; border-radius: 8px; padding: 15px; border: 1px solid #ffffff; position: relative; overflow: hidden; transition: transform 0.3s ease;">
+                                            <a t-att-href="'/shop/product/' + str(product.id)">
+                                                <t t-if="product.offer_end_time">
+                                                    <div class="countdown-timer" t-att-data-end-time="product.offer_end_time" style="font-size: 0.9rem; color: #FF5207;">
+                                                        <span class="days">00</span>d :
+                                                        <span class="hours">00</span>h :
+                                                        <span class="minutes">00</span>m :
+                                                        <span class="seconds">00</span>s
+                                                    </div>
+                                                </t>
+                                                <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                     class="card-img-top"
+                                                     style="height: 200px; object-fit: contain; padding: 10px;" />
+                                                </a>
+                                            <div class="card-body d-flex flex-column" style="background-color: #ffffff; position: relative;">
+                                                <!-- Información del producto -->
+                                                        <t t-if="product.product_tag_ids">
+                                                            <div class="d-flex justify-content-start mb-2">
+                                                                <span class="badge bg-primary" style="display: inline-block; border-radius: 0;">
+                                                                    <t t-esc="product.product_tag_ids[0].name if product.product_tag_ids else ''"/>
+                                                                </span>
+                                                            </div>
+                                                        </t>
+                                                        
+
+                                                        <div class="mb-2">
+                                                            <span class="text-muted" style="font-size: 0.9rem;">
+                                                                por: <t t-esc="product.brand_type_id.name"/>
+                                                            </span>
+                                                        </div>
+                                                        <div class="mt-auto">
+                                                            <t t-if="product.discounted_price &lt; product.list_price">                                                                
+                                                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                                                    <span class="text-decoration-line-through text-muted">
+                                                                        $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                                    </span>
+                                                                    <span class="text-danger fw-bold" style="font-size: 0.9rem;">
+                                                                        <t t-if="product.discount_percentage">
+                                                                            <t t-esc="int(product.discount_percentage)" />% OFF
+                                                                        </t>
+                                                                        <t t-elif="product.fixed_discount">
+                                                                            -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
+                                                                        </t>   
+                                                                    </span>
+
+                                                                  
+                                                                </div>
+                                                                <span class="text-dark fw-bold d-block" style="font-size: 25px;">
+                                                                    $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
+                                                                </span>
+                                                                <!-- Mostrar ahorro solo si tiene etiqueta -->
+                                                                <t t-if="product.product_tag_ids">
+                                                                    <span class="text-success" style="font-size: 0.85rem; font-weight: bold;">
+                                                                        Ahorra $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" />
+                                                                    </span>
+                                                                </t>                                                                  
+                                                            </t>
+                                                            <t t-else="">
+                                                                <span class="fw-bold d-block" style="margin-top: auto; font-size: 25px;">
+                                                                    $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                                </span>
+                                                            </t>
+
+
+                                                            <div class="mt-1">
+                                                                <span class="text-orange" style="color: #FF5207; font-size: 0.9rem; font-weight: bold; font-style: italic;">
+                                                                    Envío gratis
+                                                                </span>
+                                                            </div>
+                                                        </div>
+
+                                                <!-- Nombre del producto (oculto por defecto) -->
+                                                <div class="product-name-container" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
+                                                    <h6 class="card-title mb-2 text-truncate product-name" style="font-size: 0.9rem; white-space: normal;">
+                                                        <t t-esc="product.name.upper()" />
+                                                    </h6>
+                                                    <a t-att-href="'/shop/history/remove/' + str(product.id)" 
+                                                       t-att-data-product-id="product.id"
+                                                       class="text-blue mt-2 delete-history-item" 
+                                                       style="font-size: 0.9rem; color: blue;"
+                                                       onclick="event.preventDefault(); 
+                                                               fetch('/shop/history/remove/' + $(this).data('product-id'))
+                                                               .then(response => {
+                                                                   if (response.ok) {
+                                                                       $(this).closest('.col').fadeOut();
+                                                                   }
+                                                               });">
+                                                        Eliminar
+                                                    </a>
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                            <!-- Agregar paginación aquí -->
+
+
+                        </t>
                         <!-- Mensaje si no hay productos en el historial -->
-                        <t t-if="not viewed_products">
+                        <t t-else="">
                             <div class="text-center mt-5">
                                 <h4 style="font-family: 'Questrial', sans-serif; color: #666;">No hay productos en tu historial.</h4>
                             </div>
