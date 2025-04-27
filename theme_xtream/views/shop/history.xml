@@ -13,13 +13,14 @@
                             ('product_id', '!=', False)
                         ], order='id desc').mapped('product_id.product_tmpl_id').filtered(lambda p: p.website_published)" />
 
-                        <!-- Agrupar productos por mes -->
+                        <!-- Agrupar productos por "Hoy" y por mes -->
                         <t t-set="grouped_products" t-value="{
                             'Hoy': viewed_products.filtered(lambda p: p.last_viewed_date.date() == request.env['ir.qweb.field.date'].today()),
-                            'Enero': viewed_products.filtered(lambda p: p.last_viewed_date.month == 1),
-                            'Febrero': viewed_products.filtered(lambda p: p.last_viewed_date.month == 2),
-                            'Marzo': viewed_products.filtered(lambda p: p.last_viewed_date.month == 3),
-                            'Abril': viewed_products.filtered(lambda p: p.last_viewed_date.month == 4),
+                            'Enero': viewed_products.filtered(lambda p: p.last_viewed_date.month == 1 and p.last_viewed_date.date() != request.env['ir.qweb.field.date'].today()),
+                            'Febrero': viewed_products.filtered(lambda p: p.last_viewed_date.month == 2 and p.last_viewed_date.date() != request.env['ir.qweb.field.date'].today()),
+                            'Marzo': viewed_products.filtered(lambda p: p.last_viewed_date.month == 3 and p.last_viewed_date.date() != request.env['ir.qweb.field.date'].today()),
+                            'Abril': viewed_products.filtered(lambda p: p.last_viewed_date.month == 4 and p.last_viewed_date.date() != request.env['ir.qweb.field.date'].today()),
+                            'Mayo': viewed_products.filtered(lambda p: p.last_viewed_date.month == 5 and p.last_viewed_date.date() != request.env['ir.qweb.field.date'].today()),
                             # Agrega más meses según sea necesario
                         }" />
 
