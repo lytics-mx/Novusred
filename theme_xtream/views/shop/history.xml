@@ -3,47 +3,19 @@
         <t t-call="website.layout">
             <t t-if="request.env.user and request.env.user.id != request.env.ref('base.public_user').id">
                 <div class="container mt-4">
-                    <div class="row mb-4">
-                        <div class="col-6">
-                            <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Historial</h2>
-                        </div>
-                        <div class="col-6">
-                            <select class="form-select" id="month-filter" onchange="filterByMonth(this.value)">
-                                <option value="all">Todos los meses</option>
-                                <option value="1">Enero</option>
-                                <option value="2">Febrero</option>
-                                <option value="3">Marzo</option>
-                                <option value="4">Abril</option>
-                                <option value="5">Mayo</option>
-                                <option value="6">Junio</option>
-                                <option value="7">Julio</option>
-                                <option value="8">Agosto</option>
-                                <option value="9">Septiembre</option>
-                                <option value="10">Octubre</option>
-                                <option value="11">Noviembre</option>
-                                <option value="12">Diciembre</option>
-                            </select>
-                        </div>
+                    <div style="text-align: left;">
+                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Historial</h2>
                     </div>
                     <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
+                        <!-- Obtener productos vistos -->
+                        
                         <t t-set="viewed_products" t-value="request.env['website.track'].sudo().search([
                             ('visitor_id.partner_id', '=', request.env.user.partner_id.id),
                             ('product_id', '!=', False)
-                        ], order='id desc')" />
+                        ], order='id desc').mapped('product_id.product_tmpl_id').filtered(lambda p: p.website_published)" />
                         
-                        <t t-set="products_by_month" t-value="{}"/>
-                        <t t-foreach="viewed_products" t-as="track">
-                            <t t-set="month" t-value="track.create_date.month"/>
-                            <t t-set="product" t-value="track.product_id.product_tmpl_id"/>
-                            <t t-if="product.website_published">
-                                <t t-set="products_by_month[month]" t-value="products_by_month.get(month, []) + [product]"/>
-                            </t>
-                        </t>
-
-                        <!-- El resto del código permanece igual, solo agregamos data-month al contenedor del producto -->
-                        <div class="row row-cols-2 row-cols-md-5 g-3" id="products-container">
-                            <t t-foreach="viewed_products.mapped('product_id.product_tmpl_id').filtered(lambda p: p.website_published)" t-as="product">
-                                <div class="col product-item" t-att-data-month="viewed_products.filtered(lambda x: x.product_id.product_tmpl_id == product)[0].create_date.month">
+                        <!-- Verifica si hay productos en el historial -->
+                        <t t-if="viewed_products">
                             <div class="row row-cols-2 row-cols-md-5 g-3">
                                 <t t-foreach="viewed_products" t-as="product">
                                     <div class="col">
@@ -143,29 +115,22 @@
                                     </div>
                                 </t>
                             </div>
-                                </div>
-                            </t>
-                        </div>
+                            <!-- Agregar paginación aquí -->
+
+
+                        </t>
+                        <!-- Mensaje si no hay productos en el historial -->
+                        <t t-else="">
+                            <div class="text-center mt-5">
+                                <h4 style="font-family: 'Questrial', sans-serif; color: #666;">No hay productos en tu historial.</h4>
+                            </div>
+                        </t>
                     </div>
                 </div>
             </t>
+            <div class="oe_structure container mt-4" id="espacio_custom_block">
+                <!-- This empty div permite insertar bloques de contenido personalizados -->
+            </div>
         </t>
-    </template>
-
-    <template id="assets_frontend" inherit_id="web.assets_frontend">
-        <xpath expr="." position="inside">
-            <script type="text/javascript">
-                function filterByMonth(month) {
-                    const products = document.querySelectorAll('.product-item');
-                    products.forEach(product => {
-                        if (month === 'all' || product.dataset.month === month) {
-                            product.style.display = '';
-                        } else {
-                            product.style.display = 'none';
-                        }
-                    });
-                }
-            </script>
-        </xpath>
     </template>
 </odoo>
