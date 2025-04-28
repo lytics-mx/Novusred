@@ -1,6 +1,5 @@
 from odoo import fields, models
 
-
 class BannerImageLine(models.Model):
     """
     Model for individual images
