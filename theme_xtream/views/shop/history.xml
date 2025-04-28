@@ -3,8 +3,22 @@
         <t t-call="website.layout">
             <t t-if="request.env.user and request.env.user.id != request.env.ref('base.public_user').id">
                 <div class="container mt-4">
-                    <div style="text-align: left;">
-                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Historial</h2>
+                    <div class="row">
+                        <!-- Title on the left -->
+                        <div class="col-8">
+                            <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Historial</h2>
+                        </div>
+                        <!-- Filter on the right -->
+                        <div class="col-4">
+                            <select class="form-select" id="month-filter" onchange="filterByMonth(this.value)">
+                                <option value="all">Todos los meses</option>
+                                <t t-foreach="request.env['website.track'].sudo().search([
+                                    ('visitor_id.partner_id', '=', request.env.user.partner_id.id)
+                                ]).mapped(lambda r: (r.create_date.strftime('%Y-%m'), r.create_date.strftime('%B %Y'))).sorted(reverse=True)" t-as="month">
+                                    <option t-att-value="month[0]"><t t-esc="month[1]"/></option>
+                                </t>
+                            </select>
+                        </div>
                     </div>
                     <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
                         <!-- Obtener productos vistos -->
