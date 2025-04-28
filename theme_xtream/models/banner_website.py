@@ -13,4 +13,3 @@ class BannerImageLine(models.Model):
     )
     image = fields.Binary(string="Image", required=True, help="Upload the image")
     description = fields.Char(string="Description", help="Description of the image")
-
