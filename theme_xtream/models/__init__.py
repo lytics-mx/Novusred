@@ -26,5 +26,6 @@ from . import product_category
 from . import historial
 from . import product_tag
 from . import banner_website
+from . import banner_img
 # from . import product_image
 # from . import websitesk_track
