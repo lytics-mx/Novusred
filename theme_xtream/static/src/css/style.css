@@ -1068,57 +1068,19 @@ template {
   z-index: 3;
 }
 /* Efecto dinámico para mostrar el nombre del producto */
-/* Efecto dinámico para el cuadro completo */
-.product-card:hover {
-    transform: scale(1.05); /* Escala ligeramente el cuadro */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Agrega una sombra */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
-}
-
-/* Mostrar el nombre del producto al pasar el cursor */
-.product-card:hover .product-name-container {
-    max-height: 4.8em !important; /* Muestra el nombre completo */
-    transition: max-height 0.3s ease !important; /* Transición suave */
-}
-
-/* Inicialmente, el contenedor del nombre muestra solo 2 líneas */
+/* Inicialmente ocultar el nombre del producto */
 .product-name-container {
-    max-height: 2.4rem; /* Altura para mostrar 2 líneas */
-    overflow: hidden;
-    transition: max-height 0.3s ease; /* Transición suave */
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
 }
 
-/* Título del producto con recorte inicial */
-.product-name {
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* Limita a 2 líneas */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
+/* Mostrar nombre del producto solo cuando se hace click */
+.product-card.active .product-name-container {
+  max-height: 6rem; /* Altura para mostrar el nombre completo */
 }
 
-/* Al pasar el cursor, el contenedor se expande para mostrar 5 líneas */
-.product-card:hover .product-name-container {
-    max-height: 6rem; /* Altura para mostrar 5 líneas */
-    overflow: visible;
-}
-
-/* Al expandirse, ajusta el recorte de líneas */
-.product-card:hover .product-name {
-    -webkit-line-clamp: 5; /* Limita a 5 líneas */
-    overflow: hidden;
-}
-.card .product-name-container {
-    max-height: 2.4rem !important; /* Asegura que esta regla tenga prioridad */
-    overflow: hidden !important;
-    transition: max-height 0.3s ease !important;
-}
-
-.card:hover .product-name-container {
-    max-height: 100px !important;
-    overflow: visible !important;
-}
-/* Ajustar el cuadro del producto */
+/* Mantener los otros efectos visuales al hover */
 .product-card {
   position: relative;
   overflow: hidden;
@@ -1126,19 +1088,26 @@ template {
   border-radius: 8px;
   padding: 15px;
   border: 1px solid #ffffff;
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
-}
-/* Ajustar la imagen dentro del cuadro */
-.product-card img {
-  width: 100%; /* Ajusta la imagen al ancho del cuadro */
-  height: auto; /* Mantiene la proporción de la imagen */
-  border-radius: 8px; /* Opcional: bordes redondeados */
-  transition: transform 0.3s ease; /* Transición suave */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
 }
 
-/* Efecto de zoom en la imagen al pasar el cursor */
+.product-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Ajustar la imagen dentro del cuadro */
+.product-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+/* Efecto de zoom en la imagen al hover */
 .product-card:hover img {
-  transform: scale(1.1); /* Zoom en la imagen */
+  transform: scale(1.1);
 }
 @media screen and (max-width: 992px) {
   .product .content .wrapper:hover{
