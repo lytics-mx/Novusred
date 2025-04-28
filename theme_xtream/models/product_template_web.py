@@ -115,27 +115,22 @@ class ProductTemplate(models.Model):
                # Selecciona la fecha más cercana (si hay varias etiquetas)
                product.offer_end_time = min(end_dates) if end_dates else False
 
-     # additional_images = fields.One2many(
-     #      'product.image', 'product_tmpl_id', string="Additional Images"
-     # )
-
-     # @api.model
-     # def search(self, args, offset=0, limit=None, order=None, count=False):
-     #      """Modifica la búsqueda para filtrar por proveedores o categorías."""
-     #      # Filtrar por productos que tienen proveedores registrados
-     #      supplier_filter = [('seller_ids', '!=', [])]
-     #      # Filtrar por productos que tienen categorías registradas
-     #      category_filter = [('categ_id', '!=', False)]
-     #      # Combina los filtros con los argumentos existentes
-     #      args = AND([args, OR([supplier_filter, category_filter])])
-     #      return super(ProductTemplate, self).search(args, offset=offset, limit=limit, order=order, count=count)
-     
-
-     # seller_partner_id = fields.Many2one(
-     #      'res.partner',
-     #      string="Proveedor (Relacionado)",
-     #      related='seller_ids.partner_id',
-     #      store=True
-     # )    
-
-     
+     def get_time_remaining(self):
+          """Calcula el tiempo restante para la fecha de finalización."""
+          time_remaining = {}
+          for product in self:
+               if product.product_tag_ids and product.product_tag_ids[0].end_date:
+                    end_date = fields.Datetime.from_string(product.product_tag_ids[0].end_date)
+                    now = datetime.now()
+                    delta = end_date - now
+                    if delta.total_seconds() > 0:
+                         days = delta.days
+                         hours, remainder = divmod(delta.seconds, 3600)
+                         minutes, _ = divmod(remainder, 60)
+                         time_remaining[product.id] = f"{days}d {hours}h {minutes}m"
+                    else:
+                         time_remaining[product.id] = "¡Finalizado!"
+               else:
+                    time_remaining[product.id] = "Sin fecha"
+          return time_remaining
+          

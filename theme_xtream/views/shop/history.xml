@@ -1,6 +1,7 @@
 <odoo>
     <template id="history_template" name="Historial de Productos Vistos">
         <t t-call="website.layout">
+        
             <t t-if="request.env.user and request.env.user.id != request.env.ref('base.public_user').id">
                 <div class="container mt-4">
                     <div class="row">
@@ -25,13 +26,10 @@
                                             <a t-att-href="'/shop/product/' + str(product.id)">
                                                 <t t-if="product.product_tag_ids and product.product_tag_ids[0].end_date">
                                                     <div class="countdown-timer position-absolute" 
-                                                         t-att-data-end-date="product.product_tag_ids[0].end_date"
                                                          style="font-size: 0.9rem; color: #FF5207; top: 10px; right: 10px; background: rgba(255,255,255,0.9); padding: 5px; border-radius: 4px;">
                                                         <i class="fa fa-clock-o me-1"></i>
                                                         Termina en:
-                                                        <span class="days">00</span>d
-                                                        <span class="hours">00</span>h
-                                                        <span class="minutes">00</span>m
+                                                        <t t-esc="request.env['product.template'].browse(product.id).get_time_remaining().get(product.id)" />
                                                     </div>
                                                 </t>
                                                 <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
