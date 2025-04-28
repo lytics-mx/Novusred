@@ -71,12 +71,12 @@
                                 </div>
                             
                                 <!-- Categorías -->
-                                <h5>Categorías</h5>
+                                <!-- <h5>Categorías</h5>
                                 <div>
                                     <t t-call="theme_xtream.website_recursive_categories">
                                         <t t-set="children" t-value="categories"/>
                                     </t>
-                                </div>                        
+                                </div>                         -->
                                 
                                 <!-- Filtro por precio -->
                                 <div class="mb-2"></div>
@@ -116,23 +116,23 @@
                     <!-- Productos en oferta -->
                     <div class="col-lg-9 col-md-8">
                         <div class="row">
-                            <t t-foreach="discounted_products" t-as="product">
                                 <div class="col-6 col-md-4 col-lg-3 mb-4">
-                                                <div class="card h-100 shadow-sm product-card" style="background-color: #ffffff; border-radius: 8px; padding: 15px; border: 1px solid #ffffff; position: relative; overflow: hidden; transition: transform 0.3s ease;">
-                                                    <a t-att-href="'/shop/product/' + str(product.id)">
-                                                        <t t-if="product.product_tag_ids and product.product_tag_ids[0].end_date">
-                                                            <div class="countdown-timer position-absolute" 
-                                                                 style="font-size: 0.9rem; color:rgb(90, 89, 88); top: 10px; right: 10px; background: rgba(255,255,255,0.9); padding: 5px; border-radius: 4px;">
-                                                                <i class="fa fa-clock-o me-1"></i>
-                                                                Termina en:
-                                                                <t t-esc="request.env['product.template'].browse(product.id).get_time_remaining().get(product.id)" />
-                                                            </div>
-                                                        </t>
-                                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
-                                                             class="card-img-top"
-                                                             style="height: 200px; object-fit: contain; padding: 10px;" />
-                                                    </a>
-                                                    <div class="card-body d-flex flex-column" style="background-color: #ffffff; position: relative;">
+                                        <div class="card h-100 shadow-sm product-card" style="background-color: #ffffff; border-radius: 8px; padding: 15px; border: 1px solid #ffffff; position: relative; overflow: hidden; transition: transform 0.3s ease;">
+                                            <a t-att-href="'/shop/product/' + str(product.id)">
+                                                <t t-if="product.product_tag_ids and product.product_tag_ids[0].end_date">
+                                                    <div class="countdown-timer position-absolute" 
+                                                         style="font-size: 0.9rem; color:rgb(90, 89, 88); top: 10px; right: 10px; background: rgba(255,255,255,0.9); padding: 5px; border-radius: 4px;">
+                                                        <i class="fa fa-clock-o me-1"></i>
+                                                        Termina en:
+                                                        <t t-esc="request.env['product.template'].browse(product.id).get_time_remaining().get(product.id)" />
+                                                    </div>
+                                                </t>
+                                                <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                     class="card-img-top"
+                                                     style="height: 200px; object-fit: contain; padding: 10px;" />
+                                                </a>
+                                            <div class="card-body d-flex flex-column" style="background-color: #ffffff; position: relative;">
+                                                <!-- Información del producto -->
                                                         <t t-if="product.product_tag_ids">
                                                             <div class="d-flex justify-content-start mb-2">
                                                                 <span class="badge bg-primary" style="display: inline-block; border-radius: 0;">
@@ -140,6 +140,7 @@
                                                                 </span>
                                                             </div>
                                                         </t>
+                                                        
 
                                                         <div class="mb-2">
                                                             <span class="text-muted" style="font-size: 0.9rem;">
@@ -164,10 +165,13 @@
                                                                             </span>
                                                                         </t>   
                                                                     </span>
+
+                                                                  
                                                                 </div>
                                                                 <span class="text-dark fw-bold d-block" style="font-size: 25px;">
                                                                     $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
                                                                 </span>
+                                                                <!-- Mostrar ahorro solo si tiene etiqueta -->
                                                                 <t t-if="product.product_tag_ids">
                                                                     <span class="text-muted" style="font-size: 12px; font-weight: bold;">
                                                                         Ahorra $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" />
@@ -180,6 +184,7 @@
                                                                 </span>
                                                             </t>
 
+
                                                             <div class="mt-1">
                                                                 <span class="text-orange" style="color: #FF5207; font-size: 0.9rem; font-weight: bold; font-style: italic;">
                                                                     Envío gratis
@@ -187,16 +192,29 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="product-name-container" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
-                                                            <h6 class="card-title mb-2 text-truncate product-name" style="font-size: 0.9rem; white-space: normal;">
-                                                                <t t-esc="product.name.upper()" />
-                                                            </h6>
-                                                        
-                                                        </div>
-                                                    </div>
+                                                <!-- Nombre del producto (oculto por defecto) -->
+                                                <div class="product-name-container" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
+                                                    <h6 class="card-title mb-2 text-truncate product-name" style="font-size: 0.9rem; white-space: normal;">
+                                                        <t t-esc="product.name.upper()" />
+                                                    </h6>
+                                                    <a t-att-href="'/shop/history/remove/' + str(product.id)" 
+                                                       t-att-data-product-id="product.id"
+                                                       class="text-blue mt-2 delete-history-item" 
+                                                       style="font-size: 0.9rem; color: blue; display: block;"
+                                                       onclick="event.preventDefault(); 
+                                                               fetch('/shop/history/remove/' + $(this).data('product-id'))
+                                                               .then(response => {
+                                                                   if (response.ok) {
+                                                                       $(this).closest('.col').fadeOut();
+                                                                   }
+                                                               });">
+                                                        Eliminar
+                                                    </a>
                                                 </div>
+                                                
+                                            </div>
+                                        </div>
                                 </div>
-                            </t>
                         </div>
                     </div>
                 </div>
