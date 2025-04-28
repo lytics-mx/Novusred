@@ -6,17 +6,24 @@
                     <div class="col-lg-3">
                         <h4>Marcas</h4>
                         <div class="list-group mt-4">
-                            <t t-foreach="request.env['product.tag'].search([])" t-as="tag">
-                                <div class="form-check">
-                                    <input type="checkbox" 
-                                           class="form-check-input" 
-                                           t-att-id="'tag_' + str(tag.id)"
-                                           t-att-value="tag.id"
-                                           name="tag_filter"
-                                           t-att-checked="str(tag.id) in request.params.get('tags', '').split(',')" />
-                                    <label class="form-check-label" t-att-for="'tag_' + str(tag.id)">
-                                        <t t-esc="tag.name"/>
-                                    </label>
+                            <!-- Main brand types -->
+                            <t t-foreach="request.env['product.brand.type'].search([('parent_id', '=', False)])" t-as="main_type">
+                                <div class="brand-type-main mb-2">
+                                    <h5><t t-esc="main_type.name"/></h5>
+                                    <!-- Sub-categories -->
+                                    <t t-foreach="request.env['product.brand.type'].search([('parent_id', '=', main_type.id)])" t-as="sub_type">
+                                        <div class="form-check ms-3">
+                                            <input type="checkbox" 
+                                                   class="form-check-input" 
+                                                   t-att-id="'brand_type_' + str(sub_type.id)"
+                                                   t-att-value="sub_type.id"
+                                                   name="brand_type_filter"
+                                                   t-att-checked="str(sub_type.id) in request.params.get('brand_types', '').split(',')" />
+                                            <label class="form-check-label" t-att-for="'brand_type_' + str(sub_type.id)">
+                                                <t t-esc="sub_type.name"/>
+                                            </label>
+                                        </div>
+                                    </t>
                                 </div>
                             </t>
                         </div>
