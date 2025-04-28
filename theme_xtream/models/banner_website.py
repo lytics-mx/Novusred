@@ -7,6 +7,7 @@ class BannerImageLine(models.Model):
     _name = 'banner.image.line'
     _description = "Banner Image Line"
 
+    name = fields.Char(string="Name", help="Name of the image set")
     general_images = fields.Many2many(
         'ir.attachment',
         'banner_general_images_rel',
@@ -16,7 +17,6 @@ class BannerImageLine(models.Model):
         domain=[('mimetype', 'ilike', 'image/')],
         help="Upload general cover images."
     )
-    
     product_images = fields.Many2many(
         'ir.attachment',
         'banner_product_images_rel',
