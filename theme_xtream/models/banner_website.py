@@ -9,20 +9,20 @@ class BannerImageLine(models.Model):
 
     general_images = fields.Many2many(
         'ir.attachment',
-        'banner_general_images_rel',  # Nombre de la tabla de relación
-        'banner_id',  # Campo que relaciona con este modelo
-        'attachment_id',  # Campo que relaciona con ir.attachment
+        'banner_general_images_rel',
+        'banner_id',
+        'attachment_id',
         string="General Images",
-        domain=[('mimetype', 'ilike', 'image/')],  # Solo permite imágenes
+        domain=[('mimetype', 'ilike', 'image/')],
         help="Upload general cover images."
     )
     
     product_images = fields.Many2many(
         'ir.attachment',
-        'banner_product_images_rel',  # Nombre de la tabla de relación
-        'banner_id',  # Campo que relaciona con este modelo
-        'attachment_id',  # Campo que relaciona con ir.attachment
+        'banner_product_images_rel',
+        'banner_id',
+        'attachment_id',
         string="Product Images",
-        domain=[('mimetype', 'ilike', 'image/')],  # Solo permite imágenes
+        domain=[('mimetype', 'ilike', 'image/')],
         help="Upload product cover images."
     )
