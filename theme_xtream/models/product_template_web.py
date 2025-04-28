@@ -118,21 +118,24 @@ class ProductTemplate(models.Model):
                product.offer_end_time = min(end_dates) if end_dates else False
 
      def get_time_remaining(self):
-          """Calcula el tiempo restante para la fecha de finalización."""
-          time_remaining = {}
-          for product in self:
-               if product.product_tag_ids and product.product_tag_ids[0].end_date:
-                    end_date = fields.Datetime.from_string(product.product_tag_ids[0].end_date)
-                    now = datetime.now()
-                    delta = end_date - now
-                    if delta.total_seconds() > 0:
-                         days = delta.days
-                         hours, remainder = divmod(delta.seconds, 3600)
-                         minutes, _ = divmod(remainder, 60)
-                         time_remaining[product.id] = f"{days}d {hours}h {minutes}m"
-                    else:
-                         time_remaining[product.id] = "¡Finalizado!"
-               else:
-                    time_remaining[product.id] = "Sin fecha"
-          return time_remaining
-               
+         """Calcula el tiempo restante para la fecha de finalización."""
+         time_remaining = {}
+         for product in self:
+             # Verifica si hay etiquetas con una fecha de finalización válida
+             if product.product_tag_ids and product.product_tag_ids[0].end_date:
+                 end_date = fields.Datetime.from_string(product.product_tag_ids[0].end_date)
+                 now = datetime.now()
+                 delta = end_date - now
+                 if delta.total_seconds() > 0:
+                     # Si la oferta aún está activa, calcula el tiempo restante
+                     days = delta.days
+                     hours, remainder = divmod(delta.seconds, 3600)
+                     minutes, _ = divmod(remainder, 60)
+                     time_remaining[product.id] = f"{days}d {hours}h {minutes}m"
+                 else:
+                     # Si la oferta ya terminó, muestra "¡Finalizado!"
+                     time_remaining[product.id] = "¡Finalizado!"
+             else:
+                 # Si no hay fecha de finalización, muestra "Sin fecha"
+                 time_remaining[product.id] = "Sin fecha"
+         return time_remaining
