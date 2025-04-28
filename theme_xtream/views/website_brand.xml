@@ -33,85 +33,85 @@
                 <div class="row">
                     <!-- Filtros de la izquierda -->
                     <div class="col-lg-3 col-md-4">
-                        <div class="filters">
-                            <!-- Todos -->
-                            <div class="mb-3">
-                                <h5>Marcas</h5>
-                                <ul class="list-unstyled">
-                                    <t t-foreach="request.env['product.template'].sudo().search([]).mapped('brand_type_id')" t-as="brand">
-                                        <li t-if="brand">
-                                            <a t-att-href="'/shop/category/all?offers=true&amp;brand=' + str(brand.id)">
-                                                <t t-esc="brand.name"/> 
-                                                <small>
-                                                    (<t t-esc="request.env['product.template'].sudo().search_count([('brand_type_id', '=', brand.id)])"/>)
-                                                </small>
+                            <div class="filters">
+                                <!-- Todos -->
+                                <div class="mb-3">
+                                    <h5>Marcas</h5>
+                                    <ul class="list-unstyled">
+                                        <t t-foreach="request.env['product.template'].sudo().search([]).mapped('brand_type_id')" t-as="brand">
+                                            <li t-if="brand">
+                                                <a t-att-href="'/shop/category/all?offers=true&amp;brand=' + str(brand.id)">
+                                                    <t t-esc="brand.name"/> 
+                                                    <small>
+                                                        (<t t-esc="request.env['product.template'].sudo().search_count([('brand_type_id', '=', brand.id)])"/>)
+                                                    </small>
+                                                </a>
+                                            </li>
+                                        </t>
+                                    </ul>
+                                </div>
+                            
+                                <!-- Envío gratis -->
+                                <div class="mb-3 p-3 border rounded-3 bg-white">
+                                    <h5 class="text-orange fw-bold" style="color: #FF5207; font-size: 16px; font-style: italic; background-color: white;">Envío gratis</h5>
+
+                                    <div class="form-check form-switch bg-white">
+                                        <input class="form-check-input" type="checkbox" id="freeShippingToggle" t-att-data-url="'/shop/category/all?offers=true&amp;free_shipping=' + ('true' if free_shipping else 'false')" />
+                                        <label class="form-check-label" for="freeShippingToggle" style="background-color: white;">Todo en tu carrito de compras</label>
+                                    </div>
+                                </div>
+                            
+                                <!-- Tipos de oferta -->
+                                <div class="mb-3">
+                                    <h5>Tipos de oferta</h5>
+                                    <ul class="list-unstyled">
+                                        <li><a t-att-href="'/shop/category/all?offers=true&amp;type=day'">Oferta del día</a></li>
+                                        <li><a t-att-href="'/shop/category/all?offers=true&amp;type=flash'">Oferta relámpago</a></li>
+                                    </ul>
+                                </div>
+                            
+                                <!-- Categorías -->
+                                <h5>Categorías</h5>
+                                <div>
+                                    <t t-call="theme_xtream.website_recursive_categories">
+                                        <t t-set="children" t-value="categories"/>
+                                    </t>
+                                </div>                        
+                                
+                                <!-- Filtro por precio -->
+                                <div class="mb-2"></div>
+                                <h5>Precio</h5>
+                                <div class="mb-3 p-3 border rounded-3">
+                                    <ul class="list-unstyled">
+                                        <li>
+                                            <a t-att-href="'/shop/category/all?min_price=0&amp;max_price=500'" class="d-flex justify-content-between">
+                                                <span>Hasta $500</span>
+                                                <span class="text-muted">(<t t-esc="price_ranges['0_500']"/>)</span>
                                             </a>
                                         </li>
-                                    </t>
-                                </ul>
+                                        <li>
+                                            <a t-att-href="'/shop/category/all?min_price=500&amp;max_price=1000'" class="d-flex justify-content-between">
+                                                <span>De $500 a $1000</span>
+                                                <span class="text-muted">(<t t-esc="price_ranges['500_1000']"/>)</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a t-att-href="'/shop/category/all?min_price=1000'" class="d-flex justify-content-between">
+                                                <span>Más de $1000</span>
+                                                <span class="text-muted">(<t t-esc="price_ranges['1000_plus']"/>)</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    <form method="get" action="/shop/category/all">
+                                        <div class="d-flex align-items-center">
+                                            <input type="number" class="form-control me-2 bg-white" id="minPrice" name="min_price" placeholder="Desde" style="background-color: #ffffff;" />
+                                            <span class="me-2">—</span>
+                                            <input type="number" class="form-control me-2 bg-white" id="maxPrice" name="max_price" placeholder="Hasta" style="background-color: #ffffff;" />
+                                            <button type="submit" class="btn" style="background-color: #5a5a5a; color: white;">Buscar</button>
+                                        </div>
+                                    </form>
                             </div>
-                        
-                            <!-- Envío gratis -->
-                            <div class="mb-3 p-3 border rounded-3 bg-white">
-                                <h5 class="text-orange fw-bold" style="color: #FF5207; font-size: 16px; font-style: italic; background-color: white;">Envío gratis</h5>
-
-                                <div class="form-check form-switch bg-white">
-                                    <input class="form-check-input" type="checkbox" id="freeShippingToggle" t-att-data-url="'/shop/category/all?offers=true&amp;free_shipping=' + ('true' if free_shipping else 'false')" />
-                                    <label class="form-check-label" for="freeShippingToggle" style="background-color: white;">Todo en tu carrito de compras</label>
-                                </div>
-                            </div>
-                        
-                            <!-- Tipos de oferta -->
-                            <div class="mb-3">
-                                <h5>Tipos de oferta</h5>
-                                <ul class="list-unstyled">
-                                    <li><a t-att-href="'/shop/category/all?offers=true&amp;type=day'">Oferta del día</a></li>
-                                    <li><a t-att-href="'/shop/category/all?offers=true&amp;type=flash'">Oferta relámpago</a></li>
-                                </ul>
-                            </div>
-                        
-                            <!-- Categorías -->
-                            <h5>Categorías</h5>
-                            <div>
-                                <t t-call="theme_xtream.website_recursive_categories">
-                                    <t t-set="children" t-value="categories"/>
-                                </t>
-                            </div>                        
-                            
-                            <!-- Filtro por precio -->
-                            <!-- <div class="mb-2"></div>
-                            <h5>Precio</h5>
-                            <div class="mb-3 p-3 border rounded-3">
-                                <ul class="list-unstyled">
-                                    <li>
-                                        <a t-att-href="'/shop/category/all?min_price=0&amp;max_price=500'" class="d-flex justify-content-between">
-                                            <span>Hasta $500</span>
-                                            <span class="text-muted">(<t t-esc="price_ranges['0_500']"/>)</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a t-att-href="'/shop/category/all?min_price=500&amp;max_price=1000'" class="d-flex justify-content-between">
-                                            <span>De $500 a $1000</span>
-                                            <span class="text-muted">(<t t-esc="price_ranges['500_1000']"/>)</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a t-att-href="'/shop/category/all?min_price=1000'" class="d-flex justify-content-between">
-                                            <span>Más de $1000</span>
-                                            <span class="text-muted">(<t t-esc="price_ranges['1000_plus']"/>)</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                                <form method="get" action="/shop/category/all">
-                                    <div class="d-flex align-items-center">
-                                        <input type="number" class="form-control me-2 bg-white" id="minPrice" name="min_price" placeholder="Desde" style="background-color: #ffffff;" />
-                                        <span class="me-2">—</span>
-                                        <input type="number" class="form-control me-2 bg-white" id="maxPrice" name="max_price" placeholder="Hasta" style="background-color: #ffffff;" />
-                                        <button type="submit" class="btn" style="background-color: #5a5a5a; color: white;">Buscar</button>
-                                    </div>
-                                </form>
                         </div>
-                        </div> -->
                     </div>
                     <!-- Productos en oferta -->
                     <div class="col-lg-9 col-md-8">
