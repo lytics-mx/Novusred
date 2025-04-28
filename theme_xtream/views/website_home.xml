@@ -140,64 +140,83 @@
                                     <div class="row row-cols-2 row-cols-md-5 g-3">
                                         <t t-foreach="suggested_products[5:]" t-as="product">
                                             <div class="col">
-                                                    <div class="card h-100 shadow-sm" style="background-color: #ffffff; border-radius: 8px; padding: 15px; border: 1px solid #ffffff;">                                                        
-                                                        <a t-att-href="'/shop/product/' + str(product.id)">
-                                                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
-                                                                 class="card-img-top"
-                                                                 style="height: 200px; object-fit: contain; padding: 10px;" />
-                                                        </a>
-                                                        <div class="card-body d-flex flex-column" style="background-color: #ffffff;">
-                                                            <t t-if="product.product_tag_ids">
-                                                                <span class="badge bg-primary mb-2">
+                                                <div class="card h-100 shadow-sm product-card" style="background-color: #ffffff; border-radius: 8px; padding: 15px; border: 1px solid #ffffff; position: relative; overflow: hidden; transition: transform 0.3s ease;">
+                                                    <a t-att-href="'/shop/product/' + str(product.id)">
+                                                        <t t-if="product.product_tag_ids and product.product_tag_ids[0].end_date">
+                                                            <div class="countdown-timer position-absolute" 
+                                                                 style="font-size: 0.9rem; color:rgb(90, 89, 88); top: 10px; right: 10px; background: rgba(255,255,255,0.9); padding: 5px; border-radius: 4px;">
+                                                                <i class="fa fa-clock-o me-1"></i>
+                                                                Termina en:
+                                                                <t t-esc="request.env['product.template'].browse(product.id).get_time_remaining().get(product.id)" />
+                                                            </div>
+                                                        </t>
+                                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                             class="card-img-top"
+                                                             style="height: 200px; object-fit: contain; padding: 10px;" />
+                                                    </a>
+                                                    <div class="card-body d-flex flex-column" style="background-color: #ffffff; position: relative;">
+                                                        <t t-if="product.product_tag_ids">
+                                                            <div class="d-flex justify-content-start mb-2">
+                                                                <span class="badge bg-primary" style="display: inline-block; border-radius: 0;">
                                                                     <t t-esc="product.product_tag_ids[0].name if product.product_tag_ids else ''"/>
                                                                 </span>
-                                                                <h6 class="card-title text-truncate mb-2">
-                                                                    <t t-esc="product.name" />
-                                                                </h6>
-                                                            </t>
-                                                            <t t-else="">
-                                                                <h6 class="card-title mb-2" style="max-height: 4.8em; overflow: hidden;">
-                                                                    <t t-esc="product.name" />
-                                                                </h6>
-                                                            </t>
-                                                            <div class="mt-auto">
-                                                                <t t-if="product.discounted_price and product.discounted_price &lt; product.list_price">
-                                                                    <div class="d-flex align-items-center justify-content-between mb-2">
-                                                                        <span class="text-decoration-line-through text-muted">
-                                                                            $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                                                        </span>
-                                                                        <span class="text-danger fw-bold" style="font-size: 0.9rem;">
-                                                                            <t t-if="product.discount_percentage">
-                                                                                <t t-esc="int(product.discount_percentage)" />% OFF
-                                                                            </t>
-                                                                            <t t-elif="product.fixed_discount">
-                                                                                -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN 
-                                                                            </t>   
-                                                                        </span>
-                                                                    </div>
-                                                                    <span class="text-success fw-bold d-block">
-                                                                        $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
-                                                                    </span>
-                                                                    <t t-if="product.offer_end_time">
-                                                                        <div class="countdown-timer" t-att-data-end-time="product.offer_end_time" style="font-size: 0.9rem; color: #FF5207;">
-                                                                            <span class="days">00</span>d :
-                                                                            <span class="hours">00</span>h :
-                                                                            <span class="minutes">00</span>m :
-                                                                            <span class="seconds">00</span>s
-                                                                        </div>
-                                                                    </t>
-                                                                </t>
-                                                                <t t-else="">
-                                                                    <span class="fw-bold d-block" style="margin-top: auto;">
+                                                            </div>
+                                                        </t>
+
+                                                        <div class="mb-2">
+                                                            <span class="text-muted" style="font-size: 0.9rem;">
+                                                                por: <t t-esc="product.brand_type_id.name"/>
+                                                            </span>
+                                                        </div>
+                                                        <div class="mt-auto">
+                                                            <t t-if="product.discounted_price &lt; product.list_price">                                                                
+                                                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                                                    <span class="text-decoration-line-through text-muted">
                                                                         $<t t-esc="'{:,}'.format(int(product.list_price))" />
                                                                     </span>
-                                                                </t>
+                                                                    <span class="text-danger fw-bold" style="font-size: 0.9rem;">
+                                                                        <t t-if="product.discount_percentage">
+                                                                            <span style="font-size: 18px; font-weight: normal;">
+                                                                                <t t-esc="int(product.discount_percentage)" />% OFF
+                                                                            </span>
+                                                                        </t>
+                                                                        <t t-elif="product.fixed_discount">
+                                                                            <span style="font-size: 18px; font-weight: normal;">
+                                                                                -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
+                                                                            </span>
+                                                                        </t>   
+                                                                    </span>
+                                                                </div>
+                                                                <span class="text-dark fw-bold d-block" style="font-size: 25px;">
+                                                                    $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
+                                                                </span>
+                                                                <t t-if="product.product_tag_ids">
+                                                                    <span class="text-muted" style="font-size: 12px; font-weight: bold;">
+                                                                        Ahorra $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" />
+                                                                    </span>
+                                                                </t>                                                                  
+                                                            </t>
+                                                            <t t-else="">
+                                                                <span class="fw-bold d-block" style="margin-top: auto; font-size: 25px;">
+                                                                    $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                                </span>
+                                                            </t>
+
+                                                            <div class="mt-1">
                                                                 <span class="text-orange" style="color: #FF5207; font-size: 0.9rem; font-weight: bold; font-style: italic;">
                                                                     Envío gratis
                                                                 </span>
                                                             </div>
                                                         </div>
+
+                                                        <div class="product-name-container" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
+                                                            <h6 class="card-title mb-2 text-truncate product-name" style="font-size: 0.9rem; white-space: normal;">
+                                                                <t t-esc="product.name.upper()" />
+                                                            </h6>
+                                                        
+                                                        </div>
                                                     </div>
+                                                </div>
                                             </div>
                                         </t>
                                     </div>
