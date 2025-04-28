@@ -1,4 +1,6 @@
 from odoo import models, fields, api
+from datetime import datetime  # Importar datetime
+
 
 class ProductTemplate(models.Model):
      _inherit = 'product.template'
@@ -133,4 +135,4 @@ class ProductTemplate(models.Model):
                else:
                     time_remaining[product.id] = "Sin fecha"
           return time_remaining
-          
+               
