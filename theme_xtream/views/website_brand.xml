@@ -1,35 +1,203 @@
 <odoo>
-    <template id="website_brand" name="Brand Page">
+    <template id="offers_template" name="Productos en Oferta">
         <t t-call="website.layout">
-            <div class="container">                              
+            <div class="container mt-4">
+                <!-- Sección de encabezado con texto e íconos -->
+                <div class="d-flex align-items-center justify-content-between p-4 mb-4" style="background-color:rgb(255, 255, 255); border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin: 0 -15px; width: 100vw; position: relative; left: 50%; transform: translateX(-50%);">
+                    <!-- Contenedor del texto "Ofertas" -->
+                    <div class="d-flex align-items-center" style="flex: 1; justify-content: flex-end;">
+                        <div class="text-end" style="max-width: 300px;">
+                            <h2 class="mb-1" style="font-family: 'Questrial', sans-serif; font-size: 28px; font-weight: bold; letter-spacing: 0.5px;">Ofertas</h2>
+                            <p class="mb-0" style="font-size: 14px; color: #6c757d;">¡Aquí verás las mejores ofertas!</p>
+                        </div>
+                    </div>
+                
+                    <!-- Contenedor de los íconos -->
+                    <div class="d-flex align-items-center justify-content-center flex-wrap" style="flex: 2;">
+                        <t t-foreach="[{'src': '/theme_xtream/static/src/img/ofertas-barra/etiqueta.png', 'alt': 'Todas las ofertas', 'text': 'Todas las ofertas'},
+                                       {'src': '/theme_xtream/static/src/img/ofertas-barra/relampago.png', 'alt': 'Ofertas relámpago', 'text': 'Ofertas relámpago'},
+                                       {'src': '/theme_xtream/static/src/img/ofertas-barra/etiqueta3.png', 'alt': 'Menos de $500', 'text': 'Menos de $500'},
+                                       {'src': '/theme_xtream/static/src/img/ofertas-barra/reloj.png', 'alt': 'Hasta las 3 del día', 'text': 'Hasta las 3 del día'},
+                                       {'src': '/theme_xtream/static/src/img/ofertas-barra/relampago3.png', 'alt': 'Ofertas relámpago', 'text': 'Ofertas relámpago'},
+                                       {'src': '/theme_xtream/static/src/img/ofertas-barra/reloj3.png', 'alt': 'Hasta las 3 del día', 'text': 'Hasta las 3 del día'}]" t-as="icon">
+                            <div class="text-center mx-3">
+                                <a href="#" class="text-decoration-none">
+                                    <img t-att-src="icon['src']" t-att-alt="icon['alt']" class="img-fluid mb-1" style="height: 50px;" />
+                                    <p class="mb-0" style="font-size: 14px; color: #000;"><t t-esc="icon['text']" /></p>
+                                </a>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+                
                 <div class="row">
-                    <div class="col-lg-3">
-                        <h4>Marcas</h4>
-                        <div class="list-group mt-4">
-                            <!-- Main brand types -->
-                            <t t-foreach="request.env['product.brand.type'].search([('parent_id', '=', False)])" t-as="main_type">
-                                <div class="brand-type-main mb-2">
-                                    <h5><t t-esc="main_type.name"/></h5>
-                                    <!-- Sub-categories -->
-                                    <t t-foreach="request.env['product.brand.type'].search([('parent_id', '=', main_type.id)])" t-as="sub_type">
-                                        <div class="form-check ms-3">
-                                            <input type="checkbox" 
-                                                   class="form-check-input" 
-                                                   t-att-id="'brand_type_' + str(sub_type.id)"
-                                                   t-att-value="sub_type.id"
-                                                   name="brand_type_filter"
-                                                   t-att-checked="str(sub_type.id) in request.params.get('brand_types', '').split(',')" />
-                                            <label class="form-check-label" t-att-for="'brand_type_' + str(sub_type.id)">
-                                                <t t-esc="sub_type.name"/>
-                                            </label>
-                                        </div>
+                    <!-- Filtros de la izquierda -->
+                    <div class="col-lg-3 col-md-4">
+                        <div class="filters">
+                            <!-- Todos -->
+                            <div class="mb-3">
+                                <h5>Marcas</h5>
+                                <ul class="list-unstyled">
+                                    <t t-foreach="request.env['product.template'].sudo().search([]).mapped('brand_type_id')" t-as="brand">
+                                        <li t-if="brand">
+                                            <a t-att-href="'/shop/category/all?offers=true&amp;brand=' + str(brand.id)">
+                                                <t t-esc="brand.name"/> 
+                                                <small>
+                                                    (<t t-esc="request.env['product.template'].sudo().search_count([('brand_type_id', '=', brand.id)])"/>)
+                                                </small>
+                                            </a>
+                                        </li>
                                     </t>
+                                </ul>
+                            </div>
+                        
+                            <!-- Envío gratis -->
+                            <div class="mb-3 p-3 border rounded-3 bg-white">
+                                <h5 class="text-orange fw-bold" style="color: #FF5207; font-size: 16px; font-style: italic; background-color: white;">Envío gratis</h5>
+
+                                <div class="form-check form-switch bg-white">
+                                    <input class="form-check-input" type="checkbox" id="freeShippingToggle" t-att-data-url="'/shop/category/all?offers=true&amp;free_shipping=' + ('true' if free_shipping else 'false')" />
+                                    <label class="form-check-label" for="freeShippingToggle" style="background-color: white;">Todo en tu carrito de compras</label>
+                                </div>
+                            </div>
+                        
+                            <!-- Tipos de oferta -->
+                            <div class="mb-3">
+                                <h5>Tipos de oferta</h5>
+                                <ul class="list-unstyled">
+                                    <li><a t-att-href="'/shop/category/all?offers=true&amp;type=day'">Oferta del día</a></li>
+                                    <li><a t-att-href="'/shop/category/all?offers=true&amp;type=flash'">Oferta relámpago</a></li>
+                                </ul>
+                            </div>
+                        
+                            <!-- Categorías -->
+                            <h5>Categorías</h5>
+                            <div>
+                                <t t-call="theme_xtream.website_recursive_categories">
+                                    <t t-set="children" t-value="categories"/>
+                                </t>
+                            </div>                        
+                            
+                            <!-- Filtro por precio -->
+                            <div class="mb-2"></div>
+                            <h5>Precio</h5>
+                            <div class="mb-3 p-3 border rounded-3">
+                                <ul class="list-unstyled">
+                                    <li>
+                                        <a t-att-href="'/shop/category/all?min_price=0&amp;max_price=500'" class="d-flex justify-content-between">
+                                            <span>Hasta $500</span>
+                                            <span class="text-muted">(<t t-esc="price_ranges['0_500']"/>)</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a t-att-href="'/shop/category/all?min_price=500&amp;max_price=1000'" class="d-flex justify-content-between">
+                                            <span>De $500 a $1000</span>
+                                            <span class="text-muted">(<t t-esc="price_ranges['500_1000']"/>)</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a t-att-href="'/shop/category/all?min_price=1000'" class="d-flex justify-content-between">
+                                            <span>Más de $1000</span>
+                                            <span class="text-muted">(<t t-esc="price_ranges['1000_plus']"/>)</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                                <form method="get" action="/shop/category/all">
+                                    <div class="d-flex align-items-center">
+                                        <input type="number" class="form-control me-2 bg-white" id="minPrice" name="min_price" placeholder="Desde" style="background-color: #ffffff;" />
+                                        <span class="me-2">—</span>
+                                        <input type="number" class="form-control me-2 bg-white" id="maxPrice" name="max_price" placeholder="Hasta" style="background-color: #ffffff;" />
+                                        <button type="submit" class="btn" style="background-color: #5a5a5a; color: white;">Buscar</button>
+                                    </div>
+                                </form>
+                        </div>
+                        </div>
+                    </div>
+                    <!-- Productos en oferta -->
+                    <div class="col-lg-9 col-md-8">
+                        <div class="row">
+                            <t t-foreach="discounted_products" t-as="product">
+                                <div class="col-6 col-md-4 col-lg-3 mb-4">
+                                                <div class="card h-100 shadow-sm product-card" style="background-color: #ffffff; border-radius: 8px; padding: 15px; border: 1px solid #ffffff; position: relative; overflow: hidden; transition: transform 0.3s ease;">
+                                                    <a t-att-href="'/shop/product/' + str(product.id)">
+                                                        <t t-if="product.product_tag_ids and product.product_tag_ids[0].end_date">
+                                                            <div class="countdown-timer position-absolute" 
+                                                                 style="font-size: 0.9rem; color:rgb(90, 89, 88); top: 10px; right: 10px; background: rgba(255,255,255,0.9); padding: 5px; border-radius: 4px;">
+                                                                <i class="fa fa-clock-o me-1"></i>
+                                                                Termina en:
+                                                                <t t-esc="request.env['product.template'].browse(product.id).get_time_remaining().get(product.id)" />
+                                                            </div>
+                                                        </t>
+                                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                             class="card-img-top"
+                                                             style="height: 200px; object-fit: contain; padding: 10px;" />
+                                                    </a>
+                                                    <div class="card-body d-flex flex-column" style="background-color: #ffffff; position: relative;">
+                                                        <t t-if="product.product_tag_ids">
+                                                            <div class="d-flex justify-content-start mb-2">
+                                                                <span class="badge bg-primary" style="display: inline-block; border-radius: 0;">
+                                                                    <t t-esc="product.product_tag_ids[0].name if product.product_tag_ids else ''"/>
+                                                                </span>
+                                                            </div>
+                                                        </t>
+
+                                                        <div class="mb-2">
+                                                            <span class="text-muted" style="font-size: 0.9rem;">
+                                                                por: <t t-esc="product.brand_type_id.name"/>
+                                                            </span>
+                                                        </div>
+                                                        <div class="mt-auto">
+                                                            <t t-if="product.discounted_price &lt; product.list_price">                                                                
+                                                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                                                    <span class="text-decoration-line-through text-muted">
+                                                                        $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                                    </span>
+                                                                    <span class="text-danger fw-bold" style="font-size: 0.9rem;">
+                                                                        <t t-if="product.discount_percentage">
+                                                                            <span style="font-size: 18px; font-weight: normal;">
+                                                                                <t t-esc="int(product.discount_percentage)" />% OFF
+                                                                            </span>
+                                                                        </t>
+                                                                        <t t-elif="product.fixed_discount">
+                                                                            <span style="font-size: 18px; font-weight: normal;">
+                                                                                -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
+                                                                            </span>
+                                                                        </t>   
+                                                                    </span>
+                                                                </div>
+                                                                <span class="text-dark fw-bold d-block" style="font-size: 25px;">
+                                                                    $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
+                                                                </span>
+                                                                <t t-if="product.product_tag_ids">
+                                                                    <span class="text-muted" style="font-size: 12px; font-weight: bold;">
+                                                                        Ahorra $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" />
+                                                                    </span>
+                                                                </t>                                                                  
+                                                            </t>
+                                                            <t t-else="">
+                                                                <span class="fw-bold d-block" style="margin-top: auto; font-size: 25px;">
+                                                                    $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                                </span>
+                                                            </t>
+
+                                                            <div class="mt-1">
+                                                                <span class="text-orange" style="color: #FF5207; font-size: 0.9rem; font-weight: bold; font-style: italic;">
+                                                                    Envío gratis
+                                                                </span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="product-name-container" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
+                                                            <h6 class="card-title mb-2 text-truncate product-name" style="font-size: 0.9rem; white-space: normal;">
+                                                                <t t-esc="product.name.upper()" />
+                                                            </h6>
+                                                        
+                                                        </div>
+                                                    </div>
+                                                </div>
                                 </div>
                             </t>
                         </div>
-                    </div>
-                    <div class="col-lg-9">
-                        <div class="oe_structure" id="oe_structure_website_brand_1"/>
                     </div>
                 </div>
             </div>
