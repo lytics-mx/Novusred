@@ -36,4 +36,14 @@ class BannerImages(models.Model):
         help="Upload multiple product cover images"
     )
 
+    # New fields for the Website tab
+    website_published = fields.Boolean(
+        string="Published on Website",
+        default=False,
+        help="Check this box to publish the images on the website"
+    )
+    website_description = fields.Text(
+        string="Website Description",
+        help="Description to display on the website"
+    )
 
