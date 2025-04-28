@@ -17,7 +17,7 @@ class BannerImages(models.Model):
         'attachment_id',  # Campo que relaciona con ir.attachment
         string="General Images",
         domain=[('mimetype', 'ilike', 'image/')],  # Solo permite imágenes
-        help="Sube imágenes generales."
+        help="Upload general cover images."
     )
     
     product_images = fields.Many2many(
@@ -27,5 +27,5 @@ class BannerImages(models.Model):
         'attachment_id',  # Campo que relaciona con ir.attachment
         string="Product Images",
         domain=[('mimetype', 'ilike', 'image/')],  # Solo permite imágenes
-        help="Sube imágenes de productos."
+        help="Upload product cover images."
     )
