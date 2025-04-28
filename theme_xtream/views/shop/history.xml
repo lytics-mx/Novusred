@@ -10,12 +10,18 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Historial</h2>
                                 <div class="form-group">
-                                    <select class="form-select" id="month_filter" onchange="filterByMonth(this.value)">
+                                    <select class="form-select" id="month_filter">
                                         <option value="">Todos los meses</option>
                                         <t t-foreach="range(1, 13)" t-as="month">
                                             <option t-att-value="month" t-esc="datetime.date(2000, month, 1).strftime('%B')"/>
                                         </t>
                                     </select>
+                                    <script>
+                                        document.getElementById('month_filter').addEventListener('change', function(e) {
+                                            const month = e.target.value;
+                                            window.location.href = '/shop/history?month=' + month;
+                                        });
+                                    </script>
                                 </div>
                             </div>
                         </div>
