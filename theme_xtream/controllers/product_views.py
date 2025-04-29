@@ -4,8 +4,6 @@ from odoo.http import request
 class ShopController(http.Controller):
 
     @http.route(['/tienda/product/<model("product.product"):product>'], type='http', auth="public", website=True)
-    def product(self, product, **kwargs):
-        # Llama al método para registrar el producto visto
-        request.env['product.view.history'].sudo().add_product_to_history(product.id)
-        # Renderiza la nueva plantilla personalizada
+    def product_page(self, product, **kwargs):
+        # Renderiza la plantilla personalizada con el producto seleccionado
         return request.render("theme_xtream.custom_product_template", {'product': product})
