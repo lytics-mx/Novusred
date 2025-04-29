@@ -3,32 +3,47 @@
         <t t-call="website.layout">
             <div class="container mt-4">
                 <!-- Sección de encabezado con texto e íconos -->
-                <div class="d-flex align-items-center justify-content-between p-4 mb-4" style="background-color:rgb(255, 255, 255); border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin: 0 -15px; width: 100vw; position: relative; left: 50%; transform: translateX(-50%);">
-                    <!-- Contenedor del texto "Ofertas" -->
-                    <div class="d-flex align-items-center" style="flex: 1; justify-content: flex-end;">
-                        <div class="text-end" style="max-width: 300px;">
-                            <h2 class="mb-1" style="font-family: 'Questrial', sans-serif; font-size: 28px; font-weight: bold; letter-spacing: 0.5px;">Ofertas</h2>
-                            <p class="mb-0" style="font-size: 14px; color: #6c757d;">¡Aquí verás las mejores ofertas!</p>
+                <!-- Carrusel o Imagen de Portada -->
+                <t t-set="active_banners" t-value="request.env['banner.image.line'].sudo().search([('is_active_brand_carousel', '=', True)])" />
+                <t t-if="len(active_banners) > 1">
+                    <!-- Carrusel para múltiples imágenes -->
+                    <div id="brandCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <t t-foreach="active_banners" t-as="banner" t-key="banner.id">
+                                <div t-att-class="'carousel-item' + (' active' if banner == active_banners[0] else '')">
+                                    <img t-att-src="'/web/image/' + str(banner.brand_images[0].id)" 
+                                         alt="Imagen de Marca" 
+                                         class="d-block w-100" 
+                                         style="height: 300px; object-fit: cover;" />
+                                </div>
+                            </t>
                         </div>
+                        <!-- Controles del carrusel -->
+                        <button class="carousel-control-prev" type="button" data-bs-target="#brandCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#brandCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
                     </div>
-                
-                    <!-- Contenedor de los íconos -->
-                    <div class="d-flex align-items-center justify-content-center flex-wrap" style="flex: 2;">
-                        <t t-foreach="[{'src': '/theme_xtream/static/src/img/ofertas-barra/etiqueta.png', 'alt': 'Todas las ofertas', 'text': 'Todas las ofertas'},
-                                       {'src': '/theme_xtream/static/src/img/ofertas-barra/relampago.png', 'alt': 'Ofertas relámpago', 'text': 'Ofertas relámpago'},
-                                       {'src': '/theme_xtream/static/src/img/ofertas-barra/etiqueta3.png', 'alt': 'Menos de $500', 'text': 'Menos de $500'},
-                                       {'src': '/theme_xtream/static/src/img/ofertas-barra/reloj.png', 'alt': 'Hasta las 3 del día', 'text': 'Hasta las 3 del día'},
-                                       {'src': '/theme_xtream/static/src/img/ofertas-barra/relampago3.png', 'alt': 'Ofertas relámpago', 'text': 'Ofertas relámpago'},
-                                       {'src': '/theme_xtream/static/src/img/ofertas-barra/reloj3.png', 'alt': 'Hasta las 3 del día', 'text': 'Hasta las 3 del día'}]" t-as="icon">
-                            <div class="text-center mx-3">
-                                <a href="#" class="text-decoration-none">
-                                    <img t-att-src="icon['src']" t-att-alt="icon['alt']" class="img-fluid mb-1" style="height: 50px;" />
-                                    <p class="mb-0" style="font-size: 14px; color: #000;"><t t-esc="icon['text']" /></p>
-                                </a>
-                            </div>
-                        </t>
+                </t>
+                <t t-elif="len(active_banners) == 1">
+                    <!-- Mostrar una sola imagen si solo hay una activa -->
+                    <div>
+                        <img t-att-src="'/web/image/' + str(active_banners[0].brand_images[0].id)" 
+                             alt="Imagen de Marca" 
+                             class="img-fluid w-100" 
+                             style="height: 300px; object-fit: cover;" />
                     </div>
+                </t>
+
+                <!-- Contenido adicional de la página -->
+                <div class="row mt-4">
+                    <!-- Aquí puedes agregar más contenido relacionado con las marcas -->
                 </div>
+            </div>
                 
                 <div class="row">
                     <!-- Filtros de la izquierda -->
