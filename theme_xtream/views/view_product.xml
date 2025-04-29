@@ -10,14 +10,6 @@
                                  class="img-fluid main-image" 
                                  alt="Product Image" 
                                  style="height: 400px; object-fit: contain; padding: 10px;" />
-                            <div class="thumbnail-images mt-3 d-flex">
-                                <t t-foreach="product.product_template_image_ids" t-as="image">
-                                    <img t-att-src="image.image_1920" 
-                                         class="img-thumbnail me-2" 
-                                         alt="Thumbnail" 
-                                         style="height: 80px; object-fit: contain;" />
-                                </t>
-                            </div>
                         </div>
                     </div>
 
@@ -29,52 +21,6 @@
                         <p class="product-serial-number">
                             <strong>Número de serie:</strong> <span t-field="product.default_code" />
                         </p>
-                        <div class="product-price">
-                            <t t-if="product.discounted_price &lt; product.list_price">
-                                <div class="d-flex align-items-center">
-                                    <span class="text-muted text-decoration-line-through me-2">
-                                        $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                    </span>
-                                    <span class="text-danger fw-bold" style="font-size: 1.5rem;">
-                                        $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
-                                    </span>
-                                </div>
-                                <div>
-                                    <span class="text-success" style="font-size: 1rem;">
-                                        <t t-if="product.discount_percentage">
-                                            <t t-esc="int(product.discount_percentage)" />% OFF
-                                        </t>
-                                    </span>
-                                </div>
-                                <p class="product-savings">
-                                    <strong>Ahorra:</strong> $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" />
-                                </p>
-                            </t>
-                            <t t-else="">
-                                <span class="fw-bold" style="font-size: 1.5rem;">
-                                    $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                </span>
-                            </t>
-                        </div>
-                        <p class="product-shipping">
-                            <span class="text-orange" style="color: #FF5207; font-size: 1rem; font-weight: bold;">
-                                Envío gratis
-                            </span>
-                        </p>
-                        <p class="product-stock">
-                            <strong>En stock:</strong> <span t-field="product.qty_available" /> artículos
-                        </p>
-                        <p class="product-brand">
-                            <!-- <strong>Marca:</strong> <span t-field="product.brand_id.name" /> -->
-                        </p>
-                        <div class="product-quantity mt-3">
-                            <label for="quantity">Cantidad:</label>
-                            <input type="number" id="quantity" name="quantity" min="1" max="product.qty_available" value="1" class="form-control w-25" />
-                        </div>
-                        <div class="product-actions mt-4">
-                            <button type="button" class="btn btn-primary btn-lg">Agregar al carrito</button>
-                            <button type="button" class="btn btn-success btn-lg">Comprar</button>
-                        </div>
                     </div>
                 </div>
             </div>
