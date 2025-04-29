@@ -405,10 +405,15 @@
                                 <div class="col-md-4">
                                     <div class="card shadow-sm" style="border-radius: 10px; overflow: hidden;">
                                         <div style="position: relative;">
-                                            <img t-att-src="'/web/image/' + str(subcategory.general_images.id)" 
-                                                 alt="Subcategory Image" 
-                                                 class="img-fluid" 
-                                                 style="width: 100%; height: auto; object-fit: cover;" />
+                                            <!-- Iterar sobre las imágenes si general_images es un conjunto -->
+                                            <t t-if="subcategory.general_images">
+                                                <t t-foreach="subcategory.general_images" t-as="image" t-key="image.id">
+                                                    <img t-att-src="'/web/image/' + str(image.id)" 
+                                                         alt="Subcategory Image" 
+                                                         class="img-fluid" 
+                                                         style="width: 100%; height: auto; object-fit: cover;" />
+                                                </t>
+                                            </t>
                                             <div style="position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0, 0, 0, 0.5); color: white; padding: 10px;">
                                                 <h5 class="mb-0" t-esc="subcategory.name" style="font-size: 16px; font-weight: bold;"></h5>
                                                 <p class="mb-0" style="font-size: 12px;">SUBCATEGORIA</p>
