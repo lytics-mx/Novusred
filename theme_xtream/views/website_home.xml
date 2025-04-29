@@ -4,7 +4,35 @@
         <t t-call="website.layout">
             <div id="wrap" class="oe_structure oe_empty" style="font-family: 'Questrial', sans-serif;">
                 <!-- Verifica que la ruta de la imagen sea válidas -->
-                <img src="/theme_xtream/static/src/img/product-img/imagenes_home.png" alt="Image" style="width: 100%; height: auto; object-fit: contain;" />
+                <div id="generalImagesCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <t t-if="record.general_images">
+                            <t t-foreach="record.general_images" t-as="image" t-key="image.id">
+                                <div t-att-class="'carousel-item' + (' active' if loop.index == 1 else '')">
+                                    <img t-att-src="'/web/image/' + str(image.id)" 
+                                         alt="General Image" 
+                                         style="width: 100%; height: auto; object-fit: contain;" />
+                                </div>
+                            </t>
+                        </t>
+                        <t t-else="">
+                            <div class="carousel-item active">
+                                <img src="/theme_xtream/static/src/img/product-img/imagenes_home.png" 
+                                     alt="Default Image" 
+                                     style="width: 100%; height: auto; object-fit: contain;" />
+                            </div>
+                        </t>
+                    </div>
+                    <!-- Carousel controls -->
+                    <button class="carousel-control-prev" type="button" data-bs-target="#generalImagesCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#generalImagesCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
                 <div style="display: flex; align-items: center; justify-content: center; background-color: white; border-radius: 10px; padding: 15px 25px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); width: 90%; max-width: 700px; margin: 20px auto; flex-wrap: nowrap; gap: 15px;">
                     <!-- Texto "Pago Seguro" -->
                     <div style="font-size: 16px; font-weight: bold; color: #333; font-family: 'Questrial', sans-serif; text-align: center;">
