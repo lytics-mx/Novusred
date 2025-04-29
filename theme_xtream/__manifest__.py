@@ -58,7 +58,7 @@
 
         'views/inventory_control/brand_type.xml',
         # 'views/marca_menu.xml',
-        'views/website_descubre.xml',
+        'views/imagenes_banner.xml',
         'views/website_home.xml',
         'views/nav_bar.xml',
         # 'views/report_excel_views.xml',
