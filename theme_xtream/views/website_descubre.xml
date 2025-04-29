@@ -1,27 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- Vista de árbol para el modelo banner.image.line -->
-    <record id="banner_image_line_list" model="ir.ui.view">
-        <field name="name">banner.image.line.list</field>
+    <record id="banner_image_line_tree" model="ir.ui.view">
+        <field name="name">banner.image.line.tree</field>
         <field name="model">banner.image.line</field>
         <field name="arch" type="xml">
             <list>
                 <field name="name"/>
+                <field name="general_images"/>
+                <field name="product_images"/>
             </list>
+        </field>
+    </record>
+
+    <!-- Vista de formulario para el modelo banner.image.line -->
+    <record id="banner_image_line_form" model="ir.ui.view">
+        <field name="name">banner.image.line.form</field>
+        <field name="model">banner.image.line</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="general_images" widget="many2many_binary"/>
+                        <field name="product_images" widget="many2many_binary"/>
+                    </group>
+                </sheet>
+            </form>
         </field>
     </record>
 
     <!-- Acción para abrir el modelo banner.image.line -->
     <record id="banner_image_line_action" model="ir.actions.act_window">
-        <field name="name">Imágenes</field>
+        <field name="name">Banner Images</field>
         <field name="res_model">banner.image.line</field>
         <field name="view_mode">list,form</field>
     </record>
 
-    <!-- Menú para "Imágenes" en la configuración de comercio electrónico -->
+    <!-- Menú para "Banner Images" en la configuración de comercio electrónico -->
     <menuitem id="menu_banner_image_line"
-              name="Imágenes"
+              name="Banner Images"
               action="banner_image_line_action"
               parent="website.menu_website_global_configuration"
-              sequence="25"/>
+              sequence="30"/>
 </odoo>
