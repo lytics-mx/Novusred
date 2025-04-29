@@ -7,10 +7,16 @@
                         <!-- Product Images -->
                         <div class="col-md-6">
                             <div class="product-images">
-                                <img t-att-src="product.image_1920" class="img-fluid main-image" alt="Product Image"/>
+                                <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                     class="img-fluid main-image" 
+                                     alt="Product Image" 
+                                     style="height: 400px; object-fit: contain; padding: 10px;" />
                                 <div class="thumbnail-images mt-3">
                                     <t t-foreach="product.product_template_image_ids" t-as="image">
-                                        <img t-att-src="image.image_1920" class="img-thumbnail" alt="Thumbnail"/>
+                                        <img t-att-src="image.image_1920" 
+                                             class="img-thumbnail" 
+                                             alt="Thumbnail" 
+                                             style="height: 80px; object-fit: contain;" />
                                     </t>
                                 </div>
                             </div>
@@ -18,41 +24,64 @@
 
                         <!-- Product Details -->
                         <div class="col-md-6">
-                            <h1 t-field="product.name" class="product-title"></h1>
+                            <h1 class="product-title" style="font-size: 1.5rem; font-weight: bold;">
+                                <t t-esc="product.name.upper()" />
+                            </h1>
                             <p class="product-serial-number">
-                                <strong>Número de serie:</strong> <span t-field="product.default_code"/>
+                                <strong>Número de serie:</strong> <span t-field="product.default_code" />
                             </p>
-                            <p class="product-price">
-                                <span t-if="product.is_discounted">
-                                    <span class="text-muted text-decoration-line-through" t-field="product.list_price"/>
-                                    <span class="text-danger" t-field="product.discount_price"/>
-                                    <span class="text-success">
-                                        (<span t-field="product.discount_percentage"/>% OFF)
+                            <div class="product-price">
+                                <t t-if="product.discounted_price < product.list_price">
+                                    <div class="d-flex align-items-center">
+                                        <span class="text-muted text-decoration-line-through" style="margin-right: 10px;">
+                                            $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                        </span>
+                                        <span class="text-danger fw-bold" style="font-size: 1.5rem;">
+                                            $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span class="text-success" style="font-size: 1rem;">
+                                            <t t-if="product.discount_percentage">
+                                                <t t-esc="int(product.discount_percentage)" />% OFF
+                                            </t>
+                                            <t t-elif="product.fixed_discount">
+                                                -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
+                                            </t>
+                                        </span>
+                                    </div>
+                                    <p class="product-savings">
+                                        <strong>Ahorra:</strong> $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" />
+                                    </p>
+                                </t>
+                                <t t-else="">
+                                    <span class="fw-bold" style="font-size: 1.5rem;">
+                                        $<t t-esc="'{:,}'.format(int(product.list_price))" />
                                     </span>
-                                </span>
-                                <span t-else="" t-field="product.list_price"/>
-                            </p>
-                            <p class="product-savings">
-                                <strong>Te ahorras:</strong> <span t-field="product.discount_fixed"/>
-                            </p>
+                                </t>
+                            </div>
                             <p class="product-shipping">
-                                <strong>Envío:</strong> Gratis
+                                <span class="text-orange" style="color: #FF5207; font-size: 1rem; font-weight: bold;">
+                                    Envío gratis
+                                </span>
                             </p>
                             <p class="product-tags">
                                 <strong>Etiquetas:</strong>
                                 <t t-foreach="product.tag_ids" t-as="tag">
-                                    <span class="badge bg-primary" t-field="tag.name"/>
+                                    <span class="badge bg-primary" style="margin-right: 5px;">
+                                        <t t-esc="tag.name" />
+                                    </span>
                                 </t>
                             </p>
                             <p class="product-stock">
-                                <strong>En stock:</strong> <span t-field="product.qty_available"/> artículos
+                                <strong>En stock:</strong> <span t-field="product.qty_available" /> artículos
                             </p>
                             <p class="product-brand">
-                                <strong>Marca:</strong> <span t-field="product.brand_id.name"/>
+                                <strong>Marca:</strong> <span t-field="product.brand_id.name" />
                             </p>
                             <div class="product-quantity mt-3">
                                 <label for="quantity">Cantidad:</label>
-                                <input type="number" id="quantity" name="quantity" min="1" max="product.qty_available" value="1" class="form-control w-25"/>
+                                <input type="number" id="quantity" name="quantity" min="1" max="product.qty_available" value="1" class="form-control w-25" />
                             </div>
                             <div class="product-actions mt-4">
                                 <button type="button" class="btn btn-primary btn-lg">Agregar al carrito</button>
