@@ -50,21 +50,27 @@
                     </div>
                 </t>
                 <!-- Nuestras Mejores Marcas -->
-                <section class="our-brands text-center py-5">
-                    <h2>Nuestras Mejores Marcas</h2>
-                    <div class="container">
-                        <div class="row justify-content-center">
-                            <t t-set="brands" t-value="request.env['product.brand'].sudo().search([('icon_image', '!=', False), ('active', '=', True)], limit=4)" />
-                            <t t-foreach="brands" t-as="brand" t-key="brand.id">
-                                <div class="col-3">
-                                    <img t-att-src="'/web/image/' + str(brand.icon_image.id)" 
-                                         t-att-alt="brand.name" 
-                                         class="img-fluid" />
-                                </div>
-                            </t>
-                        </div>
+                <div class="container mt-4">
+                    <div style="text-align: left;">
+                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Marcas</h2>
                     </div>
-                </section>
+                    <t t-set="brands" t-value="request.env['brand.type'].sudo().search([
+                        ('icon_image', '!=', False),
+                        ('active', '=', True)
+                    ], limit=15)" />
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <t t-foreach="brands" t-as="brand" t-key="brand.id">
+                            <div class="position-relative text-center" style="width: 150px; background-color: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);">
+                                <!-- Ícono de la marca (icon_image) -->
+                                <div style="padding: 10px;">
+                                    <img t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')"
+                                         alt="Ícono de la Marca"
+                                         style="width: 100%; height: auto; object-fit: contain;" />
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
 
                 <!-- Encuentra lo que buscas -->
                 <section class="find-what-you-need text-center py-5">
