@@ -49,197 +49,85 @@
                         <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
                     </div>
                 </t>
-                <div class="row">
-                    <!-- Filtros de la izquierda -->
-                    <div class="col-lg-3 col-md-4">
-                            <div class="filters">
-                                <!-- Todos -->
-                                <div class="mb-3">
-                                    <h5>Marcas</h5>
-                                    <ul class="list-unstyled">
-                                        <t t-foreach="request.env['product.template'].sudo().search([]).mapped('brand_type_id')" t-as="brand">
-                                            <li t-if="brand and request.env['product.template'].sudo().search_count([('brand_type_id', '=', brand.id)]) >= 100">
-                                                <a t-att-href="'/shop/category/all?offers=true&amp;brand=' + str(brand.id)">
-                                                    <t t-esc="brand.name"/> 
-                                                    <small>
-                                                        (<t t-esc="request.env['product.template'].sudo().search_count([('brand_type_id', '=', brand.id)])"/>)
-                                                    </small>
-                                                </a>
-                                            </li>
-                                        </t>
-                                    </ul>
-                                </div>
-                            
-                                <!-- Envío gratis -->
-                                <div class="mb-3 p-3 border rounded-3 bg-white">
-                                    <h5 class="text-orange fw-bold" style="color: #FF5207; font-size: 16px; font-style: italic; background-color: white;">Envío gratis</h5>
-
-                                    <div class="form-check form-switch bg-white">
-                                        <input class="form-check-input" type="checkbox" id="freeShippingToggle" t-att-data-url="'/shop/category/all?offers=true&amp;free_shipping=' + ('true' if free_shipping else 'false')" />
-                                        <label class="form-check-label" for="freeShippingToggle" style="background-color: white;">Todo en tu carrito de compras</label>
-                                    </div>
-                                </div>
-                            
-                                <!-- Tipos de oferta -->
-                                <div class="mb-3">
-                                    <h5>Tipos de oferta</h5>
-                                    <ul class="list-unstyled">
-                                        <li><a t-att-href="'/shop/category/all?offers=true&amp;type=day'">Oferta del día</a></li>
-                                        <li><a t-att-href="'/shop/category/all?offers=true&amp;type=flash'">Oferta relámpago</a></li>
-                                    </ul>
-                                </div>
-                            
-                                <!-- Categorías -->
-                                <!-- <h5>Categorías</h5>
-                                <div>
-                                    <t t-call="theme_xtream.website_recursive_categories">
-                                        <t t-set="children" t-value="categories"/>
-                                    </t>
-                                </div>                         -->
-                                
-                                <!-- Filtro por precio -->
-                                <div class="mb-2"></div>
-                                <h5>Precio</h5>
-                                <div class="mb-3 p-3 border rounded-3">
-                                    <!-- <ul class="list-unstyled">
-                                        <li>
-                                            <a t-att-href="'/shop/category/all?min_price=0&amp;max_price=500'" class="d-flex justify-content-between">
-                                                <span>Hasta $500</span>
-                                                <span class="text-muted">(<t t-esc="price_ranges['0_500']"/>)</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a t-att-href="'/shop/category/all?min_price=500&amp;max_price=1000'" class="d-flex justify-content-between">
-                                                <span>De $500 a $1000</span>
-                                                <span class="text-muted">(<t t-esc="price_ranges['500_1000']"/>)</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a t-att-href="'/shop/category/all?min_price=1000'" class="d-flex justify-content-between">
-                                                <span>Más de $1000</span>
-                                                <span class="text-muted">(<t t-esc="price_ranges['1000_plus']"/>)</span>
-                                            </a>
-                                        </li>
-                                    </ul> -->
-                                    <form method="get" action="/shop/category/all">
-                                        <div class="d-flex align-items-center">
-                                            <input type="number" class="form-control me-2 bg-white" id="minPrice" name="min_price" placeholder="Desde" style="background-color: #ffffff;" />
-                                            <span class="me-2">—</span>
-                                            <input type="number" class="form-control me-2 bg-white" id="maxPrice" name="max_price" placeholder="Hasta" style="background-color: #ffffff;" />
-                                            <button type="submit" class="btn" style="background-color: #5a5a5a; color: white;">Buscar</button>
-                                        </div>
-                                    </form>
-                            </div>
+                <!-- Nuestras Mejores Marcas -->
+                <section class="our-brands text-center py-5">
+                    <h2>Nuestras Mejores Marcas</h2>
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-3"><img src="/theme_xtream/static/src/img/brands/microsoft.png" alt="Microsoft" class="img-fluid" /></div>
+                            <div class="col-3"><img src="/theme_xtream/static/src/img/brands/lg.png" alt="LG" class="img-fluid" /></div>
+                            <div class="col-3"><img src="/theme_xtream/static/src/img/brands/lenovo.png" alt="Lenovo" class="img-fluid" /></div>
+                            <div class="col-3"><img src="/theme_xtream/static/src/img/brands/epson.png" alt="Epson" class="img-fluid" /></div>
                         </div>
                     </div>
-                    <!-- Productos en oferta -->
-                    <div class="col-lg-9 col-md-8">
+                </section>
+
+                <!-- Encuentra lo que buscas -->
+                <section class="find-what-you-need text-center py-5">
+                    <h2>Encuentra lo que buscas</h2>
+                    <div class="container">
                         <div class="row">
-                            <t t-foreach="request.env['product.template'].sudo().search([('website_published', '=', True)])" t-as="product">
-                        
-                                <div class="col-6 col-md-4 col-lg-3 mb-4">
-                                        <div class="card h-100 shadow-sm product-card" style="background-color: #ffffff; border-radius: 8px; padding: 15px; border: 1px solid #ffffff; position: relative; overflow: hidden; transition: transform 0.3s ease;">
-                                            <a t-att-href="'/shop/product/' + str(product.id)">
-                                                <t t-if="product.product_tag_ids and product.product_tag_ids[0].end_date">
-                                                    <div class="countdown-timer position-absolute" 
-                                                         style="font-size: 0.9rem; color:rgb(90, 89, 88); top: 10px; right: 10px; background: rgba(255,255,255,0.9); padding: 5px; border-radius: 4px;">
-                                                        <i class="fa fa-clock-o me-1"></i>
-                                                        Termina en:
-                                                        <t t-esc="request.env['product.template'].browse(product.id).get_time_remaining().get(product.id)" />
-                                                    </div>
-                                                </t>
-                                                <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
-                                                     class="card-img-top"
-                                                     style="height: 200px; object-fit: contain; padding: 10px;" />
-                                                </a>
-                                            <div class="card-body d-flex flex-column" style="background-color: #ffffff; position: relative;">
-                                                <!-- Información del producto -->
-                                                        <t t-if="product.product_tag_ids">
-                                                            <div class="d-flex justify-content-start mb-2">
-                                                                <span class="badge bg-primary" style="display: inline-block; border-radius: 0;">
-                                                                    <t t-esc="product.product_tag_ids[0].name if product.product_tag_ids else ''"/>
-                                                                </span>
-                                                            </div>
-                                                        </t>
-                                                        
+                            <div class="col"><i class="icon-clock"></i><p>De cortes precisos</p></div>
+                            <div class="col"><i class="icon-settings"></i><p>Equipos de calidad</p></div>
+                            <div class="col"><i class="icon-bolt"></i><p>Optimiza tu rendimiento</p></div>
+                            <div class="col"><i class="icon-check"></i><p>Aprovecha las ofertas</p></div>
+                            <div class="col"><i class="icon-truck"></i><p>Envíos rápidos</p></div>
+                        </div>
+                    </div>
+                </section>
 
-                                                        <div class="mb-2">
-                                                            <span class="text-muted" style="font-size: 0.9rem;">
-                                                                por: <t t-esc="product.brand_type_id.name"/>
-                                                            </span>
-                                                        </div>
-                                                        <div class="mt-auto">
-                                                            <t t-if="product.discounted_price &lt; product.list_price">                                                                
-                                                                <div class="d-flex align-items-center justify-content-between mb-2">
-                                                                    <span class="text-decoration-line-through text-muted">
-                                                                        $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                                                    </span>
-                                                                    <span class="text-danger fw-bold" style="font-size: 0.9rem;">
-                                                                        <t t-if="product.discount_percentage">
-                                                                            <span style="font-size: 18px; font-weight: normal;">
-                                                                                <t t-esc="int(product.discount_percentage)" />% OFF
-                                                                            </span>
-                                                                        </t>
-                                                                        <t t-elif="product.fixed_discount">
-                                                                            <span style="font-size: 18px; font-weight: normal;">
-                                                                                -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
-                                                                            </span>
-                                                                        </t>   
-                                                                    </span>
-
-                                                                  
-                                                                </div>
-                                                                <span class="text-dark fw-bold d-block" style="font-size: 25px;">
-                                                                    $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
-                                                                </span>
-                                                                <!-- Mostrar ahorro solo si tiene etiqueta -->
-                                                                <t t-if="product.product_tag_ids">
-                                                                    <span class="text-muted" style="font-size: 12px; font-weight: bold;">
-                                                                        Ahorra $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" />
-                                                                    </span>
-                                                                </t>                                                                  
-                                                            </t>
-                                                            <t t-else="">
-                                                                <span class="fw-bold d-block" style="margin-top: auto; font-size: 25px;">
-                                                                    $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                                                </span>
-                                                            </t>
-
-
-                                                            <div class="mt-1">
-                                                                <span class="text-orange" style="color: #FF5207; font-size: 0.9rem; font-weight: bold; font-style: italic;">
-                                                                    Envío gratis
-                                                                </span>
-                                                            </div>
-                                                        </div>
-
-                                                <!-- Nombre del producto (oculto por defecto) -->
-                                                <div class="product-name-container" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
-                                                    <h6 class="card-title mb-2 text-truncate product-name" style="font-size: 0.9rem; white-space: normal;">
-                                                        <t t-esc="product.name.upper()" />
-                                                    </h6>
-                                                    <a t-att-href="'/shop/history/remove/' + str(product.id)" 
-                                                       t-att-data-product-id="product.id"
-                                                       class="text-blue mt-2 delete-history-item" 
-                                                       style="font-size: 0.9rem; color: blue; display: block;"
-                                                       onclick="event.preventDefault(); 
-                                                               fetch('/shop/history/remove/' + $(this).data('product-id'))
-                                                               .then(response => {
-                                                                   if (response.ok) {
-                                                                       $(this).closest('.col').fadeOut();
-                                                                   }
-                                                               });">
-                                                        Eliminar
-                                                    </a>
-                                                </div>
-                                                
-                                            </div>
+                <!-- Mejores Ofertas -->
+                <section class="best-offers py-5">
+                    <h2 class="text-center">Mejores Ofertas</h2>
+                    <div class="container">
+                        <div class="row">
+                            <t t-foreach="products" t-as="product">
+                                <div class="col-md-3">
+                                    <div class="card">
+                                        <img t-att-src="'/web/image/' + str(product.image_id)" class="card-img-top" alt="Product Image">
+                                        <div class="card-body">
+                                            <h5 class="card-title" t-esc="product.name"></h5>
+                                            <p class="card-text" t-esc="product.price"></p>
                                         </div>
+                                    </div>
                                 </div>
                             </t>
                         </div>
                     </div>
-                </div>                
+                </section>
+
+                <!-- Más Categorías -->
+                <section class="more-categories py-5">
+                    <h2 class="text-center">Más Categorías</h2>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-4"><img src="/theme_xtream/static/src/img/categories/category1.png" alt="Category 1" class="img-fluid" /></div>
+                            <div class="col-md-4"><img src="/theme_xtream/static/src/img/categories/category2.png" alt="Category 2" class="img-fluid" /></div>
+                            <div class="col-md-4"><img src="/theme_xtream/static/src/img/categories/category3.png" alt="Category 3" class="img-fluid" /></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Productos a Precio Especial -->
+                <section class="special-price-products py-5">
+                    <h2 class="text-center">Productos a Precio Especial</h2>
+                    <div class="container">
+                        <div class="row">
+                            <t t-foreach="special_products" t-as="product">
+                                <div class="col-md-3">
+                                    <div class="card">
+                                        <img t-att-src="'/web/image/' + str(product.image_id)" class="card-img-top" alt="Product Image">
+                                        <div class="card-body">
+                                            <h5 class="card-title" t-esc="product.name"></h5>
+                                            <p class="card-text" t-esc="product.price"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </section>
+             
                                             
             </div>
         </t>
