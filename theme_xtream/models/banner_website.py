@@ -1,4 +1,4 @@
-from odoo import fields, models
+from odoo import fields, models, api
 
 class BannerImageLine(models.Model):
     """
@@ -26,3 +26,14 @@ class BannerImageLine(models.Model):
         domain=[('mimetype', 'ilike', 'image/')],
         help="Upload product cover images."
     )
+
+    is_active_carousel = fields.Boolean(string="Activo en Carrusel", default=False)
+
+    @api.model
+    def action_activate_carousel(self):
+        """Activa este registro para el carrusel"""
+        self.ensure_one()
+        # Desactiva otros registros
+        self.sudo().search([]).write({'is_active_carousel': False})
+        # Activa el registro actual
+        self.write({'is_active_carousel': True})    

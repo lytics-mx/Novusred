@@ -6,8 +6,9 @@
                 <!-- Verifica que la ruta de la imagen sea válidas -->
                 <div id="generalImagesCarousel" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-inner">
-                        <t t-if="general_images">
-                            <t t-foreach="general_images" t-as="image" t-key="image.id">
+                        <t t-set="active_banner" t-value="request.env['banner.image.line'].sudo().search([('is_active_carousel', '=', True)], limit=1)" />
+                        <t t-if="active_banner">
+                            <t t-foreach="active_banner.general_images" t-as="image" t-key="image.id">
                                 <div t-att-class="'carousel-item' + (' active' if loop.index == 1 else '')">
                                     <img t-att-src="'/web/image/' + str(image.id)" 
                                          alt="General Image" 
