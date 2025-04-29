@@ -517,44 +517,36 @@
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Descubre</h2>
                     </div>
                     <t t-set="active_product_banner" t-value="request.env['banner.image.line'].sudo().search([('is_active_product_carousel', '=', True)], limit=1)" />
-                    <t t-if="active_product_banner and len(active_product_banner.product_images) &gt; 0">
-                        <t t-if="len(active_product_banner.product_images) &lt;= 2">
-                            <!-- Mostrar las imágenes sin carrusel si hay 2 o menos -->
-                            <div class="row g-3">
-                                <t t-foreach="active_product_banner.product_images" t-as="image" t-key="image.id">
-                                    <div class="col-12 col-md-6">
-                                        <img t-att-src="'/web/image/' + str(image.id)" 
-                                             alt="Product Image" 
-                                             class="img-fluid w-100"
-                                             style="object-fit: cover;" />
+                    <t t-if="active_product_banner and len(active_product_banner.product_images) > 0">
+                        <div id="productImagesCarousel" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <!-- Divide las imágenes en grupos de 2 -->
+                                <t t-set="chunks" t-value="[active_product_banner.product_images[i:i+2] for i in range(0, len(active_product_banner.product_images), 2)]" />
+                                <t t-foreach="chunks" t-as="chunk" t-key="chunk_index">
+                                    <div t-att-class="'carousel-item' + (' active' if chunk_index == 0 else '')">
+                                        <div class="row g-3">
+                                            <t t-foreach="chunk" t-as="image" t-key="image.id">
+                                                <div class="col-12 col-md-6">
+                                                    <img t-att-src="'/web/image/' + str(image.id)" 
+                                                         alt="Product Image" 
+                                                         class="img-fluid w-100"
+                                                         style="object-fit: cover;" />
+                                                </div>
+                                            </t>
+                                        </div>
                                     </div>
                                 </t>
                             </div>
-                        </t>
-                        <t t-else="">
-                            <!-- Carrusel para más de 2 imágenes -->
-                            <div id="productImagesCarousel" class="carousel slide" data-bs-ride="carousel">
-                                <div class="carousel-inner">
-                                    <t t-foreach="active_product_banner.product_images" t-as="image" t-key="image.id">
-                                        <div t-att-class="'carousel-item' + (' active' if image == active_product_banner.product_images[0] else '')">
-                                            <img t-att-src="'/web/image/' + str(image.id)" 
-                                                 alt="Product Image" 
-                                                 class="d-block w-100"
-                                                 style="object-fit: cover;" />
-                                        </div>
-                                    </t>
-                                </div>
-                                <!-- Controles del carrusel -->
-                                <button class="carousel-control-prev" type="button" data-bs-target="#productImagesCarousel" data-bs-slide="prev">
-                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Previous</span>
-                                </button>
-                                <button class="carousel-control-next" type="button" data-bs-target="#productImagesCarousel" data-bs-slide="next">
-                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Next</span>
-                                </button>
-                            </div>
-                        </t>
+                            <!-- Controles del carrusel -->
+                            <button class="carousel-control-prev" type="button" data-bs-target="#productImagesCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#productImagesCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
                     </t>
                 </div>
 
