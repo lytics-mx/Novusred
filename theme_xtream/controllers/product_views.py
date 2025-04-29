@@ -1,10 +1,10 @@
 from odoo import http
 from odoo.http import request
 import logging
-_logger = logging.getLogger(__name__)
-    
-class ShopController(http.Controller):
 
+_logger = logging.getLogger(__name__)
+
+class ShopController(http.Controller):
 
     @http.route(['/tienda/producto/<model("product.product"):product>'], type='http', auth="public", website=True)
     def product_page(self, product, **kwargs):
