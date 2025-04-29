@@ -513,31 +513,46 @@
                     <!-- This empty div allows for customizable content blocks to be inserted -->
                 </div>
                 <div class="container mt-4">
-                    <div style="text-align: left;">
-                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Descubre</h2>
-                    </div>
-                    <div class="row g-3">
-                        <div class="col-12 col-md-6">
-                            <a href="/descubre" class="d-block">
-                                <img src="/theme_xtream/static/src/img/home/Descubre5.png" 
-                                    alt="Imagen 1" 
-                                    class="img-fluid w-100"
-                                    style="transition: transform 0.3s ease;" 
-                                    onmouseover="this.style.transform='scale(1.02)'" 
-                                    onmouseout="this.style.transform='scale(1)'" />
-                            </a>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <a href="/events" class="d-block">
-                                <img src="/theme_xtream/static/src/img/home/Descrubre3.png" 
-                                    alt="Imagen 2" 
-                                    class="img-fluid w-100"
-                                    style="transition: transform 0.3s ease;" 
-                                    onmouseover="this.style.transform='scale(1.02)'" 
-                                    onmouseout="this.style.transform='scale(1)'" />
-                            </a>
-                        </div>
-                    </div>
+                    <t t-set="active_product_banner" t-value="request.env['banner.image.line'].sudo().search([('is_active_product_carousel', '=', True)], limit=1)" />
+                    <t t-if="active_product_banner and len(active_product_banner.product_images) > 0">
+                        <t t-if="len(active_product_banner.product_images) <= 2">
+                            <!-- Mostrar las imágenes sin carrusel si hay 2 o menos -->
+                            <div class="row g-3">
+                                <t t-foreach="active_product_banner.product_images" t-as="image" t-key="image.id">
+                                    <div class="col-12 col-md-6">
+                                        <img t-att-src="'/web/image/' + str(image.id)" 
+                                             alt="Product Image" 
+                                             class="img-fluid w-100"
+                                             style="object-fit: cover;" />
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <!-- Carrusel para más de 2 imágenes -->
+                            <div id="productImagesCarousel" class="carousel slide" data-bs-ride="carousel">
+                                <div class="carousel-inner">
+                                    <t t-foreach="active_product_banner.product_images" t-as="image" t-key="image.id">
+                                        <div t-att-class="'carousel-item' + (' active' if image == active_product_banner.product_images[0] else '')">
+                                            <img t-att-src="'/web/image/' + str(image.id)" 
+                                                 alt="Product Image" 
+                                                 class="d-block w-100"
+                                                 style="object-fit: cover;" />
+                                        </div>
+                                    </t>
+                                </div>
+                                <!-- Controles del carrusel -->
+                                <button class="carousel-control-prev" type="button" data-bs-target="#productImagesCarousel" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#productImagesCarousel" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                            </div>
+                        </t>
+                    </t>
                 </div>
 
                 <div class="container mt-4">

@@ -27,10 +27,11 @@ class BannerImageLine(models.Model):
         help="Upload product cover images."
     )
 
-    is_active_carousel = fields.Boolean(string="Mostrar en Portada", default=False)
+    is_active_carousel = fields.Boolean(string="Mostrar en Carrusel General", default=False)
+    is_active_product_carousel = fields.Boolean(string="Mostrar en Carrusel de Productos", default=False)
 
-    @api.onchange('is_active_carousel')
-    def _onchange_is_active_carousel(self):
-        """Asegura que solo un registro esté activo en el carrusel"""
-        if self.is_active_carousel:
-            self.sudo().search([('id', '!=', self.id)]).write({'is_active_carousel': False}) 
+    @api.onchange('is_active_product_carousel')
+    def _onchange_is_active_product_carousel(self):
+        """Asegura que solo un registro esté activo en el carrusel de productos"""
+        if self.is_active_product_carousel:
+            self.sudo().search([('id', '!=', self.id)]).write({'is_active_product_carousel': False})
