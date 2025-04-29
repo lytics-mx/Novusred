@@ -3,47 +3,53 @@
         <t t-call="website.layout">
             <div class="container mt-4">
                 <!-- Sección de encabezado con texto e íconos -->
-                <!-- Carrusel o Imagen de Portada -->
-                <t t-set="active_banners" t-value="request.env['banner.image.line'].sudo().search([('is_active_brand_carousel', '=', True)])" />
-                <t t-if="len(active_banners) > 1">
-                    <!-- Carrusel para múltiples imágenes -->
-                    <div id="brandCarousel" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            <t t-foreach="active_banners" t-as="banner" t-key="banner.id">
-                                <div t-att-class="'carousel-item' + (' active' if banner == active_banners[0] else '')">
-                                    <img t-att-src="'/web/image/' + str(banner.brand_images[0].id)" 
-                                         alt="Imagen de Marca" 
-                                         class="d-block w-100" 
-                                         style="height: 300px; object-fit: cover;" />
-                                </div>
-                            </t>
+                <!-- Verifica que la ruta de la imagen sea válidas -->
+                <t t-set="active_brand_banner" t-value="request.env['banner.image.line'].sudo().search([('is_active_brand_carousel', '=', True)], limit=1)" />
+                <t t-if="active_brand_banner">
+                    <t t-if="len(active_brand_banner.general_images) == 1">
+                        <!-- Single image, no carousel -->
+                        <div style="position: relative;">
+                            <img t-att-src="'/web/image/' + str(active_brand_banner.general_images[0].id)" 
+                                 alt="Brand Image" 
+                                 style="width: 100%; height: auto; object-fit: cover;" />
+                            <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
                         </div>
-                        <!-- Controles del carrusel -->
-                        <button class="carousel-control-prev" type="button" data-bs-target="#brandCarousel" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#brandCarousel" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </button>
+                    </t>
+                    <t t-elif="len(active_brand_banner.general_images) > 1">
+                        <!-- Carousel for multiple images -->
+                        <div id="brandImagesCarousel" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <t t-foreach="active_brand_banner.general_images" t-as="image" t-key="image.id">
+                                    <div t-att-class="'carousel-item' + (' active' if image == active_brand_banner.general_images[0] else '')" style="position: relative;">
+                                        <img t-att-src="'/web/image/' + str(image.id)" 
+                                             alt="Brand Image" 
+                                             style="width: 100%; height: auto; object-fit: cover;" />
+                                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
+                                    </div>
+                                </t>
+                            </div>
+                            <!-- Carousel controls -->
+                            <button class="carousel-control-prev" type="button" data-bs-target="#brandImagesCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#brandImagesCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                    </t>
+                </t>
+                <t t-else="">
+                    <!-- Default image if no active brand banner -->
+                    <div style="position: relative;">
+                        <img src="/theme_xtream/static/src/img/product-img/imagenes_home.png" 
+                             alt="Default Brand Image" 
+                             style="width: 100%; height: auto; object-fit: cover;" />
+                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
                     </div>
                 </t>
-                <t t-elif="len(active_banners) == 1">
-                    <!-- Mostrar una sola imagen si solo hay una activa -->
-                    <div>
-                        <img t-att-src="'/web/image/' + str(active_banners[0].brand_images[0].id)" 
-                             alt="Imagen de Marca" 
-                             class="img-fluid w-100" 
-                             style="height: 300px; object-fit: cover;" />
-                    </div>
-            </t>
 
-            <!-- Contenido adicional de la página -->
-            <div class="row mt-4">
-                <!-- Aquí puedes agregar más contenido relacionado con las marcas -->
-            </div>
-                
                 <div class="row">
                     <!-- Filtros de la izquierda -->
                     <div class="col-lg-3 col-md-4">
