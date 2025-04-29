@@ -358,15 +358,7 @@
             </t>
 
                 <div class="container mt-4">
-                    <div style="text-align: left;">
-                        <t t-set="discounted_products_temp" t-value="request.env['product.template'].sudo().search([
-                            ('website_published', '=', True),
-                            ('product_tag_ids', '!=', False)
-                        ], order='create_date desc', limit=1)" />
-                        <t t-if="discounted_products_temp and any(p.discounted_price &lt; p.list_price for p in discounted_products_temp)">
-                            <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Ofertas</h2>
-                        </t>
-                    </div>
+
                     <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
                         <t t-set="discounted_products" t-value="request.env['product.template'].sudo().search([
                             ('website_published', '=', True),
@@ -374,6 +366,9 @@
                         ], order='create_date desc', limit=10)" />
                         
                         <t t-if="len(discounted_products) > 5">
+                        <div style="text-align: left;">
+                            <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Ofertas</h2>
+                        </div>                         
                             <div id="offersCarousel" class="carousel slide" data-bs-ride="carousel">
                                 <div class="carousel-inner">
                                     <div class="carousel-item active">
