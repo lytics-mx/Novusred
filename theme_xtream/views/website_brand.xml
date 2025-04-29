@@ -57,6 +57,8 @@
                     <div style="text-align: left;">
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px; text-align: center;">NUESTRAS MEJORES MARCAS</h2>
                     </div>
+                    <div style="height: 30px;"></div>
+                    
                     <t t-set="brands" t-value="request.env['brand.type'].sudo().search([
                         ('icon_image', '!=', False),
                         ('active', '=', True)
@@ -81,6 +83,8 @@
                 <section class="find-what-you-need text-center py-5">
                     <h2 style="font-size: 25px; text-align: center;">Encuentra lo que buscas</h2>
                     <div class="container">
+                        <div style="height: 30px;"></div>
+
                         <div class="row justify-content-center">
                             <t t-foreach="[{'src': '/theme_xtream/static/src/img/ofertas-barra/etiqueta.png', 'alt': 'Todas las ofertas', 'text': 'Todas las ofertas'},
                                            {'src': '/theme_xtream/static/src/img/ofertas-barra/relampago.png', 'alt': 'Ofertas relámpago', 'text': 'Ofertas relámpago'},
@@ -89,7 +93,7 @@
                                            {'src': '/theme_xtream/static/src/img/ofertas-barra/relampago3.png', 'alt': 'Ofertas relámpago', 'text': 'Ofertas relámpago'},
                                            {'src': '/theme_xtream/static/src/img/ofertas-barra/reloj3.png', 'alt': 'Hasta las 3 del día', 'text': 'Hasta las 3 del día'}]" t-as="icon">
                                 <div class="col text-center mx-3">
-                                    <div style="width: 100px; height: 100px; border-radius: 50%; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                                    <div style="width: 100px; height: 100px; border-radius: 50%; background-color: #ffffff; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                                         <img t-att-src="icon['src']" t-att-alt="icon['alt']" class="img-fluid" style="width: 50px; height: 50px;" />
                                     </div>
                                     <p t-esc="icon['text']" style="font-size: 14px; margin-top: 10px;"></p>
@@ -386,15 +390,33 @@
                     </div>
                 </div>
                 </section>
+                
+                <div style="height: 50px;"></div>
 
                 <!-- Más Categorías -->
                 <section class="more-categories py-5">
                     <h2 class="text-center">Más Categorías</h2>
                     <div class="container">
                         <div class="row">
-                            <div class="col-md-4"><img src="/theme_xtream/static/src/img/categories/category1.png" alt="Category 1" class="img-fluid" /></div>
-                            <div class="col-md-4"><img src="/theme_xtream/static/src/img/categories/category2.png" alt="Category 2" class="img-fluid" /></div>
-                            <div class="col-md-4"><img src="/theme_xtream/static/src/img/categories/category3.png" alt="Category 3" class="img-fluid" /></div>
+                            <t t-set="subcategories" t-value="request.env['banner.image.line'].sudo().search([
+                                ('is_active_carousel', '=', True)
+                            ])" />
+                            <t t-foreach="subcategories" t-as="subcategory" t-key="subcategory.id">
+                                <div class="col-md-4">
+                                    <div class="card shadow-sm" style="border-radius: 10px; overflow: hidden;">
+                                        <div style="position: relative;">
+                                            <img t-att-src="'/web/image/' + str(subcategory.general_images.id)" 
+                                                 alt="Subcategory Image" 
+                                                 class="img-fluid" 
+                                                 style="width: 100%; height: auto; object-fit: cover;" />
+                                            <div style="position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0, 0, 0, 0.5); color: white; padding: 10px;">
+                                                <h5 class="mb-0" t-esc="subcategory.name" style="font-size: 16px; font-weight: bold;"></h5>
+                                                <p class="mb-0" style="font-size: 12px;">SUBCATEGORIA</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
                         </div>
                     </div>
                 </section>
