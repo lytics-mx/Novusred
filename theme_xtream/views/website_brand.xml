@@ -54,10 +54,14 @@
                     <h2>Nuestras Mejores Marcas</h2>
                     <div class="container">
                         <div class="row justify-content-center">
-                            <div class="col-3"><img src="/theme_xtream/static/src/img/brands/microsoft.png" alt="Microsoft" class="img-fluid" /></div>
-                            <div class="col-3"><img src="/theme_xtream/static/src/img/brands/lg.png" alt="LG" class="img-fluid" /></div>
-                            <div class="col-3"><img src="/theme_xtream/static/src/img/brands/lenovo.png" alt="Lenovo" class="img-fluid" /></div>
-                            <div class="col-3"><img src="/theme_xtream/static/src/img/brands/epson.png" alt="Epson" class="img-fluid" /></div>
+                            <t t-set="products" t-value="request.env['product.template'].sudo().search([('icon_image', '!=', False)], limit=4)" />
+                            <t t-foreach="products" t-as="product" t-key="product.id">
+                                <div class="col-3">
+                                    <img t-att-src="'/web/image/' + str(product.icon_image.id)" 
+                                         t-att-alt="product.name" 
+                                         class="img-fluid" />
+                                </div>
+                            </t>
                         </div>
                     </div>
                 </section>
