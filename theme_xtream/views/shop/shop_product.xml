@@ -3,73 +3,61 @@
         <xpath expr="//div[@id='wrap']" position="inside">
             <div id="wrap" class="oe_structure">
                 <div class="container">
-                    <!-- Product Image and Details -->
                     <div class="row">
+                        <!-- Product Images -->
                         <div class="col-md-6">
                             <div class="product-images">
-                                <img t-att-src="product.image_1920" class="img-fluid" alt="Product Image"/>
-                                <div class="thumbnail-images">
+                                <img t-att-src="product.image_1920" class="img-fluid main-image" alt="Product Image"/>
+                                <div class="thumbnail-images mt-3">
                                     <t t-foreach="product.product_template_image_ids" t-as="image">
                                         <img t-att-src="image.image_1920" class="img-thumbnail" alt="Thumbnail"/>
                                     </t>
                                 </div>
                             </div>
                         </div>
-                        <!-- <div class="col-md-6">
-                            <h1 t-field="product.name" class="product-title"></h1>
-                            <p class="product-price">
-                                <span t-field="product.list_price" class="text-danger"></span>
-                            </p>
-                            <button type="button" class="btn btn-primary btn-lg">Agregar al carrito</button>
-                        </div> -->
-                    </div>
 
-                    <!-- Related Products -->
-                    <div class="related-products mt-5">
-                        <h3>Productos que podrían interesarte</h3>
-                        <div class="row">
-                            <!-- <t t-foreach="related_products" t-as="related">
-                                <div class="col-md-3">
-                                    <div class="card">
-                                        <img t-att-src="related.image_1920" class="card-img-top" alt="Related Product"/>
-                                        <div class="card-body">
-                                            <h5 class="card-title" t-field="related.name"></h5>
-                                            <p class="card-text">
-                                                <span t-field="related.list_price"></span>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </t> -->
+                        <!-- Product Details -->
+                        <div class="col-md-6">
+                            <h1 t-field="product.name" class="product-title"></h1>
+                            <p class="product-serial-number">
+                                <strong>Número de serie:</strong> <span t-field="product.default_code"/>
+                            </p>
+                            <p class="product-price">
+                                <span t-if="product.is_discounted">
+                                    <span class="text-muted text-decoration-line-through" t-field="product.list_price"/>
+                                    <span class="text-danger" t-field="product.discount_price"/>
+                                    <span class="text-success">(<t t-field="product.discount_percentage"/>% OFF)</span>
+                                </span>
+                                <span t-else="" t-field="product.list_price"/>
+                            </p>
+                            <p class="product-savings">
+                                <strong>Te ahorras:</strong> <span t-field="product.discount_fixed"/>
+                            </p>
+                            <p class="product-shipping">
+                                <strong>Envío:</strong> Gratis
+                            </p>
+                            <p class="product-tags">
+                                <strong>Etiquetas:</strong>
+                                <t t-foreach="product.tag_ids" t-as="tag">
+                                    <span class="badge bg-primary" t-field="tag.name"/>
+                                </t>
+                            </p>
+                            <p class="product-stock">
+                                <strong>En stock:</strong> <span t-field="product.qty_available"/> artículos
+                            </p>
+                            <p class="product-brand">
+                                <strong>Marca:</strong> <span t-field="product.brand_id.name"/>
+                            </p>
+                            <div class="product-quantity mt-3">
+                                <label for="quantity">Cantidad:</label>
+                                <input type="number" id="quantity" name="quantity" min="1" max="product.qty_available" value="1" class="form-control w-25"/>
+                            </div>
+                            <div class="product-actions mt-4">
+                                <button type="button" class="btn btn-primary btn-lg">Agregar al carrito</button>
+                                <button type="button" class="btn btn-success btn-lg">Comprar</button>
+                            </div>
                         </div>
                     </div>
-
-                    <!-- Product Description -->
-                    <div class="product-description mt-5">
-                        <h3>Descripción</h3>
-                        <p t-field="product.description_sale"></p>
-                    </div>
-
-                    <!-- Technical Specifications -->
-                    <!-- <div class="technical-specifications mt-5">
-                        <h3>Ficha técnica</h3>
-                        <table class="table">
-                            <tbody>
-                                <tr>
-                                    <th>Peso</th>
-                                    <td><span t-field="product.weight"></span></td>
-                                </tr>
-                                <tr>
-                                    <th>Dimensiones</th>
-                                    <td><span t-field="product.volume"></span></td>
-                                </tr>
-                                <tr>
-                                    <th>Garantía</th>
-                                    <td><span t-field="product.warranty"></span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div> -->
                 </div>
             </div>
         </xpath>
