@@ -76,6 +76,7 @@
         'views/shop/ofertas/catg_offers.xml', 
         'views/shop/ofertas/product_template_tree_view.xml',
         
+        'views/shop/shop_products.xml',
         
         # 'views/website_sale/product_template.xml',
         # 'views/website_sale/shop_filters.xml',

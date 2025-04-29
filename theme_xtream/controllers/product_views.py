@@ -7,4 +7,5 @@ class ShopController(http.Controller):
     def product(self, product, **kwargs):
         # Llama al método para registrar el producto visto
         request.env['product.view.history'].sudo().add_product_to_history(product.id)
-        return request.render("website_sale.product", {'product': product})
+        # Renderiza la nueva plantilla personalizada
+        return request.render("theme_xtream.custom_product_template", {'product': product})

@@ -1,11 +1,78 @@
-<?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="website_sale_product" name="Product" inherit_id="website_sale.product">
-        <xpath expr="//t[@t-name='website_sale.product']" position="replace">
-            <!-- Your content here -->
-            <t name="Product" t-name="theme_xtream.website_sale.product">
-                <!-- Rest of your existing code -->
-            </t>
+    <template id="custom_product_template" inherit_id="website_sale.product">
+        <xpath expr="//div[@id='wrap']" position="replace">
+            <div id="wrap" class="oe_structure">
+                <div class="container">
+                    <!-- Product Image and Details -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="product-images">
+                                <img t-att-src="product.image_1920" class="img-fluid" alt="Product Image"/>
+                                <div class="thumbnail-images">
+                                    <t t-foreach="product.image_ids" t-as="image">
+                                        <img t-att-src="image.image_url" class="img-thumbnail" alt="Thumbnail"/>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h1 t-field="product.name" class="product-title"></h1>
+                            <p class="product-price">
+                                <span t-field="product.list_price" class="text-danger"></span>
+                                <span class="discount" t-if="product.discount">-<t t-esc="product.discount"/>%</span>
+                            </p>
+                            <button type="button" class="btn btn-primary btn-lg">Agregar al carrito</button>
+                        </div>
+                    </div>
+
+                    <!-- Related Products -->
+                    <div class="related-products mt-5">
+                        <h3>Productos que podrían interesarte</h3>
+                        <div class="row">
+                            <t t-foreach="related_products" t-as="related">
+                                <div class="col-md-3">
+                                    <div class="card">
+                                        <img t-att-src="related.image_1920" class="card-img-top" alt="Related Product"/>
+                                        <div class="card-body">
+                                            <h5 class="card-title" t-field="related.name"></h5>
+                                            <p class="card-text">
+                                                <span t-field="related.list_price"></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- Product Description -->
+                    <div class="product-description mt-5">
+                        <h3>Descripción</h3>
+                        <p t-field="product.description_sale"></p>
+                    </div>
+
+                    <!-- Technical Specifications -->
+                    <div class="technical-specifications mt-5">
+                        <h3>Ficha técnica</h3>
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <th>Peso</th>
+                                    <td t-field="product.weight"></td>
+                                </tr>
+                                <tr>
+                                    <th>Dimensiones</th>
+                                    <td t-field="product.volume"></td>
+                                </tr>
+                                <tr>
+                                    <th>Garantía</th>
+                                    <td t-field="product.warranty"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </xpath>
     </template>
 </odoo>
