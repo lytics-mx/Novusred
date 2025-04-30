@@ -1154,15 +1154,6 @@ template {
   opacity: 1;
 }
 
-/* Remove focus outline for all elements within product cards */
-.product-card *:focus,
-.product-card *:active {
-  outline: none !important;
-  box-shadow: none !important;
-  -webkit-tap-highlight-color: transparent !important;
-  border-color: transparent !important;
-}
-
 /* Espaciado entre tarjetas */
 .row-cols-2 .col, .row-cols-md-5 .col {
   padding: 5px;
@@ -1184,14 +1175,38 @@ template {
   font-weight: bold;
   color: #FF5207;
 }
-/* Eliminar el borde negro al interactuar con las tarjetas */
+
+/* Eliminar completamente cualquier contorno o borde en todos los estados */
+.product-card,
+.product-card:hover,
 .product-card:focus,
 .product-card:active,
+.product-card *,
+.product-card *:hover,
 .product-card *:focus,
 .product-card *:active {
-    outline: none !important; /* Elimina el contorno */
-    border: none !important; /* Elimina cualquier borde */
-    box-shadow: none !important; /* Elimina cualquier sombra */
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+/* Asegurar que solo se mantiene el borde inicial y no aparecen otros al interactuar */
+.product-card {
+  border: 1px solid #e0e0e0 !important;
+}
+
+.product-card:focus,
+.product-card:active {
+  border: 1px solid #e0e0e0 !important;
+}
+
+/* Eliminar el resaltado de selección en navegadores */
+.product-card, 
+.product-card * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 @media screen and (max-width: 992px) {
   .product .content .wrapper:hover{
