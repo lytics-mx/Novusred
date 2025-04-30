@@ -1073,7 +1073,7 @@ template {
   border-radius: 8px;
   padding: 0;
   border: 1px solid #e0e0e0;
-  overflow: hidden; /* Changed to hidden to prevent content overflow */
+  overflow: visible; /* Changed from hidden to visible to allow content to extend outside */
   transition: box-shadow 0.3s ease;
   outline: none !important;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -1081,15 +1081,12 @@ template {
   margin: 0 auto;
   position: relative;
   z-index: 1;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+  height: 100%; /* Fixed height to prevent shifting */
 }
 
 .product-card:hover {
   box-shadow: 0 5px 15px rgba(0,0,0,0.15);
   z-index: 10;
-  transform: none;
 }
 
 /* Ajustes de imagen */
@@ -1103,7 +1100,7 @@ template {
 }
 
 .product-card:hover img {
-  transform: scale(1.05); /* Reduced scale factor */
+  transform: scale(1.1);
 }
 
 /* Línea divisoria y cuerpo de la tarjeta */
@@ -1118,48 +1115,50 @@ template {
   padding: 12px;
   outline: none !important;
   background-color: #ffffff;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
 }
 
 /* Contenedor y nombre del producto */
 .product-name-container {
-  height: 2.8rem;
+  height: 2.8rem; /* Increased height to ensure both lines are visible */
   overflow: hidden;
   transition: none;
   outline: none !important;
-  margin-bottom: 5px;
-  position: relative; /* For absolute positioning context */
+  margin-bottom: 5px; /* Added spacing below the name */
 }
 
 .product-name {
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 2; /* Always show 2 lines */
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 0.95rem;
-  line-height: 1.4;
-  min-height: 2.8em;
+  line-height: 1.4; /* Added explicit line height for consistency */
+  min-height: 2.8em; /* Ensure minimum height fits two lines */
 }
 
-/* Efectos al pasar el cursor - show name in a tooltip-like element */
-.product-card:hover .product-name-container .product-name-tooltip {
-  display: block;
+/* Efectos al pasar el cursor - only affect the hovered card with absolute positioning */
+.product-card:hover .product-name-container:after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: white;
+  z-index: 11;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  border-radius: 0 0 8px 8px;
+}
+
+.product-card:hover .product-name {
   position: absolute;
   background: white;
   width: 100%;
-  padding: 12px;
-  z-index: 20;
-  box-shadow: 0 5px 10px rgba(0,0,0,0.15);
-  border-radius: 0 0 8px 8px;
-  top: 100%;
   left: 0;
-}
-
-.product-name-tooltip {
-  display: none;
+  padding: 12px;
+  z-index: 12;
+  -webkit-line-clamp: 2; /* Modified to keep showing just 2 lines on hover */
+  max-height: 2.8em; /* Restrict height to match the 2 lines */
 }
 
 /* Botón eliminar en historial */
@@ -1167,10 +1166,6 @@ template {
   opacity: 0;
   transition: opacity 0.3s ease;
   outline: none !important;
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 13;
 }
 
 .product-card:hover .delete-history-item {
@@ -1231,9 +1226,19 @@ template {
   user-select: none;
 }
 
-/* Add this HTML element in your template for the tooltip:
-<div class="product-name-tooltip">{{product.name}}</div>
-inside the product-name-container */
+/* Use transform for hover effect instead of changing dimensions */
+.product-card:hover {
+  transform: translateZ(0) scale(1.02);
+  transform-origin: center center;
+}
+
+/* Ensure expanded content doesn't affect layout */
+.product-card:hover .expanded-content {
+  position: absolute;
+  width: 100%;
+  background: white;
+  z-index: 15;
+}
 @media screen and (max-width: 992px) {
   .product .content .wrapper:hover{
     left: 35%;
