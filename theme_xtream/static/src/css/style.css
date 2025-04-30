@@ -1119,34 +1119,53 @@ template {
 
 /* Contenedor y nombre del producto */
 .product-name-container {
-  height: 2.8em; /* Fixed height for exactly 2 lines */
+  height: 2.8rem; /* Increased height to ensure both lines are visible */
   overflow: hidden;
-  margin-bottom: 5px;
-  position: relative;
+  transition: none;
+  outline: none !important;
+  margin-bottom: 5px; /* Added spacing below the name */
 }
 
 .product-name {
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* Limit to exactly 2 lines */
+  -webkit-line-clamp: 2; /* Always show 2 lines */
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 0.95rem;
-  line-height: 1.4;
-  max-height: 2.8em; /* Match container height */
+  line-height: 1.4; /* Added explicit line height for consistency */
+  min-height: 2.8em; /* Ensure minimum height fits two lines */
+}
+
+/* Efectos al pasar el cursor - only affect the hovered card with absolute positioning */
+.product-card:hover .product-name-container:after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: white;
+  z-index: 11;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  border-radius: 0 0 8px 8px;
+}
+
+.product-card:hover .product-name {
+  position: absolute;
+  background: white;
+  width: 100%;
+  left: 0;
+  padding: 12px;
+  z-index: 12;
+  -webkit-line-clamp: unset;
+  max-height: none;
 }
 
 /* Botón eliminar en historial */
-.delete-history-item {
+.product-name-container .delete-history-item {
   opacity: 0;
   transition: opacity 0.3s ease;
-  position: absolute;
-  top: 5px;
-  right: 5px;
-}
-
-.product-card:hover .delete-history-item {
-  opacity: 1;
+  outline: none !important;
 }
 
 .product-card:hover .delete-history-item {
