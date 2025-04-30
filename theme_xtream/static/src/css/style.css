@@ -1083,10 +1083,12 @@ template {
   z-index: 1; /* Default z-index */
 }
 
+/* Asegúrate de que solo la tarjeta sobre la que se pasa el cursor se amplíe */
 .product-card:hover {
   transform: scale(1.02);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-  z-index: 10; /* Higher z-index when hovering to show above other cards */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  z-index: 10; /* Asegura que esta tarjeta esté por encima de las demás */
+  position: relative; /* Mantén la posición relativa para evitar conflictos */
 }
 
 /* Ajustes de imagen */
@@ -1168,6 +1170,8 @@ template {
 /* Espaciado entre tarjetas - added more space to prevent layout shifts */
 .row-cols-2 .col, .row-cols-md-5 .col {
   padding: 8px; /* Increased to give more room */
+  position: relative;
+  overflow: visible; /* Permite que las tarjetas ampliadas se muestren correctamente */
 }
 
 /* Estilos de texto para precios */
@@ -1203,6 +1207,8 @@ template {
 /* Asegurar que solo se mantiene el borde inicial y no aparecen otros al interactuar */
 .product-card {
   border: 1px solid #e0e0e0 !important;
+  transform: scale(1); /* Estado inicial */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;  
 }
 
 .product-card:focus,
