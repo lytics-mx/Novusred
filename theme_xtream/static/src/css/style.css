@@ -1142,8 +1142,8 @@ template {
   overflow: visible; /* Allow content to overflow */
 }
 
-/* Importante: Usamos > para asegurar que solo afecte a los hijos directos de la tarjeta sobre la que pasamos el cursor */
-.product-card:hover > .product-name-container {
+/* Fix: Changed selector to target the specific hovered card's elements */
+.product-card:hover .product-name-container {
   height: auto;
   position: absolute;
   background: #fff;
@@ -1152,9 +1152,12 @@ template {
   box-shadow: 0 5px 15px rgba(0,0,0,0.15);
   border-radius: 0 0 8px 8px;
   border-top: 0;
+  left: 0; /* Ensure it aligns with the card */
+  bottom: 0; /* Position it at the bottom of the card */
+  transform: translateY(100%); /* Move it below the card */
 }
 
-.product-card:hover > .product-name-container > .product-name {
+.product-card:hover .product-name {
   -webkit-line-clamp: 2;
   height: auto;
   padding: 5px 12px 10px;
