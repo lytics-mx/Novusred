@@ -1075,25 +1075,28 @@ template {
   border: 1px solid #e0e0e0;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  outline: none !important; /* Remove outline */
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Added subtle shadow */
-  max-width: 95%; /* Make card slightly smaller */
-  margin: 0 auto; /* Center the card */
+  outline: none !important;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  max-width: 95%;
+  margin: 0 auto;
+  position: relative; /* Add position relative to establish a containing block */
+  z-index: 1; /* Default z-index */
 }
 
 .product-card:hover {
   transform: scale(1.02);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.15); /* Enhanced shadow on hover */
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  z-index: 10; /* Higher z-index when hovering to show above other cards */
 }
 
 /* Ajustes de imagen */
 .product-card img {
   width: 100%;
-  height: 180px; /* Reduced from 200px */
+  height: 180px;
   object-fit: contain;
   padding: 10px;
   transition: transform 0.3s ease;
-  outline: none !important; /* Remove outline */
+  outline: none !important;
 }
 
 .product-card:hover img {
@@ -1105,13 +1108,13 @@ template {
   height: 1px;
   background-color: #e0e0e0;
   margin: 0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Added shadow to divider */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .product-card .card-body {
-  padding: 12px; /* Reduced from 15px */
-  outline: none !important; /* Remove outline */
-  background-color: #ffffff; /* Ensuring white background for card body */
+  padding: 12px;
+  outline: none !important;
+  background-color: #ffffff;
 }
 
 /* Contenedor y nombre del producto */
@@ -1119,7 +1122,7 @@ template {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.3s ease;
-  outline: none !important; /* Remove outline */
+  outline: none !important;
 }
 
 .product-name {
@@ -1130,13 +1133,13 @@ template {
   text-overflow: ellipsis;
   max-height: 0;
   transition: max-height 0.3s ease, -webkit-line-clamp 0.3s ease;
-  outline: none !important; /* Remove outline */
-  font-size: 0.95rem; /* Slightly smaller font */
+  outline: none !important;
+  font-size: 0.95rem;
 }
 
-/* Efectos al pasar el cursor */
+/* Efectos al pasar el cursor - only affect the hovered card */
 .product-card:hover .product-name-container {
-  max-height: 90px !important; /* Reduced from 100px */
+  max-height: 90px !important;
   overflow: visible !important;
 }
 
@@ -1145,8 +1148,9 @@ template {
   max-height: 2.3em;
 }
 
+/* Initial state for all cards */
 .card .product-name-container {
-  max-height: 2.2rem !important; /* Reduced from 2.4rem */
+  max-height: 2.2rem !important;
   overflow: hidden !important;
 }
 
@@ -1154,31 +1158,31 @@ template {
 .product-name-container .delete-history-item {
   opacity: 0;
   transition: opacity 0.3s ease;
-  outline: none !important; /* Remove outline */
+  outline: none !important;
 }
 
 .product-card:hover .delete-history-item {
   opacity: 1;
 }
 
-/* Espaciado entre tarjetas */
+/* Espaciado entre tarjetas - added more space to prevent layout shifts */
 .row-cols-2 .col, .row-cols-md-5 .col {
-  padding: 4px; /* Reduced from 5px */
+  padding: 8px; /* Increased to give more room */
 }
 
 /* Estilos de texto para precios */
 .product-card .text-dark {
-  font-size: 1.1rem; /* Reduced from 1.2rem */
+  font-size: 1.1rem;
   font-weight: bold;
 }
 
 .product-card .text-danger {
-  font-size: 0.85rem; /* Reduced from 0.9rem */
+  font-size: 0.85rem;
   font-weight: bold;
 }
 
 .product-card .text-orange {
-  font-size: 0.75rem; /* Reduced from 0.8rem */
+  font-size: 0.75rem;
   font-weight: bold;
   color: #FF5207;
 }
@@ -1213,6 +1217,19 @@ template {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+/* Make hovered card appear above others without affecting layout */
+.product-card:hover {
+  position: relative;
+  z-index: 100;
+}
+
+/* Ensure product name container expands only on the hovered card */
+.product-card:hover .product-name-container {
+  position: relative;
+  z-index: 101;
+  background-color: #ffffff;
 }
 @media screen and (max-width: 992px) {
   .product .content .wrapper:hover{
