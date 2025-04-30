@@ -1119,62 +1119,34 @@ template {
 
 /* Contenedor y nombre del producto */
 .product-name-container {
-  height: 2.8rem; /* Increased height to ensure both lines are visible */
+  height: 2.8em; /* Fixed height for exactly 2 lines */
   overflow: hidden;
-  transition: none;
-  outline: none !important;
-  margin-bottom: 5px; /* Added spacing below the name */
+  margin-bottom: 5px;
+  position: relative;
 }
 
 .product-name {
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* Always show 2 lines */
+  -webkit-line-clamp: 2; /* Limit to exactly 2 lines */
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 0.95rem;
-  line-height: 1.4; /* Added explicit line height for consistency */
-  min-height: 2.8em; /* Ensure minimum height fits two lines */
-}
-
-/* Efectos al pasar el cursor - only affect the hovered card with absolute positioning */
-.product-card:hover .product-name-container:after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  background: white;
-  z-index: 11;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-  border-radius: 0 0 8px 8px;
-}
-
-.product-card:hover .product-name {
-  -webkit-line-clamp: 2; /* Keep at 2 lines */
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  z-index: 12;
-  background: white;
-  position: relative; /* Changed from absolute to keep layout flow */
-  box-shadow: none; /* Remove shadow to avoid visual clutter */
-  max-height: 2.8em; /* Limit to exactly 2 lines */
-}
-
-/* Ensure delete button is visible but below the product name */
-.product-card:hover .delete-history-item {
-  opacity: 1;
-  margin-top: 5px;
-  position: relative;
-  z-index: 13;
+  line-height: 1.4;
+  max-height: 2.8em; /* Match container height */
 }
 
 /* Botón eliminar en historial */
-.product-name-container .delete-history-item {
+.delete-history-item {
   opacity: 0;
   transition: opacity 0.3s ease;
-  outline: none !important;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+.product-card:hover .delete-history-item {
+  opacity: 1;
 }
 
 .product-card:hover .delete-history-item {
