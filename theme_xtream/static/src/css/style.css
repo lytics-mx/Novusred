@@ -1079,11 +1079,13 @@ template {
   box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Added subtle shadow */
   max-width: 95%; /* Make card slightly smaller */
   margin: 0 auto; /* Center the card */
+  height: auto; /* Allow natural height */
 }
 
 .product-card:hover {
   transform: scale(1.02);
   box-shadow: 0 5px 15px rgba(0,0,0,0.15); /* Enhanced shadow on hover */
+  z-index: 10; /* Ensure hovered card appears above others */
 }
 
 /* Ajustes de imagen */
@@ -1115,14 +1117,14 @@ template {
 }
 
 /* Contenedor y nombre del producto */
-.product-name-container {
+.product-card .product-name-container {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.3s ease;
   outline: none !important; /* Remove outline */
 }
 
-.product-name {
+.product-card .product-name {
   display: -webkit-box;
   -webkit-line-clamp: 0;
   -webkit-box-orient: vertical;
@@ -1134,7 +1136,7 @@ template {
   font-size: 0.95rem; /* Slightly smaller font */
 }
 
-/* Efectos al pasar el cursor */
+/* Efectos al pasar el cursor - específico para la tarjeta en hover */
 .product-card:hover .product-name-container {
   max-height: 90px !important; /* Reduced from 100px */
   overflow: visible !important;
@@ -1145,13 +1147,14 @@ template {
   max-height: 2.3em;
 }
 
-.card .product-name-container {
-  max-height: 2.2rem !important; /* Reduced from 2.4rem */
+/* Esto ahora se aplica individualmente a cada tarjeta */
+.product-card .product-name-container {
+  max-height: 0 !important; /* Default state */
   overflow: hidden !important;
 }
 
 /* Botón eliminar en historial */
-.product-name-container .delete-history-item {
+.product-card .product-name-container .delete-history-item {
   opacity: 0;
   transition: opacity 0.3s ease;
   outline: none !important; /* Remove outline */
