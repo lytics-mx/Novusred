@@ -1124,7 +1124,6 @@ template {
   transition: none;
   outline: none !important;
   margin-bottom: 5px; /* Added spacing below the name */
-  position: relative; /* Added for positioning of delete button */
 }
 
 .product-name {
@@ -1132,25 +1131,10 @@ template {
   -webkit-line-clamp: 2; /* Always show 2 lines */
   -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: clip;
+  text-overflow: clip;            /* ❌ Sin "..." */
   font-size: 0.95rem;
   line-height: 1.4; /* Added explicit line height for consistency */
   min-height: 2.8em; /* Ensure minimum height fits two lines */
-}
-
-/* Botón eliminar en historial - posicionado debajo del nombre */
-.delete-history-item {
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  outline: none !important;
-  position: absolute;
-  bottom: -20px; /* Position below product name */
-  right: 0;
-  z-index: 15;
-}
-
-.product-card:hover .delete-history-item {
-  opacity: 1;
 }
 
 /* Efectos al pasar el cursor - only affect the hovered card with absolute positioning */
@@ -1177,11 +1161,22 @@ template {
   -webkit-line-clamp: 2; /* ✅ Mostrar solo 2 líneas */
   -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: clip;
+  text-overflow: clip;            /* ❌ Sin "..." */
   line-height: 1.4;
   min-height: 2.8em;
   max-height: 3.8em; /* Espacio para el texto + botón eliminar */
-  padding-bottom: 25px; /* Add space below for delete button */
+}
+
+
+/* Botón eliminar en historial */
+.product-name-container .delete-history-item {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  outline: none !important;
+}
+
+.product-card:hover .delete-history-item {
+  opacity: 1;
 }
 
 /* Espaciado entre tarjetas */
