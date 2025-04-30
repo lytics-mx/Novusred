@@ -1079,14 +1079,11 @@ template {
   box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Added subtle shadow */
   max-width: 95%; /* Make card slightly smaller */
   margin: 0 auto; /* Center the card */
-  height: 100%; /* Set fixed height */
-  position: relative; /* Added for absolute positioning of hover state */
 }
 
 .product-card:hover {
-  transform: translateY(0); /* Don't move up/down */
+  transform: scale(1.02);
   box-shadow: 0 5px 15px rgba(0,0,0,0.15); /* Enhanced shadow on hover */
-  z-index: 10; /* Ensure hovered card appears above others */
 }
 
 /* Ajustes de imagen */
@@ -1100,7 +1097,7 @@ template {
 }
 
 .product-card:hover img {
-  transform: scale(1.05);
+  transform: scale(1.1);
 }
 
 /* Línea divisoria y cuerpo de la tarjeta */
@@ -1118,53 +1115,43 @@ template {
 }
 
 /* Contenedor y nombre del producto */
-.product-card .product-name-container {
-  height: 0;
+.product-name-container {
+  max-height: 0;
   overflow: hidden;
-  transition: height 0.3s ease;
+  transition: max-height 0.3s ease;
   outline: none !important; /* Remove outline */
 }
 
-.product-card .product-name {
+.product-name {
   display: -webkit-box;
   -webkit-line-clamp: 0;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  height: 0;
-  transition: height 0.3s ease, -webkit-line-clamp 0.3s ease;
+  max-height: 0;
+  transition: max-height 0.3s ease, -webkit-line-clamp 0.3s ease;
   outline: none !important; /* Remove outline */
   font-size: 0.95rem; /* Slightly smaller font */
 }
 
-/* Efectos al pasar el cursor - específico para la tarjeta en hover */
-.product-card:hover {
-  overflow: visible; /* Allow content to overflow */
-}
-
-/* Fix: Changed selector to target the specific hovered card's elements */
+/* Efectos al pasar el cursor */
 .product-card:hover .product-name-container {
-  height: auto;
-  position: absolute;
-  background: #fff;
-  width: 100%;
-  z-index: 11;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-  border-radius: 0 0 8px 8px;
-  border-top: 0;
-  left: 0; /* Ensure it aligns with the card */
-  bottom: 0; /* Position it at the bottom of the card */
-  transform: translateY(100%); /* Move it below the card */
+  max-height: 90px !important; /* Reduced from 100px */
+  overflow: visible !important;
 }
 
 .product-card:hover .product-name {
-  -webkit-line-clamp: 2 !important;
-  height: auto !important;
-  padding: 5px 12px 10px;
+  -webkit-line-clamp: 2;
+  max-height: 2.3em;
+}
+
+.card .product-name-container {
+  max-height: 2.2rem !important; /* Reduced from 2.4rem */
+  overflow: hidden !important;
 }
 
 /* Botón eliminar en historial */
-.product-card .product-name-container .delete-history-item {
+.product-name-container .delete-history-item {
   opacity: 0;
   transition: opacity 0.3s ease;
   outline: none !important; /* Remove outline */
