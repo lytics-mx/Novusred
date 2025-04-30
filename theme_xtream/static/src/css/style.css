@@ -1137,11 +1137,17 @@ template {
   min-height: 2.8em; /* Ensure minimum height fits two lines */
 }
 
-/* Efectos al pasar el cursor - show full product name on hover */
-.product-card:hover .product-name-container {
-  height: auto;
-  z-index: 100;
-  position: relative;
+/* Efectos al pasar el cursor - only affect the hovered card with absolute positioning */
+.product-card:hover .product-name-container:after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: white;
+  z-index: 2;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  border-radius: 0 0 8px 8px;
 }
 
 .product-card:hover .product-name {
@@ -1151,11 +1157,8 @@ template {
   left: 0;
   padding: 12px;
   z-index: 12;
-  -webkit-line-clamp: unset; /* Remove line clamp to show full name */
+  -webkit-line-clamp: unset;
   max-height: none;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-  border-radius: 0 0 8px 8px;
-  min-width: 100%;
 }
 
 /* Botón eliminar en historial */
