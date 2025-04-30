@@ -1079,12 +1079,12 @@ template {
   box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Added subtle shadow */
   max-width: 95%; /* Make card slightly smaller */
   margin: 0 auto; /* Center the card */
-  height: 100%; /* Fixed height for all cards */
-  position: relative; /* Enable positioning context */
+  height: 100%; /* Set fixed height */
+  position: relative; /* Added for absolute positioning of hover state */
 }
 
 .product-card:hover {
-  transform: scale(1.02);
+  transform: translateY(0); /* Don't move up/down */
   box-shadow: 0 5px 15px rgba(0,0,0,0.15); /* Enhanced shadow on hover */
   z-index: 10; /* Ensure hovered card appears above others */
 }
@@ -1092,7 +1092,7 @@ template {
 /* Ajustes de imagen */
 .product-card img {
   width: 100%;
-  height: 180px; /* Fixed height */
+  height: 180px; /* Reduced from 200px */
   object-fit: contain;
   padding: 10px;
   transition: transform 0.3s ease;
@@ -1100,7 +1100,7 @@ template {
 }
 
 .product-card:hover img {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 /* Línea divisoria y cuerpo de la tarjeta */
@@ -1119,9 +1119,9 @@ template {
 
 /* Contenedor y nombre del producto */
 .product-card .product-name-container {
-  max-height: 0;
+  height: 0;
   overflow: hidden;
-  transition: max-height 0.3s ease;
+  transition: height 0.3s ease;
   outline: none !important; /* Remove outline */
 }
 
@@ -1131,28 +1131,32 @@ template {
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-height: 0;
-  transition: max-height 0.3s ease, -webkit-line-clamp 0.3s ease;
+  height: 0;
+  transition: height 0.3s ease, -webkit-line-clamp 0.3s ease;
   outline: none !important; /* Remove outline */
   font-size: 0.95rem; /* Slightly smaller font */
 }
 
 /* Efectos al pasar el cursor - específico para la tarjeta en hover */
+.product-card:hover {
+  overflow: visible; /* Allow content to overflow */
+}
+
 .product-card:hover .product-name-container {
-  max-height: 90px !important; /* Reduced from 100px */
-  overflow: visible !important;
+  height: auto;
+  position: absolute;
+  background: #fff;
+  width: 100%;
+  z-index: 11;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  border-radius: 0 0 8px 8px;
+  border-top: 0;
 }
 
 .product-card:hover .product-name {
   -webkit-line-clamp: 2;
-  max-height: 2.3em;
-}
-
-/* Cambio clave: La tarjeta en hover crece de forma absoluta sin afectar a las demás */
-.product-card:hover {
-  position: absolute;
-  width: 95%; /* Maintain width proportion */
-  z-index: 100; /* Ensure it's on top */
+  height: auto;
+  padding: 5px 12px 10px;
 }
 
 /* Botón eliminar en historial */
@@ -1169,7 +1173,6 @@ template {
 /* Espaciado entre tarjetas */
 .row-cols-2 .col, .row-cols-md-5 .col {
   padding: 4px; /* Reduced from 5px */
-  position: relative; /* Enable positioning context for absolute children */
 }
 
 /* Estilos de texto para precios */
