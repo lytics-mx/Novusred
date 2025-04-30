@@ -1073,7 +1073,7 @@ template {
   border-radius: 8px;
   padding: 0;
   border: 1px solid #e0e0e0;
-  overflow: visible; /* Changed from hidden to visible to allow content to extend outside */
+  overflow: hidden; /* Changed back to hidden to prevent expansion */
   transition: box-shadow 0.3s ease;
   outline: none !important;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -1117,48 +1117,39 @@ template {
   background-color: #ffffff;
 }
 
-/* Contenedor y nombre del producto */
+/* Contenedor y nombre del producto - Always fixed at 2 lines */
 .product-name-container {
-  height: 2.8rem; /* Increased height to ensure both lines are visible */
+  height: 2.8rem;
   overflow: hidden;
-  transition: none;
   outline: none !important;
-  margin-bottom: 5px; /* Added spacing below the name */
+  margin-bottom: 5px;
 }
 
 .product-name {
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* Always show 2 lines */
+  -webkit-line-clamp: 2; /* Fixed at 2 lines */
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 0.95rem;
-  line-height: 1.4; /* Added explicit line height for consistency */
-  min-height: 2.8em; /* Ensure minimum height fits two lines */
+  line-height: 1.4;
+  min-height: 2.8em;
 }
 
-/* Efectos al pasar el cursor - only affect the hovered card with absolute positioning */
+/* Remove hover effects that expand the product name */
 .product-card:hover .product-name-container:after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  background: white;
-  z-index: 11;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-  border-radius: 0 0 8px 8px;
+  display: none;
 }
 
 .product-card:hover .product-name {
-  position: absolute;
-  background: white;
-  width: 100%;
-  left: 0;
-  padding: 12px;
-  z-index: 12;
-  -webkit-line-clamp: unset;
-  max-height: none;
+  position: relative;
+  background: transparent;
+  width: auto;
+  left: auto;
+  padding: 0;
+  z-index: auto;
+  -webkit-line-clamp: 2; /* Keep it at 2 lines even on hover */
+  max-height: 2.8em;
 }
 
 /* Botón eliminar en historial */
@@ -1230,14 +1221,6 @@ template {
 .product-card:hover {
   transform: translateZ(0) scale(1.02);
   transform-origin: center center;
-}
-
-/* Ensure expanded content doesn't affect layout */
-.product-card:hover .expanded-content {
-  position: absolute;
-  width: 100%;
-  background: white;
-  z-index: 15;
 }
 @media screen and (max-width: 992px) {
   .product .content .wrapper:hover{
