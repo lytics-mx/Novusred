@@ -1150,23 +1150,44 @@ template {
   border-radius: 0 0 8px 8px;
 }
 
-.product-card:hover .product-name {
+.product-card:hover .product-name-container {
   position: absolute;
   background: white;
   width: 100%;
   left: 0;
   padding: 12px;
   z-index: 12;
-  display: -webkit-box;
-  -webkit-line-clamp: 2; /* ✅ Mostrar solo 2 líneas */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: clip;            /* ❌ Sin "..." */
-  line-height: 1.4;
-  min-height: 2.8em;
-  max-height: 3.8em; /* Espacio para el texto + botón eliminar */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px; /* Espacio entre elementos */
 }
 
+.product-card:hover .product-name {
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Mostrar solo 2 líneas */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: clip; /* Sin "..." */
+  font-size: 0.95rem;
+  line-height: 1.4;
+  min-height: 2.8em;
+}
+
+.product-card:hover .delete-history-item {
+  display: block;
+  opacity: 1;
+  font-size: 0.85rem;
+  color: #FF5207;
+  cursor: pointer;
+}
+
+.product-card:hover .divider {
+  width: 100%;
+  height: 1px;
+  background-color: #e0e0e0;
+  margin-top: 8px;
+}
 
 /* Botón eliminar en historial */
 .product-name-container .delete-history-item {
@@ -1175,9 +1196,6 @@ template {
   outline: none !important;
 }
 
-.product-card:hover .delete-history-item {
-  opacity: 1;
-}
 
 /* Espaciado entre tarjetas */
 .row-cols-2 .col, .row-cols-md-5 .col {
