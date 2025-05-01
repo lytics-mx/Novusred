@@ -1123,6 +1123,7 @@ template {
   overflow: hidden;
   margin-bottom: 5px; /* Espaciado entre el nombre y el botón */
   position: relative; /* Asegurar que el botón se posicione correctamente */
+  z-index: 1;
 }
 
 /* Estilo del nombre del producto */
@@ -1134,18 +1135,26 @@ template {
   text-overflow: ellipsis; /* Mostrar "..." si el texto es muy largo */
   font-size: 0.95rem;
   line-height: 1.4;
+  position: relative;
+  z-index: 2;
+  background: white;
+  padding: 5px;
+  transition: all 0.3s ease;
 }
 
-/* Botón de eliminar historial */
-.product-name-container .delete-history-item {
-  position: absolute;
-  bottom: -20px; /* Ajustar para que quede debajo del nombre */
-  right: 12px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: 13;
+/* Mostrar el nombre completo al pasar el cursor */
+.product-card:hover .product-name-container {
+  height: auto; /* Ajustar la altura automáticamente */
+  overflow: visible; /* Permitir que el contenido se expanda */
 }
 
+.product-card:hover .product-name {
+  -webkit-line-clamp: 2; /* Mantener solo 2 líneas visibles */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+  z-index: 10;
+}
 /* Efectos al pasar el cursor - only affect the hovered card with absolute positioning */
 .product-card:hover .product-name-container:after {
   content: "";
