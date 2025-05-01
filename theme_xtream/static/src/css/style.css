@@ -1119,7 +1119,7 @@ template {
 
 /* Contenedor y nombre del producto */
 .product-name-container {
-  height: 2.4rem; /* Reduced height to prevent extra space */
+  height: 2.4rem; /* Fixed height for exactly 2 lines */
   overflow: hidden;
   transition: none;
   outline: none !important;
@@ -1145,25 +1145,24 @@ template {
   width: 100%;
   left: 0;
   padding: 12px;
-  padding-bottom: 8px;
+  padding-bottom: 6px; /* Reduced bottom padding */
   z-index: 12;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 2; /* Strict 2-line limit */
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  line-height: 1.3;
+  line-height: 1.2; /* Tighter line height */
   min-height: auto; /* Removed fixed min-height */
   box-shadow: 0 5px 15px rgba(0,0,0,0.15);
   border-radius: 0 0 8px 8px;
+  max-height: 2.4em; /* Maximum height of 2 lines */
 }
 
+/* Removed the ::after content that was adding extra space */
 /* Space after product name - corrected to avoid extra space */
 .product-card:hover .product-name::after {
-  content: "";
-  display: block;
-  height: 10px; /* Reduced space height */
-  width: 100%;
+  display: none; /* Removed completely to prevent extra space */
 }
 
 /* Delete button in history */
@@ -1180,12 +1179,13 @@ template {
 /* Ensure product name is properly displayed with no extra lines */
 .product-name {
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 2; /* Strict 2-line limit */
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.2; /* Reduced line height */
-  margin: 0; /* Removed margins that might cause extra space */
+  margin: 0 0 4px 0; /* Small bottom margin only */
+  max-height: 2.4em; /* Maximum height of 2 lines */
 }
 
 .product-card:hover .delete-history-item {
