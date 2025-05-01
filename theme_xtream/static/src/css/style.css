@@ -1119,66 +1119,15 @@ template {
 
 /* Contenedor y nombre del producto */
 .product-name-container {
-  height: 2.8rem; /* Increased height to ensure both lines are visible */
+  height: 3.2rem; /* Increased height for better text display */
   overflow: hidden;
   transition: none;
   outline: none !important;
-  margin-bottom: 5px; /* Added spacing below the name */
+  margin-bottom: 8px; /* Added spacing below the name */
+  position: relative;
 }
 
-
-/* Efectos al pasar el cursor - only affect the hovered card with absolute positioning */
-.product-card:hover .product-name-container:after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  background: white;
-  z-index: 11;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-  border-radius: 0 0 8px 8px;
-}
-.product-card:hover .product-name {
-  position: absolute;
-  background: white;
-  width: 100%;
-  left: 0;
-  padding: 12px;
-  padding-bottom: 8px;
-  z-index: 12;
-  display: -webkit-box;
-  -webkit-line-clamp: 2; /* Show exactly 2 lines */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis; /* Changed from clip to ellipsis for better indication */
-  line-height: 1.4;
-  min-height: 2.8em; /* Consistent 2-line height */
-  max-height: 2.8em; /* Added max-height to ensure only 2 lines show */
-  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-  border-radius: 0 0 8px 8px;
-}
-
-/* Space after product name - always visible */
-.product-card:hover .product-name::after {
-  content: "";
-  display: block;
-  height: 20px; /* Fixed space height */
-  width: 100%;
-}
-
-/* Delete button in history */
-.product-name-container .delete-history-item {
-  position: absolute;
-  bottom: 8px; /* Position at the space below product name */
-  right: 12px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  outline: none !important;
-  z-index: 13;
-}
-
-/* Ensure product name is always 2 lines in normal state too */
+/* Styling for the product name text itself */
 .product-name {
   display: -webkit-box;
   -webkit-line-clamp: 2; /* Always show exactly 2 lines */
@@ -1186,12 +1135,55 @@ template {
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.4;
-  height: 2.8em; /* Fixed height for 2 lines */
+  min-height: 2.8em;
   max-height: 2.8em;
+  font-size: 0.95rem; /* Slightly smaller font for better fit */
+  padding: 0 3px; /* Small padding to keep text from touching edges */
+}
+
+/* Add proper spacing and bottom border */
+.product-name-container::after {
+  content: "";
+  display: block;
+  height: 8px; /* Space below the text */
+  width: 100%;
+  border-bottom: 1px solid #e0e0e0; /* Line closing the card */
+  position: absolute;
+  bottom: -8px; /* Position at the bottom of container */
+  left: 0;
+}
+
+/* Hover effects for card */
+.product-card:hover .product-name-container {
+  height: auto; /* Allow container to expand with hover */
+  z-index: 15;
+}
+
+.product-card:hover .product-name {
+  background: white;
+  padding: 0 3px 8px 3px; /* Add padding at bottom */
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  border-radius: 0 0 8px 8px;
+}
+
+/* Delete button in history */
+.product-name-container .delete-history-item {
+  position: absolute;
+  bottom: 0;
+  right: 5px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  outline: none !important;
+  z-index: 13;
 }
 
 .product-card:hover .delete-history-item {
   opacity: 1;
+}
+
+/* Ensure the divider properly aligns with text bottom */
+.product-card .divider {
+  margin-top: 8px;
 }
 
 /* Espaciado entre tarjetas */
