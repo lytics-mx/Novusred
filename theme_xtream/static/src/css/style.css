@@ -1117,24 +1117,33 @@ template {
   background-color: #ffffff;
 }
 
-/* Contenedor y nombre del producto */
+/* Ajustar el contenedor del nombre del producto */
 .product-name-container {
-  height: 2.8rem; /* Increased height to ensure both lines are visible */
+  height: 2.8rem; /* Mantener altura para 2 líneas */
   overflow: hidden;
-  transition: none;
-  outline: none !important;
-  margin-bottom: 5px; /* Added spacing below the name */
+  margin-bottom: 5px; /* Espaciado entre el nombre y el botón */
+  position: relative; /* Asegurar que el botón se posicione correctamente */
 }
 
+/* Estilo del nombre del producto */
 .product-name {
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* Always show 2 lines */
+  -webkit-line-clamp: 2; /* Limitar a 2 líneas */
   -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: clip;            /* ❌ Sin "..." */
+  text-overflow: ellipsis; /* Mostrar "..." si el texto es muy largo */
   font-size: 0.95rem;
-  line-height: 1.4; /* Added explicit line height for consistency */
-  min-height: 2.8em; /* Ensure minimum height fits two lines */
+  line-height: 1.4;
+}
+
+/* Botón de eliminar historial */
+.product-name-container .delete-history-item {
+  position: absolute;
+  bottom: -20px; /* Ajustar para que quede debajo del nombre */
+  right: 12px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 13;
 }
 
 /* Efectos al pasar el cursor - only affect the hovered card with absolute positioning */
@@ -1177,16 +1186,6 @@ template {
   width: 100%;
 }
 
-/* Delete button in history */
-.product-name-container .delete-history-item {
-  position: absolute;
-  bottom: 8px;
-  right: 12px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  outline: none !important;
-  z-index: 13;
-}
 
 .product-card:hover .delete-history-item {
   opacity: 1;
