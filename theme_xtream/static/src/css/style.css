@@ -1119,7 +1119,7 @@ template {
 
 /* Contenedor y nombre del producto */
 .product-name-container {
-  height: 2.4rem; /* Fixed height for exactly 2 lines */
+  height: 2.4em; /* Fixed height for exactly 2 lines */
   overflow: hidden;
   transition: none;
   outline: none !important;
@@ -1128,15 +1128,7 @@ template {
 
 /* Efectos al pasar el cursor - only affect the hovered card with absolute positioning */
 .product-card:hover .product-name-container:after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  background: white;
-  z-index: 11;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-  border-radius: 0 0 8px 8px;
+  content: none; /* Remove the after pseudo-element */
 }
 
 .product-card:hover .product-name {
@@ -1145,24 +1137,24 @@ template {
   width: 100%;
   left: 0;
   padding: 12px;
-  padding-bottom: 6px; /* Reduced bottom padding */
   z-index: 12;
   display: -webkit-box;
   -webkit-line-clamp: 2; /* Strict 2-line limit */
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  line-height: 1.2; /* Tighter line height */
-  min-height: auto; /* Removed fixed min-height */
+  line-height: 1.2;
   box-shadow: 0 5px 15px rgba(0,0,0,0.15);
   border-radius: 0 0 8px 8px;
   max-height: 2.4em; /* Maximum height of 2 lines */
+  height: auto; /* Let height adjust to content */
 }
 
-/* Removed the ::after content that was adding extra space */
-/* Space after product name - corrected to avoid extra space */
+/* Completely remove any after pseudo-element for the product name */
+.product-card .product-name::after,
 .product-card:hover .product-name::after {
-  display: none; /* Removed completely to prevent extra space */
+  display: none;
+  content: none;
 }
 
 /* Delete button in history */
@@ -1183,9 +1175,11 @@ template {
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  line-height: 1.2; /* Reduced line height */
-  margin: 0 0 4px 0; /* Small bottom margin only */
+  line-height: 1.2;
+  margin: 0;
+  padding: 0;
   max-height: 2.4em; /* Maximum height of 2 lines */
+  word-wrap: break-word;
 }
 
 .product-card:hover .delete-history-item {
