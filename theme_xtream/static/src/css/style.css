@@ -1067,26 +1067,26 @@ template {
   bottom: 45%;
   z-index: 3;
 }
-/* Efecto dinámico para tarjetas de productos */
+/* Estilos para tarjetas de productos */
 .product-card {
   background-color: #ffffff;
-  border-radius: 8px;
+  border-radius: 6px;
   padding: 0;
   border: 1px solid #e0e0e0;
-  overflow: visible; /* Changed from hidden to visible to allow content to extend outside */
-  transition: box-shadow 0.3s ease;
-  outline: none !important;
+  overflow: hidden; /* Changed back to hidden for clean edges */
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  max-width: 95%;
+  max-width: 100%;
   margin: 0 auto;
   position: relative;
-  z-index: 1;
-  height: 100%; /* Fixed height to prevent shifting */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .product-card:hover {
   box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-  z-index: 10;
+  transform: translateY(-3px);
 }
 
 /* Ajustes de imagen */
@@ -1096,11 +1096,10 @@ template {
   object-fit: contain;
   padding: 10px;
   transition: transform 0.3s ease;
-  outline: none !important;
 }
 
 .product-card:hover img {
-  transform: scale(1.1);
+  transform: scale(1.03);
 }
 
 /* Línea divisoria y cuerpo de la tarjeta */
@@ -1108,150 +1107,116 @@ template {
   height: 1px;
   background-color: #e0e0e0;
   margin: 0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .product-card .card-body {
-  padding: 12px;
-  outline: none !important;
+  padding: 15px;
   background-color: #ffffff;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Contenedor y nombre del producto */
+/* Nombre del producto */
 .product-name-container {
-  height: 2.4em; /* Fixed height for exactly 2 lines */
-  overflow: hidden;
-  transition: none;
-  outline: none !important;
-  margin-bottom: 0; /* Removed spacing below the container */
+  margin-bottom: 8px;
+  height: auto;
 }
 
-/* Efectos al pasar el cursor - only affect the hovered card with absolute positioning */
-.product-card:hover .product-name-container:after {
-  content: none; /* Remove the after pseudo-element */
-}
-
-.product-card:hover .product-name {
-  position: absolute;
-  background: white;
-  width: 100%;
-  left: 0;
-  padding: 12px;
-  z-index: 12;
-  display: -webkit-box;
-  -webkit-line-clamp: 2; /* Strict 2-line limit */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.2;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-  border-radius: 0 0 8px 8px;
-  max-height: 2.4em; /* Maximum height of 2 lines */
-  height: auto; /* Let height adjust to content */
-}
-
-/* Completely remove any after pseudo-element for the product name */
-.product-card .product-name::after,
-.product-card:hover .product-name::after {
-  display: none;
-  content: none;
-}
-
-/* Delete button in history */
-.product-name-container .delete-history-item {
-  position: absolute;
-  bottom: 8px;
-  right: 12px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  outline: none !important;
-  z-index: 13;
-}
-
-/* Ensure product name is properly displayed with no extra lines */
 .product-name {
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* Strict 2-line limit */
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  line-height: 1.2;
+  line-height: 1.3;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333333;
   margin: 0;
-  padding: 0;
-  max-height: 2.4em; /* Maximum height of 2 lines */
-  word-wrap: break-word;
 }
 
-.product-card:hover .delete-history-item {
-  opacity: 1;
+/* Estilos de precio */
+.product-price {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Espaciado entre tarjetas */
-.row-cols-2 .col, .row-cols-md-5 .col {
-  padding: 8px;
-}
-
-/* Estilos de texto para precios */
 .product-card .text-dark {
-  font-size: 1.1rem;
-  font-weight: bold;
+  font-size: 18px;
+  font-weight: 700;
+  color: #031B09;
+  margin-bottom: 2px;
 }
 
 .product-card .text-danger {
-  font-size: 0.85rem;
-  font-weight: bold;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: line-through;
+  color: #9f9f9f;
 }
 
 .product-card .text-orange {
-  font-size: 0.75rem;
-  font-weight: bold;
+  font-size: 13px;
+  font-weight: 700;
+  color: #2B65FB;
+  margin-top: 3px;
+}
+
+/* Estilos para el envío gratuito */
+.free-shipping {
+  font-size: 12px;
   color: #FF5207;
+  font-weight: 600;
+  margin-top: 5px;
 }
 
-/* Eliminar completamente cualquier contorno o borde en todos los estados */
-.product-card,
-.product-card:hover,
-.product-card:focus,
-.product-card:active,
-.product-card *,
-.product-card *:hover,
-.product-card *:focus,
-.product-card *:active {
-  outline: none !important;
-  -webkit-tap-highlight-color: transparent !important;
+/* Botones de acción */
+.product-card .btn {
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 3px;
 }
 
-/* Asegurar que solo se mantiene el borde inicial y no aparecen otros al interactuar */
-.product-card {
-  border: 1px solid #e0e0e0 !important;
+.product-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
 }
 
-.product-card:focus,
-.product-card:active {
-  border: 1px solid #e0e0e0 !important;
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .product-card {
+    max-width: 100%;
+  }
+  
+  .product-card img {
+    height: 160px;
+  }
+  
+  .product-name {
+    font-size: 13px;
+  }
+  
+  .product-card .text-dark {
+    font-size: 16px;
+  }
 }
 
-/* Eliminar el resaltado de selección en navegadores */
-.product-card, 
-.product-card * {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-/* Use transform for hover effect instead of changing dimensions */
-.product-card:hover {
-  transform: translateZ(0) scale(1.02);
-  transform-origin: center center;
-}
-
-/* Ensure expanded content doesn't affect layout */
-.product-card:hover .expanded-content {
-  position: absolute;
-  width: 100%;
-  background: white;
-  z-index: 15;
+@media (max-width: 576px) {
+  .product-card img {
+    height: 140px;
+  }
+  
+  .product-card .card-body {
+    padding: 10px;
+  }
 }
 @media screen and (max-width: 992px) {
   .product .content .wrapper:hover{
