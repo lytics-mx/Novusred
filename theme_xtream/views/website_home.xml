@@ -95,11 +95,14 @@
                                                         <a t-att-href="'/shop/product/' + str(product.id)">
                                                             <t t-if="product.product_tag_ids and product.product_tag_ids[0].end_date">
                                                                 <div class="countdown-timer position-absolute" 
-                                                                    style="font-size: 0.9rem; color:rgb(90, 89, 88); top: 10px; right: 10px; background: rgba(255,255,255,0.9); padding: 5px; border-radius: 4px;">
+                                                                     style="font-size: 0.9rem; color:rgb(90, 89, 88); top: 10px; right: 10px; background: rgba(255,255,255,0.9); padding: 5px; border-radius: 4px; display: block;">
                                                                     <i class="fa fa-clock-o me-1"></i>
                                                                     Termina en:
                                                                     <t t-esc="request.env['product.template'].browse(product.id).get_time_remaining().get(product.id)" />
                                                                 </div>
+                                                            <t t-else="">
+                                                                <div class="countdown-timer position-absolute" style="display: none;"></div>
+                                                            </t>
                                                             </t>
                                                             <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
                                                                 class="card-img-top" />
@@ -108,7 +111,7 @@
                                                             <t t-if="product.product_tag_ids">
                                                                 <div class="d-flex justify-content-start mb-2">
                                                                     <span class="badge bg-primary" style="display: inline-block; border-radius: 0;">
-                                                                        <t t-esc="product.product_tag_ids[0].name if product.product_tag_ids else ''"/>
+                                                                        <t t-esc="product.product_tag_ids[0].name"/>
                                                                     </span>
                                                                 </div>
                                                             </t>
@@ -118,7 +121,7 @@
                                                                         <span class="text-decoration-line-through text-muted">
                                                                             $<t t-esc="'{:,}'.format(int(product.list_price))" />
                                                                         </span>
-                                                                        <span class="text-danger">
+                                                                        <span class="text-danger fw-bold" style="font-size: 0.9rem;">
                                                                             <t t-if="product.discount_percentage">
                                                                                 <span style="font-size: 18px; font-weight: normal;">
                                                                                     <t t-esc="int(product.discount_percentage)" />% OFF
@@ -131,7 +134,7 @@
                                                                             </t>   
                                                                         </span>
                                                                     </div>
-                                                                    <span class="text-dark">
+                                                                    <span class="text-dark fw-bold d-block" style="font-size: 25px;">
                                                                         $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
                                                                     </span>
                                                                     <t t-if="product.product_tag_ids">
