@@ -1128,44 +1128,53 @@ template {
 
 
 /* Efectos al pasar el cursor - only affect the hovered card with absolute positioning */
-.product-card:hover .product-name-container {
-  position: relative;
-  z-index: 10;
+.product-card:hover .product-name-container:after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: white;
+  z-index: 11;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  border-radius: 0 0 8px 8px;
 }
-
 .product-card:hover .product-name {
-  position: relative;
+  position: absolute;
   background: white;
   width: 100%;
   left: 0;
-  padding: 0;
+  padding: 12px;
+  padding-bottom: 8px;
   z-index: 12;
   display: -webkit-box;
   -webkit-line-clamp: 2; /* Show exactly 2 lines */
   -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: ellipsis; /* Changed from clip to ellipsis for better indication */
   line-height: 1.4;
-  min-height: 2.8em;
-  max-height: 2.8em;
+  min-height: 2.8em; /* Consistent 2-line height */
+  max-height: 2.8em; /* Added max-height to ensure only 2 lines show */
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  border-radius: 0 0 8px 8px;
 }
 
-/* Simple white space after the product name */
-.product-name-container::after {
+/* Space after product name - always visible */
+.product-card:hover .product-name::after {
   content: "";
   display: block;
-  height: 12px; /* Space height */
+  height: 20px; /* Fixed space height */
   width: 100%;
-  background: transparent;
 }
 
 /* Delete button in history */
 .product-name-container .delete-history-item {
   position: absolute;
-  bottom: -10px; /* Position at the white space below product name */
-  right: 8px;
+  bottom: 8px; /* Position at the space below product name */
+  right: 12px;
   opacity: 0;
   transition: opacity 0.3s ease;
+  outline: none !important;
   z-index: 13;
 }
 
@@ -1177,12 +1186,8 @@ template {
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.4;
-  height: 2.8em;
+  height: 2.8em; /* Fixed height for 2 lines */
   max-height: 2.8em;
-}
-
-.product-card:hover .delete-history-item {
-  opacity: 1;
 }
 
 .product-card:hover .delete-history-item {
