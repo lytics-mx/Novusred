@@ -1119,7 +1119,7 @@ template {
 
 /* Contenedor y nombre del producto */
 .product-name-container {
-  height: 2.8rem; /* Increased height to ensure both lines are visible */
+  height: 2.8rem; /* Height for exactly 2 lines */
   overflow: hidden;
   transition: none;
   outline: none !important;
@@ -1131,10 +1131,10 @@ template {
   -webkit-line-clamp: 2; /* Always show 2 lines */
   -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: clip;            /* ❌ Sin "..." */
+  text-overflow: ellipsis;
   font-size: 0.95rem;
   line-height: 1.4; /* Added explicit line height for consistency */
-  min-height: 2.8em; /* Ensure minimum height fits two lines */
+  max-height: 2.8em; /* Ensure maximum height fits two lines */
 }
 
 /* Efectos al pasar el cursor - only affect the hovered card with absolute positioning */
@@ -1156,25 +1156,22 @@ template {
   width: 100%;
   left: 0;
   padding: 12px;
-  padding-bottom: 8px;
+  padding-bottom: 0; /* Reduced padding to prevent extra space */
   z-index: 12;
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* Show only 2 lines */
+  -webkit-line-clamp: 2; /* Strictly enforce 2 lines only */
   -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: clip;
+  text-overflow: ellipsis;
   line-height: 1.4;
-  min-height: 2.8em;
+  max-height: 2.8em; /* Strict maximum height */
   box-shadow: 0 5px 15px rgba(0,0,0,0.15);
   border-radius: 0 0 8px 8px;
 }
 
-/* Space between product name and delete button/card end */
+/* Remove the extra space that was causing the third line */
 .product-card:hover .product-name::after {
-  content: "";
-  display: block;
-  height: 20px; /* Consistent space height */
-  width: 100%;
+  display: none; /* Removed the extra space element */
 }
 
 /* Delete button in history */
@@ -1190,6 +1187,7 @@ template {
 
 .product-card:hover .delete-history-item {
   opacity: 1;
+  margin-top: 8px; /* Add margin to position button properly after name */
 }
 
 /* Espaciado entre tarjetas */
@@ -1258,6 +1256,16 @@ template {
   width: 100%;
   background: white;
   z-index: 15;
+}
+
+/* Position the delete button properly relative to the 2-line product name */
+.product-card:hover .product-name-container {
+  position: relative;
+}
+
+/* Add bottom margin to create space for delete button */
+.product-card:hover .product-name {
+  margin-bottom: 30px;
 }
 @media screen and (max-width: 992px) {
   .product .content .wrapper:hover{
