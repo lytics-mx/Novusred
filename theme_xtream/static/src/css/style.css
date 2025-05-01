@@ -1082,13 +1082,6 @@ template {
   position: relative;
   z-index: 1;
   height: 100%; /* Fixed height to prevent shifting */
-
-  border: 1px solid #e0e0e0 !important;
-  position: relative; /* Necesario para que los elementos hijos absolutos se posicionen correctamente */
-  overflow: visible; /* Permitir que el contenido se expanda fuera del contenedor */
-
-
-
 }
 
 .product-card:hover {
@@ -1124,58 +1117,25 @@ template {
   background-color: #ffffff;
 }
 
-
-
-/* Ajustar el contenedor del nombre del producto */
+/* Contenedor y nombre del producto */
 .product-name-container {
-  height: 2.8rem; /* Mantener altura para 2 líneas */
-  overflow: hidden; /* Ocultar contenido adicional */
-  margin-bottom: 5px; /* Espaciado entre el nombre y otros elementos */
-  position: relative; /* Para posicionar elementos hijos */
-  z-index: 1;
-  transition: height 0.3s ease; /* Transición suave para el cambio de altura */
+  height: 2.8rem; /* Increased height to ensure both lines are visible */
+  overflow: hidden;
+  transition: none;
+  outline: none !important;
+  margin-bottom: 5px; /* Added spacing below the name */
 }
 
-/* Estilo del nombre del producto */
 .product-name {
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* Limitar a 2 líneas */
+  -webkit-line-clamp: 2; /* Always show 2 lines */
   -webkit-box-orient: vertical;
-  overflow: hidden; /* Ocultar contenido adicional */
-  text-overflow: ellipsis; /* Mostrar "..." si el texto es muy largo */
-  font-size: 0.95rem;
-  line-height: 1.4;
-  position: absolute; /* Forzar que se posicione debajo */
-  bottom: 0; /* Asegurar que esté al final del contenedor */
-  left: 0;
-  width: 100%; /* Asegurar que ocupe todo el ancho */
-  z-index: 2;
-  background: white; /* Fondo blanco para visibilidad */
-  padding: 5px;
-  transition: all 0.3s ease; /* Animación suave */
-}
-
-/* Mostrar el nombre del producto al pasar el cursor */
-.product-card:hover .product-name-container {
-  height: auto !important;
-  overflow: visible !important;
-}
-
-.product-card:hover .product-name {
-  -webkit-line-clamp: 2; /* Limitar a 2 líneas incluso al pasar el cursor */
   overflow: hidden;
-  text-overflow: ellipsis;
-  position: absolute; /* Mantener posición absoluta */
-  bottom: -40px; /* Ajustar para que se desplace hacia abajo */
-  z-index: 10;
+  text-overflow: clip;            /* ❌ Sin "..." */
+  font-size: 0.95rem;
+  line-height: 1.4; /* Added explicit line height for consistency */
+  min-height: 2.8em; /* Ensure minimum height fits two lines */
 }
-
-
-
-
-
-
-
 
 /* Efectos al pasar el cursor - only affect the hovered card with absolute positioning */
 .product-card:hover .product-name-container:after {
@@ -1190,6 +1150,24 @@ template {
   border-radius: 0 0 8px 8px;
 }
 
+.product-card:hover .product-name {
+  position: absolute;
+  background: white;
+  width: 100%;
+  left: 0;
+  padding: 12px;
+  padding-bottom: 8px;
+  z-index: 12;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Show only 2 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: clip;
+  line-height: 1.4;
+  min-height: 2.8em;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  border-radius: 0 0 8px 8px;
+}
 
 /* Space between product name and delete button/card end */
 .product-card:hover .product-name::after {
@@ -1199,6 +1177,16 @@ template {
   width: 100%;
 }
 
+/* Delete button in history */
+.product-name-container .delete-history-item {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  outline: none !important;
+  z-index: 13;
+}
 
 .product-card:hover .delete-history-item {
   opacity: 1;
@@ -1239,6 +1227,10 @@ template {
   -webkit-tap-highlight-color: transparent !important;
 }
 
+/* Asegurar que solo se mantiene el borde inicial y no aparecen otros al interactuar */
+.product-card {
+  border: 1px solid #e0e0e0 !important;
+}
 
 .product-card:focus,
 .product-card:active {
