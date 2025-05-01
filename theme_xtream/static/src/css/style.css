@@ -1119,7 +1119,7 @@ template {
 
 /* Contenedor y nombre del producto */
 .product-name-container {
-  height: 2.8rem; /* Height for exactly 2 lines */
+  height: 2.8rem; /* Increased height to ensure both lines are visible */
   overflow: hidden;
   transition: none;
   outline: none !important;
@@ -1131,10 +1131,10 @@ template {
   -webkit-line-clamp: 2; /* Always show 2 lines */
   -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: clip;            /* ❌ Sin "..." */
   font-size: 0.95rem;
   line-height: 1.4; /* Added explicit line height for consistency */
-  max-height: 2.8em; /* Ensure maximum height fits two lines */
+  min-height: 2.8em; /* Ensure minimum height fits two lines */
 }
 
 /* Efectos al pasar el cursor - only affect the hovered card with absolute positioning */
@@ -1156,22 +1156,25 @@ template {
   width: 100%;
   left: 0;
   padding: 12px;
-  padding-bottom: 0; /* Reduced padding to prevent extra space */
+  padding-bottom: 0; /* Reduced padding at bottom */
   z-index: 12;
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* Strictly enforce 2 lines only */
+  -webkit-line-clamp: 2; /* Show only 2 lines */
   -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: clip;
   line-height: 1.4;
-  max-height: 2.8em; /* Strict maximum height */
+  max-height: 2.8em; /* Changed from min-height to max-height to restrict height */
   box-shadow: 0 5px 15px rgba(0,0,0,0.15);
   border-radius: 0 0 8px 8px;
 }
 
-/* Remove the extra space that was causing the third line */
+/* Space between product name and delete button/card end */
 .product-card:hover .product-name::after {
-  display: none; /* Removed the extra space element */
+  content: "";
+  display: block;
+  height: 20px; /* Consistent space height */
+  width: 100%;
 }
 
 /* Delete button in history */
@@ -1187,7 +1190,6 @@ template {
 
 .product-card:hover .delete-history-item {
   opacity: 1;
-  margin-top: 8px; /* Add margin to position button properly after name */
 }
 
 /* Espaciado entre tarjetas */
@@ -1256,16 +1258,6 @@ template {
   width: 100%;
   background: white;
   z-index: 15;
-}
-
-/* Position the delete button properly relative to the 2-line product name */
-.product-card:hover .product-name-container {
-  position: relative;
-}
-
-/* Add bottom margin to create space for delete button */
-.product-card:hover .product-name {
-  margin-bottom: 30px;
 }
 @media screen and (max-width: 992px) {
   .product .content .wrapper:hover{
