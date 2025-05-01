@@ -1139,6 +1139,7 @@ template {
   box-shadow: 0 5px 15px rgba(0,0,0,0.15);
   border-radius: 0 0 8px 8px;
 }
+
 .product-card:hover .product-name {
   position: absolute;
   background: white;
@@ -1148,13 +1149,13 @@ template {
   padding-bottom: 8px;
   z-index: 12;
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* Show exactly 2 lines */
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis; /* Changed from clip to ellipsis for better indication */
+  text-overflow: ellipsis;
   line-height: 1.4;
-  min-height: 2.8em; /* Consistent 2-line height */
-  max-height: 2.8em; /* Added max-height to ensure only 2 lines show */
+  min-height: 2.8em;
+  max-height: none; /* Removed fixed max-height to allow proper display */
   box-shadow: 0 5px 15px rgba(0,0,0,0.15);
   border-radius: 0 0 8px 8px;
 }
@@ -1170,7 +1171,7 @@ template {
 /* Delete button in history */
 .product-name-container .delete-history-item {
   position: absolute;
-  bottom: 8px; /* Position at the space below product name */
+  bottom: 8px;
   right: 12px;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -1178,16 +1179,17 @@ template {
   z-index: 13;
 }
 
-/* Ensure product name is always 2 lines in normal state too */
+/* Ensure product name is always visible in normal state */
 .product-name {
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* Always show exactly 2 lines */
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.4;
-  height: 2.8em; /* Fixed height for 2 lines */
-  max-height: 2.8em;
+  min-height: 2.8em; /* Minimum height to fit two lines */
+  height: auto; /* Allow auto height instead of fixed */
+  margin-bottom: 5px; /* Add some space below */
 }
 
 .product-card:hover .delete-history-item {
