@@ -1077,27 +1077,37 @@ template {
   transition: box-shadow 0.3s ease;
   outline: none !important;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  max-width: 95%;
   margin: 0 auto;
   position: relative;
   z-index: 1;
-  height: auto; /* Changed from fixed height to auto */
-  min-height: 100px; /* Minimal height to maintain some consistency */
+  height: auto; /* Let height be determined by content */
   display: flex;
   flex-direction: column;
+  align-self: start; /* Prevents cards from stretching to match others */
 }
 
+/* Each product card maintains its own dimensions */
+.product-card .card-body {
+  flex-grow: 0; /* Don't grow to fill space */
+  height: auto; /* Height based on content */
+}
 
-/* Ensure image container adapts to content */
+/* Remove any row height normalization */
+.row-cols-2 > *, .row-cols-md-5 > * {
+  height: auto !important;
+}
+
+/* Ensure grid doesn't try to equalize heights */
+.row {
+  align-items: flex-start;
+}
+
+/* Product image container keeps its natural proportions */
 .product-card .product-image-container {
-  position: relative;
-  overflow: hidden;
   height: auto;
-  min-height: 180px; /* Minimum height for image area */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  min-height: 180px;
 }
+
 
 .product-card:hover {
   box-shadow: 0 5px 15px rgba(0,0,0,0.15);
@@ -1128,11 +1138,7 @@ template {
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-.product-card .card-body {
-  padding: 12px;
-  outline: none !important;
-  background-color: #ffffff;
-}
+
 
 /* Contenedor y nombre del producto */
 .product-name-container {
