@@ -1156,23 +1156,36 @@ template {
   width: 100%;
   left: 0;
   padding: 12px;
+  padding-bottom: 8px;
   z-index: 12;
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* ✅ Mostrar solo 2 líneas */
+  -webkit-line-clamp: 2; /* Show exactly 2 lines */
   -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: clip;            /* ❌ Sin "..." */
+  text-overflow: clip; /* No ellipsis */
   line-height: 1.4;
-  min-height: 2.8em;
-  max-height: 3.8em; /* Espacio para el texto + botón eliminar */
+  min-height: 2.8em; /* Consistent 2-line height */
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  border-radius: 0 0 8px 8px;
 }
 
+/* Space after product name - always visible */
+.product-card:hover .product-name::after {
+  content: "";
+  display: block;
+  height: 20px; /* Fixed space height */
+  width: 100%;
+}
 
-/* Botón eliminar en historial */
+/* Delete button in history */
 .product-name-container .delete-history-item {
+  position: absolute;
+  bottom: 8px; /* Position at the space below product name */
+  right: 12px;
   opacity: 0;
   transition: opacity 0.3s ease;
   outline: none !important;
+  z-index: 13;
 }
 
 .product-card:hover .delete-history-item {
