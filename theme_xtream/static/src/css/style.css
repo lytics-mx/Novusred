@@ -1067,7 +1067,22 @@ template {
   bottom: 45%;
   z-index: 3;
 }
-
+/* Efecto dinámico para tarjetas de productos */
+.product-card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 0;
+  border: 1px solid #e0e0e0;
+  overflow: visible; /* Changed from hidden to visible to allow content to extend outside */
+  transition: box-shadow 0.3s ease;
+  outline: none !important;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  max-width: 95%;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  height: 100%; /* Fixed height to prevent shifting */
+}
 
 .product-card:hover {
   box-shadow: 0 5px 15px rgba(0,0,0,0.15);
@@ -1096,7 +1111,11 @@ template {
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-
+.product-card .card-body {
+  padding: 12px;
+  outline: none !important;
+  background-color: #ffffff;
+}
 
 /* Contenedor y nombre del producto */
 .product-name-container {
@@ -1131,67 +1150,23 @@ template {
   border-radius: 0 0 8px 8px;
 }
 
-/* Product name hover effect with improved positioning */
 .product-card:hover .product-name {
   position: absolute;
   background: white;
   width: 100%;
   left: 0;
   padding: 12px;
-  padding-bottom: 32px; /* Increased padding to make room for delete button */
+  padding-bottom: 0; /* Reduced padding at bottom */
   z-index: 12;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 2; /* Show only 2 lines */
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: clip;
   line-height: 1.4;
+  max-height: 3.8em; /* Changed from min-height to max-height to restrict height */
   box-shadow: 0 5px 15px rgba(0,0,0,0.15);
   border-radius: 0 0 8px 8px;
-}
-
-/* Fixed positioning for delete button */
-.product-card:hover .delete-history-item {
-  position: absolute;
-  bottom: 8px;
-  right: 12px;
-  opacity: 1;
-  z-index: 13;
-}
-
-/* Ensure consistent card height */
-.product-card {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid #e0e0e0 !important;
-
-}
-
-.product-card .card-body {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background-color: #ffffff;
-  border-radius: 8px;
-  padding: 0;
-  border: 1px solid #e0e0e0;
-  overflow: visible; /* Changed from hidden to visible to allow content to extend outside */
-  transition: box-shadow 0.3s ease;
-  outline: none !important;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  max-width: 95%;
-  margin: 0 auto;
-  position: relative;
-  z-index: 1;
-  height: 100%; /* Fixed height to prevent shifting */  
-}
-
-/* Space for delete button without affecting layout */
-.product-card .product-name-container {
-  position: relative;
-  margin-bottom: 5px;
-  flex: 1;
 }
 
 /* Space between product name and delete button/card end */
@@ -1213,7 +1188,9 @@ template {
   z-index: 13;
 }
 
-
+.product-card:hover .delete-history-item {
+  opacity: 1;
+}
 
 /* Espaciado entre tarjetas */
 .row-cols-2 .col, .row-cols-md-5 .col {
@@ -1250,6 +1227,10 @@ template {
   -webkit-tap-highlight-color: transparent !important;
 }
 
+/* Asegurar que solo se mantiene el borde inicial y no aparecen otros al interactuar */
+.product-card {
+  border: 1px solid #e0e0e0 !important;
+}
 
 .product-card:focus,
 .product-card:active {
