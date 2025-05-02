@@ -5,8 +5,8 @@
             <div id="wrap" class="oe_structure oe_empty" style="font-family: 'Questrial', sans-serif;">
                 <!-- Verifica que la ruta de la imagen sea válidas -->
 
-                <t t-set="active_banner" t-value="request.env['banner.image.line'].sudo().search([('is_active_carousel', '=', True)], limit=1)" />
-                <t t-if="active_banner and active_banner.general_images">
+                <t t-set="active_banner" t-value="request.env['banner.image.line'].sudo().search([('is_active_carousel', '=', True), ('name', '=', 'home')], limit=1)" />
+                <t t-if="active_banner">
                     <t t-if="len(active_banner.general_images) == 1">
                         <!-- Single image, no carousel -->
                         <div style="position: relative;">
@@ -42,7 +42,7 @@
                     </t>
                 </t>
                 <t t-else="">
-                    <!-- Default image if no active banner or no images -->
+                    <!-- Default image if no active banner -->
                     <div style="position: relative;">
                         <img src="/theme_xtream/static/src/img/product-img/imagenes_home.png" 
                              alt="Default Image" 
