@@ -1136,22 +1136,34 @@ template {
 
 /* Contenedor y nombre del producto */
 .product-name-container {
-  height: 0; /* Ensures content fits naturally without extra space */
-  overflow: hidden;
-  transition: none;
-  outline: none !important;
-  margin-bottom: 10px; /* Added spacing below the name */
-  max-height: 2.8em; /* Ajusta la altura al contenido */
+  max-height: 2.8em; /* Altura máxima para 2 líneas */
+  overflow: hidden; /* Oculta el contenido que excede la altura */
+  display: -webkit-box; /* Necesario para -webkit-line-clamp */
+  -webkit-line-clamp: 2; /* Limita a 2 líneas */
+  -webkit-box-orient: vertical; /* Orientación vertical para el texto */
+  text-overflow: ellipsis; /* Agrega "..." si el texto es muy largo */
+  white-space: normal; /* Permite que el texto se ajuste a varias líneas */
+}
 
+.product-name-wrapper {
+  position: relative;
+  overflow: hidden;
+  height: auto;
+  margin-top: 10px; /* Espacio entre el precio y el nombre */
 }
 
 .product-name {
-    max-height: 2.8em; /* Altura máxima para 2 líneas */
-    overflow: hidden; /* Oculta el contenido que excede la altura */
-    text-overflow: ellipsis; /* Agrega "..." si el texto es muy largo */
-    white-space: normal; /* Permite que el texto se ajuste a varias líneas */
-    line-height: 1.4; /* Ajusta la altura de línea */
+  font-size: 0.9rem; /* Tamaño de fuente */
+  line-height: 1.4; /* Altura de línea */
+  color: #333; /* Color del texto */
+  margin: 0; /* Elimina márgenes adicionales */
 }
+
+.product-card:hover .product-name-container {
+  max-height: 2.8em; /* Permite mostrar hasta 3 líneas al pasar el cursor */
+  transition: max-height 0.3s ease; /* Transición suave */
+}
+
 .namehistory {
     display: -webkit-box;
     -webkit-line-clamp: 2; /* Limita a 2 líneas */
