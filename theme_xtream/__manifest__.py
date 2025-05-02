@@ -57,14 +57,11 @@
 
 
         'views/inventory_control/brand_type.xml',
+        # 'views/marca_menu.xml',
         'views/imagenes_banner.xml',
-
-# vistas de home
-        'views/website_sale/movil_home.xml',
         'views/website_home.xml',
         'views/nav_bar.xml',
         # 'views/report_excel_views.xml',
-
 
         'views/website_brand.xml',
         # 'views/marca_web.xml',
