@@ -3,38 +3,51 @@
     <template id="theme_xtream.xtream_inicio" name="Inicio">
         <t t-call="website.layout">
             <div id="wrap" class="oe_structure oe_empty" style="font-family: 'Questrial', sans-serif;">
-                <div class="container mt-4">
-                    <div style="text-align: left;">
-                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Portadas</h2>
-                    </div>
-                    <t t-set="home_banners" t-value="request.env['banner.image.line'].sudo().search([
-                        ('name', '=', 'home'),
-                        ('is_active_carousel', '=', True),
-                        ('general_images', '!=', False)
-                    ])" />
-                    <t t-if="home_banners">
-                        <div id="homeBannersCarousel" class="carousel slide" data-bs-ride="carousel">
+                <t t-set="active_banner" t-value="request.env['banner.image.line'].sudo().search([('is_active_carousel', '=', True)], limit=1)" />
+                <t t-if="active_banner">
+                    <t t-if="len(active_banner.general_images) == 1">
+                        <!-- Single image, no carousel -->
+                        <div style="position: relative;">
+                            <img t-att-src="'/web/image/' + str(active_banner.general_images[0].id)" 
+                                 alt="General Image" 
+                                 style="width: 100%; height: auto; object-fit: cover;" />
+                            <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
+                        </div>
+                    </t>
+                    <t t-elif="len(active_banner.general_images) > 1">
+                        <!-- Carousel for multiple images -->
+                        <div id="generalImagesCarousel" class="carousel slide" data-bs-ride="carousel">
                             <div class="carousel-inner">
-                                <t t-foreach="enumerate(home_banners.mapped('general_images'))" t-as="image_tuple" t-key="image_tuple[1].id">
-                                    <div t-att-class="'carousel-item' + (' active' if image_tuple[0] == 0 else '')">
-                                        <img t-att-src="'/web/image/' + str(image_tuple[1].id)" 
-                                             alt="Banner Image" 
-                                             class="d-block w-100" 
-                                             style="object-fit: cover; height: 400px;" />
+                                <t t-foreach="active_banner.general_images" t-as="image" t-key="image.id">
+                                    <div t-att-class="'carousel-item' + (' active' if image == active_banner.general_images[0] else '')" style="position: relative;">
+                                        <img t-att-src="'/web/image/' + str(image.id)" 
+                                             alt="General Image" 
+                                             style="width: 100%; height: auto; object-fit: cover;" />
+                                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
                                     </div>
                                 </t>
                             </div>
-                            <button class="carousel-control-prev" type="button" data-bs-target="#homeBannersCarousel" data-bs-slide="prev">
+                            <!-- Carousel controls -->
+                            <button class="carousel-control-prev" type="button" data-bs-target="#generalImagesCarousel" data-bs-slide="prev">
                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                 <span class="visually-hidden">Previous</span>
                             </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#homeBannersCarousel" data-bs-slide="next">
+                            <button class="carousel-control-next" type="button" data-bs-target="#generalImagesCarousel" data-bs-slide="next">
                                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                 <span class="visually-hidden">Next</span>
                             </button>
                         </div>
                     </t>
-                </div>
+                </t>
+                <t t-else="">
+                    <!-- Default image if no active banner -->
+                    <div style="position: relative;">
+                        <img src="/theme_xtream/static/src/img/product-img/imagenes_home.png" 
+                             alt="Default Image" 
+                             style="width: 100%; height: auto; object-fit: cover;" />
+                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
+                    </div>
+                </t>
 
                 <div style="display: flex; align-items: center; justify-content: center; background-color: white; border-radius: 10px; padding: 15px 25px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); width: 90%; max-width: 700px; margin: 20px auto; flex-wrap: nowrap; gap: 15px;">
                     <!-- Texto "Pago Seguro" -->
