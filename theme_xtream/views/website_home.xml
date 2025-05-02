@@ -15,9 +15,9 @@
                     <t t-if="home_banners">
                         <div id="homeBannersCarousel" class="carousel slide" data-bs-ride="carousel">
                             <div class="carousel-inner">
-                                <t t-foreach="home_banners.mapped('general_images')" t-as="image" t-key="image.id">
-                                    <div t-att-class="'carousel-item' + (' active' if loop.first else '')">
-                                        <img t-att-src="'/web/image/' + str(image.id)" 
+                                <t t-foreach="enumerate(home_banners.mapped('general_images'))" t-as="image_tuple" t-key="image_tuple[1].id">
+                                    <div t-att-class="'carousel-item' + (' active' if image_tuple[0] == 0 else '')">
+                                        <img t-att-src="'/web/image/' + str(image_tuple[1].id)" 
                                              alt="Banner Image" 
                                              class="d-block w-100" 
                                              style="object-fit: cover; height: 400px;" />
