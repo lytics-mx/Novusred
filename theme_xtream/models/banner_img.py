@@ -1,20 +1,6 @@
-from odoo import fields, models
+from odoo import models, fields
 
-class BannerImages(models.Model):
-    """
-    Model for managing banner images
-    """
-    _name = 'banner.images'
-    _description = "Banner Images"
+class IrAttachment(models.Model):
+    _inherit = 'ir.attachment'
 
-    name = fields.Char(string="Name", required=True, help="Name of the image set")
-    cover_images = fields.One2many(
-        'banner.image.line', 'image_set_id',
-        string="Cover Images",
-        help="Upload multiple cover images"
-    )
-    product_cover_images = fields.One2many(
-        'banner.image.line', 'image_set_id',
-        string="Product Cover Images",
-        help="Upload multiple product cover images"
-    )
+    public = fields.Boolean(string="Public", default=True)
