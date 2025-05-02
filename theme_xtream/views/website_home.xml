@@ -4,12 +4,36 @@
         <t t-call="website.layout">
             <div id="newwrap" class="oe_structure oe_empty" style="font-family: 'Questrial', sans-serif;">
                 <!-- Verifica que la ruta de la imagen sea válida -->
-                <div style="position: relative;">
+                <t t-set="general_images" t-value="request.env['banner.image.line'].sudo().search([('is_active_carousel', '=', True), ('name', '=', 'home')])" />
+                <t t-if="general_images">
+                    <div id="generalImagesCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <t t-foreach="general_images" t-as="image" t-key="image.id">
+                                <div t-att-class="'carousel-item' + (' active' if loop.first else '')">
+                                    <img t-att-src="'/web/image/' + str(image.id)" 
+                                         alt="Carousel Image" 
+                                         style="width: 100%; height: auto; object-fit: cover;" />
+                                </div>
+                            </t>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#generalImagesCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#generalImagesCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                </t>
+                <t t-else="">
+                    <div style="position: relative;">
                         <img src="/theme_xtream/static/src/img/product-img/imagenes_home.png" 
                              alt="Default Image" 
                              style="width: 100%; height: auto; object-fit: cover;" />
                         <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
-                </div>
+                    </div>
+                </t>
 
 
                 <div style="display: flex; align-items: center; justify-content: center; background-color: white; border-radius: 10px; padding: 15px 25px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); width: 90%; max-width: 700px; margin: 20px auto; flex-wrap: nowrap; gap: 15px;">
