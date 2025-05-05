@@ -1169,21 +1169,36 @@ template {
 }
 
 /* Efectos al pasar el cursor - only affect the hovered card with absolute positioning */
-.product-card:hover .product-name-container {
-  position: relative;
-  height: auto; /* Allow natural height */
-  z-index: 12;
-  padding: 0 12px; /* Add some padding */
+.product-card:hover .product-name-container:after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: white;
+  z-index: 11;
+  box-shadow: 0 10px 15px rgba(0,0,0,0.15);
+  border-radius: 0 0 8px 8px;
 }
 
 .product-card:hover .product-name {
+  position: absolute;
+  background: white;
+  width: 100%;
+  left: 0;
+  padding: 12px;
+  padding-bottom: 0;
+  z-index: 12;
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* Limit to 2 lines */
+  -webkit-line-clamp: 2; /* Limits text to 2 lines */
   -webkit-box-orient: vertical;
   overflow: hidden;
-  margin-bottom: 15px; /* Add space below text */
+  text-overflow: ellipsis; /* Shows "..." when text overflows */
+  line-height: 1.4;
+  height: 3.6em; /* Height for 2 lines (1.4em * 2 + padding) */
+  box-shadow: 0 10px 10px -5px rgba(0,0,0,0.2);
+  border-radius: 0 0 8px 8px;
 }
-
 
 .delete-history-item {
   display: block;
