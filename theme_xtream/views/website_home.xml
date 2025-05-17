@@ -892,12 +892,12 @@
                         ('icon_image', '!=', False),
                         ('cover_image', '!=', False),
                         ('active', '=', True)
-                    ], limit=12)" />
-                    <t t-if="len(brands) > 4">
+                    ], limit=15)" />
+                    <t t-if="len(brands) > 5">
                         <!-- Carrusel para más de 5 marcas -->
                         <div id="brandsCarousel" class="carousel slide" data-bs-ride="carousel">
                             <div class="carousel-inner">
-                                <t t-set="chunks" t-value="[brands[i:i+5] for i in range(0, len(brands), 4)]" />
+                                <t t-set="chunks" t-value="[brands[i:i+5] for i in range(0, len(brands), 5)]" />
                                 <t t-foreach="chunks" t-as="chunk" t-key="chunk_index">
                                     <div t-att-class="'carousel-item' + (' active' if chunk_index == 0 else '')">
                                         <div class="d-flex justify-content-center gap-3 flex-wrap">
@@ -989,7 +989,7 @@
                                         <t t-set="related_products" t-value="request.env['product.template'].sudo().search([
                                             ('brand_type_id', '=', brand.id),
                                             ('website_published', '=', True)
-                                        ], limit=4)" />
+                                        ], limit=3)" />
                                         <t t-foreach="related_products" t-as="product" t-key="product.id">
                                             <div style="width: 60px; height: 60px; border-radius: 5px; overflow: hidden;">
                                                 <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
