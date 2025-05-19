@@ -33,8 +33,13 @@ class BrandType(models.Model):
         help="Selecciona hasta 3 productos relacionados a esta marca."
     )
 
-    @api.constrains('product_ids')
-    def _check_product_ids_limit(self):
-        for record in self:
-            if len(record.product_ids) > 3:
-                raise ValidationError("Solo puedes seleccionar hasta 3 productos relacionados.")
+    @api.onchange('product_ids')
+    def _onchange_product_ids_limit(self):
+        if self.product_ids and len(self.product_ids) > 3:
+            self.product_ids = self.product_ids[:3]
+            return {
+                'warning': {
+                    'title': "Límite de productos",
+                    'message': "Solo puedes seleccionar hasta 3 productos relacionados."
+                }
+            }
