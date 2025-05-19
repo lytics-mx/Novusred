@@ -982,8 +982,9 @@
                                         </div>
                                         <!-- Productos relacionados -->
                                         <div class="d-flex justify-content-center gap-2 flex-wrap mt-2" style="min-height: 64px;">
-                                            <t t-if="brand.product_ids">
-                                                <t t-foreach="brand.product_ids[:3]" t-as="product" t-key="product.id">
+                                            <t t-set="published_products" t-value="brand.product_ids.filtered(lambda p: p.website_published)" />
+                                            <t t-if="published_products">
+                                                <t t-foreach="published_products[:3]" t-as="product" t-key="product.id">
                                                     <div style="width: 60px; height: 60px; border-radius: 5px; overflow: hidden;">
                                                         <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
                                                              alt="Producto"
