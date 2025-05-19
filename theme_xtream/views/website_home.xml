@@ -986,12 +986,8 @@
                                         </div>
                                         <!-- Productos relacionados -->
                                         <div class="d-flex justify-content-center gap-2 flex-wrap mt-2" style="min-height: 64px;">
-                                            <t t-set="related_products" t-value="request.env['product.template'].sudo().search([
-                                                ('brand_type_id', '=', brand.id),
-                                                ('website_published', '=', True)
-                                            ], limit=3)" />
-                                            <t t-if="related_products">
-                                                <t t-foreach="related_products" t-as="product" t-key="product.id">
+                                            <t t-if="brand.product_ids">
+                                                <t t-foreach="brand.product_ids[:3]" t-as="product" t-key="product.id">
                                                     <div style="width: 60px; height: 60px; border-radius: 5px; overflow: hidden;">
                                                         <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
                                                              alt="Producto"
