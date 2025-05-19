@@ -1018,21 +1018,23 @@
 
                 <div class="container mt-4">
                     <div style="text-align: left;">
-                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Categorías</h2>
+                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Categorías populares</h2>
                     </div>
-                    <div class="d-flex justify-content-center gap-3 flex-wrap">
-                        <t t-set="categories" t-value="request.env['product.category'].sudo().search([('is_visible_in_menu', '=', True)], limit=10)" />
+                    <t t-set="categories" t-value="request.env['product.category'].sudo().search([('is_visible_in_menu', '=', True)], limit=10)" />
+                    <div class="row row-cols-2 row-cols-md-5 g-0">
                         <t t-foreach="categories" t-as="category">
-                            <div style="text-align: center;">
-                                <a t-att-href="'/shop/category/' + str(category.id)">
-                                    <img t-att-src="'/web/image/product.category/' + str(category.id) + '/icon'" 
-                                        class="d-block" 
-                                        t-att-alt="category.name" 
-                                        style="width: 150px; height: auto; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);" />
-                                    <p style="font-family: 'Questrial', sans-serif; font-size: 16px; color: #333; margin-top: 10px;">
-                                        <t t-esc="category.name" />
-                                    </p>
-                                </a>
+                            <div class="col">
+                                <div style="text-align: center; background: #fff; border: 1px solid #e0e0e0; min-height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                    <a t-att-href="'/shop/category/' + str(category.id)">
+                                        <img t-att-src="'/web/image/product.category/' + str(category.id) + '/icon'"
+                                            class="d-block mx-auto"
+                                            t-att-alt="category.name"
+                                            style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px;" />
+                                        <p style="font-family: 'Questrial', sans-serif; font-size: 18px; color: #333; margin: 0;">
+                                            <t t-esc="category.name" />
+                                        </p>
+                                    </a>
+                                </div>
                             </div>
                         </t>
                     </div>
