@@ -30,6 +30,7 @@ class BrandType(models.Model):
         'brand_type_id',
         'product_id',
         string="Productos Relacionados",
+        domain="[('brand_type_id', '=', id)]",
         help="Selecciona hasta 3 productos relacionados a esta marca."
     )
 
