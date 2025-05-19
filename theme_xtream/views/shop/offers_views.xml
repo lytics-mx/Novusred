@@ -114,9 +114,9 @@
                     </div>
                     <!-- Productos en oferta aqui debe de corregirse el diseño-->
                     <div class="col-lg-9 col-md-8">
-                        <div class="row">
+                        <div class="row gy-4">
                             <t t-foreach="discounted_products" t-as="product">
-                                <div class="col-6 col-md-4 col-lg-3 mb-4">
+                                <div class="col-6 col-md-4 col-lg-3">
                                     <div class="card h-100 shadow-sm product-card">
                                         <a t-att-href="'/shop/product/' + str(product.id)">
                                             <t t-if="product.product_tag_ids and product.product_tag_ids[0].end_date">
@@ -130,7 +130,7 @@
                                             <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
                                                 class="card-img-top" />
                                         </a>
-                                        <div class="card-body d-flex flex-column">
+                                        <div class="card-body">
                                             <div class="mt-auto">
                                                 <t t-if="product.discounted_price &lt; product.list_price">
                                                     <!-- Precio con descuento y porcentaje/descuento fijo a la derecha -->
@@ -163,18 +163,20 @@
                                                 <t t-if="not product.product_tag_ids">
                                                     <div style="height: 29px;"></div> <!-- Espacio reservado cuando no hay tag -->
                                                 </t>
+                                                
                                                 <div class="mt-0">
                                                     <span class="text-orange" style="color: #FF5207; font-size: 0.9rem; font-weight: bold; font-style: italic;">
                                                         Envío gratis
                                                     </span>
                                                 </div>
                                             </div>
-                                            <!-- Espacio para el nombre del producto -->
-                                            <div class="mt-3">
-                                                <h6 class="card-title mb-2 text-truncate product-name" style="font-size: 1rem; white-space: normal; min-height: 48px; line-height: 1.2;">
+
+                                            <div class="product-name-container" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
+                                                <h6 class="card-title mb-2 text-truncate product-name" style="font-size: 0.9rem; white-space: normal;">
                                                     <t t-esc="product.name.upper()" />
-                                                </h6>
+                                                </h6>                                                            
                                             </div>
+                                            
                                         </div>
                                     </div>
                                 </div>
