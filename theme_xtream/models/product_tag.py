@@ -47,6 +47,16 @@ class ProductTag(models.Model):
         help="Sube un ícono representativo para esta etiqueta."
     )   
 
+
+
+    show_icon_image = fields.Boolean(
+        string="Mostrar ícono de la etiqueta",
+        default=True,
+        help="Si está activado, se mostrará el ícono de la etiqueta en la vista."
+    )
+
+
+
     @api.onchange('start_date', 'end_date')
     def _onchange_date_range(self):
         """Valida las fechas y actualiza el descuento o elimina etiquetas al finalizar el rango."""
