@@ -124,6 +124,7 @@
                                                     Termina en:
                                                     <t t-esc="request.env['product.template'].browse(product.id).get_time_remaining().get(product.id)" />
                                                 </div> -->
+                                                
                                             </t>
                                             <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
                                                 class="card-img-top" />
@@ -131,6 +132,14 @@
                                         <div class="card-body">
                                             <div class="mt-auto">
                                                 <t t-if="product.discounted_price &lt; product.list_price">
+                                                         <t t-if="product.product_tag_ids">
+                                                            <div class="d-flex justify-content-start mb-2">
+                                                                <span class="badge bg-primary" style="display: inline-block; border-radius: 0;">
+                                                                    <t t-esc="product.product_tag_ids[0].name if product.product_tag_ids else ''"/>
+                                                                </span>
+                                                            </div>
+                                                        </t>
+                                                   
                                                     <!-- Precio con descuento y porcentaje/descuento fijo a la derecha -->
                                                     <div class="d-flex align-items-center justify-content-between">
                                                         <span class="text-dark fw-bold" style="font-size: 25px;">
