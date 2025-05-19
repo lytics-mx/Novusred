@@ -41,6 +41,12 @@ class ProductTag(models.Model):
         help="Almacena el valor del descuento para activarlo nuevamente según la recurrencia."
     )
 
+    icon_image = fields.Binary(
+        string="Ícono de la Etiqueta",
+        attachment=True,
+        help="Sube un ícono representativo para esta etiqueta."
+    )   
+
     @api.onchange('start_date', 'end_date')
     def _onchange_date_range(self):
         """Valida las fechas y actualiza el descuento o elimina etiquetas al finalizar el rango."""
