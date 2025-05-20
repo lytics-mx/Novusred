@@ -15,10 +15,18 @@
                     </div>
 
                     <!-- Contenedor de los íconos -->
-                    <div class="d-flex align-items-center ms-3">
-                        <t t-if="product_tags and product_tags[0].show_icon_image and product_tags[0].icon_image">
-                            <img t-att-src="'data:image/png;base64,' + product_tags[0].icon_image.decode('utf-8')" t-att-alt="product_tags[0].name" class="img-fluid me-2" style="height: 40px;" />
-                            <span class="fw-bold" style="font-size: 18px; color: #000;"><t t-esc="product_tags[0].name" /></span>
+                    <div class="d-flex align-items-center justify-content-end flex-wrap" style="flex: 2;">
+                        <t t-if="product_tags">
+                            <t t-foreach="product_tags[:6]" t-as="tag">
+                                <t t-if="tag.show_icon_image and tag.icon_image">
+                                    <div class="text-center mx-4">
+                                        <img t-att-src="'data:image/png;base64,' + tag.icon_image.decode('utf-8')" t-att-alt="tag.name" class="img-fluid mb-2" style="height: 60px; width: 60px; object-fit: contain;" />
+                                        <div style="font-size: 15px; color: #222; font-family: 'Questrial', sans-serif; margin-top: 6px;">
+                                            <t t-esc="tag.name" />
+                                        </div>
+                                    </div>
+                                </t>
+                            </t>
                         </t>
                     </div>
                 </div>
