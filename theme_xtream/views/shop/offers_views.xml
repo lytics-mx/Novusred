@@ -16,10 +16,10 @@
 
                     <!-- Contenedor de los íconos -->
                     <div class="d-flex align-items-center justify-content-end flex-wrap" style="flex: 2;">
-                        <t t-if="product_tags and len(product_tags) > 0">
-                            <t t-foreach="product_tags[:6]" t-as="tag">
+                        <t t-if="product_tags and any(tag.show_icon_image for tag in product_tags)">
+                            <t t-foreach="[tag for tag in product_tags if tag.show_icon_image][:6]" t-as="tag">
                                 <div class="text-center mx-4">
-                                    <t t-if="tag.show_icon_image and tag.icon_image">
+                                    <t t-if="tag.icon_image">
                                         <img t-att-src="'data:image/png;base64,' + (tag.icon_image.decode('utf-8') if hasattr(tag.icon_image, 'decode') else tag.icon_image)" t-att-alt="tag.name" class="img-fluid mb-2" style="height: 60px; width: 60px; object-fit: contain;" />
                                     </t>
                                     <div style="font-size: 15px; color: #222; font-family: 'Questrial', sans-serif; margin-top: 6px;">
@@ -28,7 +28,7 @@
                                 </div>
                             </t>
                         </t>
-                        <t t-if="not product_tags or len(product_tags) == 0">
+                        <t t-if="not product_tags or not any(tag.show_icon_image for tag in product_tags)">
                             <span class="text-muted">No hay tags configurados o no tienen imagen.</span>
                         </t>
                     </div>
