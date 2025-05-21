@@ -29,11 +29,12 @@
                             <t t-if="tags">
                                 <t t-foreach="tags" t-as="tag" t-key="tag.id">
                                     <div class="position-relative text-center" style="width: 120px; background-color: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);">
-                                        <!-- Ícono de la etiqueta -->
                                         <div style="padding: 10px;">
-                                            <img t-att-src="'data:image/png;base64,' + (tag.icon_image.decode('utf-8') if hasattr(tag.icon_image, 'decode') else tag.icon_image)"
-                                                 alt="Ícono de la Etiqueta"
-                                                 style="width: 100%; height: 60px; object-fit: contain;" />
+                                            <t t-if="tag.icon_image">
+                                                <img t-att-src="'data:image/png;base64,' + (tag.icon_image.decode('utf-8') if hasattr(tag.icon_image, 'decode') else tag.icon_image)"
+                                                     alt="Ícono de la Etiqueta"
+                                                     style="width: 100%; height: 60px; object-fit: contain;" />
+                                            </t>
                                         </div>
                                         <div style="font-size: 15px; color: #222; font-family: 'Questrial', sans-serif; margin-bottom: 10px;">
                                             <t t-esc="tag.name" />
