@@ -81,9 +81,7 @@ class OffersController(http.Controller):
         offer_type = kwargs.get('type')
         min_price = kwargs.get('min_price')
         max_price = kwargs.get('max_price')
-        type_offer = request.params.get('type')
-        products = request.env['product.template'].sudo().search(domain)
-        
+
         domain = [
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False)
@@ -98,24 +96,10 @@ class OffersController(http.Controller):
         if free_shipping:
             domain.append(('free_shipping', '=', True))
         
-
-        if type_offer in ['day', 'flash']:
-            filtered = []
-            for p in products:
-                tag = p.product_tag_ids and p.product_tag_ids[0]
-                if tag and tag.start_date and tag.end_date:
-                    start = tag.start_date
-                    end = tag.end_date
-                    if isinstance(start, str):
-                        start = Datetime.fromisoformat(start)
-                    if isinstance(end, str):
-                        end = Datetime.fromisoformat(end)
-                    duration = (end - start).total_seconds() / 3600.0
-                    if type_offer == 'day' and 23.5 <= duration <= 24.5:
-                        filtered.append(p)
-                    elif type_offer == 'flash' and duration <= 6:
-                        filtered.append(p)
-            products = filtered
+        if offer_type:
+            tag = request.env['product.tag'].sudo().search([('name', 'ilike', offer_type)], limit=1)
+            if tag:
+                domain.append(('product_tag_ids', 'in', tag.id))
         
         if min_price:
             domain.append(('discounted_price', '>=', float(min_price)))
