@@ -115,19 +115,21 @@ class OffersController(http.Controller):
         if type_offer in ['day', 'flash']:
             filtered = []
             for p in products:
-                tag = p.product_tag_ids and p.product_tag_ids[0]
-                if tag and tag.start_date and tag.end_date:
-                    start = tag.start_date
-                    end = tag.end_date
-                    if isinstance(start, str):
-                        start = Datetime.fromisoformat(start)
-                    if isinstance(end, str):
-                        end = Datetime.fromisoformat(end)
-                    duration = (end - start).total_seconds() / 3600.0
-                    if type_offer == 'day' and 23.5 <= duration <= 24.5:
-                        filtered.append(p)
-                    elif type_offer == 'flash' and 0 < duration <= 6:
-                        filtered.append(p)
+                for tag in p.product_tag_ids:
+                    if tag.start_date and tag.end_date:
+                        start = tag.start_date
+                        end = tag.end_date
+                        if isinstance(start, str):
+                            start = Datetime.fromisoformat(start)
+                        if isinstance(end, str):
+                            end = Datetime.fromisoformat(end)
+                        duration = (end - start).total_seconds() / 3600.0
+                        if type_offer == 'day' and 23.5 <= duration <= 24.5:
+                            filtered.append(p)
+                            break  # Ya cumple, no revises más etiquetas
+                        elif type_offer == 'flash' and 0 < duration <= 6:
+                            filtered.append(p)
+                            break
             products = filtered
 
         categories = request.env['product.public.category'].sudo().search([])
