@@ -28,7 +28,23 @@ class OffersController(http.Controller):
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False)
         ])
-
+        oferta_dia = []
+        oferta_relampago = []
+        for p in tagged_products:
+            tag = p.product_tag_ids and p.product_tag_ids[0]
+            if tag and tag.start_date and tag.end_date:
+                start = tag.start_date
+                end = tag.end_date
+                if isinstance(start, str):
+                    start = Datetime.fromisoformat(start)
+                if isinstance(end, str):
+                    end = Datetime.fromisoformat(end)
+                duration = (end - start).total_seconds() / 3600.0
+                if 23.5 <= duration <= 24.5:
+                    oferta_dia.append(p)
+                elif duration <= 6:
+                    oferta_relampago.append(p)
+                    
         price_ranges = {
             '0_500': request.env['product.template'].sudo().search_count([
                 ('website_published', '=', True),
@@ -53,6 +69,8 @@ class OffersController(http.Controller):
             'categories': main_categories,
             'total_products': total_products,
             'price_ranges': price_ranges,
+            'oferta_dia': oferta_dia,
+            'oferta_relampago': oferta_relampago,            
         })
 
     @http.route(['/shop/category/<model("product.public.category"):category>', '/shop/category/all'], type='http', auth="public", website=True)
