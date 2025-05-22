@@ -126,10 +126,9 @@ class OffersController(http.Controller):
                     duration = (end - start).total_seconds() / 3600.0
                     if type_offer == 'day' and 23.5 <= duration <= 24.5:
                         filtered.append(p)
-                    elif type_offer == 'flash' and duration <= 6:
+                    elif type_offer == 'flash' and 0 < duration <= 6:
                         filtered.append(p)
             products = filtered
-        
 
         categories = request.env['product.public.category'].sudo().search([])
         total_products = request.env['product.template'].sudo().search_count([
