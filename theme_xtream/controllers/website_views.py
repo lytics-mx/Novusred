@@ -1,6 +1,6 @@
 from odoo import http
 from odoo.http import request
-
+from datetime import datetime as Datetime
 class OffersController(http.Controller):
 
     @http.route('/offers', type='http', auth='public', website=True)
@@ -15,12 +15,16 @@ class OffersController(http.Controller):
         # Obtener categorías principales (categorías sin padre)
         main_categories = request.env['product.category'].sudo().search([('parent_id', '=', False)])
             # Ordenar por la fecha más reciente de start_date de la primera etiqueta (si existe)
+        # Solo productos cuya primera etiqueta tenga start_date
+        tagged_products = [p for p in tagged_products if p.product_tag_ids and p.product_tag_ids[0].start_date]
+
+        # Ordenar por la fecha más reciente de start_date
         tagged_products = sorted(
             tagged_products,
-            key=lambda p: p.product_tag_ids and p.product_tag_ids[0].start_date or Datetime.from_string('1970-01-01 00:00:00'),
+            key=lambda p: p.product_tag_ids[0].start_date,
             reverse=True
         )
-        # Calcular el total de productos publicados
+                # Calcular el total de productos publicados
         total_products = request.env['product.template'].sudo().search_count([('website_published', '=', True)])
 
         # Calcular la cantidad de productos en cada rango de precios
