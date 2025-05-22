@@ -49,7 +49,7 @@ class OffersController(http.Controller):
             'discounted_products': tagged_products,
             'categories': main_categories,
             'total_products': total_products,  # Total de productos publicados
-            # 'price_ranges': price_ranges,  # Agregar price_ranges al contexto
+            'price_ranges': price_ranges,  # Agregar price_ranges al contexto
         })
 
     @http.route(['/shop/category/<model("product.public.category"):category>', '/shop/category/all'], type='http', auth="public", website=True)
