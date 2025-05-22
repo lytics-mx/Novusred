@@ -108,6 +108,10 @@ class OffersController(http.Controller):
         if max_price:
             domain.append(('discounted_price', '<=', float(max_price)))
  
+
+        # Buscar productos y categorías
+        products = request.env['product.template'].sudo().search(domain)
+
         if type_offer in ['day', 'flash']:
             filtered = []
             for p in products:
@@ -126,8 +130,7 @@ class OffersController(http.Controller):
                         filtered.append(p)
             products = filtered
         
-        # Buscar productos y categorías
-        products = request.env['product.template'].sudo().search(domain)
+
         categories = request.env['product.public.category'].sudo().search([])
         total_products = request.env['product.template'].sudo().search_count([
             ('website_published', '=', True),
