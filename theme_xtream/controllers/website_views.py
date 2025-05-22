@@ -28,21 +28,22 @@ class OffersController(http.Controller):
         total_products = request.env['product.template'].sudo().search_count([('website_published', '=', True)])
 
         # # Calcular la cantidad de productos en cada rango de precios
-        # price_ranges = {
-        #     '0_500': request.env['product.template'].sudo().search_count([
-        #         ('website_published', '=', True),
-        #         ('discounted_price', '<=', 500)
-        #     ]),
-        #     '500_1000': request.env['product.template'].sudo().search_count([
-        #         ('website_published', '=', True),
-        #         ('discounted_price', '>', 500),
-        #         ('discounted_price', '<=', 1000)
-        #     ]),
-        #     '1000_plus': request.env['product.template'].sudo().search_count([
-        #         ('website_published', '=', True),
-        #         ('discounted_price', '>', 1000)
-        #     ]),
-        # }
+        price_ranges = {
+            '0_500': request.env['product.template'].sudo().search_count([
+            ('website_published', '=', True),
+            ('discounted_price', '>', 0),
+            ('discounted_price', '<=', 500)
+            ]),
+            '500_1000': request.env['product.template'].sudo().search_count([
+            ('website_published', '=', True),
+            ('discounted_price', '>', 500),
+            ('discounted_price', '<=', 1000)
+            ]),
+            '1000_plus': request.env['product.template'].sudo().search_count([
+            ('website_published', '=', True),
+            ('discounted_price', '>', 1000)
+            ]),
+        }
     
         return request.render('theme_xtream.offers_template', {
             'discounted_products': tagged_products,
