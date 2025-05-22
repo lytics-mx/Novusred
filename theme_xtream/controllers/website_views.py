@@ -166,4 +166,5 @@ class OffersController(http.Controller):
             'free_shipping': free_shipping,
             'total_products': total_products,
             'price_ranges': price_ranges,
+            'offer_type': offer_type,
         })
