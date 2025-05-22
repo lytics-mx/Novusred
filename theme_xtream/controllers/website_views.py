@@ -27,32 +27,28 @@ class OffersController(http.Controller):
                 # Calcular el total de productos publicados
         total_products = request.env['product.template'].sudo().search_count([('website_published', '=', True)])
 
-        # Calcular la cantidad de productos en cada rango de precios
-        # ...antes del return...
-        price_ranges = {
-            '0_500': request.env['product.template'].sudo().search_count([
-                ('website_published', '=', True),
-                ('discounted_price', '<=', 500)
-            ]),
-            '500_1000': request.env['product.template'].sudo().search_count([
-                ('website_published', '=', True),
-                ('discounted_price', '>', 500),
-                ('discounted_price', '<=', 1000)
-            ]),
-            '1000_plus': request.env['product.template'].sudo().search_count([
-                ('website_published', '=', True),
-                ('discounted_price', '>', 1000)
-            ]),
-        }
-        
+        # # Calcular la cantidad de productos en cada rango de precios
+        # price_ranges = {
+        #     '0_500': request.env['product.template'].sudo().search_count([
+        #         ('website_published', '=', True),
+        #         ('discounted_price', '<=', 500)
+        #     ]),
+        #     '500_1000': request.env['product.template'].sudo().search_count([
+        #         ('website_published', '=', True),
+        #         ('discounted_price', '>', 500),
+        #         ('discounted_price', '<=', 1000)
+        #     ]),
+        #     '1000_plus': request.env['product.template'].sudo().search_count([
+        #         ('website_published', '=', True),
+        #         ('discounted_price', '>', 1000)
+        #     ]),
+        # }
+    
         return request.render('theme_xtream.offers_template', {
-            'categories': categories,
-            'discounted_products': products,
-            'current_category': category,
-            'offers': offers,
-            'free_shipping': free_shipping,
-            'total_products': total_products,
-            'price_ranges': price_ranges,  # <-- agrega esto
+            'discounted_products': tagged_products,
+            'categories': main_categories,
+            'total_products': total_products,  # Total de productos publicados
+            # 'price_ranges': price_ranges,  # Agregar price_ranges al contexto
         })
 
     @http.route(['/shop/category/<model("product.public.category"):category>', '/shop/category/all'], type='http', auth="public", website=True)
