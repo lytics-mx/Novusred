@@ -31,19 +31,21 @@ class OffersController(http.Controller):
         oferta_dia = []
         oferta_relampago = []
         for p in tagged_products:
-            tag = p.product_tag_ids and p.product_tag_ids[0]
-            if tag and tag.start_date and tag.end_date:
-                start = tag.start_date
-                end = tag.end_date
-                if isinstance(start, str):
-                    start = Datetime.fromisoformat(start)
-                if isinstance(end, str):
-                    end = Datetime.fromisoformat(end)
-                duration = (end - start).total_seconds() / 3600.0
-                if 23.5 <= duration <= 24.5:
-                    oferta_dia.append(p)
-                elif duration <= 6:
-                    oferta_relampago.append(p)
+            for tag in p.product_tag_ids:
+                if tag.start_date and tag.end_date:
+                    start = tag.start_date
+                    end = tag.end_date
+                    if isinstance(start, str):
+                        start = Datetime.fromisoformat(start)
+                    if isinstance(end, str):
+                        end = Datetime.fromisoformat(end)
+                    duration = (end - start).total_seconds() / 3600.0
+                    if 23.5 <= duration <= 24.5:
+                        oferta_dia.append(p)
+                        break  # Ya cumple, no revises más etiquetas
+                    elif 0 < duration <= 6:
+                        oferta_relampago.append(p)
+                        break
                     
         price_ranges = {
             '0_500': request.env['product.template'].sudo().search_count([
