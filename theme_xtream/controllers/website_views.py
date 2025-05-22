@@ -72,12 +72,9 @@ class OffersController(http.Controller):
             domain.append(('free_shipping', '=', True))
         
         if offer_type:
-            if offer_type == 'day':
-                domain.append(('offer_type', '=', 'day'))
-            elif offer_type == 'flash':
-                domain.append(('offer_type', '=', 'flash'))
-            elif offer_type == 'hour':
-                domain.append(('offer_type', '=', 'hour'))
+            tag = request.env['product.tag'].sudo().search([('name', 'ilike', offer_type)], limit=1)
+            if tag:
+                domain.append(('product_tag_ids', 'in', tag.id))
         
         if min_price:
             domain.append(('discounted_price', '>=', float(min_price)))
