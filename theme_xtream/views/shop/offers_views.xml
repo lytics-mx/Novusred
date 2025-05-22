@@ -15,38 +15,27 @@
                     </div>
 
                     <!-- Contenedor de los íconos -->
-                    <div class="container mt-4">
-                        <div style="text-align: left;">
-                            <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px; text-align: center;">ETIQUETAS DESTACADAS</h2>
-                        </div>
-                        <div style="height: 30px;"></div>
-                        
-                        <t t-set="tags" t-value="request.env['product.tag'].sudo().search([
-                            ('icon_image', '!=', False),
-                            ('show_icon_image', '=', True)
-                        ], limit=6)" />
-                        <div class="d-flex justify-content-center gap-3 flex-wrap">
-                            <t t-if="tags">
-                                <t t-foreach="tags" t-as="tag" t-key="tag.id">
-                                    <div class="position-relative text-center" style="width: 150px; background-color: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);">
-                                        <!-- Ícono de la etiqueta (icon_image) -->
-                                        <div style="padding: 10px;">
-                                            <t t-if="tag.icon_image">
-                                                <img t-att-src="'data:image/png;base64,' + (tag.icon_image.decode('utf-8') if hasattr(tag.icon_image, 'decode') else tag.icon_image)"
-                                                     alt="Ícono de la Etiqueta"
-                                                     style="width: 100%; height: auto; object-fit: contain;" />
-                                            </t>
-                                        </div>
-                                        <div style="font-size: 15px; color: #222; font-family: 'Questrial', sans-serif; margin-bottom: 10px;">
-                                            <t t-esc="tag.name" />
-                                        </div>
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <t t-if="tags">
+                            <t t-foreach="tags" t-as="tag" t-key="tag.id">
+                                <div class="position-relative text-center" style="width: 150px; background-color: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);">
+                                    <!-- Ícono de la etiqueta (icon_image) -->
+                                    <div style="padding: 10px;">
+                                        <t t-if="tag.icon_image">
+                                            <img t-att-src="'data:image/png;base64,' + (tag.icon_image.decode('utf-8') if hasattr(tag.icon_image, 'decode') else tag.icon_image)"
+                                                 alt="Ícono de la Etiqueta"
+                                                 style="width: 100%; height: auto; object-fit: contain;" />
+                                        </t>
                                     </div>
-                                </t>
+                                    <div style="font-size: 15px; color: #222; font-family: 'Questrial', sans-serif; margin-bottom: 10px;">
+                                        <t t-esc="tag.name" />
+                                    </div>
+                                </div>
                             </t>
-                            <t t-else="">
-                                <span class="text-muted">No hay etiquetas configuradas o no tienen imagen.</span>
-                            </t>
-                        </div>
+                        </t>
+                        <t t-else="">
+                            <span class="text-muted">No hay etiquetas configuradas o no tienen imagen.</span>
+                        </t>
                     </div>
                 </div>
                 
