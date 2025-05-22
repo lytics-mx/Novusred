@@ -14,7 +14,12 @@ class OffersController(http.Controller):
     
         # Obtener categorías principales (categorías sin padre)
         main_categories = request.env['product.category'].sudo().search([('parent_id', '=', False)])
-    
+            # Ordenar por la fecha más reciente de start_date de la primera etiqueta (si existe)
+        tagged_products = sorted(
+            tagged_products,
+            key=lambda p: p.product_tag_ids and p.product_tag_ids[0].start_date or Datetime.from_string('1970-01-01 00:00:00'),
+            reverse=True
+        )
         # Calcular el total de productos publicados
         total_products = request.env['product.template'].sudo().search_count([('website_published', '=', True)])
 
