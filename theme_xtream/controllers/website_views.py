@@ -1,6 +1,8 @@
 from odoo import http
 from odoo.http import request
 from datetime import datetime as Datetime
+from pytz import timezone
+
 class OffersController(http.Controller):
 
     @http.route('/offers', type='http', auth='public', website=True)
@@ -30,12 +32,7 @@ class OffersController(http.Controller):
         ])
         oferta_dia = []
         oferta_relampago = []
-        oferta_dia_ids = set()
-        oferta_relampago_ids = set()
-
         for p in tagged_products:
-            is_oferta_dia = False
-            is_oferta_relampago = False
             for tag in p.product_tag_ids:
                 if tag.start_date and tag.end_date:
                     start = tag.start_date
@@ -46,16 +43,11 @@ class OffersController(http.Controller):
                         end = Datetime.fromisoformat(end)
                     duration = (end - start).total_seconds() / 3600.0
                     if 23.5 <= duration <= 24.5:
-                        is_oferta_dia = True
+                        oferta_dia.append(p)
+                        break  # Ya cumple, no revises más etiquetas
                     elif 0 < duration <= 6:
-                        is_oferta_relampago = True
-            if is_oferta_dia and p.id not in oferta_dia_ids:
-                oferta_dia.append(p)
-                oferta_dia_ids.add(p.id)
-            elif is_oferta_relampago and p.id not in oferta_relampago_ids:
-                oferta_relampago.append(p)
-                oferta_relampago_ids.add(p.id)
-
+                        oferta_relampago.append(p)
+                        break
                     
         price_ranges = {
             '0_500': request.env['product.template'].sudo().search_count([
@@ -126,6 +118,8 @@ class OffersController(http.Controller):
 
         if type_offer in ['day', 'flash']:
             filtered = []
+            mexico_tz = timezone('America/Mexico_City')
+            now = Datetime.now(mexico_tz)
             for p in products:
                 for tag in p.product_tag_ids:
                     if tag.start_date and tag.end_date:
@@ -135,14 +129,18 @@ class OffersController(http.Controller):
                             start = Datetime.fromisoformat(start)
                         if isinstance(end, str):
                             end = Datetime.fromisoformat(end)
-                        duration = (end - start).total_seconds() / 3600.0
-                        if type_offer == 'day' and 23.5 <= duration <= 24.5:
-                            filtered.append(p)
-                            break  # Ya cumple, no revises más etiquetas
-                        elif type_offer == 'flash' and 0 < duration <= 6:
-                            filtered.append(p)
-                            break
+                        start = start.astimezone(mexico_tz)
+                        end = end.astimezone(mexico_tz)
+                        if start <= now <= end:
+                            duration = (end - start).total_seconds() / 3600.0
+                            if type_offer == 'day' and 23.5 <= duration <= 24.5:
+                                filtered.append(p)
+                                break
+                            elif type_offer == 'flash' and 0 < duration <= 6:
+                                filtered.append(p)
+                                break
             products = filtered
+
 
         categories = request.env['product.public.category'].sudo().search([])
         total_products = request.env['product.template'].sudo().search_count([
