@@ -9,14 +9,13 @@ class OffersController(http.Controller):
         # Filtrar productos publicados que tengan al menos una etiqueta
         tagged_products = request.env['product.template'].sudo().search([
             ('website_published', '=', True),
-            ('product_tag_ids', '!=', False)  # Productos relacionados con etiquetas
+            ('product_tag_ids', '!=', False)
         ])
-    
+
         # Obtener categorías principales (categorías sin padre)
         main_categories = request.env['product.category'].sudo().search([('parent_id', '=', False)])
-            # Ordenar por la fecha más reciente de start_date de la primera etiqueta (si existe)
-        # Solo productos cuya primera etiqueta tenga start_date
-        tagged_products = [p for p in tagged_products if p.product_tag_ids and p.product_tag_ids[0].start_date]
+        # Solo productos publicados y que tengan al menos una etiqueta con start_date
+        tagged_products = [p for p in tagged_products if p.website_published and p.product_tag_ids and p.product_tag_ids[0].start_date]
 
         # Ordenar por la fecha más reciente de start_date
         tagged_products = sorted(
@@ -24,22 +23,28 @@ class OffersController(http.Controller):
             key=lambda p: p.product_tag_ids[0].start_date,
             reverse=True
         )
-                # Calcular el total de productos publicados
-        total_products = request.env['product.template'].sudo().search_count([('website_published', '=', True)])
+        # Calcular el total de productos publicados y con etiqueta
+        total_products = request.env['product.template'].sudo().search_count([
+            ('website_published', '=', True),
+            ('product_tag_ids', '!=', False)
+        ])
 
         price_ranges = {
             '0_500': request.env['product.template'].sudo().search_count([
                 ('website_published', '=', True),
+                ('product_tag_ids', '!=', False),
                 ('discounted_price', '>', 0),
                 ('discounted_price', '<=', 500)
             ]),
             '500_1000': request.env['product.template'].sudo().search_count([
                 ('website_published', '=', True),
+                ('product_tag_ids', '!=', False),
                 ('discounted_price', '>', 500),
                 ('discounted_price', '<=', 1000)
             ]),
             '1000_plus': request.env['product.template'].sudo().search_count([
                 ('website_published', '=', True),
+                ('product_tag_ids', '!=', False),
                 ('discounted_price', '>', 1000)
             ]),
         }
@@ -47,10 +52,8 @@ class OffersController(http.Controller):
             'discounted_products': tagged_products,
             'categories': main_categories,
             'total_products': total_products,
-            'price_ranges': price_ranges,  # <-- ¡Agrega esto!
+            'price_ranges': price_ranges,
         })
-
-
 
     @http.route(['/shop/category/<model("product.public.category"):category>', '/shop/category/all'], type='http', auth="public", website=True)
     def shop_by_category(self, category=None, **kwargs):
@@ -60,8 +63,11 @@ class OffersController(http.Controller):
         offer_type = kwargs.get('type')
         min_price = kwargs.get('min_price')
         max_price = kwargs.get('max_price')
-    
-        domain = [('website_published', '=', True)]
+
+        domain = [
+            ('website_published', '=', True),
+            ('product_tag_ids', '!=', False)
+        ]
         
         if category:
             domain.append(('public_categ_ids', 'child_of', category.id))
@@ -86,21 +92,27 @@ class OffersController(http.Controller):
         # Buscar productos y categorías
         products = request.env['product.template'].sudo().search(domain)
         categories = request.env['product.public.category'].sudo().search([])
-        total_products = request.env['product.template'].sudo().search_count([('website_published', '=', True)])
-    
+        total_products = request.env['product.template'].sudo().search_count([
+            ('website_published', '=', True),
+            ('product_tag_ids', '!=', False)
+        ])
+
         price_ranges = {
             '0_500': request.env['product.template'].sudo().search_count([
                 ('website_published', '=', True),
+                ('product_tag_ids', '!=', False),
                 ('discounted_price', '>', 0),
                 ('discounted_price', '<=', 500)
             ]),
             '500_1000': request.env['product.template'].sudo().search_count([
                 ('website_published', '=', True),
+                ('product_tag_ids', '!=', False),
                 ('discounted_price', '>', 500),
                 ('discounted_price', '<=', 1000)
             ]),
             '1000_plus': request.env['product.template'].sudo().search_count([
                 ('website_published', '=', True),
+                ('product_tag_ids', '!=', False),
                 ('discounted_price', '>', 1000)
             ]),
         }
@@ -112,7 +124,5 @@ class OffersController(http.Controller):
             'offers': offers,
             'free_shipping': free_shipping,
             'total_products': total_products,
-            'price_ranges': price_ranges,  # <-- ¡Agrega esto!
+            'price_ranges': price_ranges,
         })
-    
-    
