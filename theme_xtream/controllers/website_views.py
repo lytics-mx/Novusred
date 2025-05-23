@@ -68,7 +68,10 @@ class OffersController(http.Controller):
                 ('discounted_price', '>', 1000)
             ]),
         }
-        categories = request.env['product.public.category'].sudo().search([])
+        # Solo categorías públicas que tengan al menos un producto con etiqueta
+        categories = request.env['product.public.category'].sudo().search([
+            ('product_tmpl_ids.product_tag_ids', '!=', False)
+        ])
         categories_with_count = []
         for cat in categories:
             prod_count = request.env['product.template'].sudo().search_count([
