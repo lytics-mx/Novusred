@@ -69,21 +69,22 @@ class OffersController(http.Controller):
             ]),
         }
         # Obtener solo las categorías públicas que tengan al menos un producto con etiqueta
-        # Obtener todas las categorías públicas (principales y subcategorías)
-        categories = request.env['product.public.category'].sudo().search([])
-
+        categories = request.env['product.public.category'].sudo().search([
+            ('product_tmpl_ids.website_published', '=', True),
+            ('product_tmpl_ids.product_tag_ids', '!=', False),
+        ])
+        categories = categories.filtered(lambda c: c.name)
         categories_with_count = []
         for cat in categories:
-            # Contar productos publicados, con al menos un tag, y que pertenezcan a esta categoría (o sus hijos)
             prod_count = request.env['product.template'].sudo().search_count([
-            ('website_published', '=', True),
-            ('product_tag_ids', '!=', False),
-            ('public_categ_ids', 'child_of', cat.id)
+                ('website_published', '=', True),
+                ('product_tag_ids', '!=', False),
+                ('public_categ_ids', 'child_of', cat.id)
             ])
             categories_with_count.append({
-            'id': cat.id,
-            'name': cat.name,
-            'product_count': prod_count,
+                'id': cat.id,
+                'name': cat.name,
+                'product_count': prod_count,
             })
 
         return request.render('theme_xtream.offers_template', {
@@ -111,8 +112,9 @@ class OffersController(http.Controller):
             ('product_tag_ids', '!=', False)
         ]
         
-        if category:
-            domain.append(('public_categ_ids', 'child_of', category.id))
+        category_id = request.params.get('category_id')
+        if category_id:
+            domain.append(('public_categ_ids', 'child_of', int(category_id)))
         
         if offers:
             domain.append(('discounted_price', '>', 0))
