@@ -68,10 +68,7 @@ class OffersController(http.Controller):
                 ('discounted_price', '>', 1000)
             ]),
         }
-        categories = request.env['product.public.category'].sudo().search([
-            ('product_tmpl_ids.product_tag_ids', '!=', False)
-        ])
-        categories = categories.filtered(lambda c: c.name)
+        categories = request.env['product.public.category'].sudo().search([])
         categories_with_count = []
         for cat in categories:
             prod_count = request.env['product.template'].sudo().search_count([
@@ -87,9 +84,8 @@ class OffersController(http.Controller):
 
         return request.render('theme_xtream.offers_template', {
             'discounted_products': tagged_products,
-            'categories': categories,
+            'categories': main_categories,
             'categories_with_count': categories_with_count,
-            # ...otros context...
             'total_products': total_products,
             'price_ranges': price_ranges,
             'oferta_dia': oferta_dia,
