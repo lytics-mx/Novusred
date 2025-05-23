@@ -106,7 +106,7 @@ class OffersController(http.Controller):
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False)
         ]
-        main_categories = request.env['product.category'].sudo().search([('parent_id', '=', False)])
+        main_categories = request.env['product.category'].sudo().search([])
         categories_with_count = []
         for cat in main_categories:
             prod_count = request.env['product.template'].sudo().search_count([
@@ -164,7 +164,6 @@ class OffersController(http.Controller):
                             break
             products = filtered
 
-        categories = request.env['product.public.category'].sudo().search([])
         total_products = request.env['product.template'].sudo().search_count([
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False)
@@ -191,7 +190,6 @@ class OffersController(http.Controller):
         }
 
         return request.render('theme_xtream.offers_template', {
-            'categories': categories,
             'discounted_products': products,
             'current_category': category,
             'offers': offers,
