@@ -21,20 +21,20 @@ class OffersController(http.Controller):
             categories = request.env['product.category'].sudo().search([('parent_id', '=', parent_id)])
             result = []
             for cat in categories:
-            # Verifica si la categoría (o sus hijos) tiene productos con etiquetas
-            prod_count = request.env['product.template'].sudo().search_count([
-                ('website_published', '=', True),
-                ('product_tag_ids', '!=', False),
-                ('categ_id', 'child_of', cat.id)
-            ])
-            if prod_count > 0:
-                children = get_categories_with_products(cat.id)
-                result.append({
-                'id': cat.id,
-                'name': cat.name,
-                'children': children,
-                'product_count': prod_count,
-                })
+                # Verifica si la categoría (o sus hijos) tiene productos con etiquetas
+                prod_count = request.env['product.template'].sudo().search_count([
+                    ('website_published', '=', True),
+                    ('product_tag_ids', '!=', False),
+                    ('categ_id', 'child_of', cat.id)
+                ])
+                if prod_count > 0:
+                    children = get_categories_with_products(cat.id)
+                    result.append({
+                        'id': cat.id,
+                        'name': cat.name,
+                        'children': children,
+                        'product_count': prod_count,
+                    })
             return result
 
         main_categories = get_categories_with_products()
