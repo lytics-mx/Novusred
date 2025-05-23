@@ -25,7 +25,7 @@ class OffersController(http.Controller):
                 prod_count = request.env['product.template'].sudo().search_count([
                     ('website_published', '=', True),
                     ('product_tag_ids', '!=', False),
-                    ('categ_id', 'child_of', cat.id)
+                    ('categ_id', 'child_of', cat['id'])  # <-- corregido
                 ])
                 if prod_count > 0:
                     children = get_categories_with_products(cat.id)
