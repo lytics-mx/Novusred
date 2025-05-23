@@ -32,10 +32,8 @@ class OffersController(http.Controller):
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False)
         ])
-    # Solo productos con alguna etiqueta con fechas válidas
-        mexico_tz = timezone('America/Mexico_City')
-        now = Datetime.now(mexico_tz)
-        filtered_products = []
+        oferta_dia = []
+        oferta_relampago = []
         for p in tagged_products:
             for tag in p.product_tag_ids:
                 if tag.start_date and tag.end_date:
@@ -45,18 +43,14 @@ class OffersController(http.Controller):
                         start = Datetime.fromisoformat(start)
                     if isinstance(end, str):
                         end = Datetime.fromisoformat(end)
-                    start = start.astimezone(mexico_tz)
-                    end = end.astimezone(mexico_tz)
-                    if start <= now <= end:
-                        filtered_products.append(p)
+                    duration = (end - start).total_seconds() / 3600.0
+                    if 23.5 <= duration <= 24.5:
+                        oferta_dia.append(p)
+                        break  # Ya cumple, no revises más etiquetas
+                    elif 0 < duration <= 6:
+                        oferta_relampago.append(p)
                         break
-        # Ordenar por la fecha más reciente de start_date de cualquier etiqueta
-        filtered_products = sorted(
-            filtered_products,
-            key=lambda p: max([tag.start_date for tag in p.product_tag_ids if tag.start_date]),
-            reverse=True
-        )
-                        
+                    
         price_ranges = {
             '0_500': request.env['product.template'].sudo().search_count([
                 ('website_published', '=', True),
@@ -77,11 +71,12 @@ class OffersController(http.Controller):
             ]),
         }
         return request.render('theme_xtream.offers_template', {
-            'discounted_products': filtered_products,
+            'discounted_products': tagged_products,
             'categories': main_categories,
             'total_products': total_products,
             'price_ranges': price_ranges,
-         
+            'oferta_dia': oferta_dia,
+            'oferta_relampago': oferta_relampago,            
         })
 
     @http.route(['/shop/category/<model("product.public.category"):category>', '/shop/category/all'], type='http', auth="public", website=True)
@@ -122,7 +117,7 @@ class OffersController(http.Controller):
 
         # Buscar productos y categorías
         products = request.env['product.template'].sudo().search(domain)
-        type_offer = kwargs.get('type')
+
         if type_offer in ['day', 'flash']:
             filtered = []
             mexico_tz = timezone('America/Mexico_City')
