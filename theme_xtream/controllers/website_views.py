@@ -17,10 +17,8 @@ class OffersController(http.Controller):
         # Obtener categorías principales (categorías sin padre)
         main_categories = request.env['product.category'].sudo().search([('parent_id', '=', False)])
         # Solo productos publicados y que tengan al menos una etiqueta con start_date
-        tagged_products = [
-            p for p in tagged_products
-            if p.website_published and any(tag.start_date for tag in p.product_tag_ids)
-        ]
+        tagged_products = [p for p in tagged_products if p.website_published and p.product_tag_ids and p.product_tag_ids[0].start_date]
+
         # Ordenar por la fecha más reciente de start_date
         tagged_products = sorted(
             tagged_products,
@@ -120,8 +118,6 @@ class OffersController(http.Controller):
 
         if type_offer in ['day', 'flash']:
             filtered = []
-            mexico_tz = timezone('America/Mexico_City')
-            now = Datetime.now(mexico_tz)
             for p in products:
                 for tag in p.product_tag_ids:
                     if tag.start_date and tag.end_date:
@@ -131,18 +127,14 @@ class OffersController(http.Controller):
                             start = Datetime.fromisoformat(start)
                         if isinstance(end, str):
                             end = Datetime.fromisoformat(end)
-                        start = start.astimezone(mexico_tz)
-                        end = end.astimezone(mexico_tz)
-                        if start <= now <= end:
-                            duration = (end - start).total_seconds() / 3600.0
-                            if type_offer == 'day' and 23.5 <= duration <= 24.5:
-                                filtered.append(p)
-                                break
-                            elif type_offer == 'flash' and 0 < duration <= 6:
-                                filtered.append(p)
-                                break
+                        duration = (end - start).total_seconds() / 3600.0
+                        if type_offer == 'day' and 23.5 <= duration <= 24.5:
+                            filtered.append(p)
+                            break  # Ya cumple, no revises más etiquetas
+                        elif type_offer == 'flash' and 0 < duration <= 6:
+                            filtered.append(p)
+                            break
             products = filtered
-
 
         categories = request.env['product.public.category'].sudo().search([])
         total_products = request.env['product.template'].sudo().search_count([
