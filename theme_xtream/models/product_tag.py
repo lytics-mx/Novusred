@@ -93,6 +93,10 @@ class ProductTag(models.Model):
 
     @api.onchange('offer_time_type', 'flash_hours')
     def _onchange_offer_time_type(self):
+        if self.offer_time_type == 'none':
+            self.start_date = False
+            self.end_date = False
+            return
         mexico_tz = pytz.timezone('America/Mexico_City')
         now = datetime.now(mexico_tz).replace(minute=0, second=0, microsecond=0)
         naive_now = now.replace(tzinfo=None)
@@ -102,9 +106,6 @@ class ProductTag(models.Model):
         elif self.offer_time_type == 'flash' and self.flash_hours:
             self.start_date = naive_now
             self.end_date = naive_now + timedelta(hours=self.flash_hours)
-        elif self.offer_time_type == 'none':
-            self.start_date = False
-            self.end_date = False
 
     def _apply_recurrent_discount(self):
         """Aplica o desactiva descuentos según la recurrencia."""
