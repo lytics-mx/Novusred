@@ -14,11 +14,13 @@ class OffersController(http.Controller):
             ('product_tag_ids', '!=', False)
         ])
 
-        # Obtener categorías principales (categorías sin padre)
-        main_categories = request.env['product.category'].sudo().search([('parent_id', '=', False)])
         # Solo productos publicados y que tengan al menos una etiqueta con start_date
         tagged_products = [p for p in tagged_products if p.website_published and p.product_tag_ids and p.product_tag_ids[0].start_date]
 
+        # Obtener las categorías de los productos en oferta
+        offer_categories = request.env['product.public.category'].sudo().search([
+            ('id', 'in', [cat.id for p in tagged_products for cat in p.public_categ_ids])
+        ])
         # Ordenar por la fecha más reciente de start_date
         tagged_products = sorted(
             tagged_products,
@@ -48,6 +50,7 @@ class OffersController(http.Controller):
                     elif 0 < duration <= 6:
                         oferta_relampago.append(p)
                         break
+                   
                     
         price_ranges = {
             '0_500': request.env['product.template'].sudo().search_count([
@@ -68,32 +71,14 @@ class OffersController(http.Controller):
                 ('discounted_price', '>', 1000)
             ]),
         }
-        # Obtener solo las categorías públicas que tengan al menos un producto con etiqueta
-        # Obtener todas las categorías públicas (principales y subcategorías)
-        categories = request.env['product.public.category'].sudo().search([])
 
-        categories_with_count = []
-        for cat in categories:
-            # Contar productos publicados, con al menos un tag, y que pertenezcan a esta categoría (o sus hijos)
-            prod_count = request.env['product.template'].sudo().search_count([
-            ('website_published', '=', True),
-            ('product_tag_ids', '!=', False),
-            ('public_categ_ids', 'child_of', cat.id)
-            ])
-            categories_with_count.append({
-            'id': cat.id,
-            'name': cat.name,
-            'product_count': prod_count,
-            })
-            
         return request.render('theme_xtream.offers_template', {
             'discounted_products': tagged_products,
-            'categories': main_categories,
-            'categories_with_count': categories_with_count,
             'total_products': total_products,
             'price_ranges': price_ranges,
             'oferta_dia': oferta_dia,
-            'oferta_relampago': oferta_relampago,            
+            'oferta_relampago': oferta_relampago, 
+            'offer_categories': offer_categories,           
         })
 
     @http.route(['/shop/category/<model("product.public.category"):category>', '/shop/category/all'], type='http', auth="public", website=True)
@@ -111,9 +96,12 @@ class OffersController(http.Controller):
             ('product_tag_ids', '!=', False)
         ]
         
-        category_id = request.params.get('category_id')
-        if category_id:
-            domain.append(('public_categ_ids', 'child_of', int(category_id)))
+        if category and category.id:
+            domain.append(('public_categ_ids', 'child_of', category.id))
+        else:
+            # Si no hay categoría, mostrar todos los productos
+            domain.append(('public_categ_ids', '!=', False))
+            
         
         if offers:
             domain.append(('discounted_price', '>', 0))
@@ -156,11 +144,6 @@ class OffersController(http.Controller):
                             break
             products = filtered
 
-        categories = request.env['product.public.category'].sudo().search([])
-        total_products = request.env['product.template'].sudo().search_count([
-            ('website_published', '=', True),
-            ('product_tag_ids', '!=', False)
-        ])
 
         price_ranges = {
             '0_500': request.env['product.template'].sudo().search_count([
@@ -183,12 +166,10 @@ class OffersController(http.Controller):
         }
 
         return request.render('theme_xtream.offers_template', {
-            'categories': categories,
             'discounted_products': products,
             'current_category': category,
             'offers': offers,
             'free_shipping': free_shipping,
-            'total_products': total_products,
             'price_ranges': price_ranges,
             'offer_type': offer_type,
         })
