@@ -114,6 +114,9 @@ class ProductTag(models.Model):
         elif self.offer_time_type == 'flash' and self.flash_hours:
             self.start_date = naive_now
             self.end_date = naive_now + timedelta(hours=self.flash_hours)
+        elif self.offer_time_type == 'none':
+            self.start_date = False
+            self.end_date = False
 
     def _apply_recurrent_discount(self):
         """Aplica o desactiva descuentos según la recurrencia."""
