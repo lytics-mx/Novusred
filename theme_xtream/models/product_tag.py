@@ -52,19 +52,7 @@ class ProductTag(models.Model):
         help="Almacena el valor del descuento para activarlo nuevamente según la recurrencia."
     )
 
-    icon_image = fields.Binary(
-        string="Ícono de la Etiqueta",
-        attachment=True,
-        help="Sube un ícono representativo para esta etiqueta."
-    )   
 
-
-
-    show_icon_image = fields.Boolean(
-        string="Mostrar ícono de la etiqueta",
-        default=True,
-        help="Si está activado, se mostrará el ícono de la etiqueta en la vista."
-    )
 
 
 
