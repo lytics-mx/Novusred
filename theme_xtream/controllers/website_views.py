@@ -76,13 +76,11 @@ class OffersController(http.Controller):
                 ('product_tag_ids', '!=', False),
                 ('public_categ_ids', 'child_of', cat.id)
             ])
-            if prod_count > 0:
-                categories_with_count.append({
-                    'id': cat.id,
-                    'name': cat.name,
-                    'product_count': prod_count,
-                })
-
+            categories_with_count.append({
+                'id': cat.id,
+                'name': cat.name,
+                'product_count': prod_count,
+            })
 
         return request.render('theme_xtream.offers_template', {
             'discounted_products': tagged_products,
