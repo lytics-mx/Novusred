@@ -25,6 +25,11 @@ class ProductTag(models.Model):
         string="Fecha de fin",
         help="Seleccione la fecha de fin para aplicar el descuento."
     )
+    offer_time_type = fields.Selection([
+        ('none', 'Manual'),
+        ('day', 'Todo el día'),
+        ('flash', 'Relámpago'),
+    ], string="Tipo de oferta rápida", default='none')
 
     recurrence_type = fields.Selection(
         [('none', 'Sin recurrencia'),
@@ -34,6 +39,12 @@ class ProductTag(models.Model):
         string="Recurrencia",
         default='none',
         help="Define si el descuento se aplica de forma recurrente."
+    )
+
+    flash_hours = fields.Integer(
+        string="Horas de relámpago",
+        default=1,
+        help="Duración en horas para la oferta relámpago (máximo 6 horas)."
     )
 
     stored_discount = fields.Float(
@@ -89,6 +100,19 @@ class ProductTag(models.Model):
                         product.product_tag_ids = [(3, self.id)]  # Quitar la etiqueta
             except Exception as e:
                 _logger.error(f"Error en _onchange_date_range: {e}")
+
+
+
+    @api.onchange('offer_time_type', 'flash_hours')
+    def _onchange_offer_time_type(self):
+        mexico_tz = pytz.timezone('America/Mexico_City')
+        now = datetime.now(mexico_tz)
+        if self.offer_time_type == 'day':
+            self.start_date = now.replace(minute=0, second=0, microsecond=0)
+            self.end_date = self.start_date + timedelta(hours=24)
+        elif self.offer_time_type == 'flash' and self.flash_hours:
+            self.start_date = now.replace(minute=0, second=0, microsecond=0)
+            self.end_date = self.start_date + timedelta(hours=self.flash_hours)
 
     def _apply_recurrent_discount(self):
         """Aplica o desactiva descuentos según la recurrencia."""
