@@ -76,16 +76,16 @@ class OffersController(http.Controller):
         for cat in categories:
             # Contar productos publicados, con al menos un tag, y que pertenezcan a esta categoría (o sus hijos)
             prod_count = request.env['product.template'].sudo().search_count([
-            ('website_published', '=', True),
-            ('product_tag_ids', '!=', False),
-            ('public_categ_ids', 'child_of', cat.id)
+                ('website_published', '=', True),
+                ('product_tag_ids', '!=', False),
+                ('categ_id', 'child_of', cat.id)  # <-- Aquí debe ser categ_id, no public_categ_ids
             ])
             categories_with_count.append({
-            'id': cat.id,
-            'name': cat.name,
-            'product_count': prod_count,
+                'id': cat.id,
+                'name': cat.name,
+                'product_count': prod_count,
             })
-            
+                    
         return request.render('theme_xtream.offers_template', {
             'discounted_products': tagged_products,
             'categories': main_categories,
