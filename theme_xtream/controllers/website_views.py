@@ -15,8 +15,15 @@ class OffersController(http.Controller):
             ('categ_id', '!=', False)  # <-- Falta esto para asegurar que tengan categoría
         ])
         # Obtener categorías principales (categorías sin padre)
-        main_categories = request.env['product.category'].sudo().search([])
-        # Solo productos publicados y que tengan al menos una etiqueta con start_date
+        all_categories = request.env['product.category'].sudo().search([])
+        main_categories = [
+            cat for cat in all_categories
+            if request.env['product.template'].sudo().search_count([
+                ('website_published', '=', True),
+                ('product_tag_ids', '!=', False),
+                ('categ_id', 'child_of', cat.id)
+            ]) > 0
+        ]        # Solo productos publicados y que tengan al menos una etiqueta con start_date
         tagged_products = [p for p in tagged_products if p.website_published and p.product_tag_ids and p.product_tag_ids[0].start_date]
 
         # Ordenar por la fecha más reciente de start_date
@@ -84,12 +91,13 @@ class OffersController(http.Controller):
             })     
         return request.render('theme_xtream.offers_template', {
             'discounted_products': tagged_products,
-            'categories': main_categories,
             'categories_with_count': categories_with_count,
             'total_products': total_products,
             'price_ranges': price_ranges,
             'oferta_dia': oferta_dia,
-            'oferta_relampago': oferta_relampago,            
+            'oferta_relampago': oferta_relampago,
+            'all_categories': main_categories,
+                        
         })
 
     @http.route(['/shop/category/<model("product.public.category"):category>', '/shop/category/all'], type='http', auth="public", website=True)
