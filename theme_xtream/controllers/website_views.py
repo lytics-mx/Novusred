@@ -15,7 +15,29 @@ class OffersController(http.Controller):
             ('categ_id', '!=', False)  # <-- Falta esto para asegurar que tengan categoría
         ])
         # Obtener categorías principales (categorías sin padre)
-        main_categories = request.env['product.category'].sudo().search([('parent_id', '=', False)])
+        # Obtener todas las categorías principales y sus subcategorías recursivamente,
+        # solo si tienen productos publicados con al menos una etiqueta
+        def get_categories_with_products(parent_id=False):
+            categories = request.env['product.category'].sudo().search([('parent_id', '=', parent_id)])
+            result = []
+            for cat in categories:
+            # Verifica si la categoría (o sus hijos) tiene productos con etiquetas
+            prod_count = request.env['product.template'].sudo().search_count([
+                ('website_published', '=', True),
+                ('product_tag_ids', '!=', False),
+                ('categ_id', 'child_of', cat.id)
+            ])
+            if prod_count > 0:
+                children = get_categories_with_products(cat.id)
+                result.append({
+                'id': cat.id,
+                'name': cat.name,
+                'children': children,
+                'product_count': prod_count,
+                })
+            return result
+
+        main_categories = get_categories_with_products()
         # Solo productos publicados y que tengan al menos una etiqueta con start_date
         tagged_products = [p for p in tagged_products if p.website_published and p.product_tag_ids and p.product_tag_ids[0].start_date]
 
@@ -69,16 +91,9 @@ class OffersController(http.Controller):
             ]),
         }
         # Obtener solo las categorías públicas que tengan al menos un producto con etiqueta
-        # Obtener todas las categorías públicas (principales y subcategorías)
-        # ...existing code...
-        # Antes:
-        # main_categories = request.env['product.category'].sudo().search([('parent_id', '=', False)])
-        
-        # Ahora (todas las categorías, incluidas subcategorías):
-        all_categories = request.env['product.category'].sudo().search([])
-        
+
         categories_with_count = []
-        for cat in all_categories:
+        for cat in main_categories:
             prod_count = request.env['product.template'].sudo().search_count([
                 ('website_published', '=', True),
                 ('product_tag_ids', '!=', False),
@@ -88,8 +103,7 @@ class OffersController(http.Controller):
                 'id': cat.id,
                 'name': cat.name,
                 'product_count': prod_count,
-            })
-        # ...existing code...    
+            })     
         return request.render('theme_xtream.offers_template', {
             'discounted_products': tagged_products,
             'categories': main_categories,
