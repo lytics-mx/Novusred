@@ -106,7 +106,7 @@ class ProductTag(models.Model):
     @api.onchange('offer_time_type', 'flash_hours')
     def _onchange_offer_time_type(self):
         mexico_tz = pytz.timezone('America/Mexico_City')
-        now = datetime.now(mexico_tz).replace(minute=0, second=0, microsecond=0)
+        now = datetime.now(mexico_tz)
         naive_now = now.replace(tzinfo=None)
         if self.offer_time_type == 'day':
             self.start_date = naive_now
