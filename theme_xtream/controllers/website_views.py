@@ -13,7 +13,7 @@ class OffersController(http.Controller):
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False),
         ])
-        product_tags = request.env['product.tag'].search([('visible_on_commercial', '=', True)])
+        product_tags = request.env['product.tag'].search([('visible_on_ecommerce', '=', True)])
 
         # Obtener categorías principales (categorías sin padre)
         all_categories = request.env['product.category'].sudo().search([])
