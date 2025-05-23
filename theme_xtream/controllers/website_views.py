@@ -9,11 +9,13 @@ class OffersController(http.Controller):
     def offers(self, **kwargs):
         """Renderiza la página de productos en oferta."""
         # Filtrar productos publicados que tengan al menos una etiqueta
+        # ...existing code...
         tagged_products = request.env['product.template'].sudo().search([
             ('website_published', '=', True),
-            ('product_tag_ids', '!=', False)
+            ('product_tag_ids', '!=', False),
+            ('categ_id', '!=', False)  # <-- Falta esto para asegurar que tengan categoría
         ])
-
+        # ...existing code...
         # Solo productos publicados y que tengan al menos una etiqueta con start_date
         tagged_products = [p for p in tagged_products if p.website_published and p.product_tag_ids and p.product_tag_ids[0].start_date]
 
