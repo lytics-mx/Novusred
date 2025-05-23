@@ -70,6 +70,7 @@ class OffersController(http.Controller):
         }
         # Solo categorías públicas que tengan al menos un producto con etiqueta
         categories = request.env['product.public.category'].sudo().search([
+            ('website_published', '=', True),
             ('product_tmpl_ids.product_tag_ids', '!=', False)
         ])
         categories_with_count = []
