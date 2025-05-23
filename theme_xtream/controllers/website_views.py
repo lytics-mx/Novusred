@@ -68,6 +68,7 @@ class OffersController(http.Controller):
                 ('discounted_price', '>', 1000)
             ]),
         }
+        # Solo categorías con productos que tienen etiqueta
         categories = request.env['product.public.category'].sudo().search([])
         categories_with_count = []
         for cat in categories:
@@ -76,11 +77,12 @@ class OffersController(http.Controller):
                 ('product_tag_ids', '!=', False),
                 ('public_categ_ids', 'child_of', cat.id)
             ])
-            categories_with_count.append({
-                'id': cat.id,
-                'name': cat.name,
-                'product_count': prod_count,
-            })
+            if prod_count > 0:
+                categories_with_count.append({
+                    'id': cat.id,
+                    'name': cat.name,
+                    'product_count': prod_count,
+                })
 
         return request.render('theme_xtream.offers_template', {
             'discounted_products': tagged_products,
