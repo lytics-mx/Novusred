@@ -174,3 +174,28 @@ class ProductTag(models.Model):
             products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
             for product in products:
                 product.write({'product_tag_ids': [(3, tag.id)]})  # Eliminar la etiqueta
+
+
+    def action_apply(self):
+        active_id = self.env.context.get('active_id')
+        tag = self.env['product.tag'].browse(active_id)
+        tag.flash_hours = self.flash_hours
+        tag.start_date = self.start_date
+        tag.end_date = self.end_date
+        return {'type': 'ir.actions.act_window_close'}
+    
+
+    def open_offer_wizard(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'product.tag.offer.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_flash_hours': self.flash_hours,
+                'default_start_date': self.start_date,
+                'default_end_date': self.end_date,
+                'active_id': self.id,
+            }
+        }    
