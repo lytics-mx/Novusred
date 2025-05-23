@@ -29,7 +29,7 @@ class ProductTag(models.Model):
         ('none', 'Manual'),
         ('day', 'Todo el día'),
         ('flash', 'Relámpago'),
-    ], string="Tipo de oferta rápida", default='none')
+    ], string="Tipo de oferta rápida", default='')
 
     recurrence_type = fields.Selection(
         [('none', 'Sin recurrencia'),
