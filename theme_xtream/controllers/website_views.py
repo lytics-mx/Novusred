@@ -12,8 +12,9 @@ class OffersController(http.Controller):
         tagged_products = request.env['product.template'].sudo().search([
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False),
-            ('categ_id', '!=', False)  # <-- Falta esto para asegurar que tengan categoría
         ])
+        product_tags = request.env['product.tag'].search([('visible_on_commercial', '=', True)])
+
         # Obtener categorías principales (categorías sin padre)
         all_categories = request.env['product.category'].sudo().search([])
         main_categories = [
@@ -97,6 +98,7 @@ class OffersController(http.Controller):
             'oferta_dia': oferta_dia,
             'oferta_relampago': oferta_relampago,
             'all_categories': main_categories,
+            'product_tags': product_tags,
                         
         })
 
