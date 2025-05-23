@@ -107,12 +107,13 @@ class OffersController(http.Controller):
             ('product_tag_ids', '!=', False)
         ]
         # Solo mostrar categorías principales que tengan productos con al menos un product.tag y categoría asignada
+        all_categories = request.env['product.category'].sudo().search([])
         main_categories = [
-            cat for cat in main_categories
+            cat for cat in all_categories
             if request.env['product.template'].sudo().search_count([
-            ('website_published', '=', True),
-            ('product_tag_ids', '!=', False),
-            ('categ_id', 'child_of', cat.id)
+                ('website_published', '=', True),
+                ('product_tag_ids', '!=', False),
+                ('categ_id', 'child_of', cat.id)
             ]) > 0
         ]
         categories_with_count = []
@@ -206,6 +207,7 @@ class OffersController(http.Controller):
             'price_ranges': price_ranges,
             'offer_type': offer_type,
             'categories_with_count': categories_with_count,
+            'all_categories': main_categories,
 
 
         })
