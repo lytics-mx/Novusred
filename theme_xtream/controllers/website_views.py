@@ -87,8 +87,9 @@ class OffersController(http.Controller):
 
         return request.render('theme_xtream.offers_template', {
             'discounted_products': tagged_products,
-            'categories': main_categories,
+            'categories': categories,
             'categories_with_count': categories_with_count,
+            # ...otros context...
             'total_products': total_products,
             'price_ranges': price_ranges,
             'oferta_dia': oferta_dia,
