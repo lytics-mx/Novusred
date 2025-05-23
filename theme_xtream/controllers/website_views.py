@@ -17,8 +17,10 @@ class OffersController(http.Controller):
         # Obtener categorías principales (categorías sin padre)
         main_categories = request.env['product.category'].sudo().search([('parent_id', '=', False)])
         # Solo productos publicados y que tengan al menos una etiqueta con start_date
-        tagged_products = [p for p in tagged_products if p.website_published and p.product_tag_ids and p.product_tag_ids[0].start_date]
-
+        tagged_products = [
+            p for p in tagged_products
+            if p.website_published and any(tag.start_date for tag in p.product_tag_ids)
+        ]
         # Ordenar por la fecha más reciente de start_date
         tagged_products = sorted(
             tagged_products,
@@ -30,8 +32,10 @@ class OffersController(http.Controller):
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False)
         ])
-        oferta_dia = []
-        oferta_relampago = []
+    # Solo productos con alguna etiqueta con fechas válidas
+        mexico_tz = timezone('America/Mexico_City')
+        now = Datetime.now(mexico_tz)
+        filtered_products = []
         for p in tagged_products:
             for tag in p.product_tag_ids:
                 if tag.start_date and tag.end_date:
@@ -41,14 +45,18 @@ class OffersController(http.Controller):
                         start = Datetime.fromisoformat(start)
                     if isinstance(end, str):
                         end = Datetime.fromisoformat(end)
-                    duration = (end - start).total_seconds() / 3600.0
-                    if 23.5 <= duration <= 24.5:
-                        oferta_dia.append(p)
-                        break  # Ya cumple, no revises más etiquetas
-                    elif 0 < duration <= 6:
-                        oferta_relampago.append(p)
+                    start = start.astimezone(mexico_tz)
+                    end = end.astimezone(mexico_tz)
+                    if start <= now <= end:
+                        filtered_products.append(p)
                         break
-                    
+        # Ordenar por la fecha más reciente de start_date de cualquier etiqueta
+        filtered_products = sorted(
+            filtered_products,
+            key=lambda p: max([tag.start_date for tag in p.product_tag_ids if tag.start_date]),
+            reverse=True
+        )
+                        
         price_ranges = {
             '0_500': request.env['product.template'].sudo().search_count([
                 ('website_published', '=', True),
@@ -69,12 +77,11 @@ class OffersController(http.Controller):
             ]),
         }
         return request.render('theme_xtream.offers_template', {
-            'discounted_products': tagged_products,
+            'discounted_products': filtered_products,
             'categories': main_categories,
             'total_products': total_products,
             'price_ranges': price_ranges,
-            'oferta_dia': oferta_dia,
-            'oferta_relampago': oferta_relampago,            
+         
         })
 
     @http.route(['/shop/category/<model("product.public.category"):category>', '/shop/category/all'], type='http', auth="public", website=True)
@@ -115,7 +122,7 @@ class OffersController(http.Controller):
 
         # Buscar productos y categorías
         products = request.env['product.template'].sudo().search(domain)
-
+        type_offer = kwargs.get('type')
         if type_offer in ['day', 'flash']:
             filtered = []
             mexico_tz = timezone('America/Mexico_City')
