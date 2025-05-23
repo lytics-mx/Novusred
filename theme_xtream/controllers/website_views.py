@@ -113,7 +113,7 @@ class OffersController(http.Controller):
         
         category_id = request.params.get('category_id')
         if category_id:
-            domain.append(('public_categ_ids', 'child_of', int(category_id)))
+            domain.append(('categ_id', 'child_of', int(category_id)))
         
         if offers:
             domain.append(('discounted_price', '>', 0))
