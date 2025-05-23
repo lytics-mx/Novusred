@@ -68,11 +68,9 @@ class OffersController(http.Controller):
                 ('discounted_price', '>', 1000)
             ]),
         }
-        # Solo categorías públicas que tengan al menos un producto con etiqueta
         categories = request.env['product.public.category'].sudo().search([
             ('product_tmpl_ids.product_tag_ids', '!=', False)
         ])
-        # Solo dejar categorías con nombre definido
         categories = categories.filtered(lambda c: c.name)
         categories_with_count = []
         for cat in categories:
