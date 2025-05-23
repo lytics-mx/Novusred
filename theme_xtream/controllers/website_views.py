@@ -109,7 +109,19 @@ class OffersController(http.Controller):
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False)
         ]
-        
+        main_categories = request.env['product.category'].sudo().search([('parent_id', '=', False)])
+        categories_with_count = []
+        for cat in main_categories:
+            prod_count = request.env['product.template'].sudo().search_count([
+                ('website_published', '=', True),
+                ('product_tag_ids', '!=', False),
+                ('categ_id', 'child_of', cat.id)
+            ])
+            categories_with_count.append({
+                'id': cat.id,
+                'name': cat.name,
+                'product_count': prod_count,
+            })        
         category_id = request.params.get('category_id')
         if category_id:
             domain.append(('categ_id', 'child_of', int(category_id)))
@@ -190,4 +202,7 @@ class OffersController(http.Controller):
             'total_products': total_products,
             'price_ranges': price_ranges,
             'offer_type': offer_type,
+            'categories_with_count': categories_with_count,
+
+
         })
