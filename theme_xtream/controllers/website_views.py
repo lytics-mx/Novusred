@@ -18,9 +18,15 @@ class OffersController(http.Controller):
         tagged_products = [p for p in tagged_products if p.website_published and p.product_tag_ids and p.product_tag_ids[0].start_date]
 
         # Obtener las categorías de los productos en oferta
-        offer_categories = request.env['product.public.category'].sudo().search([
-            ('id', 'in', [cat.id for p in tagged_products for cat in p.public_categ_ids])
-        ])
+        # Obtener categorías (principales o subcategorías) que tengan productos con tags
+        category_ids = set()
+        for p in tagged_products:
+            for cat in p.public_categ_ids:
+                category_ids.add(cat.id)
+                offer_categories = request.env['product.public.category'].sudo().search([
+                    ('id', 'in', list(category_ids)),
+                    ('product_tmpl_ids.product_tag_ids', '!=', False)
+                ])
         # Ordenar por la fecha más reciente de start_date
         tagged_products = sorted(
             tagged_products,
@@ -101,7 +107,7 @@ class OffersController(http.Controller):
         else:
             # Si no hay categoría, mostrar todos los productos
             domain.append(('public_categ_ids', '!=', False))
-            
+
         
         if offers:
             domain.append(('discounted_price', '>', 0))
