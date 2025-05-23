@@ -23,10 +23,10 @@ class OffersController(http.Controller):
         for p in tagged_products:
             for cat in p.public_categ_ids:
                 category_ids.add(cat.id)
-                offer_categories = request.env['product.public.category'].sudo().search([
-                    ('id', 'in', list(category_ids)),
-                    ('product_tmpl_ids.product_tag_ids', '!=', False)
-                ])
+        offer_categories = request.env['product.public.category'].sudo().search([
+            ('id', 'in', list(category_ids)),
+            ('product_tmpl_ids.product_tag_ids', '!=', False)
+        ])
         # Ordenar por la fecha más reciente de start_date
         tagged_products = sorted(
             tagged_products,
