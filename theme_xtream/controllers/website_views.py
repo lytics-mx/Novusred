@@ -105,6 +105,7 @@ class OffersController(http.Controller):
             'oferta_dia': oferta_dia,
             'oferta_relampago': oferta_relampago,
             'all_categories': main_categories,
+            'free_shipping': free_shipping,
                         
         })
     
