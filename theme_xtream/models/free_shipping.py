@@ -11,7 +11,7 @@ class ShoppingFree(models.Model):
         help='Selecciona los productos relacionados'
     )
     
-    def action_toggle_free_shipping(self):
+    def action_update_products(self):
         """Activa o desactiva el envío gratis en los productos relacionados"""
         # Desactiva el envío gratis en TODOS los productos
         self.env['product.template'].sudo().search([]).write({'free_shipping': False})
@@ -27,7 +27,7 @@ class ShoppingFree(models.Model):
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': 'Resultado',
+                'title': 'Productos actualizados',
                 'message': message,
                 'sticky': False,
             }
