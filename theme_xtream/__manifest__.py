@@ -61,7 +61,7 @@
 
 
         'views/website_configuration.xml/imagenes_banner.xml',
-        'views/website_configuration.xml/shopping_free.xml',
+        'views/website_configuration.xml/free_shipping.xml',
 
 
 
