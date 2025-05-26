@@ -1,5 +1,5 @@
 from odoo import models, fields, api
-from datetime import datetime  # Importar datetime
+from datetime import datetime, timezone  # Importar datetime
 
 
 class ProductTemplate(models.Model):
@@ -158,3 +158,35 @@ class ProductTemplate(models.Model):
                  # Si no hay fecha de finalización, muestra "Sin fecha"
                  time_remaining[product.id] = "Sin fecha"
          return time_remaining
+     
+     remaining_time_text = fields.Char(
+          string="Tiempo restante",
+          compute="_compute_remaining_time_text",
+          store=False,
+          help="Tiempo restante para finalizar la oferta"
+     )
+     
+     def _compute_remaining_time_text(self):
+          """Calcula el tiempo restante hasta la finalización de la oferta."""
+          now = datetime.now(timezone('America/Mexico_City'))
+          
+          for product in self:
+               product.remaining_time_text = ""
+               if product.product_tag_ids:
+                    for tag in product.product_tag_ids:
+                         if tag.end_date:
+                              end = tag.end_date
+                              if isinstance(end, str):
+                                   end = datetime.fromisoformat(end)
+                              
+                              # Convertir a objeto datetime consciente de la zona horaria
+                              if end.tzinfo is None:
+                                   end = end.replace(tzinfo=timezone('UTC'))
+                                   end = end.astimezone(timezone('America/Mexico_City'))
+                              
+                              if end > now:
+                                   remaining_time = end - now
+                                   remaining_hours = int(remaining_time.total_seconds() / 3600)
+                                   remaining_minutes = int((remaining_time.total_seconds() % 3600) / 60)
+                                   product.remaining_time_text = f"{remaining_hours}h {remaining_minutes}m"
+                                   break  # Solo usar la primera etiqueta con fecha de fin válida     

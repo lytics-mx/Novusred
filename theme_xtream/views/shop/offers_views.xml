@@ -42,7 +42,7 @@
                                 <ul class="list-unstyled">
                                     <li>
                                         <a t-att-href="'/offers%s' % ('?free_shipping=true' if free_shipping else '')">
-                                            <small style="color: #848484;"> <t t-esc="total_products" /></small>
+                                            <small style="color: #848484;"><t t-esc="total_products" /> productos</small>
                                         </a>
                                     </li>
                                 </ul>
@@ -76,11 +76,21 @@
                             <div class="mb-3">
                                 <h5>Tipos de oferta</h5>
                                 <ul class="list-unstyled">
-                                    <li><a t-att-href="'/shop/category/all?offers=true&amp;type=day%s' % ('&amp;free_shipping=true' if free_shipping else '')">Oferta del día</a></li>
-                                    <li><a t-att-href="'/shop/category/all?offers=true&amp;type=flash%s' % ('&amp;free_shipping=true' if free_shipping else '')">Oferta relámpago</a></li>
-                                    <li><a t-att-href="'/shop/category/all?offers=true&amp;type=current%s' % ('&amp;free_shipping=true' if free_shipping else '')">
-                                        <span style="color: #6c757d;">Ofertas activas ahora</span>
-                                    </a></li>
+                                    <li>
+                                        <a t-att-href="'/shop/category/all?offers=true&amp;type=day%s' % ('&amp;free_shipping=true' if free_shipping else '')" style="color: #848484;">
+                                            Oferta del día
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a t-att-href="'/shop/category/all?offers=true&amp;type=flash%s' % ('&amp;free_shipping=true' if free_shipping else '')" style="color: #848484;">
+                                            Oferta relámpago
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a t-att-href="'/shop/category/all?offers=true&amp;type=current%s' % ('&amp;free_shipping=true' if free_shipping else '')" style="color: #848484;">
+                                            <span>Ofertas activas ahora</span>
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                                                     
@@ -90,7 +100,7 @@
                                 <ul class="list-unstyled">
                                     <t t-foreach="categories_with_count" t-as="cat">
                                         <li>
-                                            <a t-att-href="'/shop/category/all?offers=true&amp;category_id=%s%s' % (cat['id'], '&amp;free_shipping=true' if free_shipping else '')">
+                                            <a t-att-href="'/shop/category/all?offers=true&amp;category_id=%s%s' % (cat['id'], '&amp;free_shipping=true' if free_shipping else '')" style="color: #848484;">
                                                 <span t-esc="cat['name']"/> (<span t-esc="cat['product_count']"/>)
                                             </a>
                                         </li>
@@ -104,19 +114,19 @@
                             <div class="mb-3 p-3 border rounded-3">
                                 <ul class="list-unstyled">
                                     <li>
-                                        <a t-att-href="'/shop/category/all?min_price=0&amp;max_price=500%s' % ('&amp;free_shipping=true' if free_shipping else '')" class="d-flex justify-content-between">
+                                        <a t-att-href="'/shop/category/all?min_price=0&amp;max_price=500%s' % ('&amp;free_shipping=true' if free_shipping else '')" class="d-flex justify-content-between" style="color: #848484;">
                                             <span>Hasta $500</span>
                                             <span class="text-muted">(<t t-esc="price_ranges['0_500']"/>)</span>
                                         </a>
                                     </li>
                                     <li>
-                                        <a t-att-href="'/shop/category/all?min_price=500&amp;max_price=1000%s' % ('&amp;free_shipping=true' if free_shipping else '')" class="d-flex justify-content-between">
+                                        <a t-att-href="'/shop/category/all?min_price=500&amp;max_price=1000%s' % ('&amp;free_shipping=true' if free_shipping else '')" class="d-flex justify-content-between" style="color: #848484;">
                                             <span>De $500 a $1000</span>
                                             <span class="text-muted">(<t t-esc="price_ranges['500_1000']"/>)</span>
                                         </a>
                                     </li>
                                     <li>
-                                        <a t-att-href="'/shop/category/all?min_price=1000%s' % ('&amp;free_shipping=true' if free_shipping else '')" class="d-flex justify-content-between">
+                                        <a t-att-href="'/shop/category/all?min_price=1000%s' % ('&amp;free_shipping=true' if free_shipping else '')" class="d-flex justify-content-between" style="color: #848484;">
                                             <span>Más de $1000</span>
                                             <span class="text-muted">(<t t-esc="price_ranges['1000_plus']"/>)</span>
                                         </a>
@@ -145,13 +155,25 @@
                                     <div class="card h-100 shadow-sm product-card w-100" style="margin-bottom: 0;">
                                         <a t-att-href="'/shop/product/' + str(product.id)">
                                             <t t-if="product.product_tag_ids and product.product_tag_ids[0].end_date">
-                                                <!-- <div class="countdown-timer position-absolute" 
-                                                    style="font-size: 0.9rem; color:rgb(90, 89, 88); top: 10px; right: 10px; background: rgba(255,255,255,0.9); padding: 5px; border-radius: 4px;">
+                                                <div class="countdown-timer position-absolute" 
+                                                     style="font-size: 0.85rem; color: #6c757d; top: 10px; right: 10px; background: rgba(255,255,255,0.9); 
+                                                            padding: 5px 8px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
                                                     <i class="fa fa-clock-o me-1"></i>
-                                                    Termina en:
-                                                    <t t-esc="request.env['product.template'].browse(product.id).get_time_remaining().get(product.id)" />
-                                                </div> -->
-                                                
+                                                    <span>
+                                                        <t t-if="product.product_tag_ids[0].offer_time_type == 'flash'">
+                                                            Oferta hasta las <t t-esc="(datetime.now() + timedelta(hours=product.product_tag_ids[0].flash_hours)).strftime('%H:%M')" />
+                                                        </t>
+                                                        <t t-elif="product.product_tag_ids[0].offer_time_type == 'day'">
+                                                            Oferta hasta hoy 23:59
+                                                        </t>
+                                                        <t t-elif="product.remaining_time_text">
+                                                            Termina en: <t t-esc="product.remaining_time_text" />
+                                                        </t>
+                                                        <t t-else="">
+                                                            Oferta hasta <t t-esc="product.product_tag_ids[0].end_date.strftime('%d/%m/%Y')" />
+                                                        </t>
+                                                    </span>
+                                                </div>
                                             </t>
                                             <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
                                                 class="card-img-top" />

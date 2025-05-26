@@ -1,6 +1,6 @@
 from odoo import http
 from odoo.http import request
-from datetime import datetime as Datetime
+from datetime import datetime as Datetime, timedelta
 from pytz import timezone
 
 class OffersController(http.Controller):
@@ -250,9 +250,10 @@ class OffersController(http.Controller):
         # Buscar productos y categorías
         products = request.env['product.template'].sudo().search(domain)
     
-        # En la función shop_by_category, actualizar la sección donde procesa el tipo_offer:
+        # Modificar la sección donde procesa los tiempos restantes
         if type_offer in ['day', 'flash', 'current']:
             filtered = []
+            remaining_times = {}  # Diccionario para almacenar los tiempos restantes
             now = Datetime.now(timezone('America/Mexico_City'))
             
             for p in products:
@@ -284,11 +285,12 @@ class OffersController(http.Controller):
                         elif type_offer == 'current' and start <= now <= end:
                             # Para ofertas activas actualmente
                             filtered.append(p)
-                            # Añadir información sobre tiempo restante al producto
+                            # Calcular tiempo restante
                             remaining_time = end - now
                             remaining_hours = int(remaining_time.total_seconds() / 3600)
                             remaining_minutes = int((remaining_time.total_seconds() % 3600) / 60)
-                            p.remaining_time_text = f"{remaining_hours}h {remaining_minutes}m"
+                            # Almacenar en el diccionario usando el ID del producto como clave
+                            remaining_times[p.id] = f"{remaining_hours}h {remaining_minutes}m"
                             break
             products = filtered
     
@@ -340,4 +342,7 @@ class OffersController(http.Controller):
             'offer_type': offer_type,
             'categories_with_count': categories_with_count,
             'all_categories': main_categories,
+            'remaining_times': remaining_times,  # Añadir el diccionario al contexto
+            'datetime': Datetime,  # Necesario para usar datetime en la plantilla
+            'timedelta': timedelta,  # Si también necesitas timedelta
         })
