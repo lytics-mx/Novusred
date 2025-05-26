@@ -109,11 +109,7 @@ class OffersController(http.Controller):
                     elif 0 < duration <= 6:
                         oferta_relampago.append(p)
                         break
-        all_products = request.env['product.template'].sudo().search(price_range_domain)
-        oferta_dia = [p for p in oferta_dia if p.list_price > p.discounted_price]        
-        oferta_relampago = [p for p in oferta_relampago if p.list_price > p.discounted_price]         
-        # Luego filtrar por descuento real
-        discounted_products = all_products.filtered(lambda p: p.list_price > p.discounted_price)
+
                                 
         # Actualizar los contadores de rango de precios según el filtro de free_shipping
         price_range_domain = [
@@ -123,7 +119,14 @@ class OffersController(http.Controller):
         
         if free_shipping:
             price_range_domain.append(('free_shipping', '=', True))
-            
+
+        all_products = request.env['product.template'].sudo().search(price_range_domain)
+        oferta_dia = [p for p in oferta_dia if p.list_price > p.discounted_price]        
+        oferta_relampago = [p for p in oferta_relampago if p.list_price > p.discounted_price]         
+        # Luego filtrar por descuento real
+        discounted_products = all_products.filtered(lambda p: p.list_price > p.discounted_price)
+           
+
         price_ranges = {
             '0_500': request.env['product.template'].sudo().search_count([
                 *price_range_domain,
