@@ -421,34 +421,76 @@
                 <section class="more-categories py-5">
                     <h2 class="text-center" style="font-family: 'Questrial', sans-serif; font-size: 25px;">MÁS CATEGORÍAS</h2>
                     <div class="container">
-                        <div class="row">
-                            <t t-set="subcategories" t-value="request.env['banner.image.line'].sudo().search([
-                                ('name', '=', 'subcategorias'),
-                                ('is_active_carousel', '=', True)
-                            ])" />
-                            <t t-foreach="subcategories" t-as="subcategory" t-key="subcategory.id">
-                                <div class="col-md-4 mb-4">
-                                    <div class="card shadow-sm" style="border-radius: 10px; overflow: hidden; border: 1px solid #ddd;">
-                                        <div style="position: relative;">
-                                            <!-- Mostrar la primera imagen de general_images -->
-                                            <t t-if="subcategory.general_images">
-                                                <img t-att-src="'/web/image/' + str(subcategory.general_images[0].id)" 
-                                                     alt="Subcategory Image" 
-                                                     class="img-fluid" 
-                                                     style="width: 100%; height: 200px; object-fit: cover;" />
-                                            </t>
-                                            <div style="position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0, 0, 0, 0.5); color: white; padding: 10px;">
-                                                <h5 class="mb-0" t-esc="subcategory.name" style="font-size: 16px; font-weight: bold;"></h5>
-                                                <p class="mb-0" style="font-size: 12px;">A bordo de ferrocarriles</p>
+                        <t t-set="category_banner" t-value="request.env['banner.image.line'].sudo().search([('name', '=', 'marcas'), ('is_active_carousel', '=', True)], limit=1)" />
+                        <t t-if="category_banner and category_banner.selected_categories and category_banner.category_menu_images">
+                            <t t-set="categories" t-value="category_banner.selected_categories" />
+                            <t t-set="images" t-value="category_banner.category_menu_images" />
+                            <t t-set="cat_img_pairs" t-value="list(zip(categories, images))" />
+                            <t t-if="len(cat_img_pairs) > 3">
+                                <!-- Carousel for more than 3 categories -->
+                                <div id="categoryMenuCarousel" class="carousel slide" data-bs-ride="carousel">
+                                    <div class="carousel-inner">
+                                        <t t-foreach="[cat_img_pairs[:3], cat_img_pairs[3:6]]" t-as="slide" t-key="slide">
+                                            <div t-att-class="'carousel-item' + (' active' if loop.index0 == 0 else '')">
+                                                <div class="row justify-content-center">
+                                                    <t t-foreach="slide" t-as="pair">
+                                                        <div class="col-md-4 mb-4">
+                                                            <div class="card shadow-sm" style="border-radius: 10px; overflow: hidden; border: 1px solid #ddd;">
+                                                                <div style="position: relative;">
+                                                                    <img t-att-src="'/web/image/' + str(pair[1].id)" 
+                                                                         alt="Category Image" 
+                                                                         class="img-fluid" 
+                                                                         style="width: 100%; height: 200px; object-fit: cover;" />
+                                                                    <div style="position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0, 0, 0, 0.5); color: white; padding: 10px;">
+                                                                        <h5 class="mb-0" t-esc="pair[0].name" style="font-size: 16px; font-weight: bold;"></h5>
+                                                                        <p class="mb-0" style="font-size: 12px;">Subcategoría destacada</p>
+                                                                    </div>
+                                                                </div>
+                                                                <div style="background-color: white; text-align: center; padding: 10px;">
+                                                                    <p class="mb-0" style="font-size: 14px; font-weight: bold; color: #333;">SUBCATEGORÍA</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </t>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div style="background-color: white; text-align: center; padding: 10px;">
-                                            <p class="mb-0" style="font-size: 14px; font-weight: bold; color: #333;">SUBCATEGORIA</p>
-                                        </div>
+                                        </t>
                                     </div>
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#categoryMenuCarousel" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Anterior</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#categoryMenuCarousel" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Siguiente</span>
+                                    </button>
                                 </div>
                             </t>
-                        </div>
+                            <t t-else="">
+                                <!-- Show up to 3 categories without carousel -->
+                                <div class="row justify-content-center">
+                                    <t t-foreach="cat_img_pairs" t-as="pair">
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card shadow-sm" style="border-radius: 10px; overflow: hidden; border: 1px solid #ddd;">
+                                                <div style="position: relative;">
+                                                    <img t-att-src="'/web/image/' + str(pair[1].id)" 
+                                                         alt="Category Image" 
+                                                         class="img-fluid" 
+                                                         style="width: 100%; height: 200px; object-fit: cover;" />
+                                                    <div style="position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0, 0, 0, 0.5); color: white; padding: 10px;">
+                                                        <h5 class="mb-0" t-esc="pair[0].name" style="font-size: 16px; font-weight: bold;"></h5>
+                                                        <p class="mb-0" style="font-size: 12px;">Subcategoría destacada</p>
+                                                    </div>
+                                                </div>
+                                                <div style="background-color: white; text-align: center; padding: 10px;">
+                                                    <p class="mb-0" style="font-size: 14px; font-weight: bold; color: #333;">SUBCATEGORÍA</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </t>
+                        </t>
                     </div>
                 </section>
 
