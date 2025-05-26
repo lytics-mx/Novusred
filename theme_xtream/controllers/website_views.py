@@ -20,7 +20,6 @@ class OffersController(http.Controller):
         # Filtro base para productos publicados con etiquetas
         domain = [
             ('website_published', '=', True),
-            ('visible_on_ecommerce', '=', True), 
             ('product_tag_ids', '!=', False),
         ]
         
@@ -34,13 +33,8 @@ class OffersController(http.Controller):
         # Solo productos que tengan al menos una etiqueta con start_date
         filtered_products = []
         for p in tagged_products:
-            if (
-            p.website_published
-            and p.visible_on_ecommerce
-            and p.product_tag_ids
-            and p.product_tag_ids[0].start_date
-            ):
-             filtered_products.append(p)
+            if p.website_published and p.product_tag_ids and p.product_tag_ids[0].start_date:
+                filtered_products.append(p)
     
         # Ordenar por la fecha más reciente de start_date
         filtered_products = sorted(
@@ -56,7 +50,6 @@ class OffersController(http.Controller):
         category_domain = [
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False),
-            ('visible_on_ecommerce', '=', True),
         ]
         
         # Aplicar filtro de free_shipping al dominio de categorías si está activo
@@ -84,8 +77,7 @@ class OffersController(http.Controller):
         # Calcular el total de productos publicados y con etiqueta
         total_domain = [
             ('website_published', '=', True),
-            ('product_tag_ids', '!=', False),
-            ('visible_on_ecommerce', '=', True),
+            ('product_tag_ids', '!=', False)
         ]
         if free_shipping:
             total_domain.append(('free_shipping', '=', True))
@@ -115,7 +107,6 @@ class OffersController(http.Controller):
         price_range_domain = [
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False),
-            ('visible_on_ecommerce', '=', True),
         ]
         
         if free_shipping:
@@ -144,8 +135,7 @@ class OffersController(http.Controller):
             cat_domain = [
                 ('website_published', '=', True),
                 ('product_tag_ids', '!=', False),
-                ('categ_id', 'child_of', cat.id),
-                ('visible_on_ecommerce', '=', True),
+                ('categ_id', 'child_of', cat.id)
             ]
             
             if free_shipping:
@@ -204,7 +194,6 @@ class OffersController(http.Controller):
         category_domain = [
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False),
-            ('visible_on_ecommerce', '=', True),
         ]
         
         if free_shipping:
@@ -225,8 +214,7 @@ class OffersController(http.Controller):
             cat_domain = [
                 ('website_published', '=', True),
                 ('product_tag_ids', '!=', False),
-                ('categ_id', 'child_of', cat.id),
-                ('visible_on_ecommerce', '=', True),
+                ('categ_id', 'child_of', cat.id)
             ]
             
             if free_shipping:
@@ -310,8 +298,7 @@ class OffersController(http.Controller):
         # Calcular el total de productos según los filtros actuales
         total_domain = [
             ('website_published', '=', True),
-            ('product_tag_ids', '!=', False),
-            ('visible_on_ecommerce', '=', True),
+            ('product_tag_ids', '!=', False)
         ]
         
         if free_shipping:
@@ -323,7 +310,6 @@ class OffersController(http.Controller):
         price_range_domain = [
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False),
-            ('visible_on_ecommerce', '=', True),
         ]
         
         if free_shipping:
