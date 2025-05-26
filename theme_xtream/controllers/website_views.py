@@ -39,7 +39,7 @@ class OffersController(http.Controller):
         # Ordenar por la fecha más reciente de start_date
         filtered_products = [
             p for p in filtered_products
-            if getattr(p, 'visible_on_ecommerce', True)
+            if getattr(p, 'visible_on_ecommerce', True) is True
         ]
         filtered_products = sorted(
             filtered_products,
