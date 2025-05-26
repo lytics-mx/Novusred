@@ -27,7 +27,10 @@ class OffersController(http.Controller):
         if free_shipping:
             domain.append(('free_shipping', '=', True))    
         
-        # IMPORTANTE: USA EL DOMAIN CON EL FILTRO free_shipping
+        # IMPORTANTE: Primero BUSCAR los productos con el dominio
+        tagged_products = request.env['product.template'].sudo().search(domain)
+        
+        # LUEGO filtrar por descuento real
         tagged_products = tagged_products.filtered(lambda p: p.list_price > p.discounted_price)
         
         # Solo productos que tengan al menos una etiqueta con start_date
@@ -35,6 +38,8 @@ class OffersController(http.Controller):
         for p in tagged_products:
             if p.website_published and p.product_tag_ids and p.product_tag_ids[0].start_date:
                 filtered_products.append(p)
+    
+        # Resto del código sin cambios...
     
     
         # Ordenar por la fecha más reciente de start_date
@@ -255,8 +260,12 @@ class OffersController(http.Controller):
         if max_price:
             domain.append(('discounted_price', '<=', float(max_price)))
     
-        # Filtrar solo productos con descuento real
+        # IMPORTANTE: Primero BUSCAR los productos
+        products = request.env['product.template'].sudo().search(domain)
+        
+        # LUEGO filtrar por descuento real
         products = products.filtered(lambda p: p.list_price > p.discounted_price)
+        
         
         # Si estás procesando tiempos restantes, mantener solo productos con descuento real
         if type_offer in ['day', 'flash', 'current']:
