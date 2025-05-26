@@ -57,7 +57,7 @@
 
 
         'views/inventory_control/brand_type.xml',
-        'views/inventory_control/porduct_template_odoo.xml',
+        'views/inventory_control/product_template_odoo.xml',
 
 
 
