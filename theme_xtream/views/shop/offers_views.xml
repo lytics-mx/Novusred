@@ -17,7 +17,7 @@
                     <div class="d-flex align-items-end justify-content-end flex-wrap" style="flex: 2;">
                         <div class="d-flex align-items-end justify-content-end flex-wrap w-100">
                             <t t-if="product_tags and product_tags|length > 0">
-                                <t t-foreach="product_tags[:6]" t-as="tag" t-index="i">
+                                <t t-foreach="[tag for tag in product_tags if getattr(tag, 'visible_on_ecommerce', False)][:6]" t-as="tag" t-index="i">
                                     <div class="text-center mx-4" style="min-width: 90px; position: relative;">
                                         <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
                                              t-att-alt="tag.name"
