@@ -46,7 +46,10 @@ class ProductTag(models.Model):
         default=1,
         help="Duración en horas para la oferta relámpago (máximo 6 horas)."
     )
-
+    stored_discount = fields.Float(
+        string="Descuento almacenado",
+        help="Almacena el valor del descuento para activarlo nuevamente según la recurrencia."
+    )
     retain_products = fields.Boolean(
         string="Retener productos",
         default=False,
