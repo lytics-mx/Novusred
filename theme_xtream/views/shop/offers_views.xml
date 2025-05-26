@@ -85,10 +85,10 @@
                             <div class="mb-3">
                                 <h5>Categorías</h5>
                                 <ul class="list-unstyled">
-                                    <t t-foreach="categories_with_count" t-as="cat">
+                                    <t t-foreach="categories_with_count" t-as="category">
                                         <li>
-                                            <a t-att-href="'/shop/category/all?offers=true&amp;category_id=%s' % cat['id']">
-                                                <span t-esc="cat['name']"/> (<span t-esc="cat['product_count']"/>)
+                                            <a t-att-href="'/offers?category_id=' + str(category.id) + (free_shipping and '&amp;free_shipping=true' or '')">
+                                                <t t-esc="category.name"/> (<t t-esc="category.product_count"/>)
                                             </a>
                                         </li>
                                     </t>
@@ -101,19 +101,19 @@
                             <div class="mb-3 p-3 border rounded-3">
                                 <ul class="list-unstyled">
                                     <li>
-                                        <a t-att-href="'/shop/category/all?min_price=0&amp;max_price=500'" class="d-flex justify-content-between">
+                                        <a t-att-href="'/shop/category/all?min_price=0&amp;max_price=500' + (free_shipping and '&amp;free_shipping=true' or '')" class="d-flex justify-content-between">
                                             <span>Hasta $500</span>
                                             <span class="text-muted">(<t t-esc="price_ranges['0_500']"/>)</span>
                                         </a>
                                     </li>
                                     <li>
-                                        <a t-att-href="'/shop/category/all?min_price=500&amp;max_price=1000'" class="d-flex justify-content-between">
+                                        <a t-att-href="'/shop/category/all?min_price=500&amp;max_price=1000' + (free_shipping and '&amp;free_shipping=true' or '')" class="d-flex justify-content-between">
                                             <span>De $500 a $1000</span>
                                             <span class="text-muted">(<t t-esc="price_ranges['500_1000']"/>)</span>
                                         </a>
                                     </li>
                                     <li>
-                                        <a t-att-href="'/shop/category/all?min_price=1000'" class="d-flex justify-content-between">
+                                        <a t-att-href="'/shop/category/all?min_price=1000' + (free_shipping and '&amp;free_shipping=true' or '')" class="d-flex justify-content-between">
                                             <span>Más de $1000</span>
                                             <span class="text-muted">(<t t-esc="price_ranges['1000_plus']"/>)</span>
                                         </a>
