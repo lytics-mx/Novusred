@@ -6,16 +6,16 @@ from pytz import timezone
 class OffersController(http.Controller):
 
     @http.route('/offers', type='http', auth='public', website=True)
-    def offers(self, **kwargs):
+    def offers(self,free_shipping=False,  **kwargs):
         """Renderiza la página de productos en oferta."""
 
-        free_shipping = kwargs.get('free_shipping', 'false').lower() == 'true'
-        domain = [
-            ('website_published', '=', True),
-            ('product_tag_ids', '!=', False),
-        ]
-        if free_shipping:
-            domain.append(('free_shipping', '=', True))     
+        FreeShipping = http.request.env['free.shipping'].sudo()
+        free_shipping_record = FreeShipping.search([], limit=1)
+        products = http.request.env['product.template'].sudo().search([])
+
+        if free_shipping and free_shipping_record:
+            products = free_shipping_record.product_ids
+    
         # Filtrar productos publicados que tengan al menos una etiqueta
         tagged_products = request.env['product.template'].sudo().search([
             ('website_published', '=', True),

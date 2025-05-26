@@ -43,7 +43,21 @@ class ProductTemplate(models.Model):
           store=True,
           help="Precio del producto después de aplicar el descuento."
      )
-     
+
+     free_shipping = fields.Boolean('Envío Gratis', default=False, tracking=True)
+    
+     @api.model
+     def update_free_shipping_from_model(self):
+          """Actualiza el campo free_shipping basado en el modelo free.shipping"""
+          shipping_model = self.env['free.shipping'].sudo().search([], limit=1)
+          if shipping_model and shipping_model.product_ids:
+               # Resetear todos los free_shipping a False primero
+               self.sudo().search([]).write({'free_shipping': False})
+               
+               # Marcar solo los productos relacionados
+               shipping_model.product_ids.write({'free_shipping': True})
+
+
      @api.depends('product_tag_ids.discount_percentage', 'product_tag_ids.is_percentage')
      def _compute_discount_percentage_from_tags(self):
           """Calcula el descuento basado en las etiquetas asignadas."""
