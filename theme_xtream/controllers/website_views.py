@@ -73,7 +73,23 @@ class OffersController(http.Controller):
             key=lambda p: p.product_tag_ids[0].start_date,
             reverse=True
         )
+        # Obtener todas las etiquetas activas que tienen productos asociados
+        product_tags = request.env['product.tag'].sudo().search([
+            ('is_active', '=', True),
+            ('discount_percentage', '>', 0)
+        ])
         
+        # Filtrar solo las etiquetas que están asociadas a productos visibles
+        valid_tags = []
+        for tag in product_tags:
+            tag_products = request.env['product.template'].sudo().search([
+                ('visible_on_ecommerce', '=', True),
+                ('product_tag_ids', 'in', tag.id)
+            ], limit=1)
+            
+            if tag_products:
+                valid_tags.append(tag)
+                        
         # Calcular el total de productos publicados y con etiqueta
         total_domain = [
             ('website_published', '=', True),
@@ -159,6 +175,7 @@ class OffersController(http.Controller):
             'oferta_relampago': oferta_relampago,
             'all_categories': main_categories,
             'free_shipping': free_shipping,  # Ahora es un booleano, no una cadena
+            'valid_tags': valid_tags,  # Pasar las etiquetas válidas al contexto
         })
         
 
