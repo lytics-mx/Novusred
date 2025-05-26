@@ -35,10 +35,17 @@ class BannerImageLine(models.Model):
         domain=[('mimetype', 'ilike', 'image/')],  # Only allow image files
         help="Upload images related to brands."
     )
+    category_image_ids = fields.One2many(
+        'banner.category.image', 
+        'banner_id', 
+        string="Imágenes de Categorías",
+        help="Sube imágenes y asócialas con categorías específicas"
+    )
 
     is_active_carousel = fields.Boolean(string="Mostrar en Carrusel General", default=False)
     is_active_product_carousel = fields.Boolean(string="Mostrar en Carrusel de Productos", default=False)
     is_active_brand_carousel = fields.Boolean(string="Mostrar en Carrusel de Marcas", default=False)
+    is_active_category_carousel = fields.Boolean(string="Mostrar en Carrusel de Categorías", default=False)
 
 
     @api.onchange('is_active_product_carousel')
@@ -58,3 +65,9 @@ class BannerImageLine(models.Model):
         """Ensure only one record is active for the brand carousel"""
         if self.is_active_brand_carousel:
             self.sudo().search([('id', '!=', self.id)]).write({'is_active_brand_carousel': False})
+
+    @api.onchange('is_active_category_carousel')
+    def _onchange_is_active_category_carousel(self):
+        """Ensure only one record is active for the category carousel"""
+        if self.is_active_category_carousel:
+            self.sudo().search([('id', '!=', self.id)]).write({'is_active_category_carousel': False})            
