@@ -4,12 +4,25 @@
         <field name="model">product.tag</field>
         <field name="inherit_id" ref="product.product_tag_form_view" />
         <field name="arch" type="xml">
+            <!-- Agregar botones en el header -->
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="toggle_recurrence" string="Activar recurrencia" type="object" 
+                            class="oe_highlight" attrs="{'invisible': [('enable_recurrence', '=', True)]}"/>
+                    <button name="toggle_recurrence" string="Desactivar recurrencia" type="object" 
+                            class="btn-secondary" attrs="{'invisible': [('enable_recurrence', '=', False)]}"/>
+                    <button name="sync_discount" string="Sincronizar descuentos" type="object" class="btn-secondary"/>
+                    <field name="enable_recurrence" invisible="1"/>
+                </header>
+            </xpath>
+            
             <!-- Agregar los campos de descuento después de visible_on_ecommerce -->
             <xpath expr="//field[@name='visible_on_ecommerce']" position="after">
                 <field name="discount_percentage" />
                 <field name="is_percentage" />
-                <!-- Removed invalid toggle_retain_products buttons because the method does not exist on product.tag -->
+                <field name="is_active" />
             </xpath>
+            
             <!-- Crear una nueva pestaña para la configuración de expiración -->
             <xpath expr="//notebook" position="inside">
                 <page string="Configuración de expiración" name="expiration_config">
@@ -19,23 +32,35 @@
                             <field name="end_date"/>
                             <field name="offer_time_type"/>
                             <field name="flash_hours"
-                                   modifiers='{"invisible": [["offer_time_type", "!=", "flash"]], "readonly": [["offer_time_type", "!=", "flash"]]}'/>
+                                   invisible="offer_time_type != 'flash'"
+                                   readonly="offer_time_type != 'flash'"/>
                         </group>
                         <group>
                             <field name="recurrence_type" />
-                            <field name="recurrence_day" modifiers='{"invisible": [["recurrence_type", "!=", "weekly"]]}'/>
-                            <field name="recurrence_day_month" modifiers='{"invisible": [["recurrence_type", "not in", ["monthly","biweekly"]]]}'/>
-                            <field name="recurrence_duration" modifiers='{"invisible": [["recurrence_type", "=", "none"]]}'/>
+                            <field name="recurrence_day" invisible="recurrence_type != 'weekly'"/>
+                            <field name="recurrence_day_month" invisible="recurrence_type not in ('monthly','biweekly')"/>
+                            <field name="recurrence_duration" invisible="recurrence_type == 'none'"/>
                             <field name="stored_discount" />
                             <field name="preserve_products"/>
-                            <field name="is_active"/>
                         </group>
                     </group>
+                    
+                    <div attrs="{'invisible': [('enable_recurrence', '=', False), ('recurrence_type', '!=', 'none')]}">
+                        <div class="alert alert-info" role="alert">
+                            <strong>Nota:</strong> La recurrencia automática está desactivada. Haga clic en "Activar recurrencia" para permitir que el sistema aplique automáticamente el descuento según la configuración.
+                        </div>
+                    </div>
+                    
+                    <div attrs="{'invisible': [('enable_recurrence', '=', False)]}">
+                        <div class="alert alert-success" role="alert">
+                            <strong>Recurrencia activa:</strong> El sistema aplicará y desactivará automáticamente el descuento según la configuración.
+                        </div>
+                    </div>
+                    
                     <group>
                         <field name="calendar_preview" readonly="1" nolabel="1"/>
                     </group>
                 </page>
-                <!-- Aquí puedes agregar más pestañas si lo necesitas -->
             </xpath>
         </field>
     </record>

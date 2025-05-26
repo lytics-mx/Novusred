@@ -95,6 +95,63 @@ class ProductTag(models.Model):
         help="Muestra una vista previa de las fechas donde se aplicará la recurrencia."
     )
     
+    def toggle_recurrence(self):
+        """Activa o desactiva la recurrencia automática con mensaje de confirmación."""
+        for tag in self:
+            tag.enable_recurrence = not tag.enable_recurrence
+            
+            message = ""
+            if tag.enable_recurrence:
+                # Construir mensaje de activación según el tipo de recurrencia
+                if tag.recurrence_type == 'weekly':
+                    day_name = dict(self._fields['recurrence_day'].selection).get(tag.recurrence_day, 'Desconocido')
+                    message = f"Se ha activado la recurrencia automática. Este descuento se aplicará cada {day_name} "
+                    message += f"con una duración de {tag.recurrence_duration} día(s)."
+                    
+                elif tag.recurrence_type == 'biweekly':
+                    message = f"Se ha activado la recurrencia automática. Este descuento se aplicará los días {tag.recurrence_day_month} "
+                    message += f"y {tag.recurrence_day_month + 15} de cada mes con una duración de {tag.recurrence_duration} día(s)."
+                    
+                elif tag.recurrence_type == 'monthly':
+                    message = f"Se ha activado la recurrencia automática. Este descuento se aplicará el día {tag.recurrence_day_month} "
+                    message += f"de cada mes con una duración de {tag.recurrence_duration} día(s)."
+                    
+                # Casos especiales para ofertas rápidas
+                if tag.offer_time_type == 'flash':
+                    message += f" Se trata de una oferta relámpago de {tag.flash_hours} hora(s)."
+                elif tag.offer_time_type == 'day':
+                    message += " Se aplicará durante todo el día (24 horas)."
+                    
+            else:
+                message = "Se ha desactivado la recurrencia automática. Este descuento no se aplicará según el calendario configurado."
+                
+            # Si se desactiva, aseguramos que el descuento no esté activo si no hay fechas válidas
+            if not tag.enable_recurrence:
+                if not tag.start_date or not tag.end_date or tag.end_date <= fields.Datetime.now():
+                    tag.is_active = False
+                    if tag.discount_percentage > 0:
+                        tag.stored_discount = tag.discount_percentage
+                        tag.discount_percentage = 0
+            
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'Configuración de Recurrencia',
+                    'message': message,
+                    'sticky': False,
+                    'type': 'success' if tag.enable_recurrence else 'warning',
+                    'next': {
+                        'type': 'ir.actions.act_window',
+                        'res_model': 'product.tag',
+                        'res_id': tag.id,
+                        'view_mode': 'form',
+                        'target': 'current',
+                    },
+                }
+            }    
+
+
     @api.depends('recurrence_type', 'recurrence_day', 'recurrence_day_month', 'recurrence_duration')
     def _compute_calendar_preview(self):
         """Genera una vista previa en HTML del calendario con las ocurrencias marcadas."""
@@ -293,43 +350,112 @@ class ProductTag(models.Model):
             self.start_date = naive_now
             self.end_date = naive_now + timedelta(hours=self.flash_hours)
 
-    # ...existing code...
     def _apply_recurrent_discount(self):
         """Aplica o desactiva descuentos según la recurrencia avanzada."""
         mexico_tz = pytz.timezone('America/Mexico_City')
         current_datetime = datetime.now(mexico_tz)
         today = current_datetime.date()
     
-        for tag in self.search([('recurrence_type', '!=', 'none')]):
+        # Solo procesar etiquetas con recurrencia activada
+        for tag in self.search([
+            ('recurrence_type', '!=', 'none'),
+            ('enable_recurrence', '=', True)
+        ]):
             # Verificar si debe activarse según el tipo de recurrencia
             should_activate = False
+            activation_duration = tag.recurrence_duration or 1  # Duración en días
             
             if tag.recurrence_type == 'weekly' and tag.recurrence_day:
                 # Activar descuento en el día de la semana específico
-                if current_datetime.weekday() == int(tag.recurrence_day):
+                weekday = int(tag.recurrence_day or '0')
+                current_weekday = today.weekday()
+                
+                # Verificar si estamos en el día de activación o dentro del rango de duración
+                days_since_activation = (current_weekday - weekday) % 7
+                if days_since_activation == 0:
+                    # Es el día exacto de activación
                     should_activate = True
+                    # Configurar rango de fechas para la semana
+                    start_date = current_datetime.replace(tzinfo=None)
+                    end_date = start_date + timedelta(days=activation_duration)
+                elif days_since_activation < activation_duration:
+                    # Estamos dentro del período de duración desde la activación
+                    should_activate = True
+                    # No modificamos las fechas porque ya deberían estar configuradas
+                else:
+                    # Fuera del período de activación
+                    should_activate = False
                     
             elif tag.recurrence_type == 'biweekly' and tag.recurrence_day_month:
                 # Activar descuento en el día específico y también 15 días después
                 day = tag.recurrence_day_month
-                if today.day == day or today.day == (day + 15) % 30 or (day > 28 and today.day == today.replace(day=28).day):
+                second_day = min(day + 15, 28)  # Segunda ocurrencia, máximo día 28
+                
+                # Verificar si estamos en alguno de los días de activación o dentro del rango
+                if today.day == day:
+                    # Primer día de activación en el mes
                     should_activate = True
+                    # Configurar rango de fechas
+                    start_date = current_datetime.replace(tzinfo=None)
+                    end_date = start_date + timedelta(days=activation_duration)
+                elif today.day == second_day:
+                    # Segundo día de activación en el mes
+                    should_activate = True
+                    # Configurar rango de fechas
+                    start_date = current_datetime.replace(tzinfo=None)
+                    end_date = start_date + timedelta(days=activation_duration)
+                elif (today.day > day and today.day < day + activation_duration) or \
+                     (today.day > second_day and today.day < second_day + activation_duration):
+                    # Dentro del período de duración desde alguna activación
+                    should_activate = True
+                    # No modificamos las fechas porque ya deberían estar configuradas
+                else:
+                    # Fuera del período de activación
+                    should_activate = False
                     
             elif tag.recurrence_type == 'monthly' and tag.recurrence_day_month:
                 # Activar descuento en el día específico del mes
-                if today.day == tag.recurrence_day_month:
-                    should_activate = True
-            
-            # Si debe activarse, creamos un rango de fechas basado en la duración
-            if should_activate:
-                tag.is_active = True
-                tag.discount_percentage = tag.stored_discount
+                day = tag.recurrence_day_month
                 
-                # Actualizamos las fechas de inicio y fin
-                start_date = current_datetime.replace(tzinfo=None)
-                end_date = start_date + timedelta(days=tag.recurrence_duration)
-                tag.start_date = start_date
-                tag.end_date = end_date
+                # Verificar si estamos en el día de activación o dentro del rango
+                if today.day == day:
+                    # Día exacto de activación mensual
+                    should_activate = True
+                    # Configurar rango de fechas
+                    start_date = current_datetime.replace(tzinfo=None)
+                    end_date = start_date + timedelta(days=activation_duration)
+                elif today.day > day and today.day < day + activation_duration:
+                    # Dentro del período de duración desde la activación
+                    should_activate = True
+                    # No modificamos las fechas porque ya deberían estar configuradas
+                else:
+                    # Fuera del período de activación
+                    should_activate = False
+            
+            # Ahora aplicamos la lógica de activación/desactivación
+            if should_activate and not tag.is_active:
+                _logger.info(f"Activando descuento recurrente para etiqueta {tag.name}")
+                tag.is_active = True
+                
+                # Restaurar el descuento almacenado
+                if tag.stored_discount > 0:
+                    tag.discount_percentage = tag.stored_discount
+                
+                # Actualizar fechas si es necesario
+                if not tag.start_date or not tag.end_date:
+                    # Si no hay fechas configuradas, las creamos según el tipo de recurrencia
+                    if tag.offer_time_type == 'flash':
+                        # Para ofertas relámpago
+                        tag.start_date = current_datetime.replace(tzinfo=None)
+                        tag.end_date = tag.start_date + timedelta(hours=tag.flash_hours or 1)
+                    elif tag.offer_time_type == 'day':
+                        # Para ofertas de todo el día
+                        tag.start_date = current_datetime.replace(tzinfo=None)
+                        tag.end_date = tag.start_date + timedelta(hours=24)
+                    else:
+                        # Para recurrencias normales
+                        tag.start_date = current_datetime.replace(tzinfo=None)
+                        tag.end_date = tag.start_date + timedelta(days=activation_duration)
                 
                 # Aplicar a los productos relacionados
                 products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
@@ -340,19 +466,23 @@ class ProductTag(models.Model):
                 products._compute_discount_percentage_from_tags()
                 products._compute_discounted_price()
             
-            # Si ya pasó el período de descuento, lo desactivamos
-            elif tag.end_date and tag.end_date < fields.Datetime.now():
-                if tag.is_active:
-                    tag.is_active = False
+            # Si NO debe activarse y está activo, lo desactivamos
+            elif not should_activate and tag.is_active:
+                _logger.info(f"Desactivando descuento recurrente para etiqueta {tag.name}")
+                tag.is_active = False
+                
+                # Guardar el valor del descuento para futuras recurrencias
+                if tag.discount_percentage > 0:
                     tag.stored_discount = tag.discount_percentage
                     tag.discount_percentage = 0
+                
+                # Hacer que la etiqueta no sea visible en el sitio web
+                products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
+                for product in products:
+                    product.is_discount_tag_visible = False
                     
-                    # Hacer que la etiqueta no sea visible en el sitio web
-                    products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
-                    for product in products:
-                        product.is_discount_tag_visible = False
-    # ...existing code...
-
+                products._compute_discount_percentage_from_tags()
+                products._compute_discounted_price()
     # ...existing code...
     def write(self, vals):
         """Aplica el descuento a los productos relacionados y maneja etiquetas expiradas."""
