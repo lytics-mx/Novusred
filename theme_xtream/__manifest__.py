@@ -60,7 +60,7 @@
         'views/inventory_control/product_template_odoo.xml',
 
 
-        'views/website_configuration.xml/free_shipping.xml',
+        # 'views/website_configuration.xml/free_shipping.xml',
         'views/website_configuration.xml/imagenes_banner.xml',
 
 
