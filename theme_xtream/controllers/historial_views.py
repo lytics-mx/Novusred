@@ -1,7 +1,7 @@
 from odoo import http
 from odoo.http import request
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timedelta
 from babel.dates import format_date
 
 class ProductHistoryController(http.Controller):
@@ -14,30 +14,30 @@ class ProductHistoryController(http.Controller):
             [('user_id', '=', user_id)], order='viewed_at desc'
         )
 
-        # Agrupar productos por mes
+        # Agrupar productos por fecha
         grouped_history = defaultdict(list)
-        current_month = datetime.now().strftime('%Y-%m')
+        today = datetime.now().date()
         
         for entry in history:
-            # Formato año-mes para ordenar correctamente
-            month_key = entry.viewed_at.strftime('%Y-%m')
+            # Obtener la fecha del entry
+            entry_date = entry.viewed_at.date()
             
-            # Nombre localizado del mes para mostrar
-            month_name = format_date(entry.viewed_at, format='MMMM', locale=request.env.user.lang)
-            year = entry.viewed_at.strftime('%Y')
-            display_name = f"{month_name} {year}"
-            
-            # Categoría especial para "Hoy"
-            if month_key == current_month:
-                if entry.viewed_at.date() == datetime.now().date():
-                    display_name = "Hoy"
+            # Si es hoy, mostrar en grupo "Hoy"
+            if entry_date == today:
+                display_name = "Hoy"
+            else:
+                # Para otros días, mostrar por mes
+                month_name = format_date(entry.viewed_at, format='MMMM', locale=request.env.user.lang)
+                year = entry.viewed_at.strftime('%Y')
+                display_name = f"{month_name} {year}"
             
             grouped_history[display_name].append(entry)
 
         # Ordenar los meses (primero "Hoy", luego los demás meses en orden cronológico inverso)
+        # Usamos una clave personalizada para ordenar: "0" para "Hoy", y el nombre del mes para el resto
         sorted_months = sorted(grouped_history.keys(), 
-                               key=lambda x: "0" if x == "Hoy" else x,
-                               reverse=True)
+                               key=lambda x: ("0" if x == "Hoy" else x.split()[0]),
+                               reverse=False)
         
         sorted_history = {month: grouped_history[month] for month in sorted_months}
         
@@ -45,21 +45,21 @@ class ProductHistoryController(http.Controller):
         return request.render('theme_xtream.history_template', {
             'grouped_history': sorted_history,
         })
-    @http.route('/shop/history/remove/<int:product_id>', type='http', auth='user', website=True)
+
+    @http.route('/shop/history/remove/<int:product_id>', type='json', auth='user', website=True)
     def remove_from_history(self, product_id):
         """Elimina un producto del historial del usuario actual."""
-        user_partner_id = request.env.user.partner_id.id
-        # Buscar el registro en el historial
-        track_entry = request.env['website.track'].sudo().search([
-            ('visitor_id.partner_id', '=', user_partner_id),
-            ('product_id.product_tmpl_id', '=', product_id)
-        ], limit=1)
+        user_id = request.env.user.id
+        
+        # Buscar todos los registros de este producto en el historial del usuario
+        history_entries = request.env['product.view.history'].sudo().search([
+            ('user_id', '=', user_id),
+            ('product_id', '=', product_id)
+        ])
 
-        # Eliminar el registro si existe
-        if track_entry:
-            track_entry.unlink()
-
-        # Redirigir de vuelta al historial
-        return request.redirect('/shop/history')
-    
-
+        # Eliminar los registros si existen
+        if history_entries:
+            history_entries.unlink()
+            return {'success': True}
+        
+        return {'success': False}
