@@ -1,4 +1,6 @@
 from odoo import fields, models, api
+from odoo import fields, models, api
+from odoo.exceptions import ValidationError
 
 class BannerImageLine(models.Model):
     """
@@ -45,9 +47,33 @@ class BannerImageLine(models.Model):
         help="Selecciona las categorías que quieres mostrar en el menú (ej: Auxiliar, Lámparas, etc.)"
     )
 
+    category_menu_images = fields.Many2many(
+        'ir.attachment',
+        'banner_category_menu_images_rel',
+        'banner_id',
+        'attachment_id',
+        string="Imágenes del Menú de Categorías",
+        domain=[('mimetype', 'ilike', 'image/')],
+        help="Sube las imágenes para el menú de categorías. Si subes 5 imágenes, debes seleccionar 5 categorías."
+    )
+
+
+
     is_active_carousel = fields.Boolean(string="Mostrar en Carrusel General", default=False)
     is_active_product_carousel = fields.Boolean(string="Mostrar en Carrusel de Productos", default=False)
     is_active_brand_carousel = fields.Boolean(string="Mostrar en Carrusel de Marcas", default=False)
+
+
+    @api.constrains('category_menu_images', 'selected_categories')
+    def _check_categories_images_count(self):
+        """Valida que el número de categorías coincida con el número de imágenes"""
+        for record in self:
+            if record.category_menu_images and record.selected_categories:
+                if len(record.category_menu_images) != len(record.selected_categories):
+                    raise ValidationError(
+                        f"Debes seleccionar exactamente {len(record.category_menu_images)} categorías "
+                        f"para las {len(record.category_menu_images)} imágenes subidas."
+                    )
 
 
     @api.onchange('is_active_product_carousel')
