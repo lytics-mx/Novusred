@@ -57,6 +57,11 @@
 
 
         'views/inventory_control/brand_type.xml',
+        'views/inventory_control/porduct_template_odoo.xml',
+
+
+
+
         # 'views/marca_menu.xml',
         'views/imagenes_banner.xml',
         'views/website_home.xml',
@@ -70,7 +75,6 @@
 
 
 # OFERTAS        
-        'views/shop/ofertas.xml',
         'views/shop/offers_views.xml',
         # 'views/shop/ofertas/action_offers.xml',
         'views/shop/ofertas/catg_offers.xml', 
@@ -78,7 +82,6 @@
         
         # 'views/view_product.xml',
         
-        # 'views/website_sale/product_template.xml',
         # 'views/website_sale/shop_filters.xml',
 
         'data/ir_cron_data.xml',
