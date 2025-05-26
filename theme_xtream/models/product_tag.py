@@ -47,11 +47,18 @@ class ProductTag(models.Model):
         help="Duración en horas para la oferta relámpago (máximo 6 horas)."
     )
 
-    stored_discount = fields.Float(
-        string="Descuento almacenado",
-        help="Almacena el valor del descuento para activarlo nuevamente según la recurrencia."
+    retain_products = fields.Boolean(
+        string="Retener productos",
+        default=False,
+        help="Si está activado, los productos no perderán esta etiqueta al expirar el plazo, pero se ocultarán en el e-commerce."
     )
-
+    def toggle_retain_products(self):
+        """Botón para activar/desactivar la retención de productos al expirar la etiqueta."""
+        for tag in self:
+            tag.retain_products = not tag.retain_products
+            # Si se activa la retención y hay un descuento, guardarlo
+            if tag.retain_products and tag.discount_percentage:
+                tag.stored_discount = tag.discount_percentage
 
 
 
@@ -136,7 +143,7 @@ class ProductTag(models.Model):
                     tag.discount_percentage = 0
 
     def write(self, vals):
-        """Aplica el descuento a los productos relacionados y elimina etiquetas expiradas."""
+        """Aplica el descuento a los productos relacionados y maneja etiquetas expiradas."""
         res = super(ProductTag, self).write(vals)
         if 'end_date' in vals:
             for tag in self:
@@ -144,7 +151,15 @@ class ProductTag(models.Model):
                     # Buscar productos relacionados con esta etiqueta
                     products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
                     for product in products:
-                        product.write({'product_tag_ids': [(3, tag.id)]})  # Eliminar la etiqueta
+                        if not tag.retain_products:
+                            product.write({'product_tag_ids': [(3, tag.id)]})  # Eliminar la etiqueta
+                        else:
+                            # Ocultar el producto en el e-commerce pero mantener la etiqueta
+                            product.write({'website_published': False})
+                            # Guardar el descuento actual y ponerlo a cero
+                            if tag.discount_percentage:
+                                tag.stored_discount = tag.discount_percentage
+                                tag.discount_percentage = 0
         if 'discount_percentage' in vals or 'is_percentage' in vals:
             for tag in self:
                 products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
@@ -155,11 +170,34 @@ class ProductTag(models.Model):
 
     @api.model
     def remove_expired_tags(self):
-        """Elimina etiquetas expiradas de los productos relacionados."""
+        """Maneja etiquetas expiradas según la configuración de retención."""
         now = fields.Datetime.now()
         expired_tags = self.search([('end_date', '<=', now)])
         for tag in expired_tags:
             # Buscar productos relacionados con esta etiqueta
             products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
             for product in products:
-                product.write({'product_tag_ids': [(3, tag.id)]})  # Eliminar la etiqueta
+                if not tag.retain_products:
+                    product.write({'product_tag_ids': [(3, tag.id)]})  # Eliminar la etiqueta
+                else:
+                    # Ocultar el producto en el e-commerce pero mantener la etiqueta
+                    product.write({'website_published': False})
+                    # Guardar el descuento actual y ponerlo a cero si hay descuento
+                    if tag.discount_percentage:
+                        tag.stored_discount = tag.discount_percentage
+                        tag.discount_percentage = 0
+
+    def reactivate_discount(self):
+        """Botón para reactivar el descuento guardado y hacer visibles los productos."""
+        for tag in self:
+            if tag.retain_products and tag.stored_discount:
+                tag.discount_percentage = tag.stored_discount
+                # Buscar productos relacionados con esta etiqueta
+                products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
+                for product in products:
+                    product.write({'website_published': True})
+                # Establecer nuevas fechas de inicio y fin
+                mexico_tz = pytz.timezone('America/Mexico_City')
+                now = datetime.now(mexico_tz).replace(tzinfo=None)
+                tag.start_date = now
+                tag.end_date = now + timedelta(days=7)  # Por defecto una semana
