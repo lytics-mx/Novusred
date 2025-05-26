@@ -3,7 +3,7 @@
         <t t-call="website.layout">
             <div class="container mt-4">
                 <!-- Sección de encabezado con texto e íconos -->
-                <div class="d-flex align-items-center justify-content-between p-4 mb-4 d-none d-md-flex" style="background-color: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-top: -32px; margin-bottom: 24px; width: 100vw; position: relative; left: 50%; transform: translateX(-50%);">
+                <div class="d-flex align-items-center justify-content-between p-4 mb-4" style="background-color: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-top: -32px; margin-bottom: 24px; width: 100vw; position: relative; left: 50%; transform: translateX(-50%);">
                     <!-- Texto Ofertas -->
                     <div class="d-flex align-items-center" style="flex: 1; justify-content: flex-end;">
                         <div class="text-end" style="max-width: 300px;">
@@ -33,33 +33,6 @@
                                 </t>
                             </t>
                         </div>
-                    </div>
-                </div>
-                
-                <!-- Encabezado móvil -->
-                <div class="d-flex d-md-none align-items-center justify-content-between p-3" style="background-color: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-top: -24px; margin-bottom: 18px; width: 100vw; position: relative; left: 50%; transform: translateX(-50%);">
-                    <!-- Texto Ofertas a la izquierda -->
-                    <div style="flex: 1;">
-                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 20px; font-weight: bold; letter-spacing: 0.5px; margin-bottom: 0.25rem;">Ofertas</h2>
-                        <p style="font-size: 12px; color: #6c757d; margin-bottom: 0;">¡Aquí verás las mejores ofertas!</p>
-                    </div>
-                    <!-- Iconos a la derecha -->
-                    <div class="d-flex align-items-center" style="flex: 1; justify-content: flex-end;">
-                        <t t-if="product_tags and product_tags|length > 0">
-                            <t t-foreach="product_tags[:3]" t-as="tag" t-index="i">
-                                <div class="text-center mx-1" style="min-width: 45px;">
-                                    <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
-                                         t-att-alt="tag.name"
-                                         style="height: 32px; width: 32px; object-fit: contain; border: none; background: none; box-shadow: none; margin-bottom: 0.25rem;" />
-                                    <div style="font-size: 9px; color: #222; font-family: 'Questrial', sans-serif; margin-top: 2px; line-height: 1;">
-                                        <t t-esc="tag.name" />
-                                    </div>
-                                    <t t-if="i == 0">
-                                        <div style="height: 2px; background: #3b7cff; border-radius: 1px; width: 50%; margin: 0 auto; margin-top: 2px;"></div>
-                                    </t>
-                                </div>
-                            </t>
-                        </t>
                     </div>
                 </div>
                 
@@ -178,120 +151,6 @@
                             </div>
                     </div>
                     
-                    <!-- Filtros móviles -->
-                    <div class="col-12 d-block d-md-none mb-3">
-                        <button class="btn btn-outline-secondary w-100 mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#mobileFilters" aria-expanded="false" aria-controls="mobileFilters">
-                            <i class="fa fa-filter"></i> Filtros
-                        </button>
-                        <div class="collapse" id="mobileFilters">
-                            <div class="card card-body">
-                                <!-- Copia de los filtros principales para móvil -->
-                                <!-- Todos -->
-                                <div class="mb-2">
-                                    <h6>Todos</h6>
-                                    <ul class="list-unstyled">
-                                        <li>
-                                            <a t-att-href="'/offers%s' % ('?free_shipping=true' if free_shipping else '')">
-                                                <span style="color: #848484;"><t t-esc="total_products" /></span> <span style="color: #848484;">productos</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <!-- Envío gratis -->
-                                <div class="mb-2 p-2 border rounded-3 bg-white">
-                                    <h6 class="text-orange fw-bold" style="color: #FF5207; font-size: 14px; font-style: italic; background-color: white;">Envío gratis</h6>
-                                    <div class="form-check form-switch bg-white">
-                                        <input class="form-check-input" type="checkbox" id="freeShippingToggleMobile"
-                                               t-att-checked="free_shipping"
-                                               t-att-data-url="'/offers?free_shipping=' + ('true' if not free_shipping else 'false')" />
-                                        <label class="form-check-label" for="freeShippingToggleMobile" style="background-color: white;">
-                                            Solo productos con envío gratis
-                                        </label>
-                                    </div>
-                                </div>
-                                <script>
-                                    document.addEventListener('DOMContentLoaded', function() {
-                                        var toggle = document.getElementById('freeShippingToggleMobile');
-                                        if (toggle) {
-                                            toggle.addEventListener('change', function() {
-                                                window.location.href = toggle.getAttribute('data-url');
-                                            });
-                                        }
-                                    });
-                                </script>
-                                <!-- Tipos de oferta -->
-                                <div class="mb-2">
-                                    <h6>Tipos de oferta</h6>
-                                    <ul class="list-unstyled">
-                                        <li>
-                                            <a t-att-href="'/shop/category/all?offers=true&amp;type=day%s' % ('&amp;free_shipping=true' if free_shipping else '')" style="color: #848484;">
-                                                Oferta del día
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a t-att-href="'/shop/category/all?offers=true&amp;type=flash%s' % ('&amp;free_shipping=true' if free_shipping else '')" style="color: #848484;">
-                                                Oferta relámpago
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a t-att-href="'/shop/category/all?offers=true&amp;type=current%s' % ('&amp;free_shipping=true' if free_shipping else '')" style="color: #848484;">
-                                                <span>Ofertas activas ahora</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <!-- Categorías -->
-                                <div class="mb-2">
-                                    <h6>Categorías</h6>
-                                    <ul class="list-unstyled">
-                                        <t t-foreach="categories_with_count" t-as="cat">
-                                            <li>
-                                                <a t-att-href="'/shop/category/all?offers=true&amp;category_id=%s%s' % (cat['id'], '&amp;free_shipping=true' if free_shipping else '')" style="color: #848484;">
-                                                    <span t-esc="cat['name']"/> (<span t-esc="cat['product_count']"/>)
-                                                </a>
-                                            </li>
-                                        </t>
-                                    </ul>
-                                </div>
-                                <!-- Filtro por precio -->
-                                <div class="mb-2">
-                                    <h6>Precio</h6>
-                                    <ul class="list-unstyled">
-                                        <li>
-                                            <a t-att-href="'/shop/category/all?min_price=0&amp;max_price=500%s' % ('&amp;free_shipping=true' if free_shipping else '')" class="d-flex justify-content-between" style="color: #848484;">
-                                                <span>Hasta $500</span>
-                                                <span class="text-muted">(<t t-esc="price_ranges['0_500']"/>)</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a t-att-href="'/shop/category/all?min_price=500&amp;max_price=1000%s' % ('&amp;free_shipping=true' if free_shipping else '')" class="d-flex justify-content-between" style="color: #848484;">
-                                                <span>De $500 a $1000</span>
-                                                <span class="text-muted">(<t t-esc="price_ranges['500_1000']"/>)</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a t-att-href="'/shop/category/all?min_price=1000%s' % ('&amp;free_shipping=true' if free_shipping else '')" class="d-flex justify-content-between" style="color: #848484;">
-                                                <span>Más de $1000</span>
-                                                <span class="text-muted">(<t t-esc="price_ranges['1000_plus']"/>)</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                    <form method="get" action="/shop/category/all">
-                                        <div class="d-flex align-items-center">
-                                            <input type="number" class="form-control me-2 bg-white" id="minPriceMobile" name="min_price" placeholder="Desde" style="background-color: #ffffff;" />
-                                            <span class="me-2">—</span>
-                                            <input type="number" class="form-control me-2 bg-white" id="maxPriceMobile" name="max_price" placeholder="Hasta" style="background-color: #ffffff;" />
-                                            <t t-if="free_shipping">
-                                                <input type="hidden" name="free_shipping" value="true"/>
-                                            </t>
-                                            <button type="submit" class="btn" style="background-color: #5a5a5a; color: white;">Buscar</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
                     <!-- Productos en oferta -->
                     <div class="col-lg-9 col-md-8 col-12">
                         <div class="row mobile-products-grid">
@@ -381,7 +240,6 @@
                         min-height: 280px;
                         border-radius: 8px;
                         border: 1px solid #e0e0e0;
-                        position: relative;
                     }
                     
                     .mobile-product-image {
@@ -442,26 +300,10 @@
                         font-style: italic;
                     }
                     
-                    /* Ocultar nombre por defecto en móvil */
                     .mobile-name-container {
-                        position: absolute;
-                        bottom: 0;
-                        left: 0;
-                        right: 0;
-                        background: rgba(0, 0, 0, 0.8);
-                        color: white;
-                        padding: 8px 12px;
-                        transform: translateY(100%);
-                        transition: transform 0.3s ease;
-                        opacity: 0;
-                        visibility: hidden;
-                    }
-                    
-                    /* Mostrar nombre al hacer hover en la card */
-                    .mobile-product-card:hover .mobile-name-container {
-                        transform: translateY(0);
-                        opacity: 1;
-                        visibility: visible;
+                        max-height: none !important;
+                        overflow: visible !important;
+                        margin-top: auto;
                     }
                     
                     .mobile-product-name {
@@ -475,7 +317,11 @@
                         -webkit-line-clamp: 2;
                         -webkit-box-orient: vertical;
                         overflow: hidden;
-                        color: white !important;
+                    }
+                    
+                    /* Ocultar filtros en móvil */
+                    .filters {
+                        display: none;
                     }
                     
                     /* Ajustar header en móvil */
@@ -497,21 +343,6 @@
                     
                     .mobile-product-image {
                         height: 200px;
-                    }
-                    
-                    /* Mostrar nombre normal en tablet */
-                    .mobile-name-container {
-                        position: static !important;
-                        background: transparent !important;
-                        color: inherit !important;
-                        transform: none !important;
-                        opacity: 1 !important;
-                        visibility: visible !important;
-                        padding: 0 !important;
-                    }
-                    
-                    .mobile-product-name {
-                        color: inherit !important;
                     }
                 }
                 
@@ -548,21 +379,6 @@
                     
                     .mobile-product-name {
                         font-size: 0.9rem !important;
-                    }
-                    
-                    /* Mostrar nombre normal en desktop */
-                    .mobile-name-container {
-                        position: static !important;
-                        background: transparent !important;
-                        color: inherit !important;
-                        transform: none !important;
-                        opacity: 1 !important;
-                        visibility: visible !important;
-                        padding: 0 !important;
-                    }
-                    
-                    .mobile-product-name {
-                        color: inherit !important;
                     }
                 }
             </style>
