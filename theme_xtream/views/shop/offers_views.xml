@@ -53,8 +53,21 @@
                                 <h5 class="text-orange fw-bold" style="color: #FF5207; font-size: 16px; font-style: italic; background-color: white;">Envío gratis</h5>
 
                                 <div class="form-check form-switch bg-white">
-                                    <input class="form-check-input" type="checkbox" id="freeShippingToggle" t-att-data-url="'/shop/category/all?offers=true&amp;free_shipping=' + ('true' if free_shipping else 'false')" />
+                                    <input class="form-check-input" type="checkbox" id="freeShippingToggle"
+                                           t-att-checked="free_shipping"
+                                           t-att-data-url="'/offers?free_shipping=' + ('true' if not free_shipping else 'false')" />                                    
                                     <label class="form-check-label" for="freeShippingToggle" style="background-color: white;">Todo en tu carrito de compras</label>
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        var toggle = document.getElementById('freeShippingToggle');
+                                        if (toggle) {
+                                            toggle.addEventListener('change', function() {
+                                                window.location.href = toggle.getAttribute('data-url');
+                                            });
+                                        }
+                                    });
+                                </script>                                
+                                
                                 </div>
                             </div>
                         
