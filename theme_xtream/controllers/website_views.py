@@ -10,30 +10,31 @@ class OffersController(http.Controller):
         """Renderiza la página de productos en oferta."""
 
         # Convertir el parámetro a booleano
-        free_shipping = free_shipping and free_shipping.lower() == 'true'
+        free_shipping_active = free_shipping == 'true'
 
-        # Filtrar productos publicados que tengan al menos una etiqueta
+        # Dominio base
         domain = [
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False),
         ]
         
-        # Aplicar filtro de envío gratis si está activo
-        if free_shipping:
-            # Primero intentamos buscar en el modelo free.shipping
+        # Buscar productos base
+        tagged_products = request.env['product.template'].sudo().search(domain)
+        
+        # Aplicar filtro de envío gratis
+        if free_shipping_active:
+            # Buscar el primer registro de free.shipping
             shipping_model = request.env['free.shipping'].sudo().search([], limit=1)
             
+            # Si hay un modelo con productos, SOLO mostrar esos productos
             if shipping_model and shipping_model.product_ids:
-                # Si tenemos un registro con productos, filtrar por esos IDs
-                tagged_products = request.env['product.template'].sudo().search(domain)
-                tagged_products = tagged_products.filtered(lambda p: p in shipping_model.product_ids)
+                # Filtrar para mostrar ÚNICAMENTE productos en free.shipping
+                product_ids = shipping_model.product_ids.ids
+                tagged_products = tagged_products.filtered(lambda p: p.id in product_ids)
             else:
-                # Si no hay registro o no tiene productos, usar el campo booleano
-                domain.append(('free_shipping', '=', True))
-                tagged_products = request.env['product.template'].sudo().search(domain)
-        else:
-            # Sin filtro de envío gratis
-            tagged_products = request.env['product.template'].sudo().search(domain)
+                # Si no hay modelo, usar el campo booleano
+                tagged_products = tagged_products.filtered(lambda p: p.free_shipping)
+    
 
         # Filtrar productos publicados que tengan al menos una etiqueta
         tagged_products = request.env['product.template'].sudo().search([
@@ -124,7 +125,8 @@ class OffersController(http.Controller):
             'oferta_dia': oferta_dia,
             'oferta_relampago': oferta_relampago,
             'all_categories': main_categories,
-            'free_shipping': free_shipping,
+            'free_shipping': free_shipping_active,
+
                         
         })
     
