@@ -18,11 +18,23 @@ class OffersController(http.Controller):
         # Si el checkbox está marcado, agregar filtro de free_shipping
         if free_shipping == 'true':
             domain.append(('free_shipping', '=', True))    
-        # Filtrar productos publicados que tengan al menos una etiqueta
-        tagged_products = request.env['product.template'].sudo().search([
-            ('website_published', '=', True),
-            ('product_tag_ids', '!=', False),
-        ])
+        
+        # IMPORTANTE: USA EL DOMAIN CON EL FILTRO free_shipping
+        tagged_products = request.env['product.template'].sudo().search(domain)
+        
+        # Solo productos que tengan al menos una etiqueta con start_date
+        filtered_products = []
+        for p in tagged_products:
+            if p.website_published and p.product_tag_ids and p.product_tag_ids[0].start_date:
+                filtered_products.append(p)
+
+        # Ordenar por la fecha más reciente de start_date
+        filtered_products = sorted(
+            filtered_products,
+            key=lambda p: p.product_tag_ids[0].start_date,
+            reverse=True
+        )
+    
         
         # Obtener categorías principales (categorías sin padre)
         all_categories = request.env['product.category'].sudo().search([])
@@ -100,15 +112,14 @@ class OffersController(http.Controller):
                 'product_count': prod_count,
             })     
         return request.render('theme_xtream.offers_template', {
-            'discounted_products': tagged_products,
+            'discounted_products': filtered_products,  # USA LOS PRODUCTOS FILTRADOS
             'categories_with_count': categories_with_count,
-            'total_products': total_products,
+            'total_products': len(filtered_products),  # ACTUALIZA EL CONTEO
             'price_ranges': price_ranges,
             'oferta_dia': oferta_dia,
             'oferta_relampago': oferta_relampago,
             'all_categories': main_categories,
             'free_shipping': free_shipping == 'true',
-                        
         })
     
 
