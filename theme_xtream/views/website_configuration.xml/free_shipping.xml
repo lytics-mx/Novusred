@@ -17,9 +17,18 @@
     <field name="arch" type="xml">
         <form>
             <header>
-                <button string="Actualizar Productos" name="action_update_products" type="object" class="oe_highlight"/>
+                <button string="Activar Envío Gratis" name="action_update_products" type="object" class="oe_highlight"/>
+                <button string="Desactivar Envío Gratis" name="action_deactivate_products" type="object" class="btn-secondary"/>
+                <field name="state" widget="statusbar" statusbar_visible="active,inactive"/>
             </header>
             <sheet>
+                <div class="oe_button_box" name="button_box">
+                    <button name="toggle_status" type="object" class="oe_stat_button" icon="fa-truck">
+                        <field name="is_active" widget="boolean_button" 
+                            options="{'terminology': {'string_true': 'Envío Gratis', 
+                                                     'string_false': 'Desactivado'}}"/>
+                    </button>
+                </div>
                 <group>
                     <field name="name"/>
                     <field name="product_ids" widget="many2many_tags"/>
