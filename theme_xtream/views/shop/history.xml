@@ -7,102 +7,97 @@
                     <div class="row">
                         <!-- Title on the left -->
                         <div class="col-8">
-                            <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Historial</h2>
+                            <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Tu historial</h2>
                         </div>
                     </div>
+                    
                     <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
-                        
-                        <t t-set="viewed_products" t-value="request.env['website.track'].sudo().search([
-                            ('visitor_id.partner_id', '=', request.env.user.partner_id.id),
-                            ('product_id', '!=', False)
-                        ], order='id desc').mapped('product_id.product_tmpl_id').filtered(lambda p: p.website_published)" />
-                        
-                        <!-- Verifica si hay productos en el historial -->
-                        <t t-if="viewed_products">
-                            <div class="row row-cols-2 row-cols-md-5 g-3">
-                                <t t-foreach="viewed_products" t-as="product">
-                                    <div class="col">
-                                                    <div class="card h-100 shadow-sm product-card">
-                                                        <a t-att-href="'/shop/product/' + str(product.id)">
-                                                            <t t-if="product.product_tag_ids and product.product_tag_ids[0].end_date">
-                                                                <!-- <div class="countdown-timer position-absolute" 
-                                                                    style="font-size: 0.9rem; color:rgb(90, 89, 88); top: 10px; right: 10px; background: rgba(255,255,255,0.9); padding: 5px; border-radius: 4px;">
-                                                                    <i class="fa fa-clock-o me-1"></i>
-                                                                    Termina en:
-                                                                    <t t-esc="request.env['product.template'].browse(product.id).get_time_remaining().get(product.id)" />
-                                                                </div> -->
-                                                            </t>
-                                                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
-                                                                class="card-img-top" />
-                                                        </a>
-                                                            <div class="card-body">
-                                                                <div class="mt-auto">
-                                                                    <h6 class="card-title namehistory mb-2" style="font-size: 0.9rem;">
-                                                                        <t t-esc="product.name.upper()" />
-                                                                    </h6>
-                                                                    <t t-if="product.discounted_price &lt; product.list_price">
-                                                                        <!-- Precio con descuento y porcentaje/descuento fijo a la derecha -->
-                                                                        <div class="d-flex align-items-center justify-content-between">
-                                                                            <span class="text-dark fw-bold" style="font-size: 25px;">
-                                                                                $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
-                                                                            </span>
-                                                                            <span class="text-danger" style="font-size: 18px; font-weight: normal;">
-                                                                                <t t-if="product.discount_percentage">
-                                                                                    <t t-esc="int(product.discount_percentage)" />% OFF
-                                                                                </t>
-                                                                                <t t-elif="product.fixed_discount">
-                                                                                    -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
-                                                                                </t>
-                                                                            </span>
-                                                                        </div>
-                                                                        <!-- Precio anterior debajo -->
-                                                                        <div class="mt-0">
-                                                                            <span class="text-muted ms-2" style="font-size: 18px;">
-                                                                                $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" />
-                                                                            </span>
-                                                                        </div>
-                                                                    </t>
-                                                                    <t t-else="">
-                                                                        <!-- Solo precio normal si no hay descuento -->
-                                                                        <span class="fw-bold d-block" style="font-size: 25px;">
-                                                                            $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                                                        </span>
-                                                                    </t>
-                                                                    <t t-if="not product.product_tag_ids">
-                                                                        <div style="height: 29px;"></div> <!-- Espacio reservado cuando no hay tag -->
-                                                                    </t>
-                                                                    
-                                                                    <div class="mt-0">
-                                                                        <span class="text-orange" style="color: #FF5207; font-size: 0.9rem; font-weight: bold; font-style: italic;">
-                                                                            Envío gratis
-                                                                        </span>
-                                                                    </div>
+                        <!-- Verificar si hay productos en el historial -->
+                        <t t-if="grouped_history">
+                            <!-- Iterar por cada grupo (mes) -->
+                            <t t-foreach="grouped_history" t-as="month">
+                                <div class="mb-4">
+                                    <h3 style="font-family: 'Questrial', sans-serif; font-size: 20px; margin-bottom: 15px;"><t t-esc="month"/></h3>
+                                    
+                                    <div class="row row-cols-2 row-cols-md-5 g-3">
+                                        <t t-foreach="grouped_history[month]" t-as="entry">
+                                            <div class="col">
+                                                <div class="card h-100 shadow-sm product-card">
+                                                    <a t-att-href="'/shop/product/' + str(entry.product_id.id)">
+                                                        <t t-if="entry.product_id.product_tag_ids and entry.product_id.product_tag_ids[0].end_date">
+                                                            <!-- Countdown timer if needed -->
+                                                        </t>
+                                                        <img t-att-src="'/web/image/product.template/' + str(entry.product_id.id) + '/image_1920'" 
+                                                            class="card-img-top" />
+                                                    </a>
+                                                    <div class="card-body">
+                                                        <div class="mt-auto">
+                                                            <h6 class="card-title namehistory mb-2" style="font-size: 0.9rem;">
+                                                                <t t-esc="entry.product_id.name.upper()" />
+                                                            </h6>
+                                                            <t t-if="entry.product_id.discounted_price &lt; entry.product_id.list_price">
+                                                                <!-- Precio con descuento y porcentaje/descuento fijo a la derecha -->
+                                                                <div class="d-flex align-items-center justify-content-between">
+                                                                    <span class="text-dark fw-bold" style="font-size: 25px;">
+                                                                        $<t t-esc="'{:,}'.format(int(entry.product_id.discounted_price))" />
+                                                                    </span>
+                                                                    <span class="text-danger" style="font-size: 18px; font-weight: normal;">
+                                                                        <t t-if="entry.product_id.discount_percentage">
+                                                                            <t t-esc="int(entry.product_id.discount_percentage)" />% OFF
+                                                                        </t>
+                                                                        <t t-elif="entry.product_id.fixed_discount">
+                                                                            -$<t t-esc="'{:,}'.format(int(entry.product_id.fixed_discount))" /> MXN
+                                                                        </t>
+                                                                    </span>
                                                                 </div>
-
-
-                                                            <a t-att-href="'/shop/history/remove/' + str(product.id)" 
-                                                            t-att-data-product-id="product.id"
-                                                            class="text-blue mt-2 delete-history-item" 
-                                                            style="font-size: 0.9rem; color: blue; display: inline-block; float: left;"
-                                                            onclick="event.preventDefault(); 
-                                                                    fetch('/shop/history/remove/' + $(this).data('product-id'))
-                                                                    .then(response => {
-                                                                        if (response.ok) {
-                                                                            $(this).closest('.col').fadeOut();
-                                                                        }
-                                                                    });">
-                                                                Eliminar
-                                                            </a>
+                                                                <!-- Precio anterior debajo -->
+                                                                <div class="mt-0">
+                                                                    <span class="text-muted ms-2" style="font-size: 18px;">
+                                                                        $<t t-esc="'{:,}'.format(int(entry.product_id.list_price - entry.product_id.discounted_price))" />
+                                                                    </span>
+                                                                </div>
+                                                            </t>
+                                                            <t t-else="">
+                                                                <!-- Solo precio normal si no hay descuento -->
+                                                                <span class="fw-bold d-block" style="font-size: 25px;">
+                                                                    $<t t-esc="'{:,}'.format(int(entry.product_id.list_price))" />
+                                                                </span>
+                                                            </t>
+                                                            <t t-if="not entry.product_id.product_tag_ids">
+                                                                <div style="height: 29px;"></div> <!-- Espacio reservado cuando no hay tag -->
+                                                            </t>
                                                             
+                                                            <div class="mt-0">
+                                                                <t t-if="entry.product_id.free_shipping">
+                                                                    <span class="text-orange" style="color: #FF5207; font-size: 0.9rem; font-weight: bold; font-style: italic;">
+                                                                        Envío gratis
+                                                                    </span>
+                                                                </t>
+                                                            </div>
                                                         </div>
+
+                                                        <a t-att-href="'/shop/history/remove/' + str(entry.product_id.id)" 
+                                                        t-att-data-product-id="entry.product_id.id"
+                                                        class="text-blue mt-2 delete-history-item" 
+                                                        style="font-size: 0.9rem; color: blue; display: inline-block; float: left;"
+                                                        onclick="event.preventDefault(); 
+                                                                fetch('/shop/history/remove/' + $(this).data('product-id'))
+                                                                .then(response => {
+                                                                    if (response.ok) {
+                                                                        $(this).closest('.col').fadeOut();
+                                                                    }
+                                                                });">
+                                                            Eliminar
+                                                        </a>
                                                     </div>
+                                                </div>
+                                            </div>
+                                        </t>
                                     </div>
-                                </t>
-                            </div>
-                            <!-- Agregar paginación aquí -->
-
-
+                                </div>
+                            </t>
                         </t>
+                        
                         <!-- Mensaje si no hay productos en el historial -->
                         <t t-else="">
                             <div class="text-center mt-5">
