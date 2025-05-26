@@ -230,6 +230,16 @@ class OffersController(http.Controller):
         
         categories_with_count = []
         for cat in main_categories:
+            # Define cat_domain for each category
+            cat_domain = [
+                ('website_published', '=', True),
+                ('product_tag_ids', '!=', False),
+                ('categ_id', 'child_of', cat.id)
+            ]
+            
+            if free_shipping:
+                cat_domain.append(('free_shipping', '=', True))
+                
             # Obtener todos los productos en esta categoría
             cat_products = request.env['product.template'].sudo().search(cat_domain)
             
