@@ -10,43 +10,47 @@
                 </header>
             </xpath>
             
-            <xpath expr="//field[@name='discount_percentage']" position="after">
+            <xpath expr="//field[@name='color']" position="after">
+                <field name="discount_percentage"/>
+                <field name="is_percentage"/>
                 <field name="is_active"/>
                 <field name="preserve_products"/>
             </xpath>
             
-            <xpath expr="//field[@name='recurrence_type']" position="after">
-                <field name="recurrence_day" attrs="{'invisible': [('recurrence_type', '!=', 'weekly')], 'required': [('recurrence_type', '=', 'weekly')]}"/>
-                <field name="recurrence_day_month" attrs="{'invisible': [('recurrence_type', 'not in', ['monthly', 'biweekly'])], 'required': [('recurrence_type', 'in', ['monthly', 'biweekly'])]}"/>
-                <field name="recurrence_duration"/>
-            </xpath>
-            
-            <!-- Crear pestaña para la configuración de expiración -->
-            <xpath expr="//notebook" position="inside">
-                <page string="Configuración de expiración" name="expiration_config">
-                    <group>
+            <!-- Añadimos el notebook si no existe -->
+            <xpath expr="//sheet" position="inside">
+                <notebook>
+                    <!-- Pestaña de configuración de expiración -->
+                    <page string="Configuración de expiración" name="expiration_config">
                         <group>
-                            <field name="start_date"/>
-                            <field name="end_date"/>
-                            <field name="offer_time_type"/>
-                            <field name="flash_hours" attrs="{'invisible': [('offer_time_type', '!=', 'flash')], 
-                                                             'required': [('offer_time_type', '=', 'flash')]}"/>
+                            <group>
+                                <field name="start_date"/>
+                                <field name="end_date"/>
+                                <field name="offer_time_type"/>
+                                <field name="flash_hours" attrs="{'invisible': [('offer_time_type', '!=', 'flash')], 
+                                                                'required': [('offer_time_type', '=', 'flash')]}"/>
+                            </group>
+                            <group>
+                                <field name="recurrence_type"/>
+                                <field name="recurrence_day" attrs="{'invisible': [('recurrence_type', '!=', 'weekly')], 
+                                                                    'required': [('recurrence_type', '=', 'weekly')]}"/>
+                                <field name="recurrence_day_month" attrs="{'invisible': [('recurrence_type', 'not in', ['monthly', 'biweekly'])], 
+                                                                        'required': [('recurrence_type', 'in', ['monthly', 'biweekly'])]}"/>
+                                <field name="recurrence_duration"/>
+                                <field name="stored_discount"/>
+                            </group>
                         </group>
-                        <group>
-                            <field name="recurrence_type"/>
-                            <field name="stored_discount"/>
-                        </group>
-                    </group>
-                </page>
-                
-                <!-- Agregar pestaña para el calendario de vista previa -->
-                <page string="Calendario de recurrencia" name="recurrence_calendar" 
-                      attrs="{'invisible': [('recurrence_type', '=', 'none')]}">
-                    <div class="oe_title">
-                        <h3>Vista previa de fechas recurrentes</h3>
-                    </div>
-                    <field name="calendar_preview" widget="html" readonly="1" nolabel="1"/>
-                </page>
+                    </page>
+                    
+                    <!-- Pestaña de calendario de recurrencia -->
+                    <page string="Calendario de recurrencia" name="recurrence_calendar" 
+                        attrs="{'invisible': [('recurrence_type', '=', 'none')]}">
+                        <div class="oe_title">
+                            <h3>Vista previa de fechas recurrentes</h3>
+                        </div>
+                        <field name="calendar_preview" widget="html" readonly="1" nolabel="1"/>
+                    </page>
+                </notebook>
             </xpath>
         </field>
     </record>
