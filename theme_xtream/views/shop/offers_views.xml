@@ -42,7 +42,7 @@
                                 <ul class="list-unstyled">
                                     <li>
                                         <a t-att-href="'/offers%s' % ('?free_shipping=true' if free_shipping else '')">
-                                            <small style="color: #848484;"><t t-esc="total_products" /> productos</small>
+                                            <t t-esc="total_products" /> <span style="color: #848484;">productos</span>
                                         </a>
                                     </li>
                                 </ul>
@@ -166,8 +166,8 @@
                                                         <t t-elif="product.product_tag_ids[0].offer_time_type == 'day'">
                                                             Oferta hasta hoy 23:59
                                                         </t>
-                                                        <t t-elif="product.remaining_time_text">
-                                                            Termina en: <t t-esc="product.remaining_time_text" />
+                                                        <t t-elif="offer_type == 'current' and product.id in remaining_times">
+                                                            Termina en: <t t-esc="remaining_times[product.id]" />
                                                         </t>
                                                         <t t-else="">
                                                             Oferta hasta <t t-esc="product.product_tag_ids[0].end_date.strftime('%d/%m/%Y')" />

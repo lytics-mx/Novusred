@@ -250,10 +250,11 @@ class OffersController(http.Controller):
         # Buscar productos y categorías
         products = request.env['product.template'].sudo().search(domain)
     
-        # Modificar la sección donde procesa los tiempos restantes
+        # Inicializar remaining_times antes del bloque condicional
+        remaining_times = {}  # Diccionario para almacenar los tiempos restantes
+        
         if type_offer in ['day', 'flash', 'current']:
             filtered = []
-            remaining_times = {}  # Diccionario para almacenar los tiempos restantes
             now = Datetime.now(timezone('America/Mexico_City'))
             
             for p in products:
