@@ -109,15 +109,15 @@ class ProductTag(models.Model):
             
             for i in range(3):  # Próximos 3 meses
                 month_date = current_date + timedelta(days=30*i)
-                year = month_date.year
-                month = month_date.month
+                year_value = month_date.year
+                month_value = month_date.month
                 
                 # Obtener primer día del mes y número de días
-                first_day = datetime(year, month, 1).date()
-                if month == 12:
-                    last_day = datetime(year+1, 1, 1).date() - timedelta(days=1)
+                first_day = datetime(year_value, month_value, 1).date()
+                if month_value == 12:
+                    last_day = datetime(year_value+1, 1, 1).date() - timedelta(days=1)
                 else:
-                    last_day = datetime(year, month+1, 1).date() - timedelta(days=1)
+                    last_day = datetime(year_value, month_value+1, 1).date() - timedelta(days=1)
                     
                 # Determinar qué días estarán activos según la recurrencia
                 active_days = []
@@ -127,7 +127,7 @@ class ProductTag(models.Model):
                     day = first_day
                     while day <= last_day:
                         if day.weekday() == weekday:
-                            for d in range(tag.recurrence_duration):
+                            for d in range(tag.recurrence_duration or 1):
                                 active_day = day + timedelta(days=d)
                                 if active_day <= last_day:
                                     active_days.append(active_day.day)
@@ -137,24 +137,25 @@ class ProductTag(models.Model):
                     day_of_month = tag.recurrence_day_month or 1
                     if day_of_month <= last_day.day:
                         active_days.append(day_of_month)
-                        for d in range(tag.recurrence_duration):
+                        for d in range(1, (tag.recurrence_duration or 1)):
                             active_day = day_of_month + d
                             if active_day <= last_day.day:
                                 active_days.append(active_day)
                     
                     # Segunda ocurrencia (15 días después)
                     second_day = min(day_of_month + 15, last_day.day)
-                    active_days.append(second_day)
-                    for d in range(tag.recurrence_duration):
-                        active_day = second_day + d
-                        if active_day <= last_day.day:
-                            active_days.append(active_day)
+                    if second_day not in active_days:
+                        active_days.append(second_day)
+                        for d in range(1, (tag.recurrence_duration or 1)):
+                            active_day = second_day + d
+                            if active_day <= last_day.day and active_day not in active_days:
+                                active_days.append(active_day)
                     
                 elif tag.recurrence_type == 'monthly':
                     day_of_month = tag.recurrence_day_month or 1
                     if day_of_month <= last_day.day:
                         active_days.append(day_of_month)
-                        for d in range(tag.recurrence_duration):
+                        for d in range(1, (tag.recurrence_duration or 1)):
                             active_day = day_of_month + d
                             if active_day <= last_day.day:
                                 active_days.append(active_day)
@@ -162,7 +163,8 @@ class ProductTag(models.Model):
                 months.append({
                     'name': month_date.strftime('%B %Y'),
                     'days': range(1, last_day.day + 1),
-                    'active_days': active_days
+                    'active_days': active_days,
+                    'first_weekday': first_day.weekday()
                 })
             
             # Generar HTML del calendario
@@ -173,7 +175,7 @@ class ProductTag(models.Model):
                 html += "<tr><th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th><th>Vie</th><th>Sáb</th><th>Dom</th></tr>"
                 
                 # Obtener el día de la semana del primer día del mes (0=Lunes, 6=Domingo)
-                first_weekday = datetime(year, month, 1).weekday()
+                first_weekday = month['first_weekday']
                 
                 html += "<tr>"
                 # Agregar celdas vacías para los días anteriores al primer día del mes
@@ -182,7 +184,7 @@ class ProductTag(models.Model):
                 
                 day = 1
                 weekday = first_weekday
-                while day <= last_day.day:
+                while day <= max(month['days']):
                     if weekday == 0 and day > 1:
                         html += "</tr><tr>"
                     
@@ -203,7 +205,6 @@ class ProductTag(models.Model):
             
             html += "</div>"
             tag.calendar_preview = html
-            
     # ...existing code...
     def sync_discount(self):
         """
