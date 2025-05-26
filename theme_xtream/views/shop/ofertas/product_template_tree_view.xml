@@ -1,20 +1,24 @@
 <odoo>
-    <record id="view_product_tag_form_inherit" model="ir.ui.view">
-        <field name="name">product.tag.form.inherit</field>
+    <record id="product_tag_form_view_inherited" model="ir.ui.view">
+        <field name="name">product.tag.form.inherited</field>
         <field name="model">product.tag</field>
-        <field name="inherit_id" ref="product.product_tag_form_view" />
+        <field name="inherit_id" ref="product_tags.product_tag_form_view"/>
         <field name="arch" type="xml">
-            <!-- Agregar los campos de descuento después de visible_on_ecommerce -->
-            <xpath expr="//field[@name='visible_on_ecommerce']" position="after">
-                <field name="discount_percentage" />
-                <field name="is_percentage" />
-                <field name="retain_products" invisible="1"/>
-                <button name="toggle_retain_products" string="Retener Productos" type="object" 
-                        class="oe_highlight" invisible="retain_products"/>
-                <button name="toggle_retain_products" string="No Retener Productos" type="object"
-                        invisible="not retain_products"/>
-                <button name="reactivate_discount" string="Reactivar Descuento" type="object" 
-                        class="oe_highlight" invisible="not retain_products or stored_discount == 0"/>
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="sync_discount" string="Sincronizar Descuento" type="object" class="oe_highlight"/>
+                </header>
+            </xpath>
+            
+            <xpath expr="//field[@name='discount_percentage']" position="after">
+                <field name="is_active"/>
+                <field name="preserve_products"/>
+            </xpath>
+            
+            <xpath expr="//field[@name='recurrence_type']" position="after">
+                <field name="recurrence_day" attrs="{'invisible': [('recurrence_type', '!=', 'weekly')], 'required': [('recurrence_type', '=', 'weekly')]}"/>
+                <field name="recurrence_day_month" attrs="{'invisible': [('recurrence_type', 'not in', ['monthly', 'biweekly'])], 'required': [('recurrence_type', 'in', ['monthly', 'biweekly'])]}"/>
+                <field name="recurrence_duration"/>
             </xpath>
             <!-- Crear una nueva pestaña para la configuración de expiración -->
             <xpath expr="//notebook" position="inside">

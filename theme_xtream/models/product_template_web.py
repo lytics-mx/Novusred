@@ -45,7 +45,13 @@ class ProductTemplate(models.Model):
      )
 
      free_shipping = fields.Boolean('Envío Gratis', default=False, tracking=True)
-    
+
+     is_discount_tag_visible = fields.Boolean(
+          string="Etiqueta de descuento visible",
+          default=True,
+          help="Controla si la etiqueta de descuento es visible en el sitio web"
+     )
+        
      @api.model
      def update_free_shipping_from_model(self):
           """Actualiza el campo free_shipping basado en el modelo free.shipping"""
