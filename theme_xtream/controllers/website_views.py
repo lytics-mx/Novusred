@@ -91,8 +91,8 @@ class OffersController(http.Controller):
             
         total_products = request.env['product.template'].sudo().search_count(total_domain)
         
-        oferta_dia = [p for p in oferta_dia if p.list_price > p.discounted_price]
-        oferta_relampago = [p for p in oferta_relampago if p.list_price > p.discounted_price]        
+        oferta_dia = []
+        oferta_relampago = []       
         for p in tagged_products:
             for tag in p.product_tag_ids:
                 if tag.start_date and tag.end_date:
@@ -110,7 +110,8 @@ class OffersController(http.Controller):
                         oferta_relampago.append(p)
                         break
         all_products = request.env['product.template'].sudo().search(price_range_domain)
-        
+        oferta_dia = [p for p in oferta_dia if p.list_price > p.discounted_price]        
+        oferta_relampago = [p for p in oferta_relampago if p.list_price > p.discounted_price]         
         # Luego filtrar por descuento real
         discounted_products = all_products.filtered(lambda p: p.list_price > p.discounted_price)
                                 
