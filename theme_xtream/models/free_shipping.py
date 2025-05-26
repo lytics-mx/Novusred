@@ -13,21 +13,21 @@ class ShoppingFree(models.Model):
     
     def action_update_products(self):
         """Activa o desactiva el envío gratis en los productos relacionados"""
-        # Desactiva el envío gratis en TODOS los productos
-        self.env['product.template'].sudo().search([]).write({'free_shipping': False})
-        
-        # Activa SOLO los productos en este modelo
-        if self.product_ids:
+        # Verificar si los productos seleccionados ya tienen free_shipping activo
+        if self.product_ids and all(self.product_ids.mapped('free_shipping')):
+            # Si todos tienen activo, desactivar
+            self.product_ids.write({'free_shipping': False})
+            message = f"Se desactivaron {len(self.product_ids)} productos de envío gratis."
+        else:
+            # Si alguno no tiene activo, activar
             self.product_ids.write({'free_shipping': True})
             message = f"Se activaron {len(self.product_ids)} productos de envío gratis."
-        else:
-            message = "No hay productos seleccionados para envío gratis."
-    
+
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': 'Productos actualizados',
+                'title': 'Resultado',
                 'message': message,
                 'sticky': False,
             }
