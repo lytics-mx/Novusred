@@ -15,7 +15,7 @@ class OffersController(http.Controller):
             ('product_tag_ids', '!=', False),
         ]
         if free_shipping:
-            domain.append(('free_shipping', '=', True))        
+            domain.append(('free_shipping', '=', True))     
         # Filtrar productos publicados que tengan al menos una etiqueta
         tagged_products = request.env['product.template'].sudo().search([
             ('website_published', '=', True),

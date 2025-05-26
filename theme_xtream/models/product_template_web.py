@@ -43,7 +43,6 @@ class ProductTemplate(models.Model):
           store=True,
           help="Precio del producto después de aplicar el descuento."
      )
-     free_shipping = fields.Boolean(string="Envío gratis", default=False)
      
      @api.depends('product_tag_ids.discount_percentage', 'product_tag_ids.is_percentage')
      def _compute_discount_percentage_from_tags(self):
