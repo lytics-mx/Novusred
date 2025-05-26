@@ -41,7 +41,7 @@
                                 <h5>Todos</h5>
                                 <ul class="list-unstyled">
                                     <li>
-                                        <a t-att-href="'/offers'">
+                                        <a t-att-href="'/offers%s' % ('?free_shipping=true' if free_shipping else '')">
                                             Todos <small> (<t t-esc="total_products" />) </small>
                                         </a>
                                     </li>
@@ -76,19 +76,19 @@
                             <div class="mb-3">
                                 <h5>Tipos de oferta</h5>
                                 <ul class="list-unstyled">
-                                    <li><a t-att-href="'/shop/category/all?offers=true&amp;type=day'">Oferta del día</a></li>
-                                    <li><a t-att-href="'/shop/category/all?offers=true&amp;type=flash'">Oferta relámpago</a></li>
+                                    <li><a t-att-href="'/shop/category/all?offers=true&amp;type=day%s' % ('&amp;free_shipping=true' if free_shipping else '')">Oferta del día</a></li>
+                                    <li><a t-att-href="'/shop/category/all?offers=true&amp;type=flash%s' % ('&amp;free_shipping=true' if free_shipping else '')">Oferta relámpago</a></li>
                                 </ul>
                             </div>
-                        
+                                                    
                             <!-- Categorías -->
                             <div class="mb-3">
                                 <h5>Categorías</h5>
                                 <ul class="list-unstyled">
-                                    <t t-foreach="categories_with_count" t-as="category">
+                                    <t t-foreach="categories_with_count" t-as="cat">
                                         <li>
-                                            <a t-att-href="'/offers?category_id=' + str(category['id']) + (free_shipping and '&amp;free_shipping=true' or '')">
-                                                <t t-esc="category['name']"/> (<t t-esc="category['product_count']"/>)
+                                            <a t-att-href="'/shop/category/all?offers=true&amp;category_id=%s%s' % (cat['id'], '&amp;free_shipping=true' if free_shipping else '')">
+                                                <span t-esc="cat['name']"/> (<span t-esc="cat['product_count']"/>)
                                             </a>
                                         </li>
                                     </t>
@@ -101,19 +101,19 @@
                             <div class="mb-3 p-3 border rounded-3">
                                 <ul class="list-unstyled">
                                     <li>
-                                        <a t-att-href="'/shop/category/all?min_price=0&amp;max_price=500' + (free_shipping and '&amp;free_shipping=true' or '')" class="d-flex justify-content-between">
+                                        <a t-att-href="'/shop/category/all?min_price=0&amp;max_price=500%s' % ('&amp;free_shipping=true' if free_shipping else '')" class="d-flex justify-content-between">
                                             <span>Hasta $500</span>
                                             <span class="text-muted">(<t t-esc="price_ranges['0_500']"/>)</span>
                                         </a>
                                     </li>
                                     <li>
-                                        <a t-att-href="'/shop/category/all?min_price=500&amp;max_price=1000' + (free_shipping and '&amp;free_shipping=true' or '')" class="d-flex justify-content-between">
+                                        <a t-att-href="'/shop/category/all?min_price=500&amp;max_price=1000%s' % ('&amp;free_shipping=true' if free_shipping else '')" class="d-flex justify-content-between">
                                             <span>De $500 a $1000</span>
                                             <span class="text-muted">(<t t-esc="price_ranges['500_1000']"/>)</span>
                                         </a>
                                     </li>
                                     <li>
-                                        <a t-att-href="'/shop/category/all?min_price=1000' + (free_shipping and '&amp;free_shipping=true' or '')" class="d-flex justify-content-between">
+                                        <a t-att-href="'/shop/category/all?min_price=1000%s' % ('&amp;free_shipping=true' if free_shipping else '')" class="d-flex justify-content-between">
                                             <span>Más de $1000</span>
                                             <span class="text-muted">(<t t-esc="price_ranges['1000_plus']"/>)</span>
                                         </a>
@@ -124,10 +124,14 @@
                                         <input type="number" class="form-control me-2 bg-white" id="minPrice" name="min_price" placeholder="Desde" style="background-color: #ffffff;" />
                                         <span class="me-2">—</span>
                                         <input type="number" class="form-control me-2 bg-white" id="maxPrice" name="max_price" placeholder="Hasta" style="background-color: #ffffff;" />
+                                        <!-- Hidden input to maintain free_shipping parameter -->
+                                        <t t-if="free_shipping">
+                                            <input type="hidden" name="free_shipping" value="true"/>
+                                        </t>
                                         <button type="submit" class="btn" style="background-color: #5a5a5a; color: white;">Buscar</button>
                                     </div>
                                 </form>
-                        </div>
+                            </div>
                         </div>
                     </div>
                     <!-- Productos en oferta aqui debe de corregirse el diseño-->
