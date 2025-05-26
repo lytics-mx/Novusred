@@ -88,13 +88,128 @@ class ProductTag(models.Model):
     )
 
 
-    # ...existing code...
+
+    calendar_preview = fields.Html(
+        string="Vista previa del calendario",
+        compute="_compute_calendar_preview",
+        help="Muestra una vista previa de las fechas donde se aplicará la recurrencia."
+    )
+    
+    @api.depends('recurrence_type', 'recurrence_day', 'recurrence_day_month', 'recurrence_duration')
+    def _compute_calendar_preview(self):
+        """Genera una vista previa en HTML del calendario con las ocurrencias marcadas."""
+        for tag in self:
+            if tag.recurrence_type == 'none':
+                tag.calendar_preview = "<p>No hay recurrencia configurada.</p>"
+                continue
+                
+            # Generamos un calendario para los próximos 3 meses
+            current_date = fields.Date.today()
+            months = []
+            
+            for i in range(3):  # Próximos 3 meses
+                month_date = current_date + timedelta(days=30*i)
+                year = month_date.year
+                month = month_date.month
+                
+                # Obtener primer día del mes y número de días
+                first_day = datetime(year, month, 1).date()
+                if month == 12:
+                    last_day = datetime(year+1, 1, 1).date() - timedelta(days=1)
+                else:
+                    last_day = datetime(year, month+1, 1).date() - timedelta(days=1)
+                    
+                # Determinar qué días estarán activos según la recurrencia
+                active_days = []
+                
+                if tag.recurrence_type == 'weekly':
+                    weekday = int(tag.recurrence_day or '0')
+                    day = first_day
+                    while day <= last_day:
+                        if day.weekday() == weekday:
+                            for d in range(tag.recurrence_duration):
+                                active_day = day + timedelta(days=d)
+                                if active_day <= last_day:
+                                    active_days.append(active_day.day)
+                        day += timedelta(days=1)
+                        
+                elif tag.recurrence_type == 'biweekly':
+                    day_of_month = tag.recurrence_day_month or 1
+                    if day_of_month <= last_day.day:
+                        active_days.append(day_of_month)
+                        for d in range(tag.recurrence_duration):
+                            active_day = day_of_month + d
+                            if active_day <= last_day.day:
+                                active_days.append(active_day)
+                    
+                    # Segunda ocurrencia (15 días después)
+                    second_day = min(day_of_month + 15, last_day.day)
+                    active_days.append(second_day)
+                    for d in range(tag.recurrence_duration):
+                        active_day = second_day + d
+                        if active_day <= last_day.day:
+                            active_days.append(active_day)
+                    
+                elif tag.recurrence_type == 'monthly':
+                    day_of_month = tag.recurrence_day_month or 1
+                    if day_of_month <= last_day.day:
+                        active_days.append(day_of_month)
+                        for d in range(tag.recurrence_duration):
+                            active_day = day_of_month + d
+                            if active_day <= last_day.day:
+                                active_days.append(active_day)
+                
+                months.append({
+                    'name': month_date.strftime('%B %Y'),
+                    'days': range(1, last_day.day + 1),
+                    'active_days': active_days
+                })
+            
+            # Generar HTML del calendario
+            html = "<div class='calendar-preview'>"
+            for month in months:
+                html += f"<h4>{month['name']}</h4>"
+                html += "<table class='table table-bordered'>"
+                html += "<tr><th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th><th>Vie</th><th>Sáb</th><th>Dom</th></tr>"
+                
+                # Obtener el día de la semana del primer día del mes (0=Lunes, 6=Domingo)
+                first_weekday = datetime(year, month, 1).weekday()
+                
+                html += "<tr>"
+                # Agregar celdas vacías para los días anteriores al primer día del mes
+                for i in range(first_weekday):
+                    html += "<td></td>"
+                
+                day = 1
+                weekday = first_weekday
+                while day <= last_day.day:
+                    if weekday == 0 and day > 1:
+                        html += "</tr><tr>"
+                    
+                    if day in month['active_days']:
+                        html += f"<td class='bg-success'>{day}</td>"
+                    else:
+                        html += f"<td>{day}</td>"
+                    
+                    day += 1
+                    weekday = (weekday + 1) % 7
+                
+                # Completar la última semana con celdas vacías
+                while weekday < 7:
+                    html += "<td></td>"
+                    weekday += 1
+                    
+                html += "</tr></table>"
+            
+            html += "</div>"
+            tag.calendar_preview = html
+            
     # ...existing code...
     def sync_discount(self):
         """
         Botón para sincronizar el descuento:
-        - Si está activo, aplica el descuento recuperando el valor almacenado
-        - Si no está activo, guarda el descuento actual y lo establece a 0
+        - Si está activo, aplica el descuento a los productos relacionados
+        - Si no está activo, quita el descuento pero mantiene los productos relacionados
         """
         for tag in self:
             products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
@@ -103,31 +218,14 @@ class ProductTag(models.Model):
                 # Activar descuento
                 if tag.stored_discount > 0:
                     tag.discount_percentage = tag.stored_discount
-                    tag.stored_discount = 0  # Limpiar el almacenamiento después de usarlo
-                
-                # Establecer fechas si no existen
-                mexico_tz = pytz.timezone('America/Mexico_City')
-                current_datetime = datetime.now(mexico_tz).replace(tzinfo=None)
-                
-                if not tag.start_date:
-                    tag.start_date = current_datetime
-                    
-                # Si no hay fecha de fin o ya pasó, establecer una nueva
-                if not tag.end_date or tag.end_date < fields.Datetime.now():
-                    # Por defecto, 7 días de duración
-                    duration = tag.recurrence_duration or 7
-                    tag.end_date = current_datetime + timedelta(days=duration)
-                
                 # Asegurar que los productos tengan la etiqueta visible en el sitio web
                 for product in products:
                     if product.website_published:
                         product.is_discount_tag_visible = True
             else:
                 # Desactivar descuento pero mantener productos
-                if tag.discount_percentage > 0:
-                    tag.stored_discount = tag.discount_percentage
-                    tag.discount_percentage = 0
-                
+                tag.stored_discount = tag.discount_percentage
+                tag.discount_percentage = 0
                 # Hacer que la etiqueta no sea visible en el sitio web
                 for product in products:
                     product.is_discount_tag_visible = False
@@ -136,22 +234,10 @@ class ProductTag(models.Model):
             products._compute_discount_percentage_from_tags()
             products._compute_discounted_price()
             
-            # Mostrar mensaje de confirmación al usuario
-            action_type = "activado" if tag.is_active else "desactivado"
-            discount_value = tag.discount_percentage if tag.is_active else tag.stored_discount
-            
             return {
                 'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': f'Descuento {action_type}',
-                    'message': f'El descuento ha sido {action_type} con un valor de {discount_value}%.',
-                    'sticky': False,
-                    'type': 'success',
-                    'next': {'type': 'ir.actions.client', 'tag': 'reload'}
-                }
+                'tag': 'reload',
             }
-    # ...existing code...
     # ...existing code...
 
 
@@ -213,36 +299,7 @@ class ProductTag(models.Model):
         current_datetime = datetime.now(mexico_tz)
         today = current_datetime.date()
     
-        # Primero procesamos las etiquetas que deberían desactivarse
-        expired_tags = self.search([
-            ('end_date', '<=', fields.Datetime.now()),
-            ('is_active', '=', True),
-            ('recurrence_type', '!=', 'none')
-        ])
-        
-        for tag in expired_tags:
-            if tag.is_active and tag.discount_percentage > 0:
-                # Guardar el valor del descuento para la próxima recurrencia
-                tag.stored_discount = tag.discount_percentage
-                tag.discount_percentage = 0
-                tag.is_active = False
-                
-                # Hacer que la etiqueta no sea visible en los productos
-                products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
-                for product in products:
-                    product.is_discount_tag_visible = False
-                
-                # Recalcular precios
-                products._compute_discount_percentage_from_tags()
-                products._compute_discounted_price()
-        
-        # Luego procesamos las etiquetas que deberían activarse según su recurrencia
-        recurrent_tags = self.search([
-            ('recurrence_type', '!=', 'none'),
-            ('stored_discount', '>', 0)
-        ])
-        
-        for tag in recurrent_tags:
+        for tag in self.search([('recurrence_type', '!=', 'none')]):
             # Verificar si debe activarse según el tipo de recurrencia
             should_activate = False
             
@@ -262,15 +319,14 @@ class ProductTag(models.Model):
                 if today.day == tag.recurrence_day_month:
                     should_activate = True
             
-            # Si debe activarse y no está ya activo
-            if should_activate and (not tag.is_active or tag.discount_percentage <= 0):
+            # Si debe activarse, creamos un rango de fechas basado en la duración
+            if should_activate:
                 tag.is_active = True
                 tag.discount_percentage = tag.stored_discount
                 
                 # Actualizamos las fechas de inicio y fin
                 start_date = current_datetime.replace(tzinfo=None)
-                duration = tag.recurrence_duration or 1  # Al menos 1 día
-                end_date = start_date + timedelta(days=duration)
+                end_date = start_date + timedelta(days=tag.recurrence_duration)
                 tag.start_date = start_date
                 tag.end_date = end_date
                 
@@ -280,9 +336,20 @@ class ProductTag(models.Model):
                     if product.website_published:
                         product.is_discount_tag_visible = True
                 
-                # Recalcular precios
                 products._compute_discount_percentage_from_tags()
                 products._compute_discounted_price()
+            
+            # Si ya pasó el período de descuento, lo desactivamos
+            elif tag.end_date and tag.end_date < fields.Datetime.now():
+                if tag.is_active:
+                    tag.is_active = False
+                    tag.stored_discount = tag.discount_percentage
+                    tag.discount_percentage = 0
+                    
+                    # Hacer que la etiqueta no sea visible en el sitio web
+                    products = self.env['product.template'].search([('product_tag_ids', 'in', tag.id)])
+                    for product in products:
+                        product.is_discount_tag_visible = False
     # ...existing code...
 
     # ...existing code...
@@ -318,16 +385,12 @@ class ProductTag(models.Model):
     # ...existing code...
     @api.model
     def remove_expired_tags(self):
-        """Desactiva etiquetas expiradas y almacena su valor de descuento para futuras reactivaciones."""
+        """Elimina o desactiva etiquetas expiradas según la configuración."""
         now = fields.Datetime.now()
-        expired_tags = self.search([
-            ('end_date', '<=', now), 
-            ('is_active', '=', True),
-            ('discount_percentage', '>', 0)  # Solo procesar etiquetas con descuento activo
-        ])
+        expired_tags = self.search([('end_date', '<=', now), ('is_active', '=', True)])
         
         for tag in expired_tags:
-            # Guardar el valor del descuento para futuras reactivaciones
+            # Guardar el valor del descuento para futuras recurrencias
             tag.stored_discount = tag.discount_percentage
             tag.discount_percentage = 0
             tag.is_active = False
@@ -343,13 +406,4 @@ class ProductTag(models.Model):
                 # Solo hacer invisible la etiqueta en el sitio web
                 for product in products:
                     product.is_discount_tag_visible = False
-                    
-            # Recalcular precios de los productos afectados
-            products._compute_discount_percentage_from_tags()
-            products._compute_discounted_price()
-            
-            # Registrar la acción en el log del sistema
-            _logger = self.env.get('_logger', None)
-            if _logger:
-                _logger.info(f"Etiqueta de descuento '{tag.name}' desactivada automáticamente por expiración. Valor almacenado: {tag.stored_discount}%")
     # ...existing code...

@@ -1,56 +1,50 @@
 <odoo>
-    <record id="product_tag_form_view_inherited" model="ir.ui.view">
-        <field name="name">product.tag.form.inherited</field>
+    <record id="product_tag_form_view_inherit" model="ir.ui.view">
+        <field name="name">product.tag.form.inherit</field>
         <field name="model">product.tag</field>
-        <field name="inherit_id" ref="product_tags.product_tag_form_view"/>
+        <field name="inherit_id" ref="product.product_tag_form_view"/>
         <field name="arch" type="xml">
-            <xpath expr="//sheet" position="before">
-            <header>
-                <button name="sync_discount" string="Activar Descuento" type="object" 
-                    class="oe_highlight" attrs="{'invisible': [('is_active', '=', True)]}"/>
-                <button name="sync_discount" string="Desactivar Descuento" type="object" 
-                    class="btn-secondary" attrs="{'invisible': [('is_active', '=', False)]}"/>
-            </header>
-            <div class="alert alert-info" role="alert" 
-                 attrs="{'invisible': ['|', ('is_active', '=', True), ('stored_discount', '=', 0)]}">
-                <strong>Descuento almacenado:</strong> Este descuento tiene un valor de <field name="stored_discount" readonly="1" class="oe_inline"/> 
-                que se aplicará al reactivarlo.
-            </div>
-            <div class="alert alert-success" role="alert" 
-                 attrs="{'invisible': [('is_active', '=', False)]}">
-                <strong>Descuento activo:</strong> Este descuento se está aplicando actualmente con un valor de <field name="discount_percentage" readonly="0" class="oe_inline"/>.
-            </div>
-            </xpath>
-            
-            <field name="discount_percentage" position="after">
-            <field name="is_active" widget="boolean_toggle"/>
-            <field name="preserve_products" widget="boolean_toggle"/>
-            </field>
-            
-            <field name="recurrence_type" position="after">
-            <div attrs="{'invisible': [('recurrence_type', '=', 'none')]}">
-                <field name="recurrence_day" attrs="{'invisible': [('recurrence_type', '!=', 'weekly')], 'required': [('recurrence_type', '=', 'weekly')]}"/>
-                <field name="recurrence_day_month" attrs="{'invisible': [('recurrence_type', 'not in', ['monthly', 'biweekly'])], 'required': [('recurrence_type', 'in', ['monthly', 'biweekly'])]}"/>
-                <field name="recurrence_duration" attrs="{'invisible': [('recurrence_type', '=', 'none')], 'required': [('recurrence_type', '!=', 'none')]}"/>
-            </div>
-            </field>
-            <!-- Crear una nueva pestaña para la configuración de expiración -->
-            <xpath expr="//notebook" position="inside">
-                <page string="Configuración de expiración" name="expiration_config">
-                    <group>
+            <xpath expr="//sheet" position="inside">
+                <notebook>
+                    <page string="Configuración de descuento" name="discount_settings">
                         <group>
+                            <field name="discount_percentage"/>
+                            <field name="is_percentage"/>
+                            <field name="offer_time_type" widget="radio"/>
+                            <field name="flash_hours" attrs="{'invisible': [('offer_time_type', '!=', 'flash')], 'required': [('offer_time_type', '=', 'flash')]}"/>
                             <field name="start_date"/>
                             <field name="end_date"/>
-                            <field name="offer_time_type"/>
-                            <field name="flash_hours" invisible="offer_time_type != 'flash'" 
-                                   readonly="offer_time_type != 'flash'"/>
+                            <field name="is_active"/>
+                            <field name="preserve_products"/>
                         </group>
-                        <group>
-                            <field name="recurrence_type" />
-                            <field name="stored_discount" />
+                        
+                        <group string="Configuración de recurrencia">
+                            <field name="recurrence_type"/>
+                            <field name="recurrence_day" 
+                                   attrs="{'invisible': [('recurrence_type', '!=', 'weekly')], 
+                                          'required': [('recurrence_type', '=', 'weekly')]}"/>
+                            <field name="recurrence_day_month" 
+                                   attrs="{'invisible': [('recurrence_type', 'not in', ['biweekly', 'monthly'])], 
+                                          'required': [('recurrence_type', 'in', ['biweekly', 'monthly'])]}"/>
+                            <field name="recurrence_duration" 
+                                   attrs="{'invisible': [('recurrence_type', '=', 'none')], 
+                                          'required': [('recurrence_type', '!=', 'none')]}"/>
+                            <field name="stored_discount" readonly="1" attrs="{'invisible': [('recurrence_type', '=', 'none')]}"/>
                         </group>
-                    </group>
-                </page>
+                        
+                        <div class="oe_button_box" name="button_box">
+                            <button name="sync_discount" string="Sincronizar descuento" type="object" 
+                                    class="oe_stat_button" icon="fa-refresh"/>
+                        </div>
+                    </page>
+                    
+                    <page string="Calendario de eventos" name="event_calendar" attrs="{'invisible': [('recurrence_type', '=', 'none')]}">
+                        <div class="oe_title">
+                            <h3>Vista previa de ocurrencias programadas</h3>
+                        </div>
+                        <field name="calendar_preview" widget="html" readonly="1" nolabel="1"/>
+                    </page>
+                </notebook>
             </xpath>
         </field>
     </record>
