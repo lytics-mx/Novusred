@@ -250,8 +250,11 @@ class OffersController(http.Controller):
         # Buscar productos y categorías
         products = request.env['product.template'].sudo().search(domain)
     
-        if type_offer in ['day', 'flash']:
+        # En la función shop_by_category, actualizar la sección donde procesa el tipo_offer:
+        if type_offer in ['day', 'flash', 'current']:
             filtered = []
+            now = Datetime.now(timezone('America/Mexico_City'))
+            
             for p in products:
                 for tag in p.product_tag_ids:
                     if tag.start_date and tag.end_date:
@@ -261,12 +264,31 @@ class OffersController(http.Controller):
                             start = Datetime.fromisoformat(start)
                         if isinstance(end, str):
                             end = Datetime.fromisoformat(end)
+                        
+                        # Convertir a objetos datetime conscientes de la zona horaria
+                        if start.tzinfo is None:
+                            start = start.replace(tzinfo=timezone('UTC'))
+                            start = start.astimezone(timezone('America/Mexico_City'))
+                        if end.tzinfo is None:
+                            end = end.replace(tzinfo=timezone('UTC'))
+                            end = end.astimezone(timezone('America/Mexico_City'))
+                        
                         duration = (end - start).total_seconds() / 3600.0
+                        
                         if type_offer == 'day' and 23.5 <= duration <= 24.5:
                             filtered.append(p)
                             break  # Ya cumple, no revises más etiquetas
                         elif type_offer == 'flash' and 0 < duration <= 6:
                             filtered.append(p)
+                            break
+                        elif type_offer == 'current' and start <= now <= end:
+                            # Para ofertas activas actualmente
+                            filtered.append(p)
+                            # Añadir información sobre tiempo restante al producto
+                            remaining_time = end - now
+                            remaining_hours = int(remaining_time.total_seconds() / 3600)
+                            remaining_minutes = int((remaining_time.total_seconds() % 3600) / 60)
+                            p.remaining_time_text = f"{remaining_hours}h {remaining_minutes}m"
                             break
             products = filtered
     
