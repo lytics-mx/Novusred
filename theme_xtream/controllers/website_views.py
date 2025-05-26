@@ -12,8 +12,12 @@ class OffersController(http.Controller):
         # Guardar el estado de free_shipping en la sesión del usuario
         if 'free_shipping' in request.params:
             free_shipping = request.params.get('free_shipping') == 'true'
-        
-        # Filtro base para productos publicados con etiquetas y descuento activo
+            request.session['free_shipping'] = free_shipping
+        else:
+            # Si no viene en los parámetros, usar el valor guardado en sesión (si existe)
+            free_shipping = request.session.get('free_shipping', False)
+    
+        # Filtro base para productos publicados con etiquetas
         domain = [
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False),
@@ -21,25 +25,10 @@ class OffersController(http.Controller):
         
         # Si el checkbox está marcado, agregar filtro de free_shipping
         if free_shipping:
-            domain.append(('free_shipping', '=', True))
+            domain.append(('free_shipping', '=', True))    
         
-        # IMPORTANTE: Obtener productos con el filtro base
+        # IMPORTANTE: USA EL DOMAIN CON EL FILTRO free_shipping
         tagged_products = request.env['product.template'].sudo().search(domain)
-        
-        # Filtrar productos que tengan al menos una etiqueta con descuento > 0
-        # o descuento activo (is_active = True)
-        discounted_products = []
-        for product in tagged_products:
-            has_active_discount = False
-            for tag in product.product_tag_ids:
-                # Solo considerar etiquetas con descuento_percentage > 0 o is_active = True
-                if tag.discount_percentage > 0 or tag.is_active:
-                    has_active_discount = True
-                    break
-            
-            if has_active_discount:
-                discounted_products.append(product)
-    
         
         # Solo productos que tengan al menos una etiqueta con start_date
         filtered_products = []
@@ -245,19 +234,7 @@ class OffersController(http.Controller):
             domain.append(('categ_id', 'child_of', int(category_id)))
         
         if offers:
-            # Filtrar solo productos con etiquetas de descuento activas
-            filtered_products = []
-            for product in products:
-                has_active_discount = False
-                for tag in product.product_tag_ids:
-                    if tag.discount_percentage > 0 or tag.is_active:
-                        has_active_discount = True
-                        break
-                
-                if has_active_discount:
-                    filtered_products.append(product)
-            
-            products = filtered_products
+            domain.append(('discounted_price', '>', 0))
         
         if offer_type:
             tag = request.env['product.tag'].sudo().search([('name', 'ilike', offer_type)], limit=1)
