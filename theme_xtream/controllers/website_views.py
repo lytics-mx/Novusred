@@ -37,6 +37,10 @@ class OffersController(http.Controller):
                 filtered_products.append(p)
     
         # Ordenar por la fecha más reciente de start_date
+        filtered_products = [
+            p for p in filtered_products
+            if getattr(p, 'visible_on_ecommerce', True)
+        ]
         filtered_products = sorted(
             filtered_products,
             key=lambda p: p.product_tag_ids[0].start_date,
