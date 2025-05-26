@@ -1,7 +1,7 @@
 from odoo import models, fields
 
-class FreeShippingCampaign(models.Model):
-    _name = 'free.shipping.campaign'
+class FreeCampaign(models.Model):
+    _name = 'free.campaign'
     _description = 'Campaña de Envío Gratis'
 
     name = fields.Char(string="Nombre de la campaña", required=True)
