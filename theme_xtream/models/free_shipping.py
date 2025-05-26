@@ -13,10 +13,10 @@ class ShoppingFree(models.Model):
     
     def action_toggle_free_shipping(self):
         """Activa o desactiva el envío gratis en los productos relacionados"""
-        # PRIMERO: Desactiva el envío gratis en TODOS los productos
+        # Desactiva el envío gratis en TODOS los productos
         self.env['product.template'].sudo().search([]).write({'free_shipping': False})
         
-        # SEGUNDO: Activa SOLO los productos en este modelo
+        # Activa SOLO los productos en este modelo
         if self.product_ids:
             self.product_ids.write({'free_shipping': True})
             message = f"Se activaron {len(self.product_ids)} productos de envío gratis."
@@ -32,15 +32,3 @@ class ShoppingFree(models.Model):
                 'sticky': False,
             }
         }
-    
-    @api.model
-    def init(self):
-        """Se ejecuta al iniciar el servidor"""
-        # Buscar el registro activo de free.shipping
-        shipping_record = self.search([], limit=1)
-        if shipping_record:
-            # Desactivar en todos
-            self.env['product.template'].sudo().search([]).write({'free_shipping': False})
-            # Activar solo en los relacionados
-            if shipping_record.product_ids:
-                shipping_record.product_ids.write({'free_shipping': True})    

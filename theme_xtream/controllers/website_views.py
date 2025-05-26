@@ -6,36 +6,18 @@ from pytz import timezone
 class OffersController(http.Controller):
 
     @http.route('/offers', type='http', auth='public', website=True)
-    def offers(self,free_shipping=False,  **kwargs):
+    def offers(self, free_shipping=False,**kwargs):
         """Renderiza la página de productos en oferta."""
 
-        # Convertir el parámetro a booleano
-        free_shipping_active = free_shipping == 'true'
-
-        # Dominio base
+        # Filtro base para productos publicados con etiquetas
         domain = [
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False),
         ]
         
-        # Buscar productos base
-        tagged_products = request.env['product.template'].sudo().search(domain)
-        
-        # Aplicar filtro de envío gratis
-        if free_shipping_active:
-            # Buscar el primer registro de free.shipping
-            shipping_model = request.env['free.shipping'].sudo().search([], limit=1)
-            
-            # Si hay un modelo con productos, SOLO mostrar esos productos
-            if shipping_model and shipping_model.product_ids:
-                # Filtrar para mostrar ÚNICAMENTE productos en free.shipping
-                product_ids = shipping_model.product_ids.ids
-                tagged_products = tagged_products.filtered(lambda p: p.id in product_ids)
-            else:
-                # Si no hay modelo, usar el campo booleano
-                tagged_products = tagged_products.filtered(lambda p: p.free_shipping)
-    
-
+        # Si el checkbox está marcado, agregar filtro de free_shipping
+        if free_shipping == 'true':
+            domain.append(('free_shipping', '=', True))    
         # Filtrar productos publicados que tengan al menos una etiqueta
         tagged_products = request.env['product.template'].sudo().search([
             ('website_published', '=', True),
@@ -125,8 +107,7 @@ class OffersController(http.Controller):
             'oferta_dia': oferta_dia,
             'oferta_relampago': oferta_relampago,
             'all_categories': main_categories,
-            'free_shipping': free_shipping_active,
-
+            'free_shipping': free_shipping == 'true',
                         
         })
     
@@ -141,8 +122,6 @@ class OffersController(http.Controller):
         min_price = kwargs.get('min_price')
         max_price = kwargs.get('max_price')
         type_offer = request.params.get('type')
-        free_shipping = kwargs.get('free_shipping', 'false').lower() == 'true'
-
 
         domain = [
             ('website_published', '=', True),
@@ -178,28 +157,7 @@ class OffersController(http.Controller):
             domain.append(('discounted_price', '>', 0))
         
         if free_shipping:
-            # Primero verificar si tenemos productos en el modelo free.shipping
-            shipping_model = request.env['free.shipping'].sudo().search([], limit=1)
-            
-            if shipping_model and shipping_model.product_ids:
-                # Si hay productos en el modelo, aplicar ese filtro después
-                # Guardamos el filtro para aplicarlo después de la búsqueda
-                use_model_filter = True
-            else:
-                # Si no hay, usar el campo booleano directamente
-                domain.append(('free_shipping', '=', True))
-                use_model_filter = False
-        else:
-            use_model_filter = False
-        
-        # Buscar productos y categorías
-        products = request.env['product.template'].sudo().search(domain)
-        
-        # Aplicar filtro adicional si es necesario
-        if free_shipping and use_model_filter:
-            shipping_model = request.env['free.shipping'].sudo().search([], limit=1)
-            products = products.filtered(lambda p: p in shipping_model.product_ids)
-        
+            domain.append(('free_shipping', '=', True))
         
         if offer_type:
             tag = request.env['product.tag'].sudo().search([('name', 'ilike', offer_type)], limit=1)
