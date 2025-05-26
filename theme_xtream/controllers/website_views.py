@@ -33,12 +33,7 @@ class OffersController(http.Controller):
         # Solo productos que tengan al menos una etiqueta con start_date
         filtered_products = []
         for p in tagged_products:
-            if (
-            p.website_published
-            and p.product_tag_ids
-            and p.product_tag_ids[0].start_date
-            and getattr(p, 'visible_on_ecommerce', True)  # Solo incluye si visible_on_ecommerce es True
-            ):
+            if p.website_published and p.product_tag_ids and p.product_tag_ids[0].start_date:
                 filtered_products.append(p)
     
         # Ordenar por la fecha más reciente de start_date
