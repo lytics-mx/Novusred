@@ -8,8 +8,5 @@ class FreeShippingCampaign(models.Model):
     active = fields.Boolean(string="Activo", default=True)
     start_date = fields.Date(string="Fecha de inicio")
     end_date = fields.Date(string="Fecha de fin")
-    product_ids = fields.Many2many(
-        'product.template',
-        string="Productos con Envío Gratis"
-    )
+    product_ids = fields.Many2many('product.template', string="Productos con Envío Gratis")
     notes = fields.Text(string="Notas")
