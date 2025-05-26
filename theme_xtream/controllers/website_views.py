@@ -1,6 +1,6 @@
 from odoo import http
 from odoo.http import request
-from datetime import datetime as Datetime, timedelta
+from datetime import datetime as Datetime
 from pytz import timezone
 
 class OffersController(http.Controller):
@@ -21,22 +21,21 @@ class OffersController(http.Controller):
         domain = [
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False),
-            ('list_price', '>', 'discounted_price'),  # Añadir filtro para descuento real
         ]
-        
         
         # Si el checkbox está marcado, agregar filtro de free_shipping
         if free_shipping:
             domain.append(('free_shipping', '=', True))    
         
         # IMPORTANTE: USA EL DOMAIN CON EL FILTRO free_shipping
-        tagged_products = request.env['product.template'].sudo().search(domain)
+        tagged_products = tagged_products.filtered(lambda p: p.list_price > p.discounted_price)
         
         # Solo productos que tengan al menos una etiqueta con start_date
         filtered_products = []
         for p in tagged_products:
             if p.website_published and p.product_tag_ids and p.product_tag_ids[0].start_date:
                 filtered_products.append(p)
+    
     
         # Ordenar por la fecha más reciente de start_date
         filtered_products = sorted(
@@ -52,7 +51,6 @@ class OffersController(http.Controller):
         category_domain = [
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False),
-            ('list_price', '>', 'discounted_price'),  # Añadir filtro para descuento real
         ]
         
         # Aplicar filtro de free_shipping al dominio de categorías si está activo
@@ -67,11 +65,9 @@ class OffersController(http.Controller):
             ]) > 0
         ]
         
-        tagged_products = request.env['product.template'].sudo().search(domain)
-
-        # Filtrar los productos que tienen un descuento real
-        tagged_products = tagged_products.filtered(lambda p: p.list_price > p.discounted_price)
-
+        # Solo productos publicados y que tengan al menos una etiqueta con start_date
+        tagged_products = [p for p in tagged_products if p.website_published and p.product_tag_ids and p.product_tag_ids[0].start_date]
+    
         # Ordenar por la fecha más reciente de start_date
         tagged_products = sorted(
             tagged_products,
@@ -79,19 +75,19 @@ class OffersController(http.Controller):
             reverse=True
         )
         
+        
         # Calcular el total de productos publicados y con etiqueta
         total_domain = [
             ('website_published', '=', True),
-            ('product_tag_ids', '!=', False),
-            ('list_price', '>', 'discounted_price'),  # Añadir filtro para descuento real
+            ('product_tag_ids', '!=', False)
         ]
         if free_shipping:
             total_domain.append(('free_shipping', '=', True))
             
         total_products = request.env['product.template'].sudo().search_count(total_domain)
         
-        oferta_dia = []
-        oferta_relampago = []
+        oferta_dia = [p for p in oferta_dia if p.list_price > p.discounted_price]
+        oferta_relampago = [p for p in oferta_relampago if p.list_price > p.discounted_price]        
         for p in tagged_products:
             for tag in p.product_tag_ids:
                 if tag.start_date and tag.end_date:
@@ -108,12 +104,15 @@ class OffersController(http.Controller):
                     elif 0 < duration <= 6:
                         oferta_relampago.append(p)
                         break
-                        
+        all_products = request.env['product.template'].sudo().search(price_range_domain)
+        
+        # Luego filtrar por descuento real
+        discounted_products = all_products.filtered(lambda p: p.list_price > p.discounted_price)
+                                
         # Actualizar los contadores de rango de precios según el filtro de free_shipping
         price_range_domain = [
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False),
-            ('list_price', '>', 'discounted_price'),  # Añadir filtro para descuento real
         ]
         
         if free_shipping:
@@ -135,7 +134,11 @@ class OffersController(http.Controller):
                 ('discounted_price', '>', 1000)
             ]),
         }
-        
+        price_ranges = {
+            '0_500': len(discounted_products.filtered(lambda p: 0 < p.discounted_price <= 500)),
+            '500_1000': len(discounted_products.filtered(lambda p: 500 < p.discounted_price <= 1000)),
+            '1000_plus': len(discounted_products.filtered(lambda p: p.discounted_price > 1000)),
+        }        
         # Obtener solo las categorías públicas que tengan al menos un producto con etiqueta
         categories_with_count = []
         for cat in main_categories:
@@ -190,8 +193,7 @@ class OffersController(http.Controller):
     
         domain = [
             ('website_published', '=', True),
-            ('product_tag_ids', '!=', False),
-            ('list_price', '>', 'discounted_price'),  # Añadir filtro para descuento real
+            ('product_tag_ids', '!=', False)
         ]
         
         # Aplicar filtro de free_shipping si está activo
@@ -202,9 +204,7 @@ class OffersController(http.Controller):
         category_domain = [
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False),
-            ('list_price', '>', 'discounted_price'),  # Añadir filtro para descuento real
         ]
-        
         
         if free_shipping:
             category_domain.append(('free_shipping', '=', True))
@@ -221,24 +221,22 @@ class OffersController(http.Controller):
         
         categories_with_count = []
         for cat in main_categories:
-            cat_domain = [
-                ('website_published', '=', True),
-                ('product_tag_ids', '!=', False),
-                ('categ_id', 'child_of', cat.id)
-            ]
+            # Obtener todos los productos en esta categoría
+            cat_products = request.env['product.template'].sudo().search(cat_domain)
             
-            if free_shipping:
-                cat_domain.append(('free_shipping', '=', True))
-                
-            prod_count = request.env['product.template'].sudo().search_count(cat_domain)
+            # Filtrar solo los que tienen descuento real
+            cat_products_discounted = cat_products.filtered(lambda p: p.list_price > p.discounted_price)
             
-            if prod_count > 0:  # Solo incluir categorías que tengan productos con el filtro actual
+            # Usar la cantidad filtrada
+            prod_count = len(cat_products_discounted)
+            
+            if prod_count > 0:
                 categories_with_count.append({
                     'id': cat.id,
                     'name': cat.name,
                     'product_count': prod_count,
-                })      
-                
+                })
+                    
         category_id = request.params.get('category_id')
         if category_id:
             domain.append(('categ_id', 'child_of', int(category_id)))
@@ -257,17 +255,14 @@ class OffersController(http.Controller):
         if max_price:
             domain.append(('discounted_price', '<=', float(max_price)))
     
-        # Buscar productos y categorías
-        products = request.env['product.template'].sudo().search(domain)
-        
         # Filtrar solo productos con descuento real
         products = products.filtered(lambda p: p.list_price > p.discounted_price)
-    
-        # Inicializar remaining_times antes del bloque condicional
-        remaining_times = {}  # Diccionario para almacenar los tiempos restantes
         
+        # Si estás procesando tiempos restantes, mantener solo productos con descuento real
         if type_offer in ['day', 'flash', 'current']:
+        
             filtered = []
+            remaining_times = {}  # Diccionario para almacenar los tiempos restantes
             now = Datetime.now(timezone('America/Mexico_City'))
             
             for p in products:
@@ -311,8 +306,7 @@ class OffersController(http.Controller):
         # Calcular el total de productos según los filtros actuales
         total_domain = [
             ('website_published', '=', True),
-            ('product_tag_ids', '!=', False),
-            ('list_price', '>', 'discounted_price'),  # Añadir filtro para descuento real
+            ('product_tag_ids', '!=', False)
         ]
         
         if free_shipping:
@@ -324,9 +318,17 @@ class OffersController(http.Controller):
         price_range_domain = [
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False),
-            ('list_price', '>', 'discounted_price'),  # Añadir filtro para descuento real
         ]
-            
+    
+        # Para los rangos de precio, usar el mismo enfoque que en el método offers
+        all_products = request.env['product.template'].sudo().search(price_range_domain)
+        discounted_products = all_products.filtered(lambda p: p.list_price > p.discounted_price)
+        
+        price_ranges = {
+            '0_500': len(discounted_products.filtered(lambda p: 0 < p.discounted_price <= 500)),
+            '500_1000': len(discounted_products.filtered(lambda p: 500 < p.discounted_price <= 1000)),
+            '1000_plus': len(discounted_products.filtered(lambda p: p.discounted_price > 1000)),
+        }
         if free_shipping:
             price_range_domain.append(('free_shipping', '=', True))
             
@@ -358,7 +360,4 @@ class OffersController(http.Controller):
             'offer_type': offer_type,
             'categories_with_count': categories_with_count,
             'all_categories': main_categories,
-            'remaining_times': remaining_times,  # Añadir el diccionario al contexto
-            'datetime': Datetime,  # Necesario para usar datetime en la plantilla
-            'timedelta': timedelta,  # Si también necesitas timedelta
         })
