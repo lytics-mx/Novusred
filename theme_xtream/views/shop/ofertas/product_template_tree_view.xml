@@ -8,12 +8,13 @@
             <xpath expr="//field[@name='visible_on_ecommerce']" position="after">
                 <field name="discount_percentage" />
                 <field name="is_percentage" />
-                <button name="toggle_retain_products" string="Retener Productos" type="object" class="oe_highlight"
-                        attrs="{'invisible': [('retain_products', '=', True)]}"/>
+                <field name="retain_products" invisible="1"/>
+                <button name="toggle_retain_products" string="Retener Productos" type="object" 
+                        class="oe_highlight" invisible="retain_products"/>
                 <button name="toggle_retain_products" string="No Retener Productos" type="object"
-                        attrs="{'invisible': [('retain_products', '=', False)]}"/>
-                <button name="reactivate_discount" string="Reactivar Descuento" type="object" class="oe_highlight"
-                        attrs="{'invisible': ['|', ('retain_products', '=', False), ('stored_discount', '=', 0)]}"/>
+                        invisible="not retain_products"/>
+                <button name="reactivate_discount" string="Reactivar Descuento" type="object" 
+                        class="oe_highlight" invisible="not retain_products or stored_discount == 0"/>
             </xpath>
             <!-- Crear una nueva pestaña para la configuración de expiración -->
             <xpath expr="//notebook" position="inside">
@@ -23,18 +24,15 @@
                             <field name="start_date"/>
                             <field name="end_date"/>
                             <field name="offer_time_type"/>
-                            <field name="flash_hours"
-                                   modifiers='{"invisible": [["offer_time_type", "!=", "flash"]], "readonly": [["offer_time_type", "!=", "flash"]]}'/>                        </group>
+                            <field name="flash_hours" invisible="offer_time_type != 'flash'" 
+                                   readonly="offer_time_type != 'flash'"/>
+                        </group>
                         <group>
                             <field name="recurrence_type" />
                             <!-- <field name="stored_discount" /> -->
                         </group>
                     </group>
                 </page>
-                <!-- Crear una nueva pestaña para la configuración de Fin de semana -->
-
-
-
             </xpath>
         </field>
     </record>
