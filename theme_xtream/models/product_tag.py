@@ -433,14 +433,16 @@ class ProductTag(models.Model):
                     should_activate = False
             
             # Ahora aplicamos la lógica de activación/desactivación
-            if should_activate and not tag.is_active:
-                _logger.info(f"Activando descuento recurrente para etiqueta {tag.name}")
-                tag.is_active = True
-                
-                # Restaurar el descuento almacenado
-                if tag.stored_discount > 0:
-                    tag.discount_percentage = tag.stored_discount
-                
+                if should_activate and not tag.is_active:
+                    _logger.info(f"Activando descuento recurrente para etiqueta {tag.name}")
+                    tag.is_active = True
+                    
+                    # Restaurar el descuento almacenado
+                    if tag.stored_discount > 0:
+                        tag.discount_percentage = tag.stored_discount
+                        tag.stored_discount = 0  # Opcional: limpiar el stored_discount una vez aplicado
+                    
+                            
                 # Actualizar fechas si es necesario
                 if not tag.start_date or not tag.end_date:
                     # Si no hay fechas configuradas, las creamos según el tipo de recurrencia
@@ -513,17 +515,32 @@ class ProductTag(models.Model):
     # ...existing code...
 
 
-    # ...existing code...
     @api.model
     def remove_expired_tags(self):
         """Elimina o desactiva etiquetas expiradas según la configuración."""
         now = fields.Datetime.now()
-        expired_tags = self.search([('end_date', '<=', now), ('is_active', '=', True)])
         
-        for tag in expired_tags:
-            # Guardar el valor del descuento para futuras recurrencias
-            tag.stored_discount = tag.discount_percentage
-            tag.discount_percentage = 0
+        # 1. Etiquetas que tienen fecha de fin y han expirado
+        expired_tags = self.search([
+            ('end_date', '!=', False),
+            ('end_date', '<=', now),
+            ('is_active', '=', True)
+        ])
+        
+        # 2. También incluir etiquetas con discount_percentage = 0
+        zero_discount_tags = self.search([
+            ('discount_percentage', '=', 0),
+            ('is_active', '=', True)
+        ])
+        
+        all_tags_to_process = expired_tags | zero_discount_tags
+        
+        # Desactivar etiquetas expiradas o con descuento cero
+        for tag in all_tags_to_process:
+            # Guardar el valor del descuento para futuras recurrencias si es necesario
+            if tag.discount_percentage > 0:
+                tag.stored_discount = tag.discount_percentage
+                tag.discount_percentage = 0
             tag.is_active = False
             
             # Buscar productos relacionados con esta etiqueta
@@ -537,4 +554,3 @@ class ProductTag(models.Model):
                 # Solo hacer invisible la etiqueta en el sitio web
                 for product in products:
                     product.is_discount_tag_visible = False
-    # ...existing code...
