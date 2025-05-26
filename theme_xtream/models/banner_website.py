@@ -36,6 +36,15 @@ class BannerImageLine(models.Model):
         help="Upload images related to brands."
     )
 
+    selected_categories = fields.Many2many(
+        'product.category',
+        'banner_category_rel',
+        'banner_id',
+        'category_id',
+        string="Categorías Seleccionadas",
+        help="Selecciona las categorías que quieres mostrar en el menú (ej: Auxiliar, Lámparas, etc.)"
+    )
+
     is_active_carousel = fields.Boolean(string="Mostrar en Carrusel General", default=False)
     is_active_product_carousel = fields.Boolean(string="Mostrar en Carrusel de Productos", default=False)
     is_active_brand_carousel = fields.Boolean(string="Mostrar en Carrusel de Marcas", default=False)
