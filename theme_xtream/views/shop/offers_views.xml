@@ -70,6 +70,8 @@
                         cursor: pointer;
                         transition: all 0.2s ease;
                         flex-shrink: 0;
+                        position: relative; /* Asegura posicionamiento correcto del underline */
+                        padding-bottom: 5px; /* Espacio para el underline */
                     }
                     
                     .tag-icon-container {
@@ -97,27 +99,25 @@
                     .tag-underline {
                         height: 2px;
                         background-color: #007bff;
-                        width: 100%;
+                        width: 0; /* Inicia en 0 */
                         position: absolute;
-                        bottom: -5px;
-                        left: 0;
-                        display: none;
-                        transition: all 0.3s ease;
-                    }
-                    
-                    .tag-item:hover {
-                        transform: translateY(-2px);
+                        bottom: 0;
+                        left: 50%; /* Centrado */
+                        transform: translateX(-50%); /* Centrado */
+                        transition: width 0.3s ease;
+                        opacity: 0;
                     }
                     
                     .tag-item:hover .tag-underline {
-                        display: block !important;
+                        width: 100%; /* Se expande al 100% */
+                        opacity: 1;
                     }
                     
                     .tag-item:hover .tag-icon {
                         transform: scale(1.05);
                     }
                     
-                    /* Responsive - Tablets y pantallas medianas */
+                    /* Responsive - Tablets */
                     @media (max-width: 991.98px) {
                         .tags-wrapper {
                             gap: 15px;
@@ -142,26 +142,22 @@
                     @media (max-width: 767.98px) {
                         .tags-container {
                             overflow-x: auto;
-                            overflow-y: hidden;
                             -webkit-overflow-scrolling: touch;
-                            scrollbar-width: none; /* Firefox */
-                            -ms-overflow-style: none; /* IE/Edge */
+                            scrollbar-width: none;
+                            -ms-overflow-style: none;
                         }
                         
                         .tags-container::-webkit-scrollbar {
-                            display: none; /* Chrome/Safari/Opera */
+                            display: none;
                         }
                         
                         .tags-wrapper {
-                            justify-content: flex-start;
                             gap: 12px;
                             padding-bottom: 5px;
-                            min-width: max-content;
                         }
                         
                         .tag-item {
                             min-width: 60px;
-                            flex-shrink: 0;
                         }
                         
                         .tag-icon {
@@ -176,42 +172,31 @@
                             text-overflow: ellipsis;
                             max-width: 60px;
                         }
-                    }
-                    
-                    /* Móviles muy pequeños */
-                    @media (max-width: 575.98px) {
-                        .tag-item {
-                            min-width: 55px;
-                        }
-                        
-                        .tag-icon {
-                            height: 35px;
-                            width: 35px;
-                        }
-                        
-                        .tag-name {
-                            font-size: 10px;
-                            max-width: 55px;
-                        }
-                        
-                        .tags-wrapper {
-                            gap: 10px;
+
+                        /* Mantener underline en móvil */
+                        .tag-underline {
+                            height: 2px;
                         }
                     }
                     </style>
                     
-                    <!-- JavaScript opcional para clic (si quieres funcionalidad adicional) -->
+                    <!-- JavaScript para manejo de hover en móvil -->
                     <script>
                     document.addEventListener('DOMContentLoaded', function() {
                         const tagItems = document.querySelectorAll('.tag-item');
                         
                         tagItems.forEach(function(item) {
-                            item.addEventListener('click', function() {
-                                const tagId = this.getAttribute('data-tag-id');
-                                console.log('Tag seleccionado:', tagId);
-                                
-                                // Opcional: redirigir o filtrar productos
-                                // window.location.href = '/offers?tag=' + tagId;
+                            // Manejo de eventos touch
+                            item.addEventListener('touchstart', function() {
+                                this.querySelector('.tag-underline').style.width = '100%';
+                                this.querySelector('.tag-underline').style.opacity = '1';
+                            });
+                            
+                            item.addEventListener('touchend', function() {
+                                setTimeout(() => {
+                                    this.querySelector('.tag-underline').style.width = '0';
+                                    this.querySelector('.tag-underline').style.opacity = '0';
+                                }, 300);
                             });
                         });
                     });
