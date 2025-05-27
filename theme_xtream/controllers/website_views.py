@@ -131,35 +131,22 @@ class OffersController(http.Controller):
         if free_shipping:
             price_range_domain.append(('free_shipping', '=', True))
 
+        # Obtener todos los productos y filtrar por descuento real
         all_products = request.env['product.template'].sudo().search(price_range_domain)
+        discounted_products = all_products.filtered(lambda p: p.list_price > p.discounted_price)
+        
+        # Filtrar ofertas del día y relámpago solo con productos que tengan descuento
         oferta_dia = [p for p in oferta_dia if p.list_price > p.discounted_price]        
         oferta_relampago = [p for p in oferta_relampago if p.list_price > p.discounted_price]         
-        # Luego filtrar por descuento real
-        discounted_products = all_products.filtered(lambda p: p.list_price > p.discounted_price)
-           
 
-        price_ranges = {
-            '0_500': request.env['product.template'].sudo().search_count([
-                *price_range_domain,
-                ('discounted_price', '>', 0),
-                ('discounted_price', '<=', 500)
-            ]),
-            '500_1000': request.env['product.template'].sudo().search_count([
-                *price_range_domain,
-                ('discounted_price', '>', 500),
-                ('discounted_price', '<=', 1000)
-            ]),
-            '1000_plus': request.env['product.template'].sudo().search_count([
-                *price_range_domain,
-                ('discounted_price', '>', 1000)
-            ]),
-        }
+        # SOLO UNA definición de price_ranges - ELIMINA TODAS LAS OTRAS
         price_ranges = {
             '0_500': len(discounted_products.filtered(lambda p: 0 < p.discounted_price <= 500)),
             '500_1000': len(discounted_products.filtered(lambda p: 500 < p.discounted_price <= 1000)),
             '1000_plus': len(discounted_products.filtered(lambda p: p.discounted_price > 1000)),
-        }        
-        # Obtener solo las categorías públicas que tengan al menos un producto con etiqueta
+        }
+        
+        # Obtener categorías con conteo correcto
         categories_with_count = []
         for cat in main_categories:
             cat_domain = [
@@ -171,26 +158,32 @@ class OffersController(http.Controller):
             if free_shipping:
                 cat_domain.append(('free_shipping', '=', True))
                 
-            prod_count = request.env['product.template'].sudo().search_count(cat_domain)
+            # Obtener productos de la categoría y filtrar por descuento real
+            cat_products = request.env['product.template'].sudo().search(cat_domain)
+            cat_products_with_discount = cat_products.filtered(lambda p: p.list_price > p.discounted_price)
+            prod_count = len(cat_products_with_discount)
             
-            if prod_count > 0:  # Solo incluir categorías con productos que cumplan el filtro
+            if prod_count > 0:
                 categories_with_count.append({
                     'id': cat.id,
                     'name': cat.name,
                     'product_count': prod_count,
                 })
-                
+
+        # Calcular total correcto
+        all_total_products = request.env['product.template'].sudo().search(total_domain)
+        total_products_with_discount = all_total_products.filtered(lambda p: p.list_price > p.discounted_price)
+        
         return request.render('theme_xtream.offers_template', {
             'discounted_products': filtered_products,
             'categories_with_count': categories_with_count,
-            'total_products': len(filtered_products),
+            'total_products': len(total_products_with_discount),  # Usar el conteo correcto
             'price_ranges': price_ranges,
             'oferta_dia': oferta_dia,
             'oferta_relampago': oferta_relampago,
             'all_categories': main_categories,
-            'free_shipping': free_shipping,  # Ahora es un booleano, no una cadena
-            'product_tags': product_tags,  # ← AGREGAR ESTA LÍNEA
-
+            'free_shipping': free_shipping,
+            'product_tags': product_tags,
         })
         
 
@@ -357,52 +350,30 @@ class OffersController(http.Controller):
         if free_shipping:
             price_range_domain.append(('free_shipping', '=', True))
 
-        # Para los rangos de precio, usar el mismo enfoque que en el método offers
+        # Obtener todos los productos y filtrar por descuento real
         all_products = request.env['product.template'].sudo().search(price_range_domain)
-        
-        if free_shipping:
-            price_range_domain.append(('free_shipping', '=', True))
-            all_products = request.env['product.template'].sudo().search(price_range_domain)
-            
-        # Filtrar por descuento real
         discounted_products = all_products.filtered(lambda p: p.list_price > p.discounted_price)
         
+        # SOLO UNA definición de price_ranges - ELIMINA LA DUPLICADA
         price_ranges = {
             '0_500': len(discounted_products.filtered(lambda p: 0 < p.discounted_price <= 500)),
             '500_1000': len(discounted_products.filtered(lambda p: 500 < p.discounted_price <= 1000)),
             '1000_plus': len(discounted_products.filtered(lambda p: p.discounted_price > 1000)),
         }
-        if free_shipping:
-            price_range_domain.append(('free_shipping', '=', True))
-            
-        price_ranges = {
-            '0_500': request.env['product.template'].sudo().search_count([
-                *price_range_domain,
-                ('discounted_price', '>', 0),
-                ('discounted_price', '<=', 500)
-            ]),
-            '500_1000': request.env['product.template'].sudo().search_count([
-                *price_range_domain,
-                ('discounted_price', '>', 500),
-                ('discounted_price', '<=', 1000)
-            ]),
-            '1000_plus': request.env['product.template'].sudo().search_count([
-                *price_range_domain,
-                ('discounted_price', '>', 1000)
-            ]),
-        }
+
+        # Calcular total correcto
+        all_total_products = request.env['product.template'].sudo().search(total_domain)
+        total_products_with_discount = all_total_products.filtered(lambda p: p.list_price > p.discounted_price)
     
-        # Asegurarse de que el valor de free_shipping se pase a la plantilla
         return request.render('theme_xtream.offers_template', {
             'discounted_products': products,
             'current_category': category,
             'offers': offers,
             'free_shipping': free_shipping,
-            'total_products': total_products,
+            'total_products': len(total_products_with_discount),  # Usar el conteo correcto
             'price_ranges': price_ranges,
             'offer_type': offer_type,
             'categories_with_count': categories_with_count,
             'all_categories': main_categories,
-            'product_tags': product_tags,  # ← AGREGAR ESTA LÍNEA
-
+            'product_tags': product_tags,
         })
