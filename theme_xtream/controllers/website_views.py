@@ -135,7 +135,6 @@ class OffersController(http.Controller):
         oferta_dia = [p for p in oferta_dia if p.list_price > p.discounted_price]        
         oferta_relampago = [p for p in oferta_relampago if p.list_price > p.discounted_price]         
         # Luego filtrar por descuento real
-        discounted_products = all_products.filtered(lambda p: p.list_price > p.discounted_price)
            
 
         price_ranges = {
@@ -362,8 +361,11 @@ class OffersController(http.Controller):
         ]
     
         # Para los rangos de precio, usar el mismo enfoque que en el método offers
-        all_products = request.env['product.template'].sudo().search(price_range_domain)
-        discounted_products = all_products.filtered(lambda p: p.list_price > p.discounted_price)
+        all_tagged_products = request.env['product.template'].sudo().search(domain)
+        
+        # FILTRAR por descuento real
+        discounted_products = all_tagged_products.filtered(lambda p: p.list_price > p.discounted_price)
+    
         
         price_ranges = {
             '0_500': len(discounted_products.filtered(lambda p: 0 < p.discounted_price <= 500)),
