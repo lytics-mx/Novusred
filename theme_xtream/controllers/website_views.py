@@ -60,7 +60,7 @@ class OffersController(http.Controller):
         ]
         
         # Solo productos publicados y que tengan al menos una etiqueta con start_date
-        tagged_products = [p for p in tagged_products if p.website_published and p.product_tag_ids and p.product_tag_ids[0].start_date]
+        tagged_products = [p for p in filtered_products if p.website_published and p.product_tag_ids and p.product_tag_ids[0].start_date]
     
         # Ordenar por la fecha más reciente de start_date
         tagged_products = sorted(
@@ -68,7 +68,6 @@ class OffersController(http.Controller):
             key=lambda p: p.product_tag_ids[0].start_date,
             reverse=True
         )
-        
         product_tags = request.env['product.tag'].sudo().search([
             ('visible_on_ecommerce', '=', True)  # Solo los visibles en ecommerce
         ], limit=6)
