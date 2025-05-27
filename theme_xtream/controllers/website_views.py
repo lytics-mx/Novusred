@@ -186,7 +186,6 @@ class OffersController(http.Controller):
             'free_shipping': free_shipping,  # Ahora es un booleano, no una cadena
             'product_tags': product_tags,  # ← AGREGAR ESTA LÍNEA
 
-
         })
         
 
@@ -289,9 +288,7 @@ class OffersController(http.Controller):
         # LUEGO filtrar por descuento real
         products = products.filtered(lambda p: p.list_price > p.discounted_price)
         
-        product_tags = request.env['product.tag'].sudo().search([
-            ('is_active', '=', True)
-        ]).filtered(lambda t: t.image)[:6]        
+        
         # Si estás procesando tiempos restantes, mantener solo productos con descuento real
         if type_offer in ['day', 'flash', 'current']:
         
@@ -383,6 +380,10 @@ class OffersController(http.Controller):
             ]),
         }
     
+        product_tags = request.env['product.tag'].sudo().search([
+            ('is_active', '=', True)
+        ]).filtered(lambda t: t.image)[:6]
+                    
         # Asegurarse de que el valor de free_shipping se pase a la plantilla
         return request.render('theme_xtream.offers_template', {
             'discounted_products': products,
