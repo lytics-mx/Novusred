@@ -3,57 +3,77 @@
         <t t-call="website.layout">
             <div class="container mt-4">
                 <!-- Sección de encabezado con texto e íconos -->
-                <div class="d-flex align-items-center justify-content-between p-4 mb-4" style="background-color: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-top: -32px; margin-bottom: 24px; width: 100vw; position: relative; left: 50%; transform: translateX(-50%);">
-                    <!-- Texto Ofertas -->
-                    <div class="d-flex align-items-center" style="flex: 1; justify-content: flex-end;">
-                        <div class="text-end" style="max-width: 300px;">
-                            <div class="text-center" style="margin-right: auto; margin-left: auto;">
-                                <h2 class="mb-1" style="font-family: 'Questrial', sans-serif; font-size: 28px; font-weight: bold; letter-spacing: 0.5px;">Ofertas</h2>
-                                <p class="mb-0" style="font-size: 14px; color: #6c757d;">¡Aquí verás las mejores ofertas!</p>
+                <div class="header-container" style="background-color: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-top: -32px; margin-bottom: 24px; width: 100vw; position: relative; left: 50%; transform: translateX(-50%); padding: 20px 40px;">
+                    
+                    <div class="d-flex align-items-center justify-content-between w-100">
+                        <!-- Texto Ofertas (lado izquierdo) -->
+                        <div class="offers-text-section">
+                            <h2 class="mb-1" style="font-family: 'Questrial', sans-serif; font-size: 28px; font-weight: bold; letter-spacing: 0.5px;">Ofertas</h2>
+                            <p class="mb-0" style="font-size: 14px; color: #6c757d;">¡Aquí verás las mejores ofertas!</p>
+                        </div>
+                        
+                        <!-- Iconos de tags (lado derecho) -->
+                        <div class="tags-section">
+                            <div class="tags-container">
+                                <t t-if="product_tags">
+                                    <div class="tags-wrapper">
+                                        <t t-foreach="product_tags" t-as="tag">
+                                            <div class="text-center position-relative tag-item clickable-tag" 
+                                                 t-att-data-tag-id="tag.id"
+                                                 t-att-data-tag-name="tag.name">
+                                                
+                                                <!-- Imagen del tag -->
+                                                <div class="tag-icon-container">
+                                                    <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
+                                                         t-att-alt="tag.name"
+                                                         class="tag-icon" />
+                                                </div>
+                                                
+                                                <!-- Nombre del tag -->
+                                                <div class="tag-name">
+                                                    <t t-esc="tag.name" />
+                                                </div>
+                                                
+                                                <!-- Línea azul (solo visible al hover) -->
+                                                <div class="tag-underline"></div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </t>
+                                
+                                <t t-else="">
+                                    <div style="color: #666; font-size: 14px; padding: 10px;">
+                                        No hay categorías disponibles
+                                    </div>
+                                </t>
                             </div>
                         </div>
                     </div>
-                    <!-- Iconos de tags -->
-                    <div class="d-flex align-items-start justify-content-start" style="flex: 2;">
-                        <div class="tags-container w-100">
-                            
-                            <t t-if="product_tags">
-                                <div class="tags-wrapper">
-                                    <t t-foreach="product_tags" t-as="tag">
-                                        <div class="text-center position-relative tag-item clickable-tag" 
-                                             t-att-data-tag-id="tag.id"
-                                             t-att-data-tag-name="tag.name">
-                                            
-                                            <!-- Imagen del tag -->
-                                            <div class="tag-icon-container">
-                                                <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
-                                                     t-att-alt="tag.name"
-                                                     class="tag-icon" />
-                                            </div>
-                                            
-                                            <!-- Nombre del tag -->
-                                            <div class="tag-name">
-                                                <t t-esc="tag.name" />
-                                            </div>
-                                            
-                                            <!-- Línea azul (solo visible al hover) -->
-                                            <div class="tag-underline"></div>
-                                        </div>
-                                    </t>
-                                </div>
-                            </t>
-                            
-                            <t t-else="">
-                                <div style="color: #666; font-size: 14px; padding: 10px;">
-                                    No hay categorías disponibles
-                                </div>
-                            </t>
-                        </div>
-                    </div>
                     
-                    <!-- CSS para manejar el hover y responsive -->
+                    <!-- CSS para el nuevo diseño -->
                     <style>
-                    /* Estilos base para tags */
+                    /* Contenedor principal del header */
+                    .header-container {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                    }
+                    
+                    /* Sección de texto de ofertas */
+                    .offers-text-section {
+                        flex: 0 0 auto;
+                        text-align: left;
+                    }
+                    
+                    /* Sección de tags */
+                    .tags-section {
+                        flex: 1;
+                        display: flex;
+                        justify-content: flex-end;
+                        margin-left: 40px;
+                    }
+                    
+                    /* Contenedor de tags */
                     .tags-container {
                         overflow: hidden;
                     }
@@ -129,9 +149,25 @@
                     
                     /* Responsive - Tablets */
                     @media (max-width: 991.98px) {
+                        .header-container {
+                            flex-direction: column;
+                            align-items: center;
+                            text-align: center;
+                            padding: 20px;
+                        }
+                        
+                        .offers-text-section {
+                            margin-bottom: 20px;
+                        }
+                        
+                        .tags-section {
+                            margin-left: 0;
+                            justify-content: center;
+                        }
+                        
                         .tags-wrapper {
                             gap: 15px;
-                            justify-content: flex-start;
+                            justify-content: center;
                         }
                         
                         .tag-item {
@@ -150,6 +186,14 @@
                     
                     /* Responsive - Móviles */
                     @media (max-width: 767.98px) {
+                        .header-container {
+                            padding: 15px;
+                        }
+                        
+                        .offers-text-section h2 {
+                            font-size: 24px;
+                        }
+                        
                         .tags-container {
                             overflow-x: auto;
                             -webkit-overflow-scrolling: touch;
@@ -164,6 +208,7 @@
                         .tags-wrapper {
                             gap: 12px;
                             padding-bottom: 5px;
+                            justify-content: flex-start;
                         }
                         
                         .tag-item {
