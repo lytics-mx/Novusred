@@ -14,14 +14,15 @@
                         </div>
                     </div>
                     <!-- Iconos de tags -->
-                    <div class="d-flex align-items-end justify-content-end" style="flex: 2;">
+                    <div class="d-flex align-items-start justify-content-start" style="flex: 2;">
                         <div class="tags-container w-100">
                             
                             <t t-if="product_tags">
                                 <div class="tags-wrapper">
                                     <t t-foreach="product_tags" t-as="tag">
-                                        <div class="text-center position-relative tag-item" 
-                                             t-att-data-tag-id="tag.id">
+                                        <div class="text-center position-relative tag-item clickable-tag" 
+                                             t-att-data-tag-id="tag.id"
+                                             t-att-data-tag-name="tag.name">
                                             
                                             <!-- Imagen del tag -->
                                             <div class="tag-icon-container">
@@ -70,8 +71,17 @@
                         cursor: pointer;
                         transition: all 0.2s ease;
                         flex-shrink: 0;
-                        position: relative; /* Asegura posicionamiento correcto del underline */
-                        padding-bottom: 5px; /* Espacio para el underline */
+                        position: relative;
+                        padding-bottom: 5px;
+                    }
+                    
+                    /* Estilo específico para tags clickeables */
+                    .clickable-tag:hover {
+                        transform: translateY(-2px);
+                    }
+                    
+                    .clickable-tag:active {
+                        transform: translateY(0);
                     }
                     
                     .tag-icon-container {
@@ -99,17 +109,17 @@
                     .tag-underline {
                         height: 2px;
                         background-color: #007bff;
-                        width: 0; /* Inicia en 0 */
+                        width: 0;
                         position: absolute;
                         bottom: 0;
-                        left: 50%; /* Centrado */
-                        transform: translateX(-50%); /* Centrado */
+                        left: 50%;
+                        transform: translateX(-50%);
                         transition: width 0.3s ease;
                         opacity: 0;
                     }
                     
                     .tag-item:hover .tag-underline {
-                        width: 100%; /* Se expande al 100% */
+                        width: 100%;
                         opacity: 1;
                     }
                     
@@ -172,21 +182,38 @@
                             text-overflow: ellipsis;
                             max-width: 60px;
                         }
-
-                        /* Mantener underline en móvil */
+                    
                         .tag-underline {
                             height: 2px;
                         }
                     }
                     </style>
                     
-                    <!-- JavaScript para manejo de hover en móvil -->
+                    <!-- JavaScript para manejo de clicks y hover en móvil -->
                     <script>
                     document.addEventListener('DOMContentLoaded', function() {
                         const tagItems = document.querySelectorAll('.tag-item');
                         
                         tagItems.forEach(function(item) {
-                            // Manejo de eventos touch
+                            // Manejo de clicks en tags
+                            item.addEventListener('click', function() {
+                                const tagId = this.getAttribute('data-tag-id');
+                                
+                                // Construir la URL con el filtro de tag
+                                let params = new URLSearchParams();
+                                params.append('tag_id', tagId);
+                                
+                                // Mantener el filtro de envío gratis si está activo
+                                const currentUrl = new URL(window.location);
+                                if (currentUrl.searchParams.get('free_shipping') === 'true') {
+                                    params.append('free_shipping', 'true');
+                                }
+                                
+                                // Redirigir a la nueva URL
+                                window.location.href = '/offers?' + params.toString();
+                            });
+                            
+                            // Manejo de eventos touch para móvil
                             item.addEventListener('touchstart', function() {
                                 this.querySelector('.tag-underline').style.width = '100%';
                                 this.querySelector('.tag-underline').style.opacity = '1';
@@ -201,7 +228,8 @@
                         });
                     });
                     </script>
-                    
+                    <!-- ...existing code... -->
+                    <!-- ...existing code... -->
 
                 </div>
                 <!-- Filtro móvil (solo visible en móvil) -->

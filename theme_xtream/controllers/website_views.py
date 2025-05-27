@@ -8,7 +8,52 @@ class OffersController(http.Controller):
     @http.route('/offers', type='http', auth='public', website=True)
     def offers(self, free_shipping=False, **kwargs):
         """Renderiza la página de productos en oferta."""
-    
+
+        # Obtener el parámetro tag_id de la URL
+        tag_id = kwargs.get('tag_id')
+        
+        # Construir el dominio base para productos en oferta
+        domain = [
+            ('website_published', '=', True),
+            ('sale_ok', '=', True),
+            '|',
+            ('discount_percentage', '>', 0),
+            ('fixed_discount', '>', 0)
+        ]
+        
+        # Si se especifica un tag_id, filtrar por ese tag
+        if tag_id:
+            try:
+                tag_id = int(tag_id)
+                domain.append(('product_tag_ids', 'in', [tag_id]))
+            except (ValueError, TypeError):
+                # Si tag_id no es válido, ignorar el filtro
+                pass
+        
+        # Filtro de envío gratis si está activo
+        free_shipping = kwargs.get('free_shipping') == 'true'
+        if free_shipping:
+            domain.append(('free_shipping', '=', True))
+        
+        # Obtener productos filtrados
+        Product = request.env['product.template']
+        discounted_products = Product.search(domain)
+        
+        # Calcular precios con descuento
+        for product in discounted_products:
+            if product.discount_percentage > 0:
+                product.discounted_price = product.list_price * (1 - product.discount_percentage / 100)
+            elif product.fixed_discount > 0:
+                product.discounted_price = max(0, product.list_price - product.fixed_discount)
+            else:
+                product.discounted_price = product.list_price
+        
+        # Obtener tags de productos (para mostrar en el header)
+        product_tags = request.env['product.tag'].search([
+            ('product_tmpl_ids', 'in', discounted_products.ids)
+        ])
+     
+        
         # Guardar el estado de free_shipping en la sesión del usuario
         if 'free_shipping' in request.params:
             free_shipping = request.params.get('free_shipping') == 'true'
@@ -17,11 +62,7 @@ class OffersController(http.Controller):
             # Si no viene en los parámetros, usar el valor guardado en sesión (si existe)
             free_shipping = request.session.get('free_shipping', False)
     
-        # Filtro base para productos publicados con etiquetas
-        domain = [
-            ('website_published', '=', True),
-            ('product_tag_ids', '!=', False)
-        ]
+
         
         # Aplicar filtro free_shipping si está activo
         if free_shipping:
@@ -172,6 +213,8 @@ class OffersController(http.Controller):
             'all_categories': main_categories,
             'free_shipping': free_shipping,
             'product_tags': product_tags,
+            'selected_tag_id': tag_id,  # Para mostrar cuál tag está seleccionado
+
         })
         
 
