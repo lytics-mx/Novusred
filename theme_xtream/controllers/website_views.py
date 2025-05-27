@@ -8,11 +8,7 @@ class OffersController(http.Controller):
     @http.route('/offers', type='http', auth='public', website=True)
     def offers(self, free_shipping=False, **kwargs):
         """Renderiza la página de productos en oferta."""
-
-        used_tag_ids = []
-        for product in discounted_products:
-            used_tag_ids.extend(product.product_tag_ids.ids)
-
+    
         # Obtener el parámetro tag_id de la URL
         tag_id = kwargs.get('tag_id')
         
@@ -51,9 +47,12 @@ class OffersController(http.Controller):
                 product.discounted_price = max(0, product.list_price - product.fixed_discount)
             else:
                 product.discounted_price = product.list_price
-        
-
-        
+    
+        # AHORA puedes usar discounted_products para obtener los tags
+        used_tag_ids = []
+        for product in discounted_products:
+            used_tag_ids.extend(product.product_tag_ids.ids)
+    
         # Guardar el estado de free_shipping en la sesión del usuario
         if 'free_shipping' in request.params:
             free_shipping = request.params.get('free_shipping') == 'true'
@@ -61,6 +60,8 @@ class OffersController(http.Controller):
         else:
             # Si no viene en los parámetros, usar el valor guardado en sesión (si existe)
             free_shipping = request.session.get('free_shipping', False)
+    
+        # ...resto del código sin cambios...
     
 
         
