@@ -9,6 +9,10 @@ class OffersController(http.Controller):
     def offers(self, free_shipping=False, **kwargs):
         """Renderiza la página de productos en oferta."""
 
+        used_tag_ids = []
+        for product in discounted_products:
+            used_tag_ids.extend(product.product_tag_ids.ids)
+
         # Obtener el parámetro tag_id de la URL
         tag_id = kwargs.get('tag_id')
         
@@ -48,11 +52,7 @@ class OffersController(http.Controller):
             else:
                 product.discounted_price = product.list_price
         
-        # Obtener tags de productos (para mostrar en el header)
-        product_tags = request.env['product.tag'].search([
-            ('product_tmpl_ids', 'in', discounted_products.ids)
-        ])
-     
+
         
         # Guardar el estado de free_shipping en la sesión del usuario
         if 'free_shipping' in request.params:
@@ -110,7 +110,7 @@ class OffersController(http.Controller):
             reverse=True
         )
         product_tags = request.env['product.tag'].sudo().search([
-            ('visible_on_ecommerce', '=', True)  # Solo los visibles en ecommerce
+            ('visible_on_ecommerce', '=', True)
         ], limit=6)
         
         # Resto de tu lógica existente para productos, categorías, etc.
