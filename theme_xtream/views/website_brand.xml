@@ -84,21 +84,44 @@
                     <h2 style="font-size: 25px; text-align: center;">ENCUENTRA LO QUE BUSCAS</h2>
                     <div class="container">
                         <div style="height: 30px;"></div>
-
-                        <div class="row justify-content-center">
-                            <t t-foreach="[{'src': '/theme_xtream/static/src/img/ofertas-barra/etiqueta.png', 'alt': 'Todas las ofertas', 'text': 'Todas las ofertas'},
-                                           {'src': '/theme_xtream/static/src/img/ofertas-barra/relampago.png', 'alt': 'Ofertas relámpago', 'text': 'Ofertas relámpago'},
-                                           {'src': '/theme_xtream/static/src/img/ofertas-barra/etiqueta3.png', 'alt': 'Menos de $500', 'text': 'Menos de $500'},
-                                           {'src': '/theme_xtream/static/src/img/ofertas-barra/reloj.png', 'alt': 'Hasta las 3 del día', 'text': 'Hasta las 3 del día'},
-                                           {'src': '/theme_xtream/static/src/img/ofertas-barra/relampago3.png', 'alt': 'Ofertas relámpago', 'text': 'Ofertas relámpago'},
-                                           {'src': '/theme_xtream/static/src/img/ofertas-barra/reloj3.png', 'alt': 'Hasta las 3 del día', 'text': 'Hasta las 3 del día'}]" t-as="icon">
-                                <div class="col text-center mx-3">
-                                    <div style="width: 100px; height: 100px; border-radius: 50%; background-color: #ffffff; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-                                        <img t-att-src="icon['src']" t-att-alt="icon['alt']" class="img-fluid" style="width: 50px; height: 50px;" />
+                        
+                        <div class="d-flex align-items-start justify-content-start" style="flex: 2;">
+                            <div class="tags-container w-100">
+                                <t t-set="product_tags" t-value="request.env['product.tag'].sudo().search([])"/>
+                                
+                                <t t-if="product_tags">
+                                    <div class="tags-wrapper d-flex justify-content-center">
+                                        <t t-foreach="product_tags" t-as="tag">
+                                            <div class="text-center position-relative tag-item clickable-tag mx-3" 
+                                                 t-att-data-tag-id="tag.id"
+                                                 t-att-data-tag-name="tag.name">
+                                                
+                                                <!-- Contenedor circular del icono -->
+                                                <div class="tag-icon-container" style="width: 100px; height: 100px; border-radius: 50%; background-color: #ffffff; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                                                    <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
+                                                         t-att-alt="tag.name"
+                                                         class="tag-icon"
+                                                         style="width: 50px; height: 50px;" />
+                                                </div>
+                                                
+                                                <!-- Nombre del tag -->
+                                                <div class="tag-name" style="font-size: 14px; margin-top: 10px;">
+                                                    <t t-esc="tag.name" />
+                                                </div>
+                                                
+                                                <!-- Línea azul (solo visible al hover) -->
+                                                <div class="tag-underline"></div>
+                                            </div>
+                                        </t>
                                     </div>
-                                    <p t-esc="icon['text']" style="font-size: 14px; margin-top: 10px;"></p>
-                                </div>
-                            </t>
+                                </t>
+                                
+                                <t t-else="">
+                                    <div style="color: #666; font-size: 14px; padding: 10px;">
+                                        No hay categorías disponibles
+                                    </div>
+                                </t>
+                            </div>
                         </div>
                     </div>
                 </section>
