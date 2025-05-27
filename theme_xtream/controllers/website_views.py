@@ -51,12 +51,7 @@ class OffersController(http.Controller):
         
         # Obtener categorías principales (categorías sin padre)
         all_categories = request.env['product.category'].sudo().search([])
-        # BUSCAR todos los productos que cumplen el dominio
-        all_tagged_products = request.env['product.template'].sudo().search(domain)
         
-        # FILTRAR por descuento real
-        discounted_products = all_tagged_products.filtered(lambda p: p.list_price > p.discounted_price)
-                
         # Crear el dominio para filtrar categorías
         category_domain = [
             ('website_published', '=', True),
@@ -135,6 +130,7 @@ class OffersController(http.Controller):
         oferta_dia = [p for p in oferta_dia if p.list_price > p.discounted_price]        
         oferta_relampago = [p for p in oferta_relampago if p.list_price > p.discounted_price]         
         # Luego filtrar por descuento real
+        discounted_products = all_products.filtered(lambda p: p.list_price > p.discounted_price)
            
 
         price_ranges = {
@@ -189,7 +185,6 @@ class OffersController(http.Controller):
             'all_categories': main_categories,
             'free_shipping': free_shipping,  # Ahora es un booleano, no una cadena
             'product_tags': product_tags,  # ← AGREGAR ESTA LÍNEA
-            'total_products': total_products,
 
 
         })
@@ -296,8 +291,7 @@ class OffersController(http.Controller):
         
         product_tags = request.env['product.tag'].sudo().search([
             ('is_active', '=', True)
-        ]).filtered(lambda t: t.image)[:6]
-
+        ]).filtered(lambda t: t.image)[:6]        
         # Si estás procesando tiempos restantes, mantener solo productos con descuento real
         if type_offer in ['day', 'flash', 'current']:
         
@@ -361,11 +355,8 @@ class OffersController(http.Controller):
         ]
     
         # Para los rangos de precio, usar el mismo enfoque que en el método offers
-        all_tagged_products = request.env['product.template'].sudo().search(domain)
-        
-        # FILTRAR por descuento real
-        discounted_products = all_tagged_products.filtered(lambda p: p.list_price > p.discounted_price)
-    
+        all_products = request.env['product.template'].sudo().search(price_range_domain)
+        discounted_products = all_products.filtered(lambda p: p.list_price > p.discounted_price)
         
         price_ranges = {
             '0_500': len(discounted_products.filtered(lambda p: 0 < p.discounted_price <= 500)),
@@ -391,14 +382,35 @@ class OffersController(http.Controller):
                 ('discounted_price', '>', 1000)
             ]),
         }
+
+        # IMPORTANTE: Primero BUSCAR los productos con el dominio
+        tagged_products = request.env['product.template'].sudo().search(domain)
+        
+        # LUEGO filtrar por descuento real
+        tagged_products = tagged_products.filtered(lambda p: p.list_price > p.discounted_price)
+                
+        # Solo productos que tengan al menos una etiqueta con start_date
+        filtered_products = []
+        for p in tagged_products:
+            if p.website_published and p.product_tag_ids and p.product_tag_ids[0].start_date:
+                filtered_products.append(p)
     
+        # Resto del código sin cambios...
+    
+    
+        # Ordenar por la fecha más reciente de start_date
+        filtered_products = sorted(
+            filtered_products,
+            key=lambda p: p.product_tag_ids[0].start_date,
+            reverse=True
+        )    
         # Asegurarse de que el valor de free_shipping se pase a la plantilla
         return request.render('theme_xtream.offers_template', {
             'discounted_products': products,
             'current_category': category,
             'offers': offers,
             'free_shipping': free_shipping,
-            'total_products': total_products,
+            'total_products': len(filtered_products),  # ← SOLO UNA VEZ
             'price_ranges': price_ranges,
             'offer_type': offer_type,
             'categories_with_count': categories_with_count,
