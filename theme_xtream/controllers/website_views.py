@@ -80,7 +80,18 @@ class OffersController(http.Controller):
             reverse=True
         )
         
+        product_tags = request.env['product.tag'].sudo().search([
+            ('visible_on_ecommerce', '=', True)  # Solo los visibles en ecommerce
+        ], limit=6)
         
+        # Resto de tu lógica existente para productos, categorías, etc.
+        # ...existing code...
+        
+        values = {
+            'product_tags': product_tags,  # Esta es la clave que falta
+            # ...otros valores que ya tengas...
+        }
+                
         # Calcular el total de productos publicados y con etiqueta
         total_domain = [
             ('website_published', '=', True),
