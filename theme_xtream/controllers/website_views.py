@@ -243,10 +243,9 @@ class OffersController(http.Controller):
         product_tags = request.env['product.tag'].sudo().search([
             ('visible_on_ecommerce', '=', True)  # Solo los visibles en ecommerce
         ], limit=6)
-                
+
         categories_with_count = []
         for cat in main_categories:
-            # Define cat_domain for each category
             cat_domain = [
                 ('website_published', '=', True),
                 ('product_tag_ids', '!=', False),
@@ -256,16 +255,12 @@ class OffersController(http.Controller):
             if free_shipping:
                 cat_domain.append(('free_shipping', '=', True))
                 
-            # Obtener todos los productos en esta categoría
+            # Obtener productos de la categoría y filtrar por descuento real
             cat_products = request.env['product.template'].sudo().search(cat_domain)
+            cat_products_with_discount = cat_products.filtered(lambda p: p.list_price > p.discounted_price)
+            prod_count = len(cat_products_with_discount)
             
-            # Filtrar solo los que tienen descuento real
-            cat_products_discounted = cat_products.filtered(lambda p: p.list_price > p.discounted_price)
-            
-            # Usar la cantidad filtrada
-            prod_count = len(cat_products_discounted)
-            
-            if prod_count > 0:
+            if prod_count > 0:  # Solo incluir categorías con productos que cumplan el filtro
                 categories_with_count.append({
                     'id': cat.id,
                     'name': cat.name,
@@ -353,15 +348,20 @@ class OffersController(http.Controller):
             
         total_products = request.env['product.template'].sudo().search_count(total_domain)
     
-        # Actualizar los price_ranges según el filtro de free_shipping
+        # Actualizar los contadores de rango de precios según el filtro de free_shipping
         price_range_domain = [
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False),
         ]
-    
-        # Para los rangos de precio, usar el mismo enfoque que en el método offers
+        
+        if free_shipping:
+            price_range_domain.append(('free_shipping', '=', True))
+
+        # Obtener todos los productos y luego filtrar por descuento real
         all_products = request.env['product.template'].sudo().search(price_range_domain)
+        # Filtrar solo los que tienen descuento real
         discounted_products = all_products.filtered(lambda p: p.list_price > p.discounted_price)
+        
         
         price_ranges = {
             '0_500': len(discounted_products.filtered(lambda p: 0 < p.discounted_price <= 500)),
