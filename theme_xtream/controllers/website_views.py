@@ -14,43 +14,29 @@ class OffersController(http.Controller):
             free_shipping = request.params.get('free_shipping') == 'true'
             request.session['free_shipping'] = free_shipping
         else:
+            # Si no viene en los parámetros, usar el valor guardado en sesión (si existe)
             free_shipping = request.session.get('free_shipping', False)
     
-        # ELIMINA ESTA LÍNEA DUPLICADA:
         # Filtro base para productos publicados con etiquetas
-        domain = [('website_published', '=', True)]
+        domain = [
+            ('website_published', '=', True),
+            ('product_tag_ids', '!=', False)
+        ]
         
-        # SOLO UNA VEZ agregar el filtro de free_shipping
+        # Aplicar filtro free_shipping si está activo
         if free_shipping:
             domain.append(('free_shipping', '=', True))
         
-        # ELIMINA ESTAS LÍNEAS DUPLICADAS:
-        # if free_shipping:
-        #     domain.append(('free_shipping', '=', True))    
+        # Obtener productos con etiquetas que tienen descuento real
+        products = request.env['product.template'].sudo().search(domain)
+        discounted_products = products.filtered(lambda p: p.list_price > p.discounted_price)
         
-        # Buscar productos
-        tagged_products = request.env['product.template'].sudo().search(domain)
-        
-        # Filtrar por descuento real
-        tagged_products = tagged_products.filtered(lambda p: p.list_price > p.discounted_price)
-        
-        # Solo productos que tengan al menos una etiqueta con start_date
+        # Ordenar por etiquetas y mostrar solo productos con descuento
         filtered_products = []
-        for p in tagged_products:
-            if p.website_published and p.product_tag_ids and p.product_tag_ids[0].start_date:
-                filtered_products.append(p)
-        
-        # Resto del código...
-    
-        # Resto del código sin cambios...
-    
-    
-        # Ordenar por la fecha más reciente de start_date
-        filtered_products = sorted(
-            filtered_products,
-            key=lambda p: p.product_tag_ids[0].start_date,
-            reverse=True
-        )
+        for product in discounted_products:
+            if product.product_tag_ids:
+                filtered_products.append(product)
+
         
         # Obtener categorías principales (categorías sin padre)
         all_categories = request.env['product.category'].sudo().search([])
