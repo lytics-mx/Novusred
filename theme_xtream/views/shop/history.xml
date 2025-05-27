@@ -65,92 +65,174 @@
                                         </div>
                                     </div>
                                     
-                                    <!-- Carrusel de productos -->
-                                    <div class="carousel-container position-relative" t-att-id="'carousel-' + period_id">
-                                        <div class="carousel-track-container">
-                                            <div class="carousel-track d-flex transition-transform">
-                                                <t t-foreach="period_products" t-as="item">
-                                                    <t t-set="product" t-value="item['product']" />
-                                                    <div class="carousel-slide flex-shrink-0">
-                                                        <div class="card h-100 shadow-sm product-card">
-                                                            <a t-att-href="'/shop/product/' + str(product.id)">
-                                                                <!-- Imagen del producto -->
-                                                                <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
-                                                                     class="card-img-top" 
-                                                                     style="height: 200px; object-fit: contain;" 
-                                                                     loading="lazy" />
-                                                            </a>
-                                                            
-                                                            <div class="card-body">
-                                                                <div class="mt-auto">
-                                                                    <!-- Nombre del producto -->
-                                                                    <h6 class="card-title namehistory mb-2" style="font-size: 0.9rem;">
-                                                                        <t t-esc="product.name.upper()" />
-                                                                    </h6>
-                                                                    
-                                                                    <!-- Precios -->
-                                                                    <t t-if="product.discounted_price &lt; product.list_price">
-                                                                        <div class="d-flex align-items-center justify-content-between">
-                                                                            <span class="text-dark fw-bold" style="font-size: 20px;">
-                                                                                $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
-                                                                            </span>
-                                                                            <span class="text-danger" style="font-size: 14px; font-weight: normal;">
-                                                                                <t t-if="product.discount_percentage">
-                                                                                    <t t-esc="int(product.discount_percentage)" />% OFF
-                                                                                </t>
-                                                                                <t t-elif="product.fixed_discount">
-                                                                                    -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" />
-                                                                                </t>
-                                                                            </span>
-                                                                        </div>
-                                                                        <div class="mt-0">
-                                                                            <span class="text-muted" style="font-size: 16px; text-decoration: line-through;">
+                                    <!-- DESKTOP: Carrusel de productos -->
+                                    <div class="d-none d-md-block">
+                                        <div class="carousel-container position-relative" t-att-id="'carousel-' + period_id">
+                                            <div class="carousel-track-container">
+                                                <div class="carousel-track d-flex transition-transform">
+                                                    <t t-foreach="period_products" t-as="item">
+                                                        <t t-set="product" t-value="item['product']" />
+                                                        <div class="carousel-slide flex-shrink-0">
+                                                            <div class="card h-100 shadow-sm product-card">
+                                                                <a t-att-href="'/shop/product/' + str(product.id)">
+                                                                    <!-- Imagen del producto -->
+                                                                    <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                                         class="card-img-top" 
+                                                                         style="height: 200px; object-fit: contain;" 
+                                                                         loading="lazy" />
+                                                                </a>
+                                                                
+                                                                <div class="card-body">
+                                                                    <div class="mt-auto">
+                                                                        <!-- Nombre del producto -->
+                                                                        <h6 class="card-title namehistory mb-2" style="font-size: 0.9rem;">
+                                                                            <t t-esc="product.name.upper()" />
+                                                                        </h6>
+                                                                        
+                                                                        <!-- Precios -->
+                                                                        <t t-if="product.discounted_price &lt; product.list_price">
+                                                                            <div class="d-flex align-items-center justify-content-between">
+                                                                                <span class="text-dark fw-bold" style="font-size: 20px;">
+                                                                                    $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
+                                                                                </span>
+                                                                                <span class="text-danger" style="font-size: 14px; font-weight: normal;">
+                                                                                    <t t-if="product.discount_percentage">
+                                                                                        <t t-esc="int(product.discount_percentage)" />% OFF
+                                                                                    </t>
+                                                                                    <t t-elif="product.fixed_discount">
+                                                                                        -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" />
+                                                                                    </t>
+                                                                                </span>
+                                                                            </div>
+                                                                            <div class="mt-0">
+                                                                                <span class="text-muted" style="font-size: 16px; text-decoration: line-through;">
+                                                                                    $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                                                </span>
+                                                                            </div>
+                                                                        </t>
+                                                                        <t t-else="">
+                                                                            <span class="fw-bold d-block" style="font-size: 20px;">
                                                                                 $<t t-esc="'{:,}'.format(int(product.list_price))" />
                                                                             </span>
-                                                                        </div>
-                                                                    </t>
-                                                                    <t t-else="">
-                                                                        <span class="fw-bold d-block" style="font-size: 20px;">
-                                                                            $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                                                        </span>
-                                                                    </t>
-                                                                    
-                                                                    <!-- Envío gratis -->
-                                                                    <t t-if="product.free_shipping">
-                                                                        <div class="mt-1">
-                                                                            <span class="text-orange" style="color: #FF5207; font-size: 0.8rem; font-weight: bold; font-style: italic;">
-                                                                                Envío gratis
-                                                                            </span>
-                                                                        </div>
-                                                                    </t>
-                                                                </div>
+                                                                        </t>
+                                                                        
+                                                                        <!-- Envío gratis -->
+                                                                        <t t-if="product.free_shipping">
+                                                                            <div class="mt-1">
+                                                                                <span class="text-orange" style="color: #FF5207; font-size: 0.8rem; font-weight: bold; font-style: italic;">
+                                                                                    Envío gratis
+                                                                                </span>
+                                                                            </div>
+                                                                        </t>
+                                                                    </div>
 
-                                                                <!-- Botón eliminar -->
-                                                                <a t-att-href="'/shop/history/remove/' + str(product.id)" 
-                                                                   t-att-data-product-id="product.id"
-                                                                   class="text-blue mt-2 delete-history-item d-block" 
-                                                                   style="font-size: 0.8rem; color: #007bff; text-decoration: none;"
-                                                                   onclick="event.preventDefault(); 
-                                                                           if(confirm('¿Estás seguro de eliminar este producto del historial?')) {
-                                                                               fetch('/shop/history/remove/' + this.getAttribute('data-product-id'))
-                                                                               .then(response => {
-                                                                                   if (response.ok) {
-                                                                                       this.closest('.carousel-slide').style.transition = 'opacity 0.3s, transform 0.3s';
-                                                                                       this.closest('.carousel-slide').style.opacity = '0';
-                                                                                       this.closest('.carousel-slide').style.transform = 'scale(0.8)';
-                                                                                       setTimeout(() => {
-                                                                                           location.reload();
-                                                                                       }, 300);
-                                                                                   }
-                                                                               });
-                                                                           }">
-                                                                    <i class="fa fa-trash me-1"></i>Eliminar
-                                                                </a>
+                                                                    <!-- Botón eliminar -->
+                                                                    <a t-att-href="'/shop/history/remove/' + str(product.id)" 
+                                                                       t-att-data-product-id="product.id"
+                                                                       class="text-blue mt-2 delete-history-item d-block" 
+                                                                       style="font-size: 0.8rem; color: #007bff; text-decoration: none;"
+                                                                       onclick="event.preventDefault(); 
+                                                                               if(confirm('¿Estás seguro de eliminar este producto del historial?')) {
+                                                                                   fetch('/shop/history/remove/' + this.getAttribute('data-product-id'))
+                                                                                   .then(response => {
+                                                                                       if (response.ok) {
+                                                                                           this.closest('.carousel-slide').style.transition = 'opacity 0.3s, transform 0.3s';
+                                                                                           this.closest('.carousel-slide').style.opacity = '0';
+                                                                                           this.closest('.carousel-slide').style.transform = 'scale(0.8)';
+                                                                                           setTimeout(() => {
+                                                                                               location.reload();
+                                                                                           }, 300);
+                                                                                       }
+                                                                                   });
+                                                                               }">
+                                                                        <i class="fa fa-trash me-1"></i>Eliminar
+                                                                    </a>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </t>
+                                                    </t>
+                                                </div>
                                             </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- MÓVIL: Grid de productos -->
+                                    <div class="d-block d-md-none mobile-grid">
+                                        <div class="row row-cols-2 g-3">
+                                            <t t-foreach="period_products" t-as="item">
+                                                <t t-set="product" t-value="item['product']" />
+                                                <div class="col">
+                                                    <div class="card h-100 shadow-sm product-card">
+                                                        <a t-att-href="'/shop/product/' + str(product.id)">
+                                                            <!-- Imagen del producto -->
+                                                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                                 class="card-img-top" 
+                                                                 style="height: 160px; object-fit: contain;" 
+                                                                 loading="lazy" />
+                                                        </a>
+                                                        
+                                                        <div class="card-body p-2">
+                                                            <!-- Nombre del producto -->
+                                                            <h6 class="card-title namehistory mb-1" style="font-size: 0.8rem; line-height: 1.2;">
+                                                                <t t-esc="product.name.upper()" />
+                                                            </h6>
+                                                            
+                                                            <!-- Precios -->
+                                                            <t t-if="product.discounted_price &lt; product.list_price">
+                                                                <div class="mb-1">
+                                                                    <span class="text-dark fw-bold d-block" style="font-size: 16px;">
+                                                                        $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
+                                                                    </span>
+                                                                    <span class="text-muted" style="font-size: 12px; text-decoration: line-through;">
+                                                                        $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                                    </span>
+                                                                    <span class="text-danger ms-1" style="font-size: 11px;">
+                                                                        <t t-if="product.discount_percentage">
+                                                                            <t t-esc="int(product.discount_percentage)" />% OFF
+                                                                        </t>
+                                                                    </span>
+                                                                </div>
+                                                            </t>
+                                                            <t t-else="">
+                                                                <span class="fw-bold d-block mb-1" style="font-size: 16px;">
+                                                                    $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                                </span>
+                                                            </t>
+                                                            
+                                                            <!-- Envío gratis -->
+                                                            <t t-if="product.free_shipping">
+                                                                <div class="mb-1">
+                                                                    <span class="text-orange" style="color: #FF5207; font-size: 0.7rem; font-weight: bold; font-style: italic;">
+                                                                        Envío gratis
+                                                                    </span>
+                                                                </div>
+                                                            </t>
+
+                                                            <!-- Botón eliminar -->
+                                                            <a t-att-href="'/shop/history/remove/' + str(product.id)" 
+                                                               t-att-data-product-id="product.id"
+                                                               class="text-blue delete-history-item-mobile d-block" 
+                                                               style="font-size: 0.7rem; color: #007bff; text-decoration: none;"
+                                                               onclick="event.preventDefault(); 
+                                                                       if(confirm('¿Eliminar del historial?')) {
+                                                                           fetch('/shop/history/remove/' + this.getAttribute('data-product-id'))
+                                                                           .then(response => {
+                                                                               if (response.ok) {
+                                                                                   this.closest('.col').style.transition = 'opacity 0.3s, transform 0.3s';
+                                                                                   this.closest('.col').style.opacity = '0';
+                                                                                   this.closest('.col').style.transform = 'scale(0.8)';
+                                                                                   setTimeout(() => {
+                                                                                       location.reload();
+                                                                                   }, 300);
+                                                                               }
+                                                                           });
+                                                                       }">
+                                                                <i class="fa fa-trash me-1"></i>Eliminar
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
                                         </div>
                                     </div>
                                 </div>
@@ -168,8 +250,9 @@
                     </div>
                 </div>
                 
-                <!-- CSS para el carrusel -->
+                <!-- CSS actualizado -->
                 <style>
+                /* Desktop - Carrusel */
                 .carousel-container {
                     overflow: hidden;
                     width: 100%;
@@ -208,43 +291,70 @@
                     color: #007bff;
                 }
 
-                .carousel-controls button:disabled {
-                    opacity: 0.5;
-                    cursor: not-allowed;
-                }
-
                 .transition-transform {
                     transition: transform 0.3s ease;
                 }
 
-                /* Responsive */
-                @media (max-width: 767.98px) {
-                    .carousel-slide {
-                        min-width: 150px;
-                        width: 150px;
-                    }
-                    
-                    .carousel-track {
-                        gap: 0.5rem;
-                    }
-                    
-                    .card-body {
-                        padding: 0.75rem;
-                    }
-                    
-                    .period-section {
-                        margin-bottom: 2rem !important;
-                    }
-                    
-                    .period-section:target {
-                        scroll-margin-top: 100px;
-                        background: #f8f9fa;
-                        border-radius: 8px;
-                        padding: 1rem;
-                        border-left: 4px solid #007bff;
-                    }
+                /* Móvil - Grid */
+                .mobile-grid .card {
+                    border-radius: 8px;
+                    border: 1px solid #e9ecef;
                 }
 
+                .mobile-grid .card:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                    transition: all 0.2s ease;
+                }
+
+                .mobile-grid .namehistory {
+                    overflow: hidden;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                }
+
+                /* Secciones de períodos */
+                .period-section {
+                    margin-bottom: 2rem;
+                }
+
+                .period-section:target {
+                    scroll-margin-top: 100px;
+                    background: #f8f9fa;
+                    border-radius: 8px;
+                    padding: 1rem;
+                    border-left: 4px solid #007bff;
+                    animation: highlight 0.5s ease;
+                }
+
+                @keyframes highlight {
+                    0% { background: #e3f2fd; }
+                    100% { background: #f8f9fa; }
+                }
+
+                /* Dropdown móvil */
+                .dropdown-menu {
+                    max-height: 300px;
+                    overflow-y: auto;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                }
+
+                .period-selector {
+                    transition: background-color 0.2s ease;
+                    padding: 0.75rem 1rem;
+                }
+
+                .period-selector:hover {
+                    background-color: #f8f9fa;
+                }
+
+                .period-selector:active {
+                    background-color: #e9ecef;
+                }
+
+                /* Responsive breakpoints */
                 @media (min-width: 768px) {
                     .carousel-slide {
                         min-width: 220px;
@@ -259,40 +369,29 @@
                     }
                 }
 
-                /* Animaciones suaves */
-                .carousel-slide {
-                    transition: transform 0.2s ease, opacity 0.2s ease;
-                }
-
-                .carousel-slide:hover {
-                    transform: translateY(-2px);
-                }
-
-                /* Dropdown móvil */
-                .dropdown-menu {
-                    max-height: 300px;
-                    overflow-y: auto;
-                }
-
-                .period-selector {
-                    transition: background-color 0.2s ease;
-                }
-
-                .period-selector:hover {
-                    background-color: #f8f9fa;
+                /* Ocultar elementos según dispositivo */
+                @media (max-width: 767.98px) {
+                    .period-section h4 {
+                        font-size: 16px !important;
+                    }
+                    
+                    .mobile-grid .col {
+                        margin-bottom: 0.75rem;
+                    }
                 }
                 </style>
                 
-                <!-- JavaScript para el carrusel infinito -->
+                <!-- JavaScript actualizado -->
                 <script type="text/javascript">
                 //<![CDATA[
                 document.addEventListener('DOMContentLoaded', function() {
-                    // Inicializar carruseles
-                    const carousels = document.querySelectorAll('.carousel-container');
-                    
-                    carousels.forEach(carousel => {
-                        initInfiniteCarousel(carousel);
-                    });
+                    // Solo inicializar carruseles en desktop
+                    if (window.innerWidth >= 768) {
+                        const carousels = document.querySelectorAll('.carousel-container');
+                        carousels.forEach(carousel => {
+                            initInfiniteCarousel(carousel);
+                        });
+                    }
                     
                     // Manejador para selector de períodos en móvil
                     const periodSelectors = document.querySelectorAll('.period-selector');
@@ -324,44 +423,41 @@
                 function initInfiniteCarousel(carousel) {
                     const track = carousel.querySelector('.carousel-track');
                     const slides = carousel.querySelectorAll('.carousel-slide');
-                    const prevBtn = document.querySelector(`.carousel-prev[data-target="#${carousel.id}"]`);
-                    const nextBtn = document.querySelector(`.carousel-next[data-target="#${carousel.id}"]`);
+                    const prevBtn = document.querySelector('.carousel-prev[data-target="#' + carousel.id + '"]');
+                    const nextBtn = document.querySelector('.carousel-next[data-target="#' + carousel.id + '"]');
                     
                     if (slides.length === 0) return;
                     
                     let currentIndex = 0;
-                    const slideWidth = slides[0].offsetWidth + 16; // incluir gap
+                    const slideWidth = slides[0].offsetWidth + 16;
                     const visibleSlides = Math.floor(carousel.offsetWidth / slideWidth);
                     
-                    // Clonar slides para efecto infinito
-                    if (slides.length > visibleSlides) {
-                        // Clonar primeros slides al final
-                        for (let i = 0; i < visibleSlides; i++) {
-                            const clone = slides[i].cloneNode(true);
-                            clone.classList.add('cloned');
-                            track.appendChild(clone);
-                        }
-                        
-                        // Clonar últimos slides al principio
-                        for (let i = slides.length - visibleSlides; i < slides.length; i++) {
-                            const clone = slides[i].cloneNode(true);
-                            clone.classList.add('cloned');
-                            track.insertBefore(clone, track.firstChild);
-                        }
-                        
-                        currentIndex = visibleSlides;
-                        updatePosition(true);
-                    } else {
-                        // Si hay pocos slides, ocultar botones de navegación
+                    if (slides.length <= visibleSlides) {
                         if (prevBtn) prevBtn.style.display = 'none';
                         if (nextBtn) nextBtn.style.display = 'none';
                         return;
                     }
                     
-                    function updatePosition(immediate = false) {
+                    // Clonar slides
+                    for (let i = 0; i < visibleSlides; i++) {
+                        const clone = slides[i].cloneNode(true);
+                        clone.classList.add('cloned');
+                        track.appendChild(clone);
+                    }
+                    
+                    for (let i = slides.length - visibleSlides; i < slides.length; i++) {
+                        const clone = slides[i].cloneNode(true);
+                        clone.classList.add('cloned');
+                        track.insertBefore(clone, track.firstChild);
+                    }
+                    
+                    currentIndex = visibleSlides;
+                    updatePosition(true);
+                    
+                    function updatePosition(immediate) {
                         const offset = -currentIndex * slideWidth;
                         track.style.transition = immediate ? 'none' : 'transform 0.3s ease';
-                        track.style.transform = `translateX(${offset}px)`;
+                        track.style.transform = 'translateX(' + offset + 'px)';
                     }
                     
                     function moveNext() {
@@ -369,7 +465,7 @@
                         updatePosition();
                         
                         if (currentIndex >= slides.length + visibleSlides) {
-                            setTimeout(() => {
+                            setTimeout(function() {
                                 currentIndex = visibleSlides;
                                 updatePosition(true);
                             }, 300);
@@ -381,84 +477,15 @@
                         updatePosition();
                         
                         if (currentIndex < 0) {
-                            setTimeout(() => {
+                            setTimeout(function() {
                                 currentIndex = slides.length - 1;
                                 updatePosition(true);
                             }, 300);
                         }
                     }
                     
-                    // Event listeners
-                    if (nextBtn) {
-                        nextBtn.addEventListener('click', moveNext);
-                    }
-                    
-                    if (prevBtn) {
-                        prevBtn.addEventListener('click', movePrev);
-                    }
-                    
-                    // Auto-scroll en móvil con touch
-                    let isDown = false;
-                    let startX;
-                    let scrollLeft;
-                    
-                    carousel.addEventListener('mousedown', (e) => {
-                        if (window.innerWidth > 768) return; // Solo en móvil
-                        isDown = true;
-                        startX = e.pageX - carousel.offsetLeft;
-                        scrollLeft = currentIndex;
-                    });
-                    
-                    carousel.addEventListener('mouseleave', () => {
-                        isDown = false;
-                    });
-                    
-                    carousel.addEventListener('mouseup', () => {
-                        isDown = false;
-                    });
-                    
-                    carousel.addEventListener('mousemove', (e) => {
-                        if (!isDown || window.innerWidth > 768) return;
-                        e.preventDefault();
-                        const x = e.pageX - carousel.offsetLeft;
-                        const walk = (x - startX) * 2;
-                        
-                        if (walk > 50) {
-                            movePrev();
-                            isDown = false;
-                        } else if (walk < -50) {
-                            moveNext();
-                            isDown = false;
-                        }
-                    });
-                    
-                    // Touch events para móvil
-                    let touchStartX = 0;
-                    
-                    carousel.addEventListener('touchstart', (e) => {
-                        touchStartX = e.touches[0].clientX;
-                    });
-                    
-                    carousel.addEventListener('touchend', (e) => {
-                        const touchEndX = e.changedTouches[0].clientX;
-                        const diff = touchStartX - touchEndX;
-                        
-                        if (Math.abs(diff) > 50) {
-                            if (diff > 0) {
-                                moveNext();
-                            } else {
-                                movePrev();
-                            }
-                        }
-                    });
-                    
-                    // Auto-play opcional (descomenta si quieres)
-                    /*
-                    setInterval(() => {
-                        if (!isDown) {
-                            moveNext();
-                    }, 5000);
-                    */
+                    if (nextBtn) nextBtn.addEventListener('click', moveNext);
+                    if (prevBtn) prevBtn.addEventListener('click', movePrev);
                 }
                 //]]>
                 </script>
