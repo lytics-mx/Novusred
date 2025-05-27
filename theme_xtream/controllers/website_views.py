@@ -189,6 +189,8 @@ class OffersController(http.Controller):
             'oferta_relampago': oferta_relampago,
             'all_categories': main_categories,
             'free_shipping': free_shipping,  # Ahora es un booleano, no una cadena
+            'product_tags': product_tags,  # ← AGREGAR ESTA LÍNEA
+
         })
         
 
