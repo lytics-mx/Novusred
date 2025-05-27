@@ -357,11 +357,15 @@ class OffersController(http.Controller):
         if free_shipping:
             price_range_domain.append(('free_shipping', '=', True))
 
-        # Obtener todos los productos y luego filtrar por descuento real
+        # Para los rangos de precio, usar el mismo enfoque que en el método offers
         all_products = request.env['product.template'].sudo().search(price_range_domain)
-        # Filtrar solo los que tienen descuento real
-        discounted_products = all_products.filtered(lambda p: p.list_price > p.discounted_price)
         
+        if free_shipping:
+            price_range_domain.append(('free_shipping', '=', True))
+            all_products = request.env['product.template'].sudo().search(price_range_domain)
+            
+        # Filtrar por descuento real
+        discounted_products = all_products.filtered(lambda p: p.list_price > p.discounted_price)
         
         price_ranges = {
             '0_500': len(discounted_products.filtered(lambda p: 0 < p.discounted_price <= 500)),
