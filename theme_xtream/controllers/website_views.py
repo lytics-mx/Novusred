@@ -61,7 +61,6 @@ class OffersController(http.Controller):
             # Si no viene en los parámetros, usar el valor guardado en sesión (si existe)
             free_shipping = request.session.get('free_shipping', False)
     
-        # ...resto del código sin cambios...
     
 
         
