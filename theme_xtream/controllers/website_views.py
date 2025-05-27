@@ -189,7 +189,8 @@ class OffersController(http.Controller):
             'oferta_relampago': oferta_relampago,
             'all_categories': main_categories,
             'free_shipping': free_shipping,  # Ahora es un booleano, no una cadena
-            
+            'product_tags': product_tags,  # ← AGREGAR ESTA LÍNEA
+
         })
         
 
@@ -239,7 +240,10 @@ class OffersController(http.Controller):
                 ('categ_id', 'child_of', cat.id)
             ]) > 0
         ]
-        
+        product_tags = request.env['product.tag'].sudo().search([
+            ('visible_on_ecommerce', '=', True)  # Solo los visibles en ecommerce
+        ], limit=6)
+                
         categories_with_count = []
         for cat in main_categories:
             # Define cat_domain for each category
@@ -395,4 +399,6 @@ class OffersController(http.Controller):
             'offer_type': offer_type,
             'categories_with_count': categories_with_count,
             'all_categories': main_categories,
+            'product_tags': product_tags,  # ← AGREGAR ESTA LÍNEA
+
         })
