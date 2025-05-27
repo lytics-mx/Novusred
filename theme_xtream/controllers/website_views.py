@@ -382,35 +382,14 @@ class OffersController(http.Controller):
                 ('discounted_price', '>', 1000)
             ]),
         }
-
-        # IMPORTANTE: Primero BUSCAR los productos con el dominio
-        tagged_products = request.env['product.template'].sudo().search(domain)
-        
-        # LUEGO filtrar por descuento real
-        tagged_products = tagged_products.filtered(lambda p: p.list_price > p.discounted_price)
-                
-        # Solo productos que tengan al menos una etiqueta con start_date
-        filtered_products = []
-        for p in tagged_products:
-            if p.website_published and p.product_tag_ids and p.product_tag_ids[0].start_date:
-                filtered_products.append(p)
     
-        # Resto del código sin cambios...
-    
-    
-        # Ordenar por la fecha más reciente de start_date
-        filtered_products = sorted(
-            filtered_products,
-            key=lambda p: p.product_tag_ids[0].start_date,
-            reverse=True
-        )    
         # Asegurarse de que el valor de free_shipping se pase a la plantilla
         return request.render('theme_xtream.offers_template', {
             'discounted_products': products,
             'current_category': category,
             'offers': offers,
             'free_shipping': free_shipping,
-            'total_products': len(filtered_products),  # ← SOLO UNA VEZ
+            'total_products': total_products,
             'price_ranges': price_ranges,
             'offer_type': offer_type,
             'categories_with_count': categories_with_count,
