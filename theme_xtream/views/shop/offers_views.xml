@@ -201,9 +201,131 @@
                         });
                     });
                     </script>
+                    
 
                 </div>
-                
+                <!-- Filtro móvil (solo visible en móvil) -->
+                <div class="d-block d-md-none mb-3">
+                    <div class="mobile-filters-container">
+                        <!-- Botón para abrir filtros -->
+                        <button class="btn btn-outline-secondary w-100 mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#mobileFilters" aria-expanded="false" aria-controls="mobileFilters">
+                            <i class="fas fa-filter me-2"></i>Filtros
+                        </button>
+                        
+                        <!-- Panel de filtros colapsable -->
+                        <div class="collapse" id="mobileFilters">
+                            <div class="card card-body mobile-filters-panel">
+                                
+                                <!-- Envío gratis -->
+                                <div class="mb-3">
+                                    <h6 class="text-orange fw-bold" style="color: #FF5207;">Envío gratis</h6>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="mobileFreeShippingToggle"
+                                               t-att-checked="'checked' if free_shipping else None" />
+                                        <label class="form-check-label" for="mobileFreeShippingToggle">
+                                            Solo productos con envío gratis
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Tipos de oferta -->
+                                <div class="mb-3">
+                                    <h6>Tipos de oferta</h6>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <a t-att-href="'/shop/category/all?offers=true&amp;type=day%s' % ('&amp;free_shipping=true' if free_shipping else '')" 
+                                           class="btn btn-sm btn-outline-secondary">
+                                            Oferta del día
+                                        </a>
+                                        <a t-att-href="'/shop/category/all?offers=true&amp;type=flash%s' % ('&amp;free_shipping=true' if free_shipping else '')" 
+                                           class="btn btn-sm btn-outline-secondary">
+                                            Oferta relámpago
+                                        </a>
+                                        <a t-att-href="'/shop/category/all?offers=true&amp;type=current%s' % ('&amp;free_shipping=true' if free_shipping else '')" 
+                                           class="btn btn-sm btn-outline-secondary">
+                                            Ofertas activas
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <!-- Categorías -->
+                                <div class="mb-3">
+                                    <h6>Categorías</h6>
+                                    <div class="mobile-categories-grid">
+                                        <t t-foreach="categories_with_count" t-as="cat">
+                                            <a t-att-href="'/shop/category/all?offers=true&amp;category_id=%s%s' % (cat['id'], '&amp;free_shipping=true' if free_shipping else '')" 
+                                               class="btn btn-sm btn-outline-secondary mb-2">
+                                                <span t-esc="cat['name']"/> (<span t-esc="cat['product_count']"/>)
+                                            </a>
+                                        </t>
+                                    </div>
+                                </div>
+                                
+                                <!-- Filtro por precio -->
+                                <div class="mb-3">
+                                    <h6>Precio</h6>
+                                    <div class="d-flex flex-wrap gap-2 mb-3">
+                                        <a t-att-href="'/shop/category/all?min_price=0&amp;max_price=500%s' % ('&amp;free_shipping=true' if free_shipping else '')" 
+                                           class="btn btn-sm btn-outline-secondary">
+                                            Hasta $500 (<t t-esc="price_ranges['0_500']"/>)
+                                        </a>
+                                        <a t-att-href="'/shop/category/all?min_price=500&amp;max_price=1000%s' % ('&amp;free_shipping=true' if free_shipping else '')" 
+                                           class="btn btn-sm btn-outline-secondary">
+                                            $500-$1000 (<t t-esc="price_ranges['500_1000']"/>)
+                                        </a>
+                                        <a t-att-href="'/shop/category/all?min_price=1000%s' % ('&amp;free_shipping=true' if free_shipping else '')" 
+                                           class="btn btn-sm btn-outline-secondary">
+                                            +$1000 (<t t-esc="price_ranges['1000_plus']"/>)
+                                        </a>
+                                    </div>
+                                    
+                                    <!-- Filtro personalizado de precio -->
+                                    <form method="get" action="/shop/category/all" class="mobile-price-form">
+                                        <div class="row g-2">
+                                            <div class="col-5">
+                                                <input type="number" class="form-control form-control-sm" name="min_price" placeholder="Desde" />
+                                            </div>
+                                            <div class="col-2 text-center pt-1">—</div>
+                                            <div class="col-5">
+                                                <input type="number" class="form-control form-control-sm" name="max_price" placeholder="Hasta" />
+                                            </div>
+                                            <div class="col-12 mt-2">
+                                                <t t-if="free_shipping">
+                                                    <input type="hidden" name="free_shipping" value="true"/>
+                                                </t>
+                                                <button type="submit" class="btn btn-primary btn-sm w-100">Aplicar filtro</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+                            <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                // Toggle de envío gratis desktop
+                                var toggle = document.getElementById('freeShippingToggle');
+                                if (toggle) {
+                                    toggle.checked = <t t-esc="'true' if free_shipping else 'false'"/>;
+                                    toggle.addEventListener('change', function() {
+                                        var newUrl = '/offers?free_shipping=' + (this.checked ? 'true' : 'false');
+                                        window.location.href = newUrl;
+                                    });
+                                }
+                                
+                                // Toggle de envío gratis móvil
+                                var mobileToggle = document.getElementById('mobileFreeShippingToggle');
+                                if (mobileToggle) {
+                                    mobileToggle.checked = <t t-esc="'true' if free_shipping else 'false'"/>;
+                                    mobileToggle.addEventListener('change', function() {
+                                        var newUrl = '/offers?free_shipping=' + (this.checked ? 'true' : 'false');
+                                        window.location.href = newUrl;
+                                    });
+                                }
+                            });
+                            </script>                
+
                 <div class="row">
                     <!-- Filtros de la izquierda -->
                     <div class="col-lg-3 col-md-4 d-none d-md-block">
@@ -558,6 +680,42 @@
                                     font-size: 1rem !important;
                                 }
                             }
+
+
+                            /* Estilos para móvil */
+                            @media (max-width: 767.98px) {
+                                /* Estilos de filtros móviles */
+                                .mobile-filters-container {
+                                    background: #f8f9fa;
+                                    border-radius: 8px;
+                                    padding: 15px;
+                                    margin: 0 5px;
+                                }
+                                
+                                .mobile-filters-panel {
+                                    border: none;
+                                    box-shadow: none;
+                                    background: white;
+                                    border-radius: 8px;
+                                }
+                                
+                                .mobile-categories-grid {
+                                    display: flex;
+                                    flex-wrap: wrap;
+                                    gap: 8px;
+                                }
+                                
+                                .mobile-price-form .form-control-sm {
+                                    font-size: 14px;
+                                }
+                                
+                                /* Estilos existentes de productos */
+                                .mobile-badge {
+                                    font-size: 10px;
+                                    padding: 2px 6px;
+                                }
+                              }
+
                         </style>
         </t>
     </template>
