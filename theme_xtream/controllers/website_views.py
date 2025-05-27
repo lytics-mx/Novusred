@@ -80,17 +80,11 @@ class OffersController(http.Controller):
             reverse=True
         )
         
-        product_tags = request.env['product.tag'].sudo().search([
-            ('visible_on_ecommerce', '=', True)  # Solo los visibles en ecommerce
-        ], limit=6)
-        
-        # Resto de tu lógica existente para productos, categorías, etc.
         # ...existing code...
         
-        values = {
-            'product_tags': product_tags,  # Esta es la clave que falta
-            # ...otros valores que ya tengas...
-        }
+        # Simplemente obtén todos los tags que tengan imagen:
+        product_tags = request.env['product.tag'].sudo().search([])
+        product_tags = [tag for tag in product_tags if tag.image][:6]
                 
         # Calcular el total de productos publicados y con etiqueta
         total_domain = [
