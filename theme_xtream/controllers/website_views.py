@@ -80,12 +80,17 @@ class OffersController(http.Controller):
             reverse=True
         )
         
+        product_tags = request.env['product.tag'].sudo().search([
+            ('visible_on_ecommerce', '=', True)  # Solo los visibles en ecommerce
+        ], limit=6)
+        
+        # Resto de tu lógica existente para productos, categorías, etc.
         # ...existing code...
         
-        # Simplemente obtén todos los tags que tengan imagen:
-        product_tags = request.env['product.tag'].sudo().search([
-            ('is_active', '=', True)
-        ]).filtered(lambda t: t.image)[:6]
+        values = {
+            'product_tags': product_tags,  # Esta es la clave que falta
+            # ...otros valores que ya tengas...
+        }
                 
         # Calcular el total de productos publicados y con etiqueta
         total_domain = [
@@ -184,8 +189,7 @@ class OffersController(http.Controller):
             'oferta_relampago': oferta_relampago,
             'all_categories': main_categories,
             'free_shipping': free_shipping,  # Ahora es un booleano, no una cadena
-            'product_tags': product_tags,  # ← AGREGAR ESTA LÍNEA
-
+            
         })
         
 
@@ -380,10 +384,6 @@ class OffersController(http.Controller):
             ]),
         }
     
-        product_tags = request.env['product.tag'].sudo().search([
-            ('is_active', '=', True)
-        ]).filtered(lambda t: t.image)[:6]
-                    
         # Asegurarse de que el valor de free_shipping se pase a la plantilla
         return request.render('theme_xtream.offers_template', {
             'discounted_products': products,
@@ -395,6 +395,4 @@ class OffersController(http.Controller):
             'offer_type': offer_type,
             'categories_with_count': categories_with_count,
             'all_categories': main_categories,
-            'product_tags': product_tags,  # ← AGREGAR ESTA LÍNEA
-
         })
