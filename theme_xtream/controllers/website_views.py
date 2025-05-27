@@ -83,18 +83,9 @@ class OffersController(http.Controller):
         # ...existing code...
         
         # Simplemente obtén todos los tags que tengan imagen:
-        # ...existing code...
-        
-        # Obtener solo los tags activos con imagen (máximo 6)
         product_tags = request.env['product.tag'].sudo().search([
             ('is_active', '=', True)
         ]).filtered(lambda t: t.image)[:6]
-        
-        # ...existing code...
-        return request.render('theme_xtream.offers_template', {
-            # ...existing values...
-            'product_tags': product_tags,
-        })
                 
         # Calcular el total de productos publicados y con etiqueta
         total_domain = [
