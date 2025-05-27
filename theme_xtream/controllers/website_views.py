@@ -51,7 +51,12 @@ class OffersController(http.Controller):
         
         # Obtener categorías principales (categorías sin padre)
         all_categories = request.env['product.category'].sudo().search([])
+        # BUSCAR todos los productos que cumplen el dominio
+        all_tagged_products = request.env['product.template'].sudo().search(domain)
         
+        # FILTRAR por descuento real
+        discounted_products = all_tagged_products.filtered(lambda p: p.list_price > p.discounted_price)
+                
         # Crear el dominio para filtrar categorías
         category_domain = [
             ('website_published', '=', True),
@@ -293,7 +298,7 @@ class OffersController(http.Controller):
         product_tags = request.env['product.tag'].sudo().search([
             ('is_active', '=', True)
         ]).filtered(lambda t: t.image)[:6]
-                
+
         # Si estás procesando tiempos restantes, mantener solo productos con descuento real
         if type_offer in ['day', 'flash', 'current']:
         
