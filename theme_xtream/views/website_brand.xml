@@ -92,26 +92,28 @@
                                 <t t-if="product_tags">
                                     <div class="tags-wrapper d-flex justify-content-center">
                                         <t t-foreach="product_tags" t-as="tag">
-                                            <div class="text-center position-relative tag-item clickable-tag mx-3" 
-                                                 t-att-data-tag-id="tag.id"
-                                                 t-att-data-tag-name="tag.name">
-                                                
-                                                <!-- Contenedor circular del icono -->
-                                                <div class="tag-icon-container" style="width: 100px; height: 100px; border-radius: 50%; background-color: #ffffff; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-                                                    <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
-                                                         t-att-alt="tag.name"
-                                                         class="tag-icon"
-                                                         style="width: 50px; height: 50px;" />
+                                            <a t-att-href="'/offers?tag_id=' + str(tag.id)" class="text-decoration-none">
+                                                <div class="text-center position-relative tag-item clickable-tag mx-3" 
+                                                     t-att-data-tag-id="tag.id"
+                                                     t-att-data-tag-name="tag.name">
+                                                    
+                                                    <!-- Contenedor circular del icono -->
+                                                    <div class="tag-icon-container" style="width: 100px; height: 100px; border-radius: 50%; background-color: #ffffff; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                                                        <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
+                                                             t-att-alt="tag.name"
+                                                             class="tag-icon"
+                                                             style="width: 50px; height: 50px;" />
+                                                    </div>
+                                                    
+                                                    <!-- Nombre del tag -->
+                                                    <div class="tag-name" style="font-size: 14px; margin-top: 10px; color: #000;">
+                                                        <t t-esc="tag.name" />
+                                                    </div>
+                                                    
+                                                    <!-- Línea azul (solo visible al hover) -->
+                                                    <div class="tag-underline"></div>
                                                 </div>
-                                                
-                                                <!-- Nombre del tag -->
-                                                <div class="tag-name" style="font-size: 14px; margin-top: 10px;">
-                                                    <t t-esc="tag.name" />
-                                                </div>
-                                                
-                                                <!-- Línea azul (solo visible al hover) -->
-                                                <div class="tag-underline"></div>
-                                            </div>
+                                            </a>
                                         </t>
                                     </div>
                                 </t>
@@ -124,6 +126,27 @@
                             </div>
                         </div>
                     </div>
+
+                    <script type="text/javascript">
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const tagItems = document.querySelectorAll('.tag-item');
+                            
+                            tagItems.forEach(function(item) {
+                                // Manejo de eventos touch para móvil
+                                item.addEventListener('touchstart', function() {
+                                    this.querySelector('.tag-underline').style.width = '100%';
+                                    this.querySelector('.tag-underline').style.opacity = '1';
+                                });
+                                
+                                item.addEventListener('touchend', function() {
+                                    setTimeout(() => {
+                                        this.querySelector('.tag-underline').style.width = '0';
+                                        this.querySelector('.tag-underline').style.opacity = '0';
+                                    }, 300);
+                                });
+                            });
+                        });
+                    </script>
                 </section>
 
                 <!-- Mejores Ofertas -->
