@@ -16,38 +16,105 @@
                     <!-- Iconos de tags -->
                     <!-- ...existing code... -->
                     <!-- Iconos de tags -->
+                    <!-- ...existing code... -->
+                    <!-- Iconos de tags -->
                     <div class="d-flex align-items-end justify-content-end flex-wrap" style="flex: 2;">
-                        <div class="d-flex align-items-end justify-content-end flex-wrap w-100">
+                        <div class="d-flex align-items-center justify-content-end flex-wrap w-100">
                             <!-- Debug temporal -->
                             <div style="background: red; color: white; padding: 5px; margin: 5px;">
                                 DEBUG: product_tags existe = <t t-esc="bool(product_tags)"/>
                                 <br/>Cantidad de tags = <t t-esc="len(product_tags) if product_tags else 0"/>
                             </div>
                             
-                            <!-- ...existing code... -->
                             <t t-if="product_tags">
-                                <t t-foreach="product_tags" t-as="tag">
-                                    <t t-if="tag and tag.image">
-                                        <div class="text-center mx-4" style="min-width: 90px;">
+                                <t t-foreach="product_tags" t-as="tag" t-if="tag.is_active">
+                                    <div class="text-center position-relative tag-item" 
+                                         style="min-width: 80px; margin: 0 15px; cursor: pointer;"
+                                         t-att-data-tag-id="tag.id">
+                                        
+                                        <!-- Imagen del tag -->
+                                        <div class="tag-icon-container" style="margin-bottom: 8px;">
                                             <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
                                                  t-att-alt="tag.name"
-                                                 class="img-fluid mb-2"
-                                                 style="height: 60px; width: 60px; object-fit: contain;" />
-                                            <div style="font-size: 14px; color: #222; font-family: 'Questrial', sans-serif;">
-                                                <t t-esc="tag.name" />
-                                            </div>
+                                                 class="tag-icon"
+                                                 style="height: 60px; width: 60px; object-fit: contain; 
+                                                        border: none; background: none; box-shadow: none;" />
                                         </div>
-                                    </t>
+                                        
+                                        <!-- Nombre del tag -->
+                                        <div class="tag-name" 
+                                             style="font-size: 14px; color: #222; font-family: 'Questrial', sans-serif;
+                                                    line-height: 1.2; margin-bottom: 5px;">
+                                            <t t-esc="tag.name" />
+                                        </div>
+                                        
+                                        <!-- Línea azul (solo visible en el primer tag por defecto) -->
+                                        <div class="tag-underline" 
+                                             t-att-style="'height: 2px; background-color: #007bff; width: 100%; 
+                                                          position: absolute; bottom: -5px; left: 0; 
+                                                          display: ' + ('block' if tag_index == 0 else 'none') + ';'">
+                                        </div>
+                                    </div>
                                 </t>
                             </t>
-                            <!-- ...existing code... -->
+                            
                             <t t-else="">
                                 <div style="background: orange; color: white; padding: 10px;">
-                                    No hay product_tags disponibles
+                                    No hay product_tags activos disponibles
                                 </div>
                             </t>
                         </div>
                     </div>
+                    
+                    <!-- JavaScript para manejar el clic y la línea azul -->
+                    <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const tagItems = document.querySelectorAll('.tag-item');
+                        
+                        tagItems.forEach(function(item, index) {
+                            item.addEventListener('click', function() {
+                                // Remover línea azul de todos los tags
+                                tagItems.forEach(function(tag) {
+                                    tag.querySelector('.tag-underline').style.display = 'none';
+                                });
+                                
+                                // Mostrar línea azul en el tag clickeado
+                                this.querySelector('.tag-underline').style.display = 'block';
+                                
+                                // Aquí puedes agregar la lógica para filtrar productos por tag
+                                const tagId = this.getAttribute('data-tag-id');
+                                console.log('Tag seleccionado:', tagId);
+                                
+                                // Opcional: redirigir o filtrar productos
+                                // window.location.href = '/offers?tag=' + tagId;
+                            });
+                        });
+                    });
+                    </script>
+                    
+                    <!-- CSS adicional para mejorar la apariencia -->
+                    <style>
+                    .tag-item {
+                        transition: all 0.2s ease;
+                    }
+                    
+                    .tag-item:hover {
+                        transform: translateY(-2px);
+                    }
+                    
+                    .tag-icon {
+                        transition: transform 0.2s ease;
+                    }
+                    
+                    .tag-item:hover .tag-icon {
+                        transform: scale(1.05);
+                    }
+                    
+                    .tag-underline {
+                        transition: all 0.3s ease;
+                    }
+                    </style>
+                    <!-- ...existing code... -->
                     <!-- ...existing code... -->
                 </div>
                 
