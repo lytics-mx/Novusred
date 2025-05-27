@@ -14,23 +14,24 @@ class OffersController(http.Controller):
             free_shipping = request.params.get('free_shipping') == 'true'
             request.session['free_shipping'] = free_shipping
         else:
-            # Si no viene en los parámetros, usar el valor guardado en sesión (si existe)
             free_shipping = request.session.get('free_shipping', False)
     
+        # ELIMINA ESTA LÍNEA DUPLICADA:
         # Filtro base para productos publicados con etiquetas
-        domain = [
-            ('website_published', '=', True),
-            ('product_tag_ids', '!=', False),
-        ]
+        domain = [('website_published', '=', True)]
         
-        # Si el checkbox está marcado, agregar filtro de free_shipping
+        # SOLO UNA VEZ agregar el filtro de free_shipping
         if free_shipping:
-            domain.append(('free_shipping', '=', True))    
+            domain.append(('free_shipping', '=', True))
         
-        # IMPORTANTE: Primero BUSCAR los productos con el dominio
+        # ELIMINA ESTAS LÍNEAS DUPLICADAS:
+        # if free_shipping:
+        #     domain.append(('free_shipping', '=', True))    
+        
+        # Buscar productos
         tagged_products = request.env['product.template'].sudo().search(domain)
         
-        # LUEGO filtrar por descuento real
+        # Filtrar por descuento real
         tagged_products = tagged_products.filtered(lambda p: p.list_price > p.discounted_price)
         
         # Solo productos que tengan al menos una etiqueta con start_date
@@ -38,6 +39,8 @@ class OffersController(http.Controller):
         for p in tagged_products:
             if p.website_published and p.product_tag_ids and p.product_tag_ids[0].start_date:
                 filtered_products.append(p)
+        
+        # Resto del código...
     
         # Resto del código sin cambios...
     
