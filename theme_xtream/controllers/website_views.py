@@ -185,6 +185,8 @@ class OffersController(http.Controller):
             'all_categories': main_categories,
             'free_shipping': free_shipping,  # Ahora es un booleano, no una cadena
             'product_tags': product_tags,  # ← AGREGAR ESTA LÍNEA
+            'total_products': total_products,
+
 
         })
         
@@ -288,7 +290,10 @@ class OffersController(http.Controller):
         # LUEGO filtrar por descuento real
         products = products.filtered(lambda p: p.list_price > p.discounted_price)
         
-        
+        product_tags = request.env['product.tag'].sudo().search([
+            ('is_active', '=', True)
+        ]).filtered(lambda t: t.image)[:6]
+                
         # Si estás procesando tiempos restantes, mantener solo productos con descuento real
         if type_offer in ['day', 'flash', 'current']:
         
@@ -391,4 +396,6 @@ class OffersController(http.Controller):
             'offer_type': offer_type,
             'categories_with_count': categories_with_count,
             'all_categories': main_categories,
+            'product_tags': product_tags,  # ← AGREGAR ESTA LÍNEA
+
         })
