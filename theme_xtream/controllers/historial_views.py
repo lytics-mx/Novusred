@@ -6,8 +6,8 @@ import pytz
 
 class ProductHistoryController(http.Controller):
 
-    @http.route('/shop/history', type='http', auth='user', website=True)
-    def view_history(self):
+    @http.route(['/shop/history', '/shop/history/<string:period_filter>'], type='http', auth='user', website=True)
+    def view_history(self, period_filter=None):
         """Obtiene el historial de productos vistos por el usuario actual agrupado por períodos."""
         user_partner_id = request.env.user.partner_id.id
         
@@ -33,6 +33,10 @@ class ProductHistoryController(http.Controller):
             'Este mes': [],
             'Anteriores': []
         }
+        
+        # Lista de todos los meses disponibles para el filtro
+        available_periods = ['Hoy', 'Ayer', 'Esta semana', 'Este mes']
+        month_periods = set()
         
         seen_products = set()  # Para evitar duplicados
         
@@ -76,6 +80,7 @@ class ProductHistoryController(http.Controller):
                 else:
                     # Más de un mes
                     month_name = visit_date.strftime('%B %Y')
+                    month_periods.add(month_name)
                     if month_name not in grouped_history:
                         grouped_history[month_name] = []
                     grouped_history[month_name].append({
@@ -84,11 +89,26 @@ class ProductHistoryController(http.Controller):
                         'track_id': track.id
                     })
         
-        # Filtrar períodos vacíos
-        filtered_history = {k: v for k, v in grouped_history.items() if v}
+        # Agregar meses disponibles a la lista de períodos
+        available_periods.extend(sorted(month_periods, reverse=True))
+        
+        # Filtrar por período si se especifica
+        if period_filter and period_filter in grouped_history:
+            filtered_history = {period_filter: grouped_history[period_filter]}
+            current_filter = period_filter
+        else:
+            # Filtrar períodos vacíos
+            filtered_history = {k: v for k, v in grouped_history.items() if v}
+            current_filter = None
+        
+        # Contar total de productos
+        total_products = sum(len(products) for products in filtered_history.values())
         
         return request.render('theme_xtream.history_template', {
             'grouped_history': filtered_history,
+            'available_periods': [period for period in available_periods if period in grouped_history and grouped_history[period]],
+            'current_filter': current_filter,
+            'total_products': total_products,
         })
 
     @http.route('/shop/history/remove/<int:product_id>', type='http', auth='user', website=True)

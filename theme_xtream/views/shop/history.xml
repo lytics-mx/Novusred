@@ -13,19 +13,34 @@
                     <div class="d-block d-md-none mb-4">
                         <div class="dropdown">
                             <button class="btn btn-outline-primary dropdown-toggle w-100" type="button" id="monthSelector" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fa fa-calendar me-2"></i>Seleccionar período
+                                <i class="fa fa-calendar me-2"></i>
+                                <t t-if="current_filter">
+                                    <t t-esc="current_filter" />
+                                </t>
+                                <t t-else="">
+                                    Seleccionar período
+                                </t>
                             </button>
                             <ul class="dropdown-menu w-100" aria-labelledby="monthSelector">
-                                <t t-if="grouped_history">
-                                    <t t-foreach="grouped_history.items()" t-as="period_data">
-                                        <t t-set="period_name" t-value="period_data[0]" />
-                                        <t t-set="period_products" t-value="period_data[1]" />
+                                <!-- Opción para mostrar todos -->
+                                <li>
+                                    <a class="dropdown-item" href="/shop/history">
+                                        Todos los períodos
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider" /></li>
+                                
+                                <!-- Lista de períodos disponibles -->
+                                <t t-if="available_periods">
+                                    <t t-foreach="available_periods" t-as="period">
                                         <li>
-                                            <a class="dropdown-item period-selector" 
-                                               t-att-data-period="period_name"
-                                               href="#period-" t-att-data-period-id="period_name.replace(' ', '-').lower()">
-                                                <t t-esc="period_name" />
-                                                <span class="text-muted ms-2">(<t t-esc="len(period_products)" />)</span>
+                                            <a class="dropdown-item" 
+                                               t-att-href="'/shop/history/' + str(period)"
+                                               t-att-class="'dropdown-item' + (' active' if current_filter == period else '')">
+                                                <t t-esc="period" />
+                                                <t t-if="grouped_history.get(period)">
+                                                    <span class="text-muted ms-2">(<t t-esc="len(grouped_history[period])" />)</span>
+                                                </t>
                                             </a>
                                         </li>
                                     </t>
@@ -434,116 +449,31 @@
                         font-size: 16px !important;
                     }
                 }
+
+                /* Estilos para botones de filtro */
+                .btn-outline-primary.active {
+                    background-color: #007bff;
+                    color: white;
+                    border-color: #007bff;
+                }
+
+                .dropdown-item.active {
+                    background-color: #007bff;
+                    color: white;
+                }
+
+                .dropdown-item:hover {
+                    background-color: #f8f9fa;
+                }
+
+                .dropdown-item.active:hover {
+                    background-color: #0056b3;
+                    color: white;
+                }
+
                 </style>
                 
-                <!-- JavaScript actualizado -->
-                <script type="text/javascript">
-                //<![CDATA[
-                document.addEventListener('DOMContentLoaded', function() {
-                    // Solo inicializar carruseles en desktop
-                    if (window.innerWidth >= 768) {
-                        const carousels = document.querySelectorAll('.carousel-container');
-                        carousels.forEach(carousel => {
-                            initInfiniteCarousel(carousel);
-                        });
-                    }
-                    
-                    // Manejador para selector de períodos en móvil
-                    const periodSelectors = document.querySelectorAll('.period-selector');
-                    periodSelectors.forEach(selector => {
-                        selector.addEventListener('click', function(e) {
-                            e.preventDefault();
-                            const targetId = this.getAttribute('href');
-                            const targetElement = document.querySelector(targetId);
-                            
-                            if (targetElement) {
-                                // Cerrar dropdown
-                                const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('monthSelector'));
-                                if (dropdown) dropdown.hide();
-                                
-                                // Scroll suave al período
-                                targetElement.scrollIntoView({ 
-                                    behavior: 'smooth',
-                                    block: 'start'
-                                });
-                                
-                                // Actualizar texto del botón
-                                document.getElementById('monthSelector').innerHTML = 
-                                    '<i class="fa fa-calendar me-2"></i>' + this.getAttribute('data-period');
-                            }
-                        });
-                    });
-                });
 
-                function initInfiniteCarousel(carousel) {
-                    const track = carousel.querySelector('.carousel-track');
-                    const slides = carousel.querySelectorAll('.carousel-slide');
-                    const prevBtn = carousel.querySelector('.carousel-prev');
-                    const nextBtn = carousel.querySelector('.carousel-next');
-                    
-                    if (slides.length === 0) return;
-                    
-                    let currentIndex = 0;
-                    const slideWidth = slides[0].offsetWidth + 8; // REDUCIDO DE 16 a 8 para coincidir con gap de 0.5rem
-                    const visibleSlides = Math.floor((carousel.offsetWidth - 60) / slideWidth);
-                    
-                    if (slides.length <= visibleSlides) {
-                        if (prevBtn) prevBtn.style.display = 'none';
-                        if (nextBtn) nextBtn.style.display = 'none';
-                        return;
-                    }
-                    
-                    // Clonar slides
-                    for (let i = 0; i < visibleSlides; i++) {
-                        const clone = slides[i].cloneNode(true);
-                        clone.classList.add('cloned');
-                        track.appendChild(clone);
-                    }
-                    
-                    for (let i = slides.length - visibleSlides; i < slides.length; i++) {
-                        const clone = slides[i].cloneNode(true);
-                        clone.classList.add('cloned');
-                        track.insertBefore(clone, track.firstChild);
-                    }
-                    
-                    currentIndex = visibleSlides;
-                    updatePosition(true);
-                    
-                    function updatePosition(immediate) {
-                        const offset = -currentIndex * slideWidth;
-                        track.style.transition = immediate ? 'none' : 'transform 0.3s ease';
-                        track.style.transform = 'translateX(' + offset + 'px)';
-                    }
-                    
-                    function moveNext() {
-                        currentIndex++;
-                        updatePosition();
-                        
-                        if (currentIndex >= slides.length + visibleSlides) {
-                            setTimeout(function() {
-                                currentIndex = visibleSlides;
-                                updatePosition(true);
-                            }, 300);
-                        }
-                    }
-                    
-                    function movePrev() {
-                        currentIndex--;
-                        updatePosition();
-                        
-                        if (currentIndex < 0) {
-                            setTimeout(function() {
-                                currentIndex = slides.length - 1;
-                                updatePosition(true);
-                            }, 300);
-                        }
-                    }
-                    
-                    if (nextBtn) nextBtn.addEventListener('click', moveNext);
-                    if (prevBtn) prevBtn.addEventListener('click', movePrev);
-                }
-                //]]>
-                </script>
             </t>
             
             <!-- Usuario no autenticado -->
