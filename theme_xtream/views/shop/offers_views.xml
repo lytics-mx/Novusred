@@ -500,20 +500,10 @@
                                 <div class="col-6 col-md-6 col-lg-4 mobile-product-col">
                                     <div class="card shadow-sm product-card mobile-product-card">
                                         <!-- Contador de tiempo de oferta -->
-                                        <t t-if="offer_info.get(product.id, {}).get('type') and offer_info.get(product.id, {}).get('end_date')">
-                                            <div class="offer-countdown-container" 
-                                                t-att-data-offer-type="offer_info[product.id]['type']"
-                                                t-att-data-product-id="product.id">
-                                                <div class="offer-countdown" t-att-data-end-date="offer_info[product.id]['end_date']">
-                                                    <t t-if="offer_info[product.id]['type'] == 'day'">
-                                                        <span class="countdown-text">Oferta del día termina en:</span>
-                                                    </t>
-                                                    <t t-elif="offer_info[product.id]['type'] == 'flash'">
-                                                        <span class="countdown-text">Oferta relámpago termina en:</span>
-                                                    </t>
-                                                    <t t-else="">
-                                                        <span class="countdown-text">Oferta termina en:</span>
-                                                    </t>
+                                        <t t-if="product.offer_end_date">
+                                            <div class="offer-countdown-container">
+                                                <div class="offer-countdown" t-att-data-end-date="product.offer_end_date">
+                                                    <span class="countdown-text">Oferta termina en:</span>
                                                     <div class="countdown-timer">
                                                         <span class="countdown-hours">00</span>h 
                                                         <span class="countdown-minutes">00</span>m 
@@ -521,54 +511,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <style>
-                                                .offer-countdown-container {
-                                                    background: rgba(255, 82, 7, 0.1);
-                                                    padding: 8px;
-                                                    margin: -8px -8px 8px -8px;
-                                                    text-align: center;
-                                                }
-                                                .countdown-text {
-                                                    font-size: 12px;
-                                                    color: #FF5207;
-                                                    font-weight: bold;
-                                                    display: block;
-                                                    margin-bottom: 4px;
-                                                }
-                                                .countdown-timer {
-                                                    font-size: 14px;
-                                                    font-weight: bold;
-                                                    color: #333;
-                                                }
-                                            </style>
-                                            <t t-raw="'&lt;script&gt;
-                                                document.addEventListener(&quot;DOMContentLoaded&quot;, function() {
-                                                    document.querySelectorAll(&quot;.offer-countdown&quot;).forEach(function(countdown) {
-                                                        const endDate = new Date(countdown.dataset.endDate);
-                                                        
-                                                        function updateTimer() {
-                                                            const now = new Date();
-                                                            const diff = endDate - now;
-
-                                                            if (diff &lt;= 0) {
-                                                                countdown.innerHTML = &quot;&lt;span class=\&quot;countdown-text\&quot;&gt;Oferta terminada&lt;/span&gt;&quot;;
-                                                                return;
-                                                            }
-
-                                                            const hours = Math.floor(diff / (1000 * 60 * 60));
-                                                            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                                                            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-                                                            countdown.querySelector(&quot;.countdown-hours&quot;).textContent = hours.toString().padStart(2, &quot;0&quot;);
-                                                            countdown.querySelector(&quot;.countdown-minutes&quot;).textContent = minutes.toString().padStart(2, &quot;0&quot;);
-                                                            countdown.querySelector(&quot;.countdown-seconds&quot;).textContent = seconds.toString().padStart(2, &quot;0&quot;);
-                                                        }
-
-                                                        updateTimer();
-                                                        setInterval(updateTimer, 1000);
-                                                    });
-                                                });
-                                            &lt;/script&gt;'" />
                                         </t>
 
                                         <a t-att-href="'/shop/product/' + str(product.id)">
