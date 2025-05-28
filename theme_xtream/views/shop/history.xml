@@ -83,6 +83,7 @@
                                                                          loading="lazy" />
                                                                 </a>
                                                                 
+                                                                <!-- Para la versión desktop -->
                                                                 <div class="card-body">
                                                                     <div class="mt-auto">
                                                                         <!-- Nombre del producto -->
@@ -90,12 +91,12 @@
                                                                             <t t-esc="product.name.upper()" />
                                                                         </h6>
                                                                         
-                                                                        <!-- Precios -->
-                                                                        <t t-if="product.discounted_price &lt; product.list_price">
-                                                                            <div class="d-flex align-items-center justify-content-between">
-                                                                                <span class="text-dark fw-bold" style="font-size: 20px;">
-                                                                                    $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
-                                                                                </span>
+                                                                        <!-- Precios y descuentos -->
+                                                                        <div class="d-flex align-items-center justify-content-between">
+                                                                            <span class="text-dark fw-bold" style="font-size: 20px;">
+                                                                                $<t t-esc="'{:,}'.format(int(product.discounted_price if product.discounted_price else product.list_price))" />
+                                                                            </span>
+                                                                            <t t-if="product.discounted_price &lt; product.list_price">
                                                                                 <span class="text-danger" style="font-size: 14px; font-weight: normal;">
                                                                                     <t t-if="product.discount_percentage">
                                                                                         <t t-esc="int(product.discount_percentage)" />% OFF
@@ -104,51 +105,54 @@
                                                                                         -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" />
                                                                                     </t>
                                                                                 </span>
-                                                                            </div>
-                                                                            <div class="mt-0">
+                                                                            </t>
+                                                                        </div>
+                                                                        
+                                                                        <!-- Precio original si hay descuento -->
+                                                                        <div class="mt-0">
+                                                                            <t t-if="product.discounted_price &lt; product.list_price">
                                                                                 <span class="text-muted" style="font-size: 16px; text-decoration: line-through;">
                                                                                     $<t t-esc="'{:,}'.format(int(product.list_price))" />
                                                                                 </span>
-                                                                            </div>
-                                                                        </t>
-                                                                        <t t-else="">
-                                                                            <span class="fw-bold d-block" style="font-size: 20px;">
-                                                                                $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                                                            </span>
-                                                                        </t>
+                                                                            </t>
+                                                                            <t t-else="">
+                                                                                <span class="invisible">Espacio reservado</span>
+                                                                            </t>
+                                                                        </div>
                                                                         
                                                                         <!-- Envío gratis -->
-                                                                        <t t-if="product.free_shipping">
-                                                                            <div class="mt-1">
+                                                                        <div class="mt-1">
+                                                                            <t t-if="product.free_shipping">
                                                                                 <span class="text-orange" style="color: #FF5207; font-size: 0.8rem; font-weight: bold; font-style: italic;">
                                                                                     Envío gratis
                                                                                 </span>
-                                                                            </div>
-                                                                        </t>
+                                                                            </t>
+                                                                            <t t-else="">
+                                                                                <span class="invisible">Espacio reservado</span>
+                                                                            </t>
+                                                                        </div>
                                                                     </div>
 
                                                                     <!-- Botón eliminar -->
                                                                     <a t-att-href="'/shop/history/remove/' + str(product.id)" 
-                                                                       t-att-data-product-id="product.id"
-                                                                       class="text-blue mt-2 delete-history-item d-block" 
-                                                                       style="font-size: 0.8rem; color: #007bff; text-decoration: none;"
-                                                                       onclick="event.preventDefault(); 
-                                                                               if(confirm('¿Estás seguro de eliminar este producto del historial?')) {
-                                                                                   fetch('/shop/history/remove/' + this.getAttribute('data-product-id'))
-                                                                                   .then(response => {
-                                                                                       if (response.ok) {
-                                                                                           this.closest('.carousel-slide').style.transition = 'opacity 0.3s, transform 0.3s';
-                                                                                           this.closest('.carousel-slide').style.opacity = '0';
-                                                                                           this.closest('.carousel-slide').style.transform = 'scale(0.8)';
-                                                                                           setTimeout(() => {
-                                                                                               location.reload();
-                                                                                           }, 300);
-                                                                                       }
-                                                                                   });
-                                                                               }">
+                                                                    t-att-data-product-id="product.id"
+                                                                    class="text-blue mt-2 delete-history-item d-block" 
+                                                                    style="font-size: 0.8rem; color: #007bff; text-decoration: none;"
+                                                                    onclick="event.preventDefault(); 
+                                                                            if(confirm('¿Estás seguro de eliminar este producto del historial?')) {
+                                                                                fetch('/shop/history/remove/' + this.getAttribute('data-product-id'))
+                                                                                .then(response => {
+                                                                                    if (response.ok) {
+                                                                                        this.closest('.carousel-slide').style.opacity = '0';
+                                                                                        this.closest('.carousel-slide').style.transform = 'scale(0.8)';
+                                                                                        setTimeout(() => { location.reload(); }, 300);
+                                                                                    }
+                                                                                });
+                                                                            }">
                                                                         <i class="fa fa-trash me-1"></i>Eliminar
                                                                     </a>
                                                                 </div>
+
                                                             </div>
                                                         </div>
                                                     </t>
@@ -285,38 +289,38 @@
                     width: 200px;
                 }
 
-                /* Controles flotantes del carrusel - TAMAÑO AJUSTADO */
+                /* Controles flotantes del carrusel */
                 .carousel-nav {
-                    width: 32px;
-                    height: 32px;
+                    width: 45px;
+                    height: 45px;
                     border-radius: 50%;
-                    border: 1px solid #ddd;
+                    border: 2px solid #fff;
                     background: rgba(255, 255, 255, 0.95);
-                    color: #666;
+                    color: #333;
                     cursor: pointer;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    font-size: 12px;
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                    transition: all 0.2s ease;
-                    backdrop-filter: blur(5px);
+                    font-size: 16px;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                    transition: all 0.3s ease;
+                    backdrop-filter: blur(10px);
                 }
 
                 .carousel-nav:hover {
                     background: #007bff;
                     color: white;
                     border-color: #007bff;
-                    transform: translateY(-50%) scale(1.05);
-                    box-shadow: 0 3px 12px rgba(0, 123, 255, 0.25);
+                    transform: translateY(-50%) scale(1.1);
+                    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
                 }
 
                 .carousel-nav:active {
-                    transform: translateY(-50%) scale(0.98);
+                    transform: translateY(-50%) scale(0.95);
                 }
 
                 .carousel-nav:disabled {
-                    opacity: 0.4;
+                    opacity: 0.5;
                     cursor: not-allowed;
                     background: rgba(255, 255, 255, 0.7);
                 }
@@ -324,17 +328,8 @@
                 .carousel-nav:disabled:hover {
                     transform: translateY(-50%) scale(1);
                     background: rgba(255, 255, 255, 0.7);
-                    color: #666;
-                    border-color: #ddd;
-                }
-
-                /* Posicionamiento específico */
-                .carousel-prev {
-                    left: -18px !important;
-                }
-
-                .carousel-next {
-                    right: -18px !important;
+                    color: #333;
+                    border-color: #fff;
                 }
 
                 .transition-transform {
@@ -413,42 +408,12 @@
                         min-width: 220px;
                         width: 220px;
                     }
-                    
-                    /* Botones un poco más grandes en tablet */
-                    .carousel-nav {
-                        width: 36px;
-                        height: 36px;
-                        font-size: 14px;
-                    }
-                    
-                    .carousel-prev {
-                        left: -20px !important;
-                    }
-                    
-                    .carousel-next {
-                        right: -20px !important;
-                    }
                 }
 
                 @media (min-width: 992px) {
                     .carousel-slide {
                         min-width: 240px;
                         width: 240px;
-                    }
-                    
-                    /* Botones tamaño final en desktop */
-                    .carousel-nav {
-                        width: 38px;
-                        height: 38px;
-                        font-size: 14px;
-                    }
-                    
-                    .carousel-prev {
-                        left: -22px !important;
-                    }
-                    
-                    .carousel-next {
-                        right: -22px !important;
                     }
                 }
 
