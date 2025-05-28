@@ -52,89 +52,88 @@
                                                 (<t t-esc="len(period_products)" /> productos)
                                             </span>
                                         </h4>
-                                    <!-- DESKTOP: Carrusel de productos con controles flotantes -->
+                                    <!-- DESKTOP: Grid de productos -->
                                     <div class="d-none d-md-block">
-                                        <div class="carousel-container">
-                                            <div class="carousel-track-container">
-                                                <div class="carousel-track d-flex">
-                                                    <t t-foreach="period_products" t-as="item">
-                                                        <t t-set="product" t-value="item['product']" />
-                                                        <div class="carousel-slide px-1">
-                                                            <div class="card h-100 shadow-sm">
-                                                                <a t-att-href="'/shop/product/' + str(product.id)">
-                                                                    <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                                                                         class="card-img-top"
-                                                                         style="height: 180px; object-fit: contain;"
-                                                                         loading="lazy" />
-                                                                </a>
-                                                                <div class="card-body p-3">
-                                                                    <h6 class="card-title namehistory mb-2" style="font-size: 0.9rem;">
-                                                                        <t t-esc="product.name.upper()" />
-                                                                    </h6>
-                                                                    
-                                                                    <!-- Precios -->
-                                                                    <t t-if="product.discounted_price &lt; product.list_price">
-                                                                        <div class="mb-2">
-                                                                            <span class="text-dark fw-bold d-block" style="font-size: 18px;">
-                                                                                $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
-                                                                            </span>
-                                                                            <div class="d-flex align-items-center">
-                                                                                <span class="text-muted me-2" style="font-size: 14px; text-decoration: line-through;">
-                                                                                    $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                                                                </span>
-                                                                                <span class="badge bg-danger" style="font-size: 10px;">
-                                                                                    <t t-if="product.discount_percentage">
-                                                                                        <t t-esc="int(product.discount_percentage)" />% OFF
-                                                                                    </t>
-                                                                                </span>
-                                                                            </div>
-                                                                        </div>
-                                                                    </t>
-                                                                    <t t-else="">
-                                                                        <span class="fw-bold d-block mb-2" style="font-size: 18px;">
+                                        <div class="row row-cols-2 row-cols-md-5 g-3 mb-4">
+                                            <t t-foreach="period_products" t-as="item">
+                                                <t t-set="product" t-value="item['product']" />
+                                                <div class="col">
+                                                    <div class="card h-100 shadow-sm product-card">
+                                                        <a t-att-href="'/shop/product/' + str(product.id)">
+                                                            <!-- Imagen del producto -->
+                                                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                                 class="card-img-top" 
+                                                                 style="height: 200px; object-fit: contain;" />
+                                                        </a>
+                                                        
+                                                        <div class="card-body">
+                                                            <div class="mt-auto">
+                                                                <!-- Nombre del producto -->
+                                                                <h6 class="card-title namehistory mb-2" style="font-size: 0.9rem;">
+                                                                    <t t-esc="product.name.upper()" />
+                                                                </h6>
+                                                                
+                                                                <!-- Precios -->
+                                                                <t t-if="product.discounted_price &lt; product.list_price">
+                                                                    <div class="d-flex align-items-center justify-content-between">
+                                                                        <span class="text-dark fw-bold" style="font-size: 25px;">
+                                                                            $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
+                                                                        </span>
+                                                                        <span class="text-danger" style="font-size: 18px; font-weight: normal;">
+                                                                            <t t-if="product.discount_percentage">
+                                                                                <t t-esc="int(product.discount_percentage)" />% OFF
+                                                                            </t>
+                                                                        </span>
+                                                                    </div>
+                                                                    <div class="mt-0">
+                                                                        <span class="text-muted ms-2" style="font-size: 18px; text-decoration: line-through;">
                                                                             $<t t-esc="'{:,}'.format(int(product.list_price))" />
                                                                         </span>
-                                                                    </t>
-
-                                                                    <!-- Envío gratis -->
-                                                                    <t t-if="product.free_shipping">
-                                                                        <div class="mb-2">
-                                                                            <span class="text-orange" style="color: #FF5207; font-size: 0.8rem; font-weight: bold; font-style: italic;">
-                                                                                <i class="fa fa-truck me-1"></i>Envío gratis
-                                                                            </span>
-                                                                        </div>
-                                                                    </t>
-
-                                                                    <!-- Botón eliminar -->
-                                                                    <a t-att-href="'/shop/history/remove/' + str(product.id)"
-                                                                       t-att-data-product-id="product.id"
-                                                                       class="text-blue delete-history-item"
-                                                                       style="font-size: 0.8rem; color: #007bff; text-decoration: none;"
-                                                                       onclick="event.preventDefault();
-                                                                               if(confirm('¿Eliminar del historial?')) {
-                                                                                   fetch('/shop/history/remove/' + this.getAttribute('data-product-id'))
-                                                                                   .then(response => {
-                                                                                       if (response.ok) {
-                                                                                           location.reload();
-                                                                                       }
-                                                                                   });
-                                                                               }">
-                                                                        <i class="fa fa-trash me-1"></i>Eliminar
-                                                                    </a>
-                                                                </div>
+                                                                    </div>
+                                                                </t>
+                                                                <t t-else="">
+                                                                    <span class="fw-bold d-block" style="font-size: 25px;">
+                                                                        $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                                    </span>
+                                                                </t>
+                                                                
+                                                                <!-- Envío gratis -->
+                                                                <t t-if="product.free_shipping">
+                                                                    <div class="mt-1">
+                                                                        <span class="text-orange" style="color: #FF5207; font-size: 0.9rem; font-weight: bold; font-style: italic;">
+                                                                            Envío gratis
+                                                                        </span>
+                                                                    </div>
+                                                                </t>
                                                             </div>
+
+                                                            <!-- Botón eliminar -->
+                                                            <a t-att-href="'/shop/history/remove/' + str(product.id)" 
+                                                               t-att-data-product-id="product.id"
+                                                               class="text-blue mt-2 delete-history-item" 
+                                                               style="font-size: 0.9rem; color: #007bff; display: inline-block; float: left; text-decoration: none;"
+                                                               onclick="event.preventDefault(); 
+                                                                       if(confirm('¿Estás seguro de eliminar este producto del historial?')) {
+                                                                           fetch('/shop/history/remove/' + this.getAttribute('data-product-id'))
+                                                                           .then(response => {
+                                                                               if (response.ok) {
+                                                                                   this.closest('.col').style.transition = 'opacity 0.3s';
+                                                                                   this.closest('.col').style.opacity = '0';
+                                                                                   setTimeout(() => {
+                                                                                       this.closest('.col').remove();
+                                                                                   }, 300);
+                                                                               }
+                                                                           });
+                                                                       }">
+                                                                <i class="fa fa-trash me-1"></i>Eliminar
+                                                            </a>
                                                         </div>
-                                                    </t>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <button class="carousel-nav carousel-prev position-absolute top-50 start-0 translate-middle-y">
-                                                <i class="fa fa-chevron-left"></i>
-                                            </button>
-                                            <button class="carousel-nav carousel-next position-absolute top-50 end-0 translate-middle-y">
-                                                <i class="fa fa-chevron-right"></i>
-                                            </button>
+                                            </t>
                                         </div>
                                     </div>
+
                                     <!-- MÓVIL: Lista vertical de productos -->
                                     <div class="d-block d-md-none mobile-list">
                                         <t t-foreach="period_products" t-as="item">
