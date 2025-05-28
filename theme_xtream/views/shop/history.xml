@@ -74,26 +74,7 @@
                                                     <t t-foreach="period_products" t-as="item">
                                                         <t t-set="product" t-value="item['product']" />
                                                         <div class="carousel-slide flex-shrink-0">
-                                                            <div class="card h-100 shadow-sm product-card position-relative">
-                                                                <!-- Botón eliminar en la parte superior -->
-                                                                <a t-att-href="'/shop/history/remove/' + str(product.id)" 
-                                                                t-att-data-product-id="product.id"
-                                                                class="btn-close position-absolute delete-history-item" 
-                                                                style="top: 8px; right: 8px; z-index: 5; width: 24px; height: 24px; background: rgba(255, 255, 255, 0.9); border-radius: 50%; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; text-decoration: none; color: #666; font-size: 12px;"
-                                                                onclick="event.preventDefault(); 
-                                                                        if(confirm('¿Estás seguro de eliminar este producto del historial?')) {
-                                                                            fetch('/shop/history/remove/' + this.getAttribute('data-product-id'))
-                                                                            .then(response => {
-                                                                                if (response.ok) {
-                                                                                    this.closest('.carousel-slide').style.opacity = '0';
-                                                                                    this.closest('.carousel-slide').style.transform = 'scale(0.8)';
-                                                                                    setTimeout(() => { location.reload(); }, 300);
-                                                                                }
-                                                                            });
-                                                                        }">
-                                                                    <i class="fa fa-times"></i>
-                                                                </a>
-
+                                                            <div class="card h-100 shadow-sm product-card">
                                                                 <a t-att-href="'/shop/product/' + str(product.id)">
                                                                     <!-- Imagen del producto -->
                                                                     <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
@@ -151,34 +132,41 @@
                                                                             </t>
                                                                         </div>
                                                                     </div>
+
+                                                                    <!-- Botón eliminar -->
+                                                                    <a t-att-href="'/shop/history/remove/' + str(product.id)" 
+                                                                    t-att-data-product-id="product.id"
+                                                                    class="text-blue mt-2 delete-history-item d-block text-start" 
+                                                                    style="font-size: 0.8rem; color: #007bff; text-decoration: none;"
+                                                                    onclick="event.preventDefault(); 
+                                                                            if(confirm('¿Estás seguro de eliminar este producto del historial?')) {
+                                                                                fetch('/shop/history/remove/' + this.getAttribute('data-product-id'))
+                                                                                .then(response => {
+                                                                                    if (response.ok) {
+                                                                                        this.closest('.carousel-slide').style.opacity = '0';
+                                                                                        this.closest('.carousel-slide').style.transform = 'scale(0.8)';
+                                                                                        setTimeout(() => { location.reload(); }, 300);
+                                                                                    }
+                                                                                });
+                                                                            }">
+                                                                        Eliminar
+                                                                    </a>
                                                                 </div>
+
                                                             </div>
                                                         </div>
-// ...existing code...
+                                                    </t>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- MÓVIL: Lista vertical de productos -->
+                                    <div class="d-block d-md-none mobile-list">
+                                        <t t-foreach="period_products" t-as="item">
+                                            <t t-set="product" t-value="item['product']" />
                                             <div class="product-item-mobile mb-3">
-                                                <div class="card shadow-sm position-relative">
-                                                    <!-- Botón eliminar en la parte superior móvil -->
-                                                    <a t-att-href="'/shop/history/remove/' + str(product.id)" 
-                                                       t-att-data-product-id="product.id"
-                                                       class="btn-close position-absolute delete-history-item-mobile" 
-                                                       style="top: 8px; right: 8px; z-index: 5; width: 24px; height: 24px; background: rgba(255, 255, 255, 0.9); border-radius: 50%; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; text-decoration: none; color: #666; font-size: 12px;"
-                                                       onclick="event.preventDefault(); 
-                                                               if(confirm('¿Eliminar del historial?')) {
-                                                                   fetch('/shop/history/remove/' + this.getAttribute('data-product-id'))
-                                                                   .then(response => {
-                                                                       if (response.ok) {
-                                                                           this.closest('.product-item-mobile').style.transition = 'opacity 0.3s, transform 0.3s';
-                                                                           this.closest('.product-item-mobile').style.opacity = '0';
-                                                                           this.closest('.product-item-mobile').style.transform = 'translateX(-100%)';
-                                                                           setTimeout(() => {
-                                                                               location.reload();
-                                                                           }, 300);
-                                                                       }
-                                                                   });
-                                                               }">
-                                                        <i class="fa fa-times"></i>
-                                                    </a>
-
+                                                <div class="card shadow-sm">
                                                     <div class="row g-0">
                                                         <!-- Imagen del producto -->
                                                         <div class="col-4">
@@ -232,12 +220,50 @@
                                                                         </span>
                                                                     </div>
                                                                 </t>
+
+                                                                <!-- Botón eliminar -->
+                                                                <a t-att-href="'/shop/history/remove/' + str(product.id)" 
+                                                                   t-att-data-product-id="product.id"
+                                                                   class="text-blue delete-history-item-mobile" 
+                                                                   style="font-size: 0.8rem; color: #007bff; text-decoration: none;"
+                                                                   onclick="event.preventDefault(); 
+                                                                           if(confirm('¿Eliminar del historial?')) {
+                                                                               fetch('/shop/history/remove/' + this.getAttribute('data-product-id'))
+                                                                               .then(response => {
+                                                                                   if (response.ok) {
+                                                                                       this.closest('.product-item-mobile').style.transition = 'opacity 0.3s, transform 0.3s';
+                                                                                       this.closest('.product-item-mobile').style.opacity = '0';
+                                                                                       this.closest('.product-item-mobile').style.transform = 'translateX(-100%)';
+                                                                                       setTimeout(() => {
+                                                                                           location.reload();
+                                                                                       }, 300);
+                                                                                   }
+                                                                               });
+                                                                           }">
+                                                                    <i class="fa fa-trash me-1"></i>Eliminar del historial
+                                                                </a>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-// ...existing code...
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+                        </t>
+                        
+                        <!-- Mensaje si no hay productos -->
+                        <t t-else="">
+                            <div class="text-center mt-5">
+                                <h4 style="font-family: 'Questrial', sans-serif; color: #666;">No hay productos en tu historial.</h4>
+                                <p class="text-muted">Empieza a explorar nuestros productos para ver tu historial aquí.</p>
+                                <a href="/shop" class="btn btn-primary mt-3">Ir a la tienda</a>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+                
                 <!-- CSS actualizado -->
                 <style>
                 /* Desktop - Carrusel */
@@ -255,7 +281,7 @@
 
                 .carousel-track {
                     transition: transform 0.3s ease;
-                    gap: 0.5rem;
+                    gap: 0.5rem; /* REDUCIDO DE 1rem a 0.5rem */
                 }
 
                 .carousel-slide {
@@ -263,42 +289,30 @@
                     width: 200px;
                 }
 
-                /* Botón eliminar en la esquina superior */
-                .btn-close:hover {
-                    background: rgba(220, 53, 69, 0.9) !important;
-                    color: white !important;
-                    border-color: #dc3545 !important;
-                    transform: scale(1.1);
-                }
-
-                .btn-close:active {
-                    transform: scale(0.95);
-                }
-
-                /* Controles flotantes del carrusel - MÁS TRANSPARENTES */
+                /* Controles flotantes del carrusel */
                 .carousel-nav {
                     width: 32px;
                     height: 32px;
                     border-radius: 50%;
-                    border: 1px solid rgba(221, 221, 221, 0.3);
-                    background: rgba(255, 255, 255, 0.6);
-                    color: rgba(102, 102, 102, 0.8);
+                    border: 1px solid #ddd;
+                    background: rgba(255, 255, 255, 0.95);
+                    color: #666;
                     cursor: pointer;
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     font-size: 12px;
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
                     transition: all 0.2s ease;
-                    backdrop-filter: blur(3px);
+                    backdrop-filter: blur(5px);
                 }
 
                 .carousel-nav:hover {
-                    background: rgba(0, 123, 255, 0.8);
+                    background: #007bff;
                     color: white;
-                    border-color: rgba(0, 123, 255, 0.8);
+                    border-color: #007bff;
                     transform: translateY(-50%) scale(1.05);
-                    box-shadow: 0 3px 12px rgba(0, 123, 255, 0.15);
+                    box-shadow: 0 3px 12px rgba(0, 123, 255, 0.25);
                 }
 
                 .carousel-nav:active {
@@ -306,16 +320,16 @@
                 }
 
                 .carousel-nav:disabled {
-                    opacity: 0.2;
+                    opacity: 0.4;
                     cursor: not-allowed;
-                    background: rgba(255, 255, 255, 0.4);
+                    background: rgba(255, 255, 255, 0.7);
                 }
 
                 .carousel-nav:disabled:hover {
                     transform: translateY(-50%) scale(1);
-                    background: rgba(255, 255, 255, 0.4);
-                    color: rgba(102, 102, 102, 0.6);
-                    border-color: rgba(221, 221, 221, 0.3);
+                    background: rgba(255, 255, 255, 0.7);
+                    color: #666;
+                    border-color: #ddd;
                 }
 
                 /* Posicionamiento específico */
