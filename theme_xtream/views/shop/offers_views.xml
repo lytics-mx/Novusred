@@ -499,6 +499,78 @@
                             <t t-foreach="discounted_products" t-as="product">
                                 <div class="col-6 col-md-6 col-lg-4 mobile-product-col">
                                     <div class="card shadow-sm product-card mobile-product-card">
+                                        <!-- Contador de tiempo de oferta -->
+                                        <t t-if="product.offer_type and product.offer_end_date">
+                                            <div class="offer-countdown-container" 
+                                                t-att-data-offer-type="product.offer_type"
+                                                t-att-data-product-id="product.id">
+                                                <div class="offer-countdown" t-att-data-end-date="product.offer_end_date">
+                                                    <t t-if="product.offer_type == 'day'">
+                                                        <span class="countdown-text">Oferta del día termina en:</span>
+                                                    </t>
+                                                    <t t-elif="product.offer_type == 'flash'">
+                                                        <span class="countdown-text">Oferta relámpago termina en:</span>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span class="countdown-text">Oferta termina en:</span>
+                                                    </t>
+                                                    <div class="countdown-timer">
+                                                        <span class="countdown-hours">00</span>h 
+                                                        <span class="countdown-minutes">00</span>m 
+                                                        <span class="countdown-seconds">00</span>s
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <style>
+                                                .offer-countdown-container {
+                                                    background: rgba(255, 82, 7, 0.1);
+                                                    padding: 8px;
+                                                    margin: -8px -8px 8px -8px;
+                                                    text-align: center;
+                                                }
+                                                .countdown-text {
+                                                    font-size: 12px;
+                                                    color: #FF5207;
+                                                    font-weight: bold;
+                                                    display: block;
+                                                    margin-bottom: 4px;
+                                                }
+                                                .countdown-timer {
+                                                    font-size: 14px;
+                                                    font-weight: bold;
+                                                    color: #333;
+                                                }
+                                            </style>
+                                            <script>
+                                                document.addEventListener('DOMContentLoaded', function() {
+                                                    document.querySelectorAll('.offer-countdown').forEach(function(countdown) {
+                                                        const endDate = new Date(countdown.dataset.endDate);
+                                                        
+                                                        function updateTimer() {
+                                                            const now = new Date();
+                                                            const diff = endDate - now;
+
+                                                            if (diff <= 0) {
+                                                                countdown.innerHTML = '<span class="countdown-text">Oferta terminada</span>';
+                                                                return;
+                                                            }
+
+                                                            const hours = Math.floor(diff / (1000 * 60 * 60));
+                                                            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                                                            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                                                            countdown.querySelector('.countdown-hours').textContent = hours.toString().padStart(2, '0');
+                                                            countdown.querySelector('.countdown-minutes').textContent = minutes.toString().padStart(2, '0');
+                                                            countdown.querySelector('.countdown-seconds').textContent = seconds.toString().padStart(2, '0');
+                                                        }
+
+                                                        updateTimer();
+                                                        setInterval(updateTimer, 1000);
+                                                    });
+                                                });
+                                            </script>
+                                        </t>
+
                                         <a t-att-href="'/shop/product/' + str(product.id)">
                                             <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
                                                 class="card-img-top mobile-product-image" />
@@ -699,7 +771,7 @@
                                 
                                 .mobile-product-col {
                                     padding: 2px; /* Incrementado de 2px a 3px para más espacio lateral */
-                                    margin-bottom: 45px; /* Incrementado de 25px a 35px para más espacio abajo */
+                                    margin-bottom: 60px; /* Incrementado de 25px a 35px para más espacio abajo */
                                 }
                                 
                                 .mobile-product-card {
