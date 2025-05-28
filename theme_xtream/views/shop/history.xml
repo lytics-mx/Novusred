@@ -281,7 +281,7 @@
 
                 .carousel-track {
                     transition: transform 0.3s ease;
-                    gap: 1rem;
+                    gap: 0.5rem; /* REDUCIDO DE 1rem a 0.5rem */
                 }
 
                 .carousel-slide {
@@ -291,36 +291,36 @@
 
                 /* Controles flotantes del carrusel */
                 .carousel-nav {
-                    width: 45px;
-                    height: 45px;
+                    width: 32px;
+                    height: 32px;
                     border-radius: 50%;
-                    border: 2px solid #fff;
+                    border: 1px solid #ddd;
                     background: rgba(255, 255, 255, 0.95);
-                    color: #333;
+                    color: #666;
                     cursor: pointer;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    font-size: 16px;
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                    transition: all 0.3s ease;
-                    backdrop-filter: blur(10px);
+                    font-size: 12px;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                    transition: all 0.2s ease;
+                    backdrop-filter: blur(5px);
                 }
 
                 .carousel-nav:hover {
                     background: #007bff;
                     color: white;
                     border-color: #007bff;
-                    transform: translateY(-50%) scale(1.1);
-                    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
+                    transform: translateY(-50%) scale(1.05);
+                    box-shadow: 0 3px 12px rgba(0, 123, 255, 0.25);
                 }
 
                 .carousel-nav:active {
-                    transform: translateY(-50%) scale(0.95);
+                    transform: translateY(-50%) scale(0.98);
                 }
 
                 .carousel-nav:disabled {
-                    opacity: 0.5;
+                    opacity: 0.4;
                     cursor: not-allowed;
                     background: rgba(255, 255, 255, 0.7);
                 }
@@ -328,8 +328,17 @@
                 .carousel-nav:disabled:hover {
                     transform: translateY(-50%) scale(1);
                     background: rgba(255, 255, 255, 0.7);
-                    color: #333;
-                    border-color: #fff;
+                    color: #666;
+                    border-color: #ddd;
+                }
+
+                /* Posicionamiento específico */
+                .carousel-prev {
+                    left: -18px !important;
+                }
+
+                .carousel-next {
+                    right: -18px !important;
                 }
 
                 .transition-transform {
@@ -408,12 +417,42 @@
                         min-width: 220px;
                         width: 220px;
                     }
+                    
+                    /* Botones un poco más grandes en tablet */
+                    .carousel-nav {
+                        width: 36px;
+                        height: 36px;
+                        font-size: 14px;
+                    }
+                    
+                    .carousel-prev {
+                        left: -20px !important;
+                    }
+                    
+                    .carousel-next {
+                        right: -20px !important;
+                    }
                 }
 
                 @media (min-width: 992px) {
                     .carousel-slide {
                         min-width: 240px;
                         width: 240px;
+                    }
+                    
+                    /* Botones tamaño final en desktop */
+                    .carousel-nav {
+                        width: 38px;
+                        height: 38px;
+                        font-size: 14px;
+                    }
+                    
+                    .carousel-prev {
+                        left: -22px !important;
+                    }
+                    
+                    .carousel-next {
+                        right: -22px !important;
                     }
                 }
 
@@ -473,8 +512,8 @@
                     if (slides.length === 0) return;
                     
                     let currentIndex = 0;
-                    const slideWidth = slides[0].offsetWidth + 16;
-                    const visibleSlides = Math.floor((carousel.offsetWidth - 60) / slideWidth); // Resta padding de las flechas
+                    const slideWidth = slides[0].offsetWidth + 8; // REDUCIDO DE 16 a 8 para coincidir con gap de 0.5rem
+                    const visibleSlides = Math.floor((carousel.offsetWidth - 60) / slideWidth);
                     
                     if (slides.length <= visibleSlides) {
                         if (prevBtn) prevBtn.style.display = 'none';
