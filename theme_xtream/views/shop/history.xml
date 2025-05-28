@@ -74,22 +74,24 @@
                                                 <div class="col">
                                                     <div class="card h-100 shadow-sm product-card">
                                                         <a t-att-href="'/shop/product/' + str(product.id)">
-                                                            <!-- Imagen del producto -->
                                                             <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
                                                                  class="card-img-top" 
                                                                  style="height: 180px; object-fit: contain;" />
                                                         </a>
                                                         
                                                         <div class="card-body d-flex flex-column">
-                                                            <!-- Nombre del producto -->
-                                                            <h6 class="card-title namehistory mb-2" style="font-size: 0.85rem; line-height: 1.2;">
+                                                            <h6 class="card-title namehistory mb-1" style="font-size: 0.85rem; line-height: 1.2;">
                                                                 <t t-esc="product.name.upper()" />
                                                             </h6>
                                                             
-                                                            <!-- Precios -->
-                                                            <div class="mt-auto">
+                                                            <!-- Brand type -->
+                                                            <p class="text-muted mb-2" style="font-size: 0.8rem;">
+                                                                Por <t t-esc="product.brand_type_id.name"/>
+                                                            </p>
+                                                            
+                                                            <div class="mt-auto price-container">
                                                                 <t t-if="product.discounted_price &lt; product.list_price">
-                                                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                                                    <div class="d-flex align-items-center justify-content-between mb-1 current-price">
                                                                         <span class="text-dark fw-bold" style="font-size: 20px;">
                                                                             $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
                                                                         </span>
@@ -99,8 +101,8 @@
                                                                             </t>
                                                                         </span>
                                                                     </div>
-                                                                    <div>
-                                                                        <span class="text-muted" style="font-size: 14px; text-decoration: line-through;">
+                                                                    <div class="original-price" style="display: none;">
+                                                                        <span class="text-muted" style="font-size: 20px; text-decoration: line-through;">
                                                                             $<t t-esc="'{:,}'.format(int(product.list_price))" />
                                                                         </span>
                                                                     </div>
@@ -111,7 +113,6 @@
                                                                     </span>
                                                                 </t>
                                                                 
-                                                                <!-- Envío gratis -->
                                                                 <t t-if="product.free_shipping">
                                                                     <div class="mt-1">
                                                                         <span class="text-orange" style="color: #FF5207; font-size: 0.8rem; font-weight: bold; font-style: italic;">
@@ -121,7 +122,6 @@
                                                                 </t>
                                                             </div>
 
-                                                            <!-- Botón eliminar -->
                                                             <a t-att-href="'/shop/history/remove/' + str(product.id)" 
                                                                t-att-data-product-id="product.id"
                                                                class="text-blue mt-2 delete-history-item" 
@@ -146,6 +146,18 @@
                                                 </div>
                                             </t>
                                         </div>
+                                        <script>
+                                            document.querySelectorAll('.price-container').forEach(container => {
+                                                container.addEventListener('mouseenter', () => {
+                                                    container.querySelector('.current-price')?.style.setProperty('display', 'none');
+                                                    container.querySelector('.original-price')?.style.setProperty('display', 'block');
+                                                });
+                                                container.addEventListener('mouseleave', () => {
+                                                    container.querySelector('.current-price')?.style.setProperty('display', 'flex');
+                                                    container.querySelector('.original-price')?.style.setProperty('display', 'none');
+                                                });
+                                            });
+                                        </script>
                                     </div>
 
                                     <!-- MÓVIL: Lista vertical de productos -->
