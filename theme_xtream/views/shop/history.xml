@@ -44,7 +44,7 @@
                                 
                                 <!-- Sección del período -->
                                 <div class="period-section mb-5" t-att-id="'period-' + period_id">
-                                    <!-- Título del período (sin controles) -->
+                                    <!-- Título del período -->
                                     <div class="mb-3 mt-4">
                                         <h4 style="font-family: 'Questrial', sans-serif; font-size: 18px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 8px;">
                                             <t t-esc="period_name" />
@@ -54,111 +54,104 @@
                                         </h4>
                                     </div>
                                     
-                                    <!-- DESKTOP: Carrusel de productos con controles flotantes -->
-                                    <div class="d-none d-md-block">
-                                        <div class="carousel-container position-relative" t-att-id="'carousel-' + period_id">
-                                            <!-- Controles flotantes del carrusel -->
-                                            <button class="carousel-nav carousel-prev position-absolute" 
-                                                    t-att-data-target="'#carousel-' + period_id"
-                                                    style="left: -20px; top: 50%; transform: translateY(-50%); z-index: 10;">
-                                                <i class="fa fa-chevron-left"></i>
-                                            </button>
-                                            <button class="carousel-nav carousel-next position-absolute" 
-                                                    t-att-data-target="'#carousel-' + period_id"
-                                                    style="right: -20px; top: 50%; transform: translateY(-50%); z-index: 10;">
-                                                <i class="fa fa-chevron-right"></i>
-                                            </button>
-                                            
-                                            <div class="carousel-track-container">
-                                                <div class="carousel-track d-flex transition-transform">
-                                                    <t t-foreach="period_products" t-as="item">
-                                                        <t t-set="product" t-value="item['product']" />
-                                                        <div class="carousel-slide flex-shrink-0">
-                                                            <div class="card h-100 shadow-sm product-card">
-                                                                <a t-att-href="'/shop/product/' + str(product.id)">
-                                                                    <!-- Imagen del producto -->
-                                                                    <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
-                                                                         class="card-img-top" 
-                                                                         style="height: 200px; object-fit: contain;" 
-                                                                         loading="lazy" />
-                                                                </a>
-                                                                
-                                                                <div class="card-body">
-                                                                    <div class="mt-auto">
+                                    <!-- DESKTOP Y TABLET: Carrusel de productos -->
+                                    <div class="d-none d-sm-block">
+                                        <div class="carousel-wrapper">
+                                            <div class="carousel-container position-relative" t-att-id="'carousel-' + period_id">
+                                                <!-- Controles flotantes del carrusel -->
+                                                <button class="carousel-nav carousel-prev position-absolute" 
+                                                        t-att-data-target="'#carousel-' + period_id">
+                                                    <i class="fa fa-chevron-left"></i>
+                                                </button>
+                                                <button class="carousel-nav carousel-next position-absolute" 
+                                                        t-att-data-target="'#carousel-' + period_id">
+                                                    <i class="fa fa-chevron-right"></i>
+                                                </button>
+                                                
+                                                <div class="carousel-track-container">
+                                                    <div class="carousel-track d-flex transition-transform">
+                                                        <t t-foreach="period_products" t-as="item">
+                                                            <t t-set="product" t-value="item['product']" />
+                                                            <div class="carousel-slide flex-shrink-0">
+                                                                <div class="card h-100 shadow-sm product-card">
+                                                                    <a t-att-href="'/shop/product/' + str(product.id)">
+                                                                        <!-- Imagen del producto -->
+                                                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                                             class="card-img-top" 
+                                                                             style="height: 180px; object-fit: contain;" 
+                                                                             loading="lazy" />
+                                                                    </a>
+                                                                    
+                                                                    <div class="card-body p-2">
                                                                         <!-- Nombre del producto -->
-                                                                        <h6 class="card-title namehistory mb-2" style="font-size: 0.9rem;">
+                                                                        <h6 class="card-title namehistory mb-2" style="font-size: 0.8rem; line-height: 1.2;">
                                                                             <t t-esc="product.name.upper()" />
                                                                         </h6>
                                                                         
                                                                         <!-- Precios -->
                                                                         <t t-if="product.discounted_price &lt; product.list_price">
-                                                                            <div class="d-flex align-items-center justify-content-between">
-                                                                                <span class="text-dark fw-bold" style="font-size: 20px;">
+                                                                            <div class="mb-1">
+                                                                                <span class="text-dark fw-bold d-block" style="font-size: 16px;">
                                                                                     $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
                                                                                 </span>
-                                                                                <span class="text-danger" style="font-size: 14px; font-weight: normal;">
+                                                                                <span class="text-muted" style="font-size: 12px; text-decoration: line-through;">
+                                                                                    $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                                                </span>
+                                                                                <span class="text-danger ms-1" style="font-size: 11px;">
                                                                                     <t t-if="product.discount_percentage">
                                                                                         <t t-esc="int(product.discount_percentage)" />% OFF
                                                                                     </t>
-                                                                                    <t t-elif="product.fixed_discount">
-                                                                                        -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" />
-                                                                                    </t>
-                                                                                </span>
-                                                                            </div>
-                                                                            <div class="mt-0">
-                                                                                <span class="text-muted" style="font-size: 16px; text-decoration: line-through;">
-                                                                                    $<t t-esc="'{:,}'.format(int(product.list_price))" />
                                                                                 </span>
                                                                             </div>
                                                                         </t>
                                                                         <t t-else="">
-                                                                            <span class="fw-bold d-block" style="font-size: 20px;">
+                                                                            <span class="fw-bold d-block mb-1" style="font-size: 16px;">
                                                                                 $<t t-esc="'{:,}'.format(int(product.list_price))" />
                                                                             </span>
                                                                         </t>
                                                                         
                                                                         <!-- Envío gratis -->
                                                                         <t t-if="product.free_shipping">
-                                                                            <div class="mt-1">
-                                                                                <span class="text-orange" style="color: #FF5207; font-size: 0.8rem; font-weight: bold; font-style: italic;">
+                                                                            <div class="mb-1">
+                                                                                <span class="text-orange" style="color: #FF5207; font-size: 0.7rem; font-weight: bold; font-style: italic;">
                                                                                     Envío gratis
                                                                                 </span>
                                                                             </div>
                                                                         </t>
-                                                                    </div>
 
-                                                                    <!-- Botón eliminar -->
-                                                                    <a t-att-href="'/shop/history/remove/' + str(product.id)" 
-                                                                       t-att-data-product-id="product.id"
-                                                                       class="text-blue mt-2 delete-history-item d-block" 
-                                                                       style="font-size: 0.8rem; color: #007bff; text-decoration: none;"
-                                                                       onclick="event.preventDefault(); 
-                                                                               if(confirm('¿Estás seguro de eliminar este producto del historial?')) {
-                                                                                   fetch('/shop/history/remove/' + this.getAttribute('data-product-id'))
-                                                                                   .then(response => {
-                                                                                       if (response.ok) {
-                                                                                           this.closest('.carousel-slide').style.transition = 'opacity 0.3s, transform 0.3s';
-                                                                                           this.closest('.carousel-slide').style.opacity = '0';
-                                                                                           this.closest('.carousel-slide').style.transform = 'scale(0.8)';
-                                                                                           setTimeout(() => {
-                                                                                               location.reload();
-                                                                                           }, 300);
-                                                                                       }
-                                                                                   });
-                                                                               }">
-                                                                        <i class="fa fa-trash me-1"></i>Eliminar
-                                                                    </a>
+                                                                        <!-- Botón eliminar -->
+                                                                        <a t-att-href="'/shop/history/remove/' + str(product.id)" 
+                                                                           t-att-data-product-id="product.id"
+                                                                           class="text-blue mt-1 delete-history-item d-block" 
+                                                                           style="font-size: 0.7rem; color: #007bff; text-decoration: none;"
+                                                                           onclick="event.preventDefault(); 
+                                                                                   if(confirm('¿Estás seguro de eliminar este producto del historial?')) {
+                                                                                       fetch('/shop/history/remove/' + this.getAttribute('data-product-id'))
+                                                                                       .then(response => {
+                                                                                           if (response.ok) {
+                                                                                               this.closest('.carousel-slide').style.transition = 'opacity 0.3s, transform 0.3s';
+                                                                                               this.closest('.carousel-slide').style.opacity = '0';
+                                                                                               this.closest('.carousel-slide').style.transform = 'scale(0.8)';
+                                                                                               setTimeout(() => {
+                                                                                                   location.reload();
+                                                                                               }, 300);
+                                                                                           }
+                                                                                       });
+                                                                                   }">
+                                                                            <i class="fa fa-trash me-1"></i>Eliminar
+                                                                        </a>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    </t>
+                                                        </t>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     
                                     <!-- MÓVIL: Lista vertical de productos -->
-                                    <div class="d-block d-md-none mobile-list">
+                                    <div class="d-block d-sm-none mobile-list">
                                         <t t-foreach="period_products" t-as="item">
                                             <t t-set="product" t-value="item['product']" />
                                             <div class="product-item-mobile mb-3">
@@ -262,12 +255,17 @@
                 
                 <!-- CSS actualizado -->
                 <style>
+                /* Wrapper para dar espacio a los botones */
+                .carousel-wrapper {
+                    padding: 0 50px;
+                    margin: 0 -15px;
+                }
+
                 /* Desktop - Carrusel */
                 .carousel-container {
                     overflow: hidden;
                     width: 100%;
                     position: relative;
-                    padding: 0 30px; /* Espacio para las flechas */
                 }
 
                 .carousel-track-container {
@@ -281,14 +279,14 @@
                 }
 
                 .carousel-slide {
-                    min-width: 200px;
-                    width: 200px;
+                    min-width: 180px;
+                    width: 180px;
                 }
 
                 /* Controles flotantes del carrusel */
                 .carousel-nav {
-                    width: 45px;
-                    height: 45px;
+                    width: 40px;
+                    height: 40px;
                     border-radius: 50%;
                     border: 2px solid #fff;
                     background: rgba(255, 255, 255, 0.95);
@@ -297,10 +295,21 @@
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    font-size: 16px;
+                    font-size: 14px;
                     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
                     transition: all 0.3s ease;
                     backdrop-filter: blur(10px);
+                    top: 50%;
+                    transform: translateY(-50%);
+                    z-index: 10;
+                }
+
+                .carousel-prev {
+                    left: -45px;
+                }
+
+                .carousel-next {
+                    right: -45px;
                 }
 
                 .carousel-nav:hover {
@@ -316,16 +325,10 @@
                 }
 
                 .carousel-nav:disabled {
-                    opacity: 0.5;
+                    opacity: 0.3;
                     cursor: not-allowed;
                     background: rgba(255, 255, 255, 0.7);
-                }
-
-                .carousel-nav:disabled:hover {
-                    transform: translateY(-50%) scale(1);
-                    background: rgba(255, 255, 255, 0.7);
-                    color: #333;
-                    border-color: #fff;
+                    display: none;
                 }
 
                 .transition-transform {
@@ -401,20 +404,64 @@
                 /* Responsive breakpoints */
                 @media (min-width: 768px) {
                     .carousel-slide {
-                        min-width: 220px;
-                        width: 220px;
+                        min-width: 200px;
+                        width: 200px;
+                    }
+                    
+                    .carousel-nav {
+                        width: 45px;
+                        height: 45px;
+                        font-size: 16px;
+                    }
+                    
+                    .carousel-wrapper {
+                        padding: 0 60px;
+                    }
+                    
+                    .carousel-prev {
+                        left: -55px;
+                    }
+                    
+                    .carousel-next {
+                        right: -55px;
                     }
                 }
 
                 @media (min-width: 992px) {
                     .carousel-slide {
-                        min-width: 240px;
-                        width: 240px;
+                        min-width: 220px;
+                        width: 220px;
+                    }
+                }
+
+                /* Tablets y pantallas medianas */
+                @media (min-width: 576px) and (max-width: 767.98px) {
+                    .carousel-slide {
+                        min-width: 160px;
+                        width: 160px;
+                    }
+                    
+                    .carousel-nav {
+                        width: 35px;
+                        height: 35px;
+                        font-size: 12px;
+                    }
+                    
+                    .carousel-wrapper {
+                        padding: 0 45px;
+                    }
+                    
+                    .carousel-prev {
+                        left: -40px;
+                    }
+                    
+                    .carousel-next {
+                        right: -40px;
                     }
                 }
 
                 /* Ocultar elementos según dispositivo */
-                @media (max-width: 767.98px) {
+                @media (max-width: 575.98px) {
                     .period-section h4 {
                         font-size: 16px !important;
                     }
@@ -425,8 +472,8 @@
                 <script type="text/javascript">
                 //<![CDATA[
                 document.addEventListener('DOMContentLoaded', function() {
-                    // Solo inicializar carruseles en desktop
-                    if (window.innerWidth >= 768) {
+                    // Solo inicializar carruseles en pantallas >= 576px
+                    if (window.innerWidth >= 576) {
                         const carousels = document.querySelectorAll('.carousel-container');
                         carousels.forEach(carousel => {
                             initInfiniteCarousel(carousel);
@@ -470,7 +517,8 @@
                     
                     let currentIndex = 0;
                     const slideWidth = slides[0].offsetWidth + 16;
-                    const visibleSlides = Math.floor((carousel.offsetWidth - 60) / slideWidth); // Resta padding de las flechas
+                    const containerWidth = carousel.offsetWidth;
+                    const visibleSlides = Math.floor(containerWidth / slideWidth);
                     
                     if (slides.length <= visibleSlides) {
                         if (prevBtn) prevBtn.style.display = 'none';
@@ -478,7 +526,7 @@
                         return;
                     }
                     
-                    // Clonar slides
+                    // Clonar slides para efecto infinito
                     for (let i = 0; i < visibleSlides; i++) {
                         const clone = slides[i].cloneNode(true);
                         clone.classList.add('cloned');
