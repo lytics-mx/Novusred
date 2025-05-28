@@ -2,33 +2,22 @@
     <template id="offers_template" name="Productos en Oferta">
         <t t-call="website.layout">
             <div class="container mt-4">
-                <!-- Sección de encabezado con texto e íconos -->
-                <div class="d-flex align-items-center justify-content-between p-4 mb-4 header-section" style="background-color: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-top: -32px; margin-bottom: 24px; width: 100vw; position: relative; left: 50%; transform: translateX(-50%);">
-                    <!-- Texto Ofertas -->
-                    <div class="d-flex align-items-center header-text-container" style="flex: 1; justify-content: flex-end;">
-                        <div class="text-end" style="max-width: 300px;">
-                            <div class="text-center" style="margin-right: auto; margin-left: auto;">
-                                <h2 class="mb-1 header-title" style="font-family: 'Questrial', sans-serif; font-size: 28px; font-weight: bold; letter-spacing: 0.5px;">Ofertas</h2>
-                                <p class="mb-0 header-subtitle" style="font-size: 14px; color: #6c757d;">¡Aquí verás las mejores ofertas!</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Iconos de tags -->
-                    <div class="d-flex align-items-start justify-content-start header-tags-container" style="flex: 2;">
+                    <!-- Sección de encabezado con iconos solamente -->
+                    <div class="d-flex align-items-center justify-content-center p-4 mb-4" style="background-color: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-top: -32px; margin-bottom: 24px; width: 100vw; position: relative; left: 50%; transform: translateX(-50%);">
+                        <!-- Solo iconos de tags centrados -->
                         <div class="tags-container w-100">
-                            
                             <t t-if="product_tags">
                                 <div class="tags-wrapper d-flex justify-content-center">
                                     <t t-foreach="product_tags" t-as="tag">
                                         <div class="text-center position-relative tag-item clickable-tag" 
-                                             t-att-data-tag-id="tag.id"
-                                             t-att-data-tag-name="tag.name">
+                                            t-att-data-tag-id="tag.id"
+                                            t-att-data-tag-name="tag.name">
                                             
                                             <!-- Imagen del tag -->
                                             <div class="tag-icon-container">
                                                 <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
-                                                     t-att-alt="tag.name"
-                                                     class="tag-icon" />
+                                                    t-att-alt="tag.name"
+                                                    class="tag-icon" />
                                             </div>
                                             
                                             <!-- Nombre del tag -->
@@ -44,7 +33,7 @@
                             </t>
                             
                             <t t-else="">
-                                <div style="color: #666; font-size: 14px; padding: 10px;">
+                                <div style="color: #666; font-size: 14px; padding: 10px; text-align: center;">
                                     No hay categorías disponibles
                                 </div>
                             </t>
@@ -187,83 +176,6 @@
                             height: 2px;
                         }
                     }
-
-                    /* Responsive para el encabezado */
-                    @media (max-width: 767.98px) {
-                        .header-section {
-                            flex-direction: column !important;
-                            padding: 16px 12px !important;
-                            margin-left: -15px !important;
-                            margin-right: -15px !important;
-                            width: calc(100vw + 30px) !important;
-                            transform: none !important;
-                            left: auto !important;
-                            border-radius: 0 !important;
-                        }
-                        
-                        .header-text-container {
-                            flex: none !important;
-                            width: 100% !important;
-                            justify-content: center !important;
-                            margin-bottom: 16px;
-                        }
-                        
-                        .header-tags-container {
-                            flex: none !important;
-                            width: 100% !important;
-                        }
-                        
-                        .header-title {
-                            font-size: 22px !important;
-                        }
-                        
-                        .header-subtitle {
-                            font-size: 12px !important;
-                        }
-                        
-                        .tags-wrapper {
-                            justify-content: flex-start !important;
-                            overflow-x: auto;
-                            -webkit-overflow-scrolling: touch;
-                            scrollbar-width: none;
-                            -ms-overflow-style: none;
-                            padding-bottom: 5px;
-                        }
-                        
-                        .tags-wrapper::-webkit-scrollbar {
-                            display: none;
-                        }
-                    }
-
-                    /* Responsive para tablets */
-                    @media (min-width: 768px) and (max-width: 991.98px) {
-                        .header-section {
-                            padding: 20px 16px !important;
-                            margin-left: -15px !important;
-                            margin-right: -15px !important;
-                        }
-                        
-                        .header-title {
-                            font-size: 24px !important;
-                        }
-                        
-                        .header-subtitle {
-                            font-size: 13px !important;
-                        }
-                        
-                        .tags-wrapper {
-                            gap: 15px !important;
-                            justify-content: flex-end !important;
-                        }
-                    }
-
-                    /* Desktop - mantener estilos originales */
-                    @media (min-width: 992px) {
-                        .header-section {
-                            /* Mantener estilos originales para desktop */
-                        }
-                    }
-                    
                     </style>
                     
                     <!-- JavaScript para manejo de clicks y hover en móvil -->
@@ -309,10 +221,11 @@
                     <!-- ...existing code... -->
 
                 </div>
-                <!-- Filtro móvil (solo visible en móvil) -->
+                <!-- Filtro móvil (solo visible en móvil) con contador -->
                 <div class="d-block d-md-none mb-3">
-                    <!-- Total de productos fuera del contenedor -->
+                    <!-- Título "Ofertas" y contador de productos -->
                     <div class="d-flex justify-content-between align-items-center mb-3 px-3">
+                        <h2 class="mb-0" style="font-family: 'Questrial', sans-serif; font-size: 24px; font-weight: bold;">Ofertas</h2>
                         <span class="text-muted" style="font-size: 14px;">
                             <t t-esc="total_products" /> productos
                         </span>
@@ -651,6 +564,60 @@
             <!-- CSS para diseño móvil -->
             <!-- CSS para diseño móvil -->
                         <style>
+                            /* Responsive para el encabezado */
+                            @media (max-width: 767.98px) {
+                                /* Header solo con tags centrados */
+                                .d-flex.align-items-center.justify-content-center.p-4.mb-4 {
+                                    padding: 16px 12px !important;
+                                    margin-left: -15px !important;
+                                    margin-right: -15px !important;
+                                    width: calc(100vw + 30px) !important;
+                                    transform: none !important;
+                                    left: auto !important;
+                                    border-radius: 0 !important;
+                                }
+                                
+                                .tags-wrapper {
+                                    justify-content: center !important;
+                                    gap: 8px !important;
+                                    overflow-x: auto !important;
+                                    -webkit-overflow-scrolling: touch;
+                                    scrollbar-width: none;
+                                    -ms-overflow-style: none;
+                                    padding: 0 5px 5px 5px;
+                                }
+                                
+                                .tags-wrapper::-webkit-scrollbar {
+                                    display: none;
+                                }
+                                
+                                .tag-item {
+                                    min-width: 50px !important;
+                                    flex-shrink: 0;
+                                }
+                                
+                                .tag-icon {
+                                    height: 32px !important;
+                                    width: 32px !important;
+                                }
+                                
+                                .tag-name {
+                                    font-size: 9px !important;
+                                    white-space: nowrap;
+                                    overflow: hidden;
+                                    text-overflow: ellipsis;
+                                    max-width: 50px;
+                                    line-height: 1.1;
+                                }
+                                
+                                /* Título "Ofertas" en la sección de filtros móviles */
+                                .d-block.d-md-none h2 {
+                                    color: #333;
+                                    letter-spacing: 0.5px;
+                                }
+                            }
+
+
                             /* Regla global para envío gratis - aplicar a todos los tamaños */
                             .mobile-shipping-text {
                                 color: #FF5207 !important;
