@@ -90,15 +90,22 @@
                                                             </p>
                                                             
                                                             <div class="mt-auto">
-                                                                <!-- Original price -->
-                                                                <div class="text-muted" style="text-decoration: line-through; font-size: 14px;">
-                                                                    $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                                                </div>
+                                                                <!-- Mostrar precio tachado SOLO si hay descuento -->
+                                                                <t t-if="product.discounted_price &lt; product.list_price">
+                                                                    <div class="text-muted" style="text-decoration: line-through; font-size: 14px;">
+                                                                        $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                                    </div>
+                                                                </t>
                                                                 
                                                                 <!-- Current price with discount -->
                                                                 <div class="d-flex align-items-center justify-content-between">
                                                                     <span class="text-dark fw-bold" style="font-size: 20px;">
-                                                                        $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
+                                                                        <t t-if="product.discounted_price &lt; product.list_price">
+                                                                            $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
+                                                                        </t>
+                                                                        <t t-else="">
+                                                                            $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                                        </t>
                                                                     </span>
                                                                     <t t-if="product.discount_percentage">
                                                                         <span class="text-danger" style="font-size: 12px;">
@@ -107,10 +114,12 @@
                                                                     </t>
                                                                 </div>
                                                                 
-                                                                <!-- Savings amount -->
-                                                                <div class="text-success mb-2" style="font-size: 14px;">
-                                                                    Ahorras $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" />
-                                                                </div>
+                                                                <!-- Mostrar ahorros SOLO si hay descuento -->
+                                                                <t t-if="product.discounted_price &lt; product.list_price">
+                                                                    <div class="text-success mb-2" style="font-size: 14px;">
+                                                                        Ahorras $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" />
+                                                                    </div>
+                                                                </t>
                                                                 
                                                                 <!-- Free shipping -->
                                                                 <t t-if="product.free_shipping">
@@ -123,22 +132,22 @@
 
                                                                 <!-- Delete button -->
                                                                 <a t-att-href="'/shop/history/remove/' + str(product.id)" 
-                                                                   t-att-data-product-id="product.id"
-                                                                   class="text-blue delete-history-item" 
-                                                                   style="font-size: 0.8rem; color: #007bff; text-decoration: none; float: left;"
-                                                                   onclick="event.preventDefault(); 
-                                                                           if(confirm('¿Estás seguro de eliminar este producto del historial?')) {
-                                                                               fetch('/shop/history/remove/' + this.getAttribute('data-product-id'))
-                                                                               .then(response => {
-                                                                                   if (response.ok) {
-                                                                                       this.closest('.col').style.transition = 'opacity 0.3s';
-                                                                                       this.closest('.col').style.opacity = '0';
-                                                                                       setTimeout(() => {
-                                                                                           this.closest('.col').remove();
-                                                                                       }, 300);
-                                                                                   }
-                                                                               });
-                                                                           }">
+                                                                t-att-data-product-id="product.id"
+                                                                class="text-blue delete-history-item" 
+                                                                style="font-size: 0.8rem; color: #007bff; text-decoration: none; float: left;"
+                                                                onclick="event.preventDefault(); 
+                                                                        if(confirm('¿Estás seguro de eliminar este producto del historial?')) {
+                                                                            fetch('/shop/history/remove/' + this.getAttribute('data-product-id'))
+                                                                            .then(response => {
+                                                                                if (response.ok) {
+                                                                                    this.closest('.col').style.transition = 'opacity 0.3s';
+                                                                                    this.closest('.col').style.opacity = '0';
+                                                                                    setTimeout(() => {
+                                                                                        this.closest('.col').remove();
+                                                                                    }, 300);
+                                                                                }
+                                                                            });
+                                                                        }">
                                                                     <i class="fa fa-trash me-1"></i>Eliminar
                                                                 </a>
                                                             </div>
@@ -276,7 +285,6 @@
                     min-width: 200px;
                     width: 200px;
                 }
-
                 /* NUEVO: Efecto hover solo en la tarjeta individual */
                 .product-card {
                     transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -290,6 +298,16 @@
                     position: relative;
                 }
 
+                /* Eliminar espacios innecesarios cuando no hay descuento */
+                .product-card .card-body {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                }
+
+                .product-card .mt-auto {
+                    margin-top: auto !important;
+                }
                 /* Asegurar que el texto tachado sea visible en hover */
                 .product-card:hover .text-muted[style*="line-through"] {
                     color: #6c757d !important;
