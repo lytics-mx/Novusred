@@ -240,6 +240,7 @@ class OffersController(http.Controller):
             'free_shipping': free_shipping,
             'product_tags': product_tags,
             'selected_tag_id': tag_id,  # Para mostrar cuál tag está seleccionado
+            'offer_info': offer_info,  # Información de tipo de oferta y fecha de finalización
 
         })
         
@@ -338,11 +339,13 @@ class OffersController(http.Controller):
         # IMPORTANTE: Primero BUSCAR los productos
         products = request.env['product.template'].sudo().search(domain)
         
+        # Crear diccionario para información de ofertas
+        offer_info = {}
+        
         # Agregar información de tipo de oferta para cada producto
         for product in products:
             # Agregar información de tipo de oferta y fecha de finalización
-            product.offer_type = None
-            product.offer_end_date = None
+            offer_info[product.id] = {'type': None, 'end_date': None}
             
             # Buscar en las etiquetas del producto para determinar el tipo de oferta
             for tag in product.product_tag_ids:
@@ -361,17 +364,23 @@ class OffersController(http.Controller):
                     
                     # Determinar tipo de oferta basado en duración
                     if 23.5 <= duration <= 24.5:
-                        product.offer_type = 'day'
-                        product.offer_end_date = end.strftime('%Y-%m-%dT%H:%M:%S')
+                        offer_info[product.id] = {
+                            'type': 'day',
+                            'end_date': end.strftime('%Y-%m-%dT%H:%M:%S')
+                        }
                         break
                     elif 0 < duration <= 6:
-                        product.offer_type = 'flash'
-                        product.offer_end_date = end.strftime('%Y-%m-%dT%H:%M:%S')
+                        offer_info[product.id] = {
+                            'type': 'flash',
+                            'end_date': end.strftime('%Y-%m-%dT%H:%M:%S')
+                        }
                         break
                     else:
-                        product.offer_type = 'regular'
-                        product.offer_end_date = end.strftime('%Y-%m-%dT%H:%M:%S')
-                        break    
+                        offer_info[product.id] = {
+                            'type': 'regular',
+                            'end_date': end.strftime('%Y-%m-%dT%H:%M:%S')
+                        }
+                        break  
     
         # LUEGO filtrar por descuento real
         products = products.filtered(lambda p: p.list_price > p.discounted_price)
@@ -468,4 +477,6 @@ class OffersController(http.Controller):
             'categories_with_count': categories_with_count,
             'all_categories': main_categories,
             'product_tags': product_tags,
+            'offer_info': offer_info,  # AGREGAR ESTA LÍNEA
+
         })

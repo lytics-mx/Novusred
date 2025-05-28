@@ -500,15 +500,15 @@
                                 <div class="col-6 col-md-6 col-lg-4 mobile-product-col">
                                     <div class="card shadow-sm product-card mobile-product-card">
                                         <!-- Contador de tiempo de oferta -->
-                                        <t t-if="product.offer_type and product.offer_end_date">
+                                        <t t-if="offer_info.get(product.id, {}).get('type') and offer_info.get(product.id, {}).get('end_date')">
                                             <div class="offer-countdown-container" 
-                                                t-att-data-offer-type="product.offer_type"
+                                                t-att-data-offer-type="offer_info[product.id]['type']"
                                                 t-att-data-product-id="product.id">
-                                                <div class="offer-countdown" t-att-data-end-date="product.offer_end_date">
-                                                    <t t-if="product.offer_type == 'day'">
+                                                <div class="offer-countdown" t-att-data-end-date="offer_info[product.id]['end_date']">
+                                                    <t t-if="offer_info[product.id]['type'] == 'day'">
                                                         <span class="countdown-text">Oferta del día termina en:</span>
                                                     </t>
-                                                    <t t-elif="product.offer_type == 'flash'">
+                                                    <t t-elif="offer_info[product.id]['type'] == 'flash'">
                                                         <span class="countdown-text">Oferta relámpago termina en:</span>
                                                     </t>
                                                     <t t-else="">
