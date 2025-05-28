@@ -61,7 +61,51 @@ class OffersController(http.Controller):
             # Si no viene en los parámetros, usar el valor guardado en sesión (si existe)
             free_shipping = request.session.get('free_shipping', False)
     
-    
+        # Obtener productos filtrados
+        Product = request.env['product.template']
+        discounted_products = Product.search(domain)
+        
+        # Calcular precios con descuento Y agregar información de oferta
+        for product in discounted_products:
+            if product.discount_percentage > 0:
+                product.discounted_price = product.list_price * (1 - product.discount_percentage / 100)
+            elif product.fixed_discount > 0:
+                product.discounted_price = max(0, product.list_price - product.fixed_discount)
+            else:
+                product.discounted_price = product.list_price
+            
+            # Agregar información de tipo de oferta y fecha de finalización
+            product.offer_type = None
+            product.offer_end_date = None
+            
+            # Buscar en las etiquetas del producto para determinar el tipo de oferta
+            for tag in product.product_tag_ids:
+                if tag.start_date and tag.end_date:
+                    start = tag.start_date
+                    end = tag.end_date
+                    
+                    # Convertir a datetime si son strings
+                    if isinstance(start, str):
+                        start = Datetime.fromisoformat(start)
+                    if isinstance(end, str):
+                        end = Datetime.fromisoformat(end)
+                    
+                    # Calcular duración en horas
+                    duration = (end - start).total_seconds() / 3600.0
+                    
+                    # Determinar tipo de oferta basado en duración
+                    if 23.5 <= duration <= 24.5:
+                        product.offer_type = 'day'
+                        product.offer_end_date = end.strftime('%Y-%m-%dT%H:%M:%S')
+                        break
+                    elif 0 < duration <= 6:
+                        product.offer_type = 'flash'
+                        product.offer_end_date = end.strftime('%Y-%m-%dT%H:%M:%S')
+                        break
+                    else:
+                        product.offer_type = 'regular'
+                        product.offer_end_date = end.strftime('%Y-%m-%dT%H:%M:%S')
+                        break    
 
         
         # Aplicar filtro free_shipping si está activo
@@ -312,6 +356,41 @@ class OffersController(http.Controller):
         # IMPORTANTE: Primero BUSCAR los productos
         products = request.env['product.template'].sudo().search(domain)
         
+        # Agregar información de tipo de oferta para cada producto
+        for product in products:
+            # Agregar información de tipo de oferta y fecha de finalización
+            product.offer_type = None
+            product.offer_end_date = None
+            
+            # Buscar en las etiquetas del producto para determinar el tipo de oferta
+            for tag in product.product_tag_ids:
+                if tag.start_date and tag.end_date:
+                    start = tag.start_date
+                    end = tag.end_date
+                    
+                    # Convertir a datetime si son strings
+                    if isinstance(start, str):
+                        start = Datetime.fromisoformat(start)
+                    if isinstance(end, str):
+                        end = Datetime.fromisoformat(end)
+                    
+                    # Calcular duración en horas
+                    duration = (end - start).total_seconds() / 3600.0
+                    
+                    # Determinar tipo de oferta basado en duración
+                    if 23.5 <= duration <= 24.5:
+                        product.offer_type = 'day'
+                        product.offer_end_date = end.strftime('%Y-%m-%dT%H:%M:%S')
+                        break
+                    elif 0 < duration <= 6:
+                        product.offer_type = 'flash'
+                        product.offer_end_date = end.strftime('%Y-%m-%dT%H:%M:%S')
+                        break
+                    else:
+                        product.offer_type = 'regular'
+                        product.offer_end_date = end.strftime('%Y-%m-%dT%H:%M:%S')
+                        break    
+    
         # LUEGO filtrar por descuento real
         products = products.filtered(lambda p: p.list_price > p.discounted_price)
         
