@@ -190,26 +190,26 @@
                                                                         <t t-esc="product.name.upper()" />
                                                                     </a>
                                                                 </h6>
-                                                                
-                                                                <!-- Precios -->
+
+                                                                <!-- Precios y descuento -->
+                                                                <span class="text-danger mb-1" style="font-size: 18px; font-weight: normal;">
+                                                                    <t t-if="product.discount_percentage">
+                                                                        <t t-esc="int(product.discount_percentage)" />% OFF
+                                                                    </t>
+                                                                    <t t-elif="product.fixed_discount">
+                                                                        -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
+                                                                    </t>
+                                                                </span>
+
+                                                                <!-- Precio con/sin descuento -->
                                                                 <t t-if="product.discounted_price &lt; product.list_price">
                                                                     <div class="mb-2">
                                                                         <span class="text-dark fw-bold d-block" style="font-size: 18px;">
                                                                             $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
                                                                         </span>
-                                                                        <div class="d-flex align-items-center">
-                                                                            <span class="text-muted me-2" style="font-size: 14px; text-decoration: line-through;">
-                                                                                $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                                                            </span>
-                                                                            <span class="text-danger" style="font-size: 18px; font-weight: normal;">
-                                                                                <t t-if="product.discount_percentage">
-                                                                                    <t t-esc="int(product.discount_percentage)" />% OFF
-                                                                                </t>
-                                                                                <t t-elif="product.fixed_discount">
-                                                                                    -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
-                                                                                </t>
-                                                                            </span>
-                                                                        </div>
+                                                                        <span class="text-muted" style="font-size: 14px; text-decoration: line-through;">
+                                                                            $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                                        </span>
                                                                     </div>
                                                                 </t>
                                                                 <t t-else="">
@@ -217,15 +217,20 @@
                                                                         $<t t-esc="'{:,}'.format(int(product.list_price))" />
                                                                     </span>
                                                                 </t>
-                                                                
+
                                                                 <!-- Envío gratis -->
                                                                 <t t-if="product.free_shipping">
                                                                     <div class="mb-2">
                                                                         <span class="text-orange" style="color: #FF5207; font-size: 0.8rem; font-weight: bold; font-style: italic;">
-                                                                            <i class="fa fa-truck me-1"></i>Envío gratis
+                                                                            Envío gratis
                                                                         </span>
                                                                     </div>
                                                                 </t>
+
+                                                                <!-- Marca -->
+                                                                <p class="text-muted mb-2" style="font-size: 0.8rem;">
+                                                                    Por <t t-esc="product.brand_type_id.name"/>
+                                                                </p>
 
                                                                 <!-- Botón eliminar -->
                                                                 <a t-att-href="'/shop/history/remove/' + str(product.id)" 
@@ -246,7 +251,7 @@
                                                                                    }
                                                                                });
                                                                            }">
-                                                                    <i class="fa fa-trash me-1"></i>Eliminar del historial
+                                                                    Eliminar
                                                                 </a>
                                                             </div>
                                                         </div>

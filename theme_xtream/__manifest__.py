@@ -65,7 +65,7 @@
 
 
         'views/website_sale/website_history.xml',
-        'views/website_sale/website_categroy.xml',
+        'views/website_sale/website_category.xml',
 
 
 
