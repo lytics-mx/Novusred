@@ -64,6 +64,11 @@
         'views/website_configuration.xml/free_shipping.xml',
 
 
+        'views/website_sale/website_history.xml',
+        'views/website_sale/website_categroy.xml',
+
+
+
 
         'views/website_home.xml',
         'views/nav_bar.xml',
