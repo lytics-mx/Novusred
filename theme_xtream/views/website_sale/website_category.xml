@@ -67,17 +67,18 @@
                         ('active', '=', True)
                     ])" />
 
-                    <t t-if="len(brands) > 3">
-                        <div id="brandsCarousel" class="carousel slide" data-bs-ride="carousel">
-                            <div class="carousel-inner">
-                                <!-- Mobile view (3 items per slide) -->
-                                <div class="d-block d-md-none">
+                    <!-- Mobile view -->
+                    <div class="d-block d-md-none">
+                        <t t-if="len(brands) > 3">
+                            <div id="brandsMobileCarousel" class="carousel slide" data-bs-ride="carousel">
+                                <div class="carousel-inner">
                                     <t t-foreach="range(0, len(brands), 3)" t-as="i">
                                         <div t-att-class="'carousel-item' + (' active' if i == 0 else '')">
-                                            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                                            <div class="row g-2">
                                                 <t t-foreach="brands[i:min(i+3, len(brands))]" t-as="brand">
-                                                    <div class="position-relative text-center" style="width: 100px; background-color: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);">
-                                                        <div style="padding: 10px;">
+                                                    <div class="col-4">
+                                                        <div class="brand-card h-100 d-flex align-items-center justify-content-center" 
+                                                             style="background-color: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); padding: 15px;">
                                                             <img t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')"
                                                                  alt="Ícono de la Marca"
                                                                  style="width: 100%; height: auto; object-fit: contain;" />
@@ -88,14 +89,44 @@
                                         </div>
                                     </t>
                                 </div>
-                                <!-- Desktop view (4 items per slide) -->
-                                <div class="d-none d-md-block">
+                                <button class="carousel-control-prev" type="button" data-bs-target="#brandsMobileCarousel" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#brandsMobileCarousel" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <div class="row g-2">
+                                <t t-foreach="brands" t-as="brand">
+                                    <div class="col-4">
+                                        <div class="brand-card h-100 d-flex align-items-center justify-content-center" 
+                                             style="background-color: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); padding: 15px;">
+                                            <img t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')"
+                                                 alt="Ícono de la Marca"
+                                                 style="width: 100%; height: auto; object-fit: contain;" />
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+                    </div>
+
+                    <!-- Desktop view -->
+                    <div class="d-none d-md-block">
+                        <t t-if="len(brands) > 4">
+                            <div id="brandsDesktopCarousel" class="carousel slide" data-bs-ride="carousel">
+                                <div class="carousel-inner">
                                     <t t-foreach="range(0, len(brands), 4)" t-as="i">
                                         <div t-att-class="'carousel-item' + (' active' if i == 0 else '')">
-                                            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                                            <div class="row g-4">
                                                 <t t-foreach="brands[i:min(i+4, len(brands))]" t-as="brand">
-                                                    <div class="position-relative text-center" style="width: 150px; background-color: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);">
-                                                        <div style="padding: 10px;">
+                                                    <div class="col-3">
+                                                        <div class="brand-card h-100 d-flex align-items-center justify-content-center" 
+                                                             style="background-color: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); padding: 20px;">
                                                             <img t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')"
                                                                  alt="Ícono de la Marca"
                                                                  style="width: 100%; height: auto; object-fit: contain;" />
@@ -106,30 +137,31 @@
                                         </div>
                                     </t>
                                 </div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#brandsDesktopCarousel" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#brandsDesktopCarousel" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
                             </div>
-                            <button class="carousel-control-prev" type="button" data-bs-target="#brandsCarousel" data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Previous</span>
-                            </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#brandsCarousel" data-bs-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Next</span>
-                            </button>
-                        </div>
-                    </t>
-                    <t t-else="">
-                        <div class="d-flex justify-content-center gap-3 flex-wrap">
-                            <t t-foreach="brands" t-as="brand">
-                                <div class="position-relative text-center" style="width: 150px; background-color: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);">
-                                    <div style="padding: 10px;">
-                                        <img t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')"
-                                             alt="Ícono de la Marca"
-                                             style="width: 100%; height: auto; object-fit: contain;" />
+                        </t>
+                        <t t-else="">
+                            <div class="row g-4">
+                                <t t-foreach="brands" t-as="brand">
+                                    <div class="col-3">
+                                        <div class="brand-card h-100 d-flex align-items-center justify-content-center" 
+                                             style="background-color: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); padding: 20px;">
+                                            <img t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')"
+                                                 alt="Ícono de la Marca"
+                                                 style="width: 100%; height: auto; object-fit: contain;" />
+                                        </div>
                                     </div>
-                                </div>
-                            </t>
-                        </div>
-                    </t>
+                                </t>
+                            </div>
+                        </t>
+                    </div>
                 </div>
 
                 <div style="height: 50px;"></div>
