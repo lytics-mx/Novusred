@@ -615,77 +615,110 @@
                         </div>
                     </div>
                 </section>
-                                            <section class="category-menu" style="background: #E9ECEF padding: 40px 0;">
-                                                <div class="container">
-                                                    <div class="row justify-content-center">
-                                                        <div class="col-12">
-                                                            <h3 style="font-family: 'Questrial', sans-serif; font-size: 20px; text-align: center; margin-bottom: 30px;">
-                                                                Computadoras Y Accesorios
-                                                            </h3>
-                                                            <div class="row justify-content-center" style="font-size: 14px;">
-                                                                <!-- All: solo muestra los primeros 18 subcategorías de primer nivel -->
-                                                                <div class="col-md-3 col-12 mb-4">
-                                                                    <span style="font-weight: bold;">Todos</span>
-                                                                    <ul style="list-style: none; padding-left: 0;">
-                                                                        <t t-set="all_subcats" t-value="request.env['product.category'].sudo().search([('parent_id','!=',False)], limit=18)"/>
-                                                                        <t t-foreach="all_subcats" t-as="subcat">
-                                                                            <li>
-                                                                                <span>
-                                                                                    <t t-esc="subcat.name"/>
-                                                                                </span>
-                                                                            </li>
-                                                                        </t>
-                                                                    </ul>
-                                                                </div>
-                                                                <!-- Control de Acceso -->
-                                                                <div class="col-md-3 col-12 mb-4">
-                                                                    <span style="font-weight: bold;">Control de Acceso</span>
-                                                                    <ul style="list-style: none; padding-left: 0;">
-                                                                        <t t-set="control_acceso" t-value="request.env['product.category'].sudo().search([('name','=','Control de Acceso')], limit=1)"/>
-                                                                        <t t-if="control_acceso">
-                                                                            <t t-foreach="control_acceso.child_id" t-as="subcat">
-                                                                                <li>
-                                                                                    <span>
-                                                                                        <t t-esc="subcat.name"/>
-                                                                                    </span>
-                                                                                </li>
+                                            <section class="category-menu">
+                                                <!-- Desktop View -->
+                                                <div class="d-none d-md-block" style="background: #E9ECEF; padding: 40px 0;">
+                                                    <div class="container">
+                                                        <div class="row justify-content-center">
+                                                            <div class="col-12">
+                                                                <h3 style="font-family: 'Questrial', sans-serif; font-size: 20px; text-align: center; margin-bottom: 30px;">
+                                                                    Computadoras Y Accesorios
+                                                                </h3>
+                                                                <div class="row justify-content-center" style="font-size: 14px;">
+                                                                    <!-- Keep existing desktop columns layout -->
+                                                                    <div class="col-md-3 col-12 mb-4">
+                                                                        <span style="font-weight: bold;">Todos</span>
+                                                                        <ul style="list-style: none; padding-left: 0;">
+                                                                            <t t-set="all_subcats" t-value="request.env['product.category'].sudo().search([('parent_id','!=',False)], limit=18)"/>
+                                                                            <t t-foreach="all_subcats" t-as="subcat">
+                                                                                <li><span><t t-esc="subcat.name"/></span></li>
                                                                             </t>
-                                                                        </t>
-                                                                    </ul>
-                                                                </div>
-                                                                <!-- Saleable -->
-                                                                <div class="col-md-3 col-12 mb-4">
-                                                                    <span style="font-weight: bold;">Saleable</span>
-                                                                    <ul style="list-style: none; padding-left: 0;">
-                                                                        <t t-set="saleable" t-value="request.env['product.category'].sudo().search([('name','=','Saleable')], limit=1)"/>
-                                                                        <t t-if="saleable">
-                                                                            <t t-foreach="saleable.child_id" t-as="subcat">
-                                                                                <li>
-                                                                                    <span>
-                                                                                        <t t-esc="subcat.name"/>
-                                                                                    </span>
-                                                                                </li>
+                                                                        </ul>
+                                                                    </div>
+                                                                    <!-- Other desktop columns remain the same -->
+                                                                    <div class="col-md-3 col-12 mb-4">
+                                                                        <span style="font-weight: bold;">Control de Acceso</span>
+                                                                        <ul style="list-style: none; padding-left: 0;">
+                                                                            <t t-set="control_acceso" t-value="request.env['product.category'].sudo().search([('name','=','Control de Acceso')], limit=1)"/>
+                                                                            <t t-if="control_acceso">
+                                                                                <t t-foreach="control_acceso.child_id" t-as="subcat">
+                                                                                    <li><span><t t-esc="subcat.name"/></span></li>
+                                                                                </t>
                                                                             </t>
-                                                                        </t>
-                                                                    </ul>
-                                                                </div>
-                                                                <!-- Videovigilancia -->
-                                                                <div class="col-md-3 col-12 mb-4">
-                                                                    <span style="font-weight: bold;">Videovigilancia</span>
-                                                                    <ul style="list-style: none; padding-left: 0;">
-                                                                        <t t-set="videovigilancia" t-value="request.env['product.category'].sudo().search([('name','=','Videovigilancia')], limit=1)"/>
-                                                                        <t t-if="videovigilancia">
-                                                                            <t t-foreach="videovigilancia.child_id" t-as="subcat">
-                                                                                <li>
-                                                                                    <span>
-                                                                                        <t t-esc="subcat.name"/>
-                                                                                    </span>
-                                                                                </li>
+                                                                        </ul>
+                                                                    </div>
+                                                                    <div class="col-md-3 col-12 mb-4">
+                                                                        <span style="font-weight: bold;">Saleable</span>
+                                                                        <ul style="list-style: none; padding-left: 0;">
+                                                                            <t t-set="saleable" t-value="request.env['product.category'].sudo().search([('name','=','Saleable')], limit=1)"/>
+                                                                            <t t-if="saleable">
+                                                                                <t t-foreach="saleable.child_id" t-as="subcat">
+                                                                                    <li><span><t t-esc="subcat.name"/></span></li>
+                                                                                </t>
                                                                             </t>
-                                                                        </t>
-                                                                    </ul>
+                                                                        </ul>
+                                                                    </div>
+                                                                    <div class="col-md-3 col-12 mb-4">
+                                                                        <span style="font-weight: bold;">Videovigilancia</span>
+                                                                        <ul style="list-style: none; padding-left: 0;">
+                                                                            <t t-set="videovigilancia" t-value="request.env['product.category'].sudo().search([('name','=','Videovigilancia')], limit=1)"/>
+                                                                            <t t-if="videovigilancia">
+                                                                                <t t-foreach="videovigilancia.child_id" t-as="subcat">
+                                                                                    <li><span><t t-esc="subcat.name"/></span></li>
+                                                                                </t>
+                                                                            </t>
+                                                                        </ul>
+                                                                    </div>
                                                                 </div>
                                                             </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Mobile View -->
+                                                <div class="d-block d-md-none" style="background: #ffffff;">
+                                                    <div class="container px-0">
+                                                        <div class="accordion" id="categoryAccordion">
+                                                            <div class="accordion-item">
+                                                                <h2 class="accordion-header">
+                                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAlmacenamiento" aria-expanded="false">
+                                                                        Almacenamiento de datos
+                                                                        <i class="fa fa-chevron-right float-end"></i>
+                                                                    </button>
+                                                                </h2>
+                                                                <div id="collapseAlmacenamiento" class="accordion-collapse collapse" data-bs-parent="#categoryAccordion">
+                                                                    <div class="accordion-body">
+                                                                        <ul class="list-unstyled">
+                                                                            <li>CD-DVD</li>
+                                                                            <li>Disco duro</li>
+                                                                            <li>Disco duro externo</li>
+                                                                            <li>Disco SSD</li>
+                                                                            <li>Memoria SD</li>
+                                                                            <li>Memoria USB</li>
+                                                                            <li>Servidor NAS</li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="accordion-item">
+                                                                <h2 class="accordion-header">
+                                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAudio" aria-expanded="false">
+                                                                        Audio y video
+                                                                        <i class="fa fa-chevron-right float-end"></i>
+                                                                    </button>
+                                                                </h2>
+                                                                <div id="collapseAudio" class="accordion-collapse collapse" data-bs-parent="#categoryAccordion">
+                                                                    <div class="accordion-body">
+                                                                        <ul class="list-unstyled">
+                                                                            <li>Audífonos y bocinas</li>
+                                                                            <li>Adaptadores de audio y video</li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Add more accordion items for other categories -->
                                                         </div>
                                                     </div>
                                                 </div>
