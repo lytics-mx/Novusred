@@ -465,79 +465,105 @@
 
                 <!-- Más Categorías -->
                 <!-- ...existing code... -->
+                <!-- ...existing code... -->
                 <section class="more-categories py-5">
                     <h2 class="text-center" style="font-family: 'Questrial', sans-serif; font-size: 25px;">MÁS CATEGORÍAS</h2>
                     <div class="container">
-                        <t t-set="category_banner" t-value="request.env['banner.image.line'].sudo().search([('name', '=', 'categorias'), ('is_active_carousel', '=', True)], limit=1)" />
-                        <t t-if="category_banner and category_banner.selected_categories and category_banner.category_menu_images">
-                            <t t-set="cat_img_pairs" t-value="list(zip(category_banner.selected_categories, category_banner.category_menu_images))" />
-                            <t t-if="len(cat_img_pairs) > 3">
-                                <!-- Carousel for more than 3 categories -->
-                                <div id="categoryMenuCarousel" class="carousel slide" data-bs-ride="carousel">
-                                    <div class="carousel-inner">
-                                        <t t-foreach="[cat_img_pairs[:3], cat_img_pairs[3:6]]" t-as="slide" t-key="slide">
-                                            <div t-att-class="'carousel-item' + (' active' if loop.index0 == 0 else '')">
-                                                <div class="row justify-content-center">
-                                                    <t t-foreach="slide" t-as="pair">
-                                                        <div class="col-md-4 mb-4">
-                                                            <div class="card shadow-sm" style="border-radius: 10px; overflow: hidden; border: 1px solid #ddd;">
-                                                                <div style="position: relative;">
-                                                                    <img t-att-src="'/web/image/' + str(pair[1].id)" 
-                                                                         alt="Category Image" 
-                                                                         class="img-fluid" 
-                                                                         style="width: 100%; height: 200px; object-fit: cover;" />
-                                                                    <div style="position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0, 0, 0, 0.5); color: white; padding: 10px;">
-                                                                        <h5 class="mb-0" t-esc="pair[0].name" style="font-size: 16px; font-weight: bold;"></h5>
-                                                                        <!-- Show subcategories -->
-                                                                        <t t-foreach="pair[0].child_id" t-as="child">
-                                                                            <p class="mb-0" style="font-size: 12px;"><t t-esc="child.name"/></p>
-                                                                        </t>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+                        
+                        <!-- FORZAR MOSTRAR - Sin condiciones -->
+                        <div style="background: #e7f3ff; padding: 15px; margin: 20px 0; border: 1px solid #b3d9ff; border-radius: 5px;">
+                            <h5>🔍 DEBUG COMPLETO</h5>
+                            
+                            <!-- Buscar TODOS los banners -->
+                            <t t-set="all_banners" t-value="request.env['banner.image.line'].sudo().search([])" />
+                            <p><strong>Total banners:</strong> <t t-esc="len(all_banners)" /></p>
+                            
+                            <!-- Buscar específicamente "categorias" -->
+                            <t t-set="categoria_banner" t-value="request.env['banner.image.line'].sudo().search([('name', '=', 'categorias')])" />
+                            <p><strong>Banner "categorias" encontrado:</strong> <t t-esc="bool(categoria_banner)" /></p>
+                            
+                            <t t-if="categoria_banner">
+                                <p><strong>ID:</strong> <t t-esc="categoria_banner.id" /></p>
+                                <p><strong>Name:</strong> <t t-esc="categoria_banner.name" /></p>
+                                <p><strong>is_active_carousel:</strong> <t t-esc="categoria_banner.is_active_carousel" /></p>
+                                <p><strong>Categorías:</strong> <t t-esc="len(categoria_banner.selected_categories) if categoria_banner.selected_categories else 0" /></p>
+                                <p><strong>Imágenes:</strong> <t t-esc="len(categoria_banner.category_menu_images) if categoria_banner.category_menu_images else 0" /></p>
+                            </t>
+                            
+                            <!-- Mostrar TODOS los banners -->
+                            <t t-if="all_banners">
+                                <h6>📋 Todos los banners:</h6>
+                                <t t-foreach="all_banners" t-as="banner">
+                                    <div style="margin: 5px 0; padding: 5px; background: white; border-radius: 3px;">
+                                        <strong><t t-esc="banner.name" /></strong> 
+                                        (ID: <t t-esc="banner.id" />, 
+                                        Active: <t t-esc="banner.is_active_carousel" />,
+                                        Cats: <t t-esc="len(banner.selected_categories) if banner.selected_categories else 0" />,
+                                        Imgs: <t t-esc="len(banner.category_menu_images) if banner.category_menu_images else 0" />)
+                                    </div>
+                                </t>
+                            </t>
+                        </div>
+                
+                        <!-- MOSTRAR CATEGORÍAS FORZADO (para probar) -->
+                        <t t-set="test_banner" t-value="request.env['banner.image.line'].sudo().search([('name', '=', 'categorias')], limit=1)" />
+                        
+                        <t t-if="test_banner">
+                            <div style="background: #d4edda; padding: 15px; margin: 20px 0; border: 1px solid #c3e6cb; border-radius: 5px;">
+                                <h5>✅ BANNER ENCONTRADO - Intentando mostrar</h5>
+                                
+                                <t t-if="test_banner.selected_categories and test_banner.category_menu_images">
+                                    <p>🎯 Mostrando categorías del banner...</p>
+                                    
+                                    <t t-set="categories" t-value="test_banner.selected_categories" />
+                                    <t t-set="images" t-value="test_banner.category_menu_images" />
+                                    
+                                    <div class="row justify-content-center">
+                                        <t t-foreach="categories[:3]" t-as="category" t-key="category.id">
+                                            <div class="col-md-4 mb-4">
+                                                <div class="card shadow-sm" style="border-radius: 10px; overflow: hidden; border: 2px solid #28a745;">
+                                                    <div style="position: relative; background: #f8f9fa; height: 200px; display: flex; align-items: center; justify-content: center;">
+                                                        <t t-if="images and len(images) > category_index">
+                                                            <img t-att-src="'/web/image/' + str(images[category_index].id)" 
+                                                                 alt="Category Image" 
+                                                                 class="img-fluid" 
+                                                                 style="width: 100%; height: 200px; object-fit: cover;" 
+                                                                 onerror="this.style.display='none'; this.parentNode.innerHTML='<span style=color:red>Error imagen</span>';" />
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span style="color: #6c757d;">Sin imagen</span>
+                                                        </t>
+                                                        
+                                                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0, 0, 0, 0.7); color: white; padding: 10px;">
+                                                            <h5 class="mb-0" t-esc="category.name" style="font-size: 16px; font-weight: bold;"></h5>
+                                                            <p class="mb-0" style="font-size: 12px;">Categoría ID: <t t-esc="category.id" /></p>
                                                         </div>
-                                                    </t>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </t>
                                     </div>
-                                    <button class="carousel-control-prev" type="button" data-bs-target="#categoryMenuCarousel" data-bs-slide="prev">
-                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Anterior</span>
-                                    </button>
-                                    <button class="carousel-control-next" type="button" data-bs-target="#categoryMenuCarousel" data-bs-slide="next">
-                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Siguiente</span>
-                                    </button>
-                                </div>
-                            </t>
-                            <t t-else="">
-                                <!-- Show up to 3 categories without carousel -->
-                                <div class="row justify-content-center">
-                                    <t t-foreach="cat_img_pairs" t-as="pair">
-                                        <div class="col-md-4 mb-4">
-                                            <div class="card shadow-sm" style="border-radius: 10px; overflow: hidden; border: 1px solid #ddd;">
-                                                <div style="position: relative;">
-                                                    <img t-att-src="'/web/image/' + str(pair[1].id)" 
-                                                         alt="Category Image" 
-                                                         class="img-fluid" 
-                                                         style="width: 100%; height: 200px; object-fit: cover;" />
-                                                    <div style="position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0, 0, 0, 0.5); color: white; padding: 10px;">
-                                                        <h5 class="mb-0" t-esc="pair[0].name" style="font-size: 16px; font-weight: bold;"></h5>
-                                                        <!-- Show subcategories -->
-                                                        <t t-foreach="pair[0].child_id" t-as="child">
-                                                            <p class="mb-0" style="font-size: 12px;"><t t-esc="child.name"/></p>
-                                                        </t>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </t>
-                                </div>
-                            </t>
+                                </t>
+                                <t t-else="">
+                                    <div style="background: #fff3cd; padding: 10px; border-radius: 5px;">
+                                        <p>⚠️ Banner encontrado pero:</p>
+                                        <ul>
+                                            <li>Categorías: <t t-esc="'✅' if test_banner.selected_categories else '❌'" /> (<t t-esc="len(test_banner.selected_categories) if test_banner.selected_categories else 0" />)</li>
+                                            <li>Imágenes: <t t-esc="'✅' if test_banner.category_menu_images else '❌'" /> (<t t-esc="len(test_banner.category_menu_images) if test_banner.category_menu_images else 0" />)</li>
+                                        </ul>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <div style="background: #f8d7da; padding: 15px; margin: 20px 0; border: 1px solid #f5c6cb; border-radius: 5px;">
+                                <h5>❌ NO SE ENCONTRÓ BANNER "categorias"</h5>
+                                <p>Verifica que existe un registro en banner.image.line con name = 'categorias'</p>
+                            </div>
                         </t>
                     </div>
                 </section>
+                <!-- ...existing code... -->
                 <!-- ...existing code... -->
 
                 <!-- Productos a Precio Especial -->
