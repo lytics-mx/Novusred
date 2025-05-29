@@ -65,7 +65,7 @@
 
 
         'views/website_sale/website_history.xml',
-        # 'views/website_sale/website_category.xml',
+        'views/website_sale/website_category.xml',
 
 
 
@@ -74,7 +74,6 @@
         'views/nav_bar.xml',
         # 'views/report_excel_views.xml',
 
-        'views/website_brand.xml',
         # 'views/marca_web.xml',
         'views/category/category.xml',
 

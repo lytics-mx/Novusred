@@ -135,11 +135,11 @@ class WebsiteProduct(http.Controller):
         else:
             return http.request.render('theme_xtream.xtream_inicio')
         
-    @http.route('/brand', auth='public', website=True)
+    @http.route('/category', auth='public', website=True)
     def brand(self, **kw):
         """
         Renderiza la página de marca con contenido dinámico.
         """
-        return http.request.render('theme_xtream.website_brand')
+        return http.request.render('theme_xtream.website_categroy')
 
 
