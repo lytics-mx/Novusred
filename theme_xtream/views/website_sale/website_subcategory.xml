@@ -141,7 +141,7 @@
                                                             </h6>
                                                             <div class="d-flex align-items-center justify-content-between mb-1">
                                                                 <span class="text-dark fw-bold" style="font-size: 18px;">
-                                                                    <t t-if="product.discounted_price &amp;lt; product.list_price">
+                                                                    <t t-if="product.discounted_price != product.list_price">
                                                                         $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
                                                                     </t>
                                                                     <t t-else="">
@@ -195,7 +195,7 @@
                                                         </h5>
                                                         <div class="d-flex align-items-center justify-content-between mb-2">
                                                             <span class="text-dark fw-bold" style="font-size: 20px;">
-                                                                <t t-if="product.discounted_price &lt; product.list_price">
+                                                                <t t-if="product.discounted_price != product.list_price">
                                                                     $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
                                                                 </t>
                                                                 <t t-else="">
@@ -233,37 +233,31 @@
                 </div>
             </div>
         </t>
-        <!-- JavaScript para filtros dinámicos -->
-        <script>
+        <script type="text/javascript">
+            //<![CDATA[
             function updateFilters() {
-                // Recopilar todos los filtros activos
                 const filters = {};
                 
-                // Categoría
                 const categorySelect = document.getElementById('category-select');
                 if (categorySelect && categorySelect.value) {
                     filters.category_id = categorySelect.value;
                 }
                 
-                // Subcategoría
                 const subcategorySelect = document.getElementById('subcategory-select');
                 if (subcategorySelect && subcategorySelect.value) {
                     filters.subcategory_id = subcategorySelect.value;
                 }
                 
-                // Marca
                 const brandRadio = document.querySelector('input[name="brand"]:checked');
                 if (brandRadio) {
                     filters.brand_id = brandRadio.value;
                 }
                 
-                // Envío gratis
                 const freeShipping = document.getElementById('free-shipping');
                 if (freeShipping && freeShipping.checked) {
                     filters.free_shipping = true;
                 }
                 
-                // Precios
                 const minPrice = document.getElementById('min-price');
                 const maxPrice = document.getElementById('max-price');
                 if (minPrice && minPrice.value) {
@@ -273,19 +267,16 @@
                     filters.max_price = maxPrice.value;
                 }
                 
-                // Descuento
                 const discountRadio = document.querySelector('input[name="discount"]:checked');
                 if (discountRadio) {
                     filters.discount_id = discountRadio.value;
                 }
                 
-                // Promoción
                 const promotionRadio = document.querySelector('input[name="promotion"]:checked');
                 if (promotionRadio) {
                     filters.promotion_id = promotionRadio.value;
                 }
                 
-                // Construir URL con parámetros
                 const urlParams = new URLSearchParams();
                 Object.keys(filters).forEach(key => {
                     if (filters[key]) {
@@ -293,60 +284,57 @@
                     }
                 });
                 
-                // Recargar página con filtros
                 const currentUrl = window.location.pathname;
-                const newUrl = urlParams.toString() ? `${currentUrl}?${urlParams.toString()}` : currentUrl;
+                const newUrl = urlParams.toString() ? currentUrl + '?' + urlParams.toString() : currentUrl;
                 window.location.href = newUrl;
             }
             
-            // Función para actualizar subcategorías cuando cambia la categoría
-            document.getElementById('category-select').addEventListener('change', function() {
-                const categoryId = this.value;
-                const subcategorySelect = document.getElementById('subcategory-select');
-                
-                if (categoryId) {
-                    // Mostrar select de subcategorías
-                    subcategorySelect.style.display = 'block';
-                    
-                    // Aquí podrías hacer una llamada AJAX para obtener las subcategorías
-                    // Por ahora, simplemente actualiza los filtros
-                    updateFilters();
-                } else {
-                    // Ocultar select de subcategorías
-                    subcategorySelect.style.display = 'none';
-                    subcategorySelect.value = '';
-                    updateFilters();
+            document.addEventListener('DOMContentLoaded', function() {
+                const categorySelect = document.getElementById('category-select');
+                if (categorySelect) {
+                    categorySelect.addEventListener('change', function() {
+                        const categoryId = this.value;
+                        const subcategorySelect = document.getElementById('subcategory-select');
+                        
+                        if (categoryId) {
+                            subcategorySelect.style.display = 'block';
+                            updateFilters();
+                        } else {
+                            subcategorySelect.style.display = 'none';
+                            subcategorySelect.value = '';
+                            updateFilters();
+                        }
+                    });
                 }
-            });
-            
-            // Limpiar otros radio buttons cuando se selecciona uno nuevo
-            document.querySelectorAll('input[name="brand"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    if (this.checked) {
-                        // Limpiar otros filtros de radio button si es necesario
-                        document.querySelectorAll('input[name="discount"]').forEach(r => r.checked = false);
-                        document.querySelectorAll('input[name="promotion"]').forEach(r => r.checked = false);
-                    }
+                
+                document.querySelectorAll('input[name="brand"]').forEach(radio => {
+                    radio.addEventListener('change', function() {
+                        if (this.checked) {
+                            document.querySelectorAll('input[name="discount"]').forEach(r => r.checked = false);
+                            document.querySelectorAll('input[name="promotion"]').forEach(r => r.checked = false);
+                        }
+                    });
+                });
+                
+                document.querySelectorAll('input[name="discount"]').forEach(radio => {
+                    radio.addEventListener('change', function() {
+                        if (this.checked) {
+                            document.querySelectorAll('input[name="brand"]').forEach(r => r.checked = false);
+                            document.querySelectorAll('input[name="promotion"]').forEach(r => r.checked = false);
+                        }
+                    });
+                });
+                
+                document.querySelectorAll('input[name="promotion"]').forEach(radio => {
+                    radio.addEventListener('change', function() {
+                        if (this.checked) {
+                            document.querySelectorAll('input[name="brand"]').forEach(r => r.checked = false);
+                            document.querySelectorAll('input[name="discount"]').forEach(r => r.checked = false);
+                        }
+                    });
                 });
             });
-            
-            document.querySelectorAll('input[name="discount"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    if (this.checked) {
-                        document.querySelectorAll('input[name="brand"]').forEach(r => r.checked = false);
-                        document.querySelectorAll('input[name="promotion"]').forEach(r => r.checked = false);
-                    }
-                });
-            });
-            
-            document.querySelectorAll('input[name="promotion"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    if (this.checked) {
-                        document.querySelectorAll('input[name="brand"]').forEach(r => r.checked = false);
-                        document.querySelectorAll('input[name="discount"]').forEach(r => r.checked = false);
-                    }
-                });
-            });
+            //]]>
         </script>
     </template>
 </odoo>
