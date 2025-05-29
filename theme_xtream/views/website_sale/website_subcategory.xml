@@ -1,0 +1,128 @@
+<odoo>
+    <template id="website_subcategory" name="Subcategorías con Filtros">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure oe_empty" style="font-family: 'Questrial', sans-serif;">
+                <div class="container-fluid py-4">
+                    <div class="row">
+                        <!-- Sidebar de Filtros -->
+                        <div class="col-lg-3 col-md-4">
+                            <div class="filters-sidebar" style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                                <h4 style="margin-bottom: 20px; color: #333;">Filtros</h4>
+                                
+                                <!-- Categorías -->
+                                <div class="filter-section mb-4">
+                                    <h5 style="color: #555; margin-bottom: 15px;">Categorías</h5>
+                                    <select id="category-select" class="form-select mb-2" onchange="updateFilters()">
+                                        <option value="">Todas las categorías</option>
+                                        <t t-foreach="categories" t-as="category" t-key="category.id">
+                                            <option t-att-value="category.id" 
+                                                    t-att-selected="'selected' if current_filters.get('category_id') == category.id else ''">
+                                                <t t-esc="category.name"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                    
+                                    <!-- Subcategorías -->
+                                    <select id="subcategory-select" class="form-select" onchange="updateFilters()" t-att-style="'display: none' if not subcategories else ''">
+                                        <option value="">Todas las subcategorías</option>
+                                        <t t-foreach="subcategories" t-as="subcategory" t-key="subcategory.id">
+                                            <option t-att-value="subcategory.id"
+                                                    t-att-selected="'selected' if current_filters.get('subcategory_id') == subcategory.id else ''">
+                                                <t t-esc="subcategory.name"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                                
+                                <!-- Marcas -->
+                                <div class="filter-section mb-4">
+                                    <h5 style="color: #555; margin-bottom: 15px;">Marcas</h5>
+                                    <div id="brands-container">
+                                        <t t-foreach="available_brands" t-as="brand" t-key="brand.id">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="radio" name="brand" 
+                                                       t-att-value="brand.id" t-att-id="'brand_' + str(brand.id)"
+                                                       t-att-checked="'checked' if current_filters.get('brand_id') == brand.id else ''"
+                                                       onchange="updateFilters()"/>
+                                                <label class="form-check-label" t-att-for="'brand_' + str(brand.id)">
+                                                    <t t-esc="brand.name"/>
+                                                    <small class="text-muted">(<span id="brand-count-<t t-esc='brand.id'/>">0</span>)</small>
+                                                </label>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                                
+                                <!-- Envío Gratis -->
+                                <div class="filter-section mb-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="free-shipping" 
+                                               t-att-checked="'checked' if current_filters.get('free_shipping') else ''"
+                                               onchange="updateFilters()"/>
+                                        <label class="form-check-label" for="free-shipping">
+                                            <strong>Envío gratis</strong>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Rango de Precios -->
+                                <div class="filter-section mb-4">
+                                    <h5 style="color: #555; margin-bottom: 15px;">Precio</h5>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <input type="number" class="form-control" placeholder="Mín" id="min-price"
+                                                   t-att-value="current_filters.get('min_price', '')" onchange="updateFilters()"/>
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="number" class="form-control" placeholder="Máx" id="max-price"
+                                                   t-att-value="current_filters.get('max_price', '')" onchange="updateFilters()"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Descuentos -->
+                                <div class="filter-section mb-4">
+                                    <h5 style="color: #555; margin-bottom: 15px;">Descuentos</h5>
+                                    <t t-foreach="discount_tags" t-as="discount" t-key="discount.id">
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="radio" name="discount" 
+                                                   t-att-value="discount.id" t-att-id="'discount_' + str(discount.id)"
+                                                   t-att-checked="'checked' if current_filters.get('discount_id') == discount.id else ''"
+                                                   onchange="updateFilters()"/>
+                                            <label class="form-check-label" t-att-for="'discount_' + str(discount.id)">
+                                                <t t-esc="discount.name"/> (<t t-esc="int(discount.discount_percentage)"/>% OFF)
+                                            </label>
+                                        </div>
+                                    </t>
+                                </div>
+                                
+                                <!-- Tags de Promoción -->
+                                <div class="filter-section mb-4">
+                                    <h5 style="color: #555; margin-bottom: 15px;">Promociones</h5>
+                                    <t t-foreach="promotion_tags" t-as="tag" t-key="tag.id">
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="radio" name="promotion" 
+                                                   t-att-value="tag.id" t-att-id="'promotion_' + str(tag.id)"
+                                                   t-att-checked="'checked' if current_filters.get('promotion_id') == tag.id else ''"
+                                                   onchange="updateFilters()"/>
+                                            <label class="form-check-label" t-att-for="'promotion_' + str(tag.id)">
+                                                <t t-esc="tag.name"/>
+                                            </label>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Área de Productos -->
+                        <div class="col-lg-9 col-md-8">
+                            <div class="products-grid">
+                                <!-- Aquí irán los productos filtrados -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>
