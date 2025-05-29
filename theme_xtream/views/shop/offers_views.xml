@@ -519,15 +519,7 @@
                                         <div style="height: 10px;"></div>
 
                                         <div class="card-body mobile-card-body">
-                                            <!-- Nombre del producto SIEMPRE VISIBLE PRIMERO -->
-                                            <div class="product-name-container mobile-name-container mb-2">
-                                                <h6 class="card-title product-name mobile-product-name" style="font-size: 14px; line-height: 1.3; color: #333; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                                                    <t t-esc="product.name.upper()" />
-                                                </h6>
-                                            </div>
-                                            
-                                            <!-- Precios y badges -->
-                                            <div class="pricing-section">
+                                            <div class="mt-auto">
                                                 <t t-if="product.discounted_price &lt; product.list_price">
                                                     <t t-if="product.product_tag_ids">
                                                         <div class="d-flex justify-content-start mb-2 mobile-badge-container">
@@ -560,18 +552,22 @@
                                                         $<t t-esc="'{:,}'.format(int(product.list_price))" />
                                                     </span>
                                                 </t>
-                                                
-                                                <!-- Free shipping -->
+                                                <t t-if="not product.product_tag_ids">
+                                                    <div class="mobile-spacer"></div>
+                                                </t>
                                                 <t t-if="product.free_shipping">
-                                                    <div class="mt-2 mobile-shipping">
+                                                    <div class="mt-0 mobile-shipping">
                                                         <span class="text-orange mobile-shipping-text">
                                                             Envío gratis
                                                         </span>
                                                     </div>
                                                 </t>
                                             </div>
+                                            <h6 class="card-title mb-2" style="font-size: 14px; line-height: 1.2; max-height: 2.4em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                                                <t t-esc="product.name" />
+                                            </h6>
                                         </div>
-                                                                            </div>
+                                    </div>
                                 </div>
                             </t>
                         </div>
@@ -602,76 +598,39 @@
                                 padding: 2px;
                                 margin-bottom: 25px; /* Aumentado de 15px a 25px */
                             }
-
-                            .product-name-container {
-                                margin-bottom: 8px !important;
-                            }
-
-                            .product-name, .mobile-product-name {
-                                font-size: 14px !important;
-                                line-height: 1.3 !important;
-                                color: #333 !important;
-                                margin-bottom: 8px !important;
-                                display: -webkit-box !important;
-                                -webkit-line-clamp: 2 !important;
-                                -webkit-box-orient: vertical !important;
-                                overflow: hidden !important;
-                                text-overflow: ellipsis !important;
-                                height: auto !important;
-                                min-height: 36px !important; /* Asegurar espacio mínimo para 2 líneas */
-                            }
-
-                            /* Quitar cualquier efecto dinámico del nombre */
-                            .product-name, .mobile-product-name {
-                                transition: none !important;
-                                transform: none !important;
-                            }
-
-                            .product-name:hover, .mobile-product-name:hover {
-                                transform: none !important;
-                                color: #333 !important;
-                            }
                             
                             /* Estilos para móvil */
                             @media (max-width: 767.98px) {
-                                .mobile-product-name {
-                                    font-size: 12px !important;
-                                    line-height: 1.2 !important;
-                                    min-height: 30px !important; /* Espacio para 2 líneas en móvil */
-                                    margin-bottom: 6px !important;
-                                }
-                                
-                                .mobile-card-body {
-                                    padding: 8px 10px 10px 10px !important;
-                                    display: block !important; /* Cambiar de flex a block */
-                                }
-                                
-                                .pricing-section {
-                                    margin-top: auto;
+                                .mobile-badge {
+                                    font-size: 12px;
+                                    padding: 2px 6px;
                                 }
                                 
                                 .mobile-product-col {
-                                    padding: 1px; /* Reducido */
-                                    margin-bottom: 8px; /* Más juntas */
+                                    padding: 2px;
+                                    margin-bottom: 15px;
                                 }
                                 
                                 .mobile-product-card {
                                     min-height: 240px;
                                     border: 1px solid #e0e0e0;
-                                    margin: 0 1px; /* Más juntas lateralmente */
+                                    margin: 0 2px;
                                 }
-
-                                .mobile-badge {
-                                    font-size: 12px;
-                                    padding: 2px 6px;
-                                }
-
+                                
                                 .mobile-product-image {
                                     height: 160px;
                                     object-fit: contain;
                                     padding: 10px;
                                 }
-
+                                
+                                .mobile-card-body {
+                                    padding: 6px 10px 10px 10px;
+                                    display: flex;
+                                    flex-direction: column;
+                                    justify-content: space-between;
+                                    flex-grow: 1;
+                                }
+                                
                                 .mobile-badge-container {
                                     margin-bottom: 4px;
                                 }
@@ -717,7 +676,76 @@
                                     padding-left: 10px;
                                     padding-right: 10px;
                                 }
+                            }
+                            
+                            /* Estilos para tablet */
+                            @media (min-width: 768px) and (max-width: 991.98px) {
+                                .mobile-badge {
+                                    font-size: 12px;
+                                    padding: 3px 8px;
+                                }
+                                
+                                .mobile-product-col {
+                                    padding: 2px;
+                                    margin-bottom: 20px;
+                                }
+                                
+                                .mobile-product-card {
+                                    min-height: 300px; /* Reducido de 350px */
+                                }
+                                
+                                .mobile-product-image {
+                                    height: 200px; /* Reducido de 200px */
+                                }
+                                
+                                .mobile-shipping-text {
+                                    font-size: 14px !important;
+                                }
+                            }
+                            
+                            /* Estilos desktop */
+                            @media (min-width: 992px) {
+                                .mobile-badge {
+                                    font-size: 14px;
+                                    padding: 4px 10px;
+                                }
+                                
+                                .mobile-product-col {
+                                    padding: 2px; /* Incrementado de 2px a 3px para más espacio lateral */
+                                    margin-bottom: 60px; /* Incrementado de 25px a 35px para más espacio abajo */
+                                }
+                                
+                                .mobile-product-card {
+                                    min-height: 320px;
+                                    border: 1px solid #e0e0e0;
+                                    margin: 0 2px;
+                                }
+                                
+                                .mobile-product-image {
+                                    height: 300px;
+                                    object-fit: contain;
+                                }
+                                
+                                .mobile-main-price {
+                                    font-size: 25px !important;
+                                }
+                                
+                                .mobile-discount {
+                                    font-size: 18px !important;
+                                }
+                                
+                                .mobile-discount-amount span {
+                                    font-size: 18px !important;
+                                }
+                                
+                                .mobile-shipping-text {
+                                    font-size: 1rem !important;
+                                }
+                            }
 
+
+                            /* Estilos para móvil */
+                            @media (max-width: 767.98px) {
                                 /* Estilos de filtros móviles */
                                 .mobile-filters-container {
                                     margin: 0 10px;
@@ -765,96 +793,7 @@
                                     border-color: #dee2e6;
                                     color: #333;
                                 }
-                            }
-                            
-                            /* Estilos para tablet */
-                            @media (min-width: 768px) and (max-width: 991.98px) {
-                                .mobile-product-name {
-                                    font-size: 13px !important;
-                                    line-height: 1.25 !important;
-                                    min-height: 33px !important;
-                                    margin-bottom: 8px !important;
-                                }
-                                
-                                .mobile-card-body {
-                                    padding: 10px !important;
-                                    display: block !important;
-                                }
-                                
-                                .mobile-product-col {
-                                    padding: 1px;
-                                    margin-bottom: 12px; /* Más juntas */
-                                }
-                                
-                                .mobile-product-card {
-                                    min-height: 280px; /* Reducido */
-                                    margin: 0 1px;
-                                }
-
-                                .mobile-badge {
-                                    font-size: 12px;
-                                    padding: 3px 8px;
-                                }
-                                
-                                .mobile-product-image {
-                                    height: 200px; /* Reducido de 200px */
-                                }
-                                
-                                .mobile-shipping-text {
-                                    font-size: 14px !important;
-                                }
-                            }
-                            
-                            /* Estilos desktop */
-                            @media (min-width: 992px) {
-                                .mobile-product-name {
-                                    font-size: 14px !important;
-                                    line-height: 1.3 !important;
-                                    min-height: 36px !important;
-                                    margin-bottom: 10px !important;
-                                }
-                                
-                                .mobile-card-body {
-                                    padding: 12px !important;
-                                    display: block !important;
-                                }
-                                
-                                .mobile-product-col {
-                                    padding: 1px;
-                                    margin-bottom: 20px; /* Más juntas */
-                                }
-                                
-                                .mobile-product-card {
-                                    min-height: 320px;
-                                    margin: 0 1px;
-                                }
-
-                                .mobile-badge {
-                                    font-size: 14px;
-                                    padding: 4px 10px;
-                                }
-                                
-                                .mobile-product-image {
-                                    height: 300px;
-                                    object-fit: contain;
-                                }
-                                
-                                .mobile-main-price {
-                                    font-size: 25px !important;
-                                }
-                                
-                                .mobile-discount {
-                                    font-size: 18px !important;
-                                }
-                                
-                                .mobile-discount-amount span {
-                                    font-size: 18px !important;
-                                }
-                                
-                                .mobile-shipping-text {
-                                    font-size: 1rem !important;
-                                }
-                            }
+                             }   
                         </style>
         </t>
     </template>
