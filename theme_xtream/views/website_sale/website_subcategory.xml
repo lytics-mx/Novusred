@@ -1,120 +1,236 @@
 <odoo>
-    <template id="website_subcategory" name="Subcategorías">
+    <template id="website_subcategory" name="Subcategorías con Filtros">
         <t t-call="website.layout">
-            <div class="container mt-4">
-                <!-- Sección de encabezado con texto e íconos -->
-                <div class="d-flex align-items-center justify-content-between p-4 mb-4" style="background-color: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-top: -32px; margin-bottom: 24px; width: 100vw; position: relative; left: 50%; transform: translateX(-50%);">
-                    <!-- Navigation breadcrumb -->
-                    <div class="d-none d-md-flex align-items-center" style="flex: 1;">
-                        <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item">
-                                    <a href="/shop" style="color: #6c757d; text-decoration: none;">Tienda</a>
-                                </li>
-                                <t t-if="selected_category">
-                                    <t t-foreach="selected_category.parent_id" t-as="parent">
-                                        <li class="breadcrumb-item">
-                                            <a t-att-href="'/subcategory?category_id=%s' % parent.id" 
-                                               style="color: #6c757d; text-decoration: none;">
-                                                <t t-esc="parent.name"/>
-                                            </a>
-                                        </li>
+            <div id="wrap" class="oe_structure oe_empty" style="font-family: 'Questrial', sans-serif;">
+                <div class="container-fluid py-4">
+                    <div class="row">
+                        <!-- Sidebar de Filtros -->
+                        <div class="col-lg-3 col-md-4">
+                            <div class="filters-sidebar" style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                                <h4 style="margin-bottom: 20px; color: #333;">Filtros</h4>
+                                
+                                <!-- Categorías -->
+                                <div class="filter-section mb-4">
+                                    <h5 style="color: #555; margin-bottom: 15px;">Categorías</h5>
+                                    <select id="category-select" class="form-select mb-2" onchange="updateFilters()">
+                                        <option value="">Todas las categorías</option>
+                                        <t t-foreach="categories" t-as="category" t-key="category.id">
+                                            <option t-att-value="category.id" 
+                                                    t-att-selected="'selected' if current_filters.get('category_id') == category.id else ''">
+                                                <t t-esc="category.name"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                    
+                                    <!-- Subcategorías -->
+                                    <select id="subcategory-select" class="form-select" onchange="updateFilters()" t-att-style="'display: none' if not subcategories else ''">
+                                        <option value="">Todas las subcategorías</option>
+                                        <t t-foreach="subcategories" t-as="subcategory" t-key="subcategory.id">
+                                            <option t-att-value="subcategory.id"
+                                                    t-att-selected="'selected' if current_filters.get('subcategory_id') == subcategory.id else ''">
+                                                <t t-esc="subcategory.name"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                                
+                                <!-- Marcas -->
+                                <div class="filter-section mb-4">
+                                    <h5 style="color: #555; margin-bottom: 15px;">Marcas</h5>
+                                    <div id="brands-container">
+                                        <t t-foreach="available_brands" t-as="brand" t-key="brand.id">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="radio" name="brand" 
+                                                       t-att-value="brand.id" t-att-id="'brand_' + str(brand.id)"
+                                                       t-att-checked="'checked' if current_filters.get('brand_id') == brand.id else ''"
+                                                       onchange="updateFilters()"/>
+                                                <label class="form-check-label" t-att-for="'brand_' + str(brand.id)">
+                                                    <t t-esc="brand.name"/>
+                                                    <small class="text-muted">(<span t-att-id="'brand-count-' + str(brand.id)">0</span>)</small>
+                                                </label>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                                
+                                <!-- Envío Gratis -->
+                                <div class="filter-section mb-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="free-shipping" 
+                                               t-att-checked="'checked' if current_filters.get('free_shipping') else ''"
+                                               onchange="updateFilters()"/>
+                                        <label class="form-check-label" for="free-shipping">
+                                            <strong>Envío gratis</strong>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Rango de Precios -->
+                                <div class="filter-section mb-4">
+                                    <h5 style="color: #555; margin-bottom: 15px;">Precio</h5>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <input type="number" class="form-control" placeholder="Mín" id="min-price"
+                                                   t-att-value="current_filters.get('min_price', '')" onchange="updateFilters()"/>
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="number" class="form-control" placeholder="Máx" id="max-price"
+                                                   t-att-value="current_filters.get('max_price', '')" onchange="updateFilters()"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Descuentos -->
+                                <div class="filter-section mb-4">
+                                    <h5 style="color: #555; margin-bottom: 15px;">Descuentos</h5>
+                                    <t t-foreach="discount_tags" t-as="discount" t-key="discount.id">
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="radio" name="discount" 
+                                                   t-att-value="discount.id" t-att-id="'discount_' + str(discount.id)"
+                                                   t-att-checked="'checked' if current_filters.get('discount_id') == discount.id else ''"
+                                                   onchange="updateFilters()"/>
+                                            <label class="form-check-label" t-att-for="'discount_' + str(discount.id)">
+                                                <t t-esc="discount.name"/> (<t t-esc="int(discount.discount_percentage)"/>% OFF)
+                                            </label>
+                                        </div>
                                     </t>
-                                    <li class="breadcrumb-item active" aria-current="page">
-                                        <span style="color: #6c757d;">
-                                            <t t-esc="selected_category.name"/>
-                                        </span>
-                                    </li>
-                                </t>
-                            </ol>
-                        </nav>
-                    </div>
-
-                    <!-- Category title and counter -->
-                    <div class="text-center" style="flex: 1;">
-                        <h2 class="mb-1" style="font-family: 'Questrial', sans-serif; font-size: 28px; font-weight: bold; letter-spacing: 0.5px;">
-                            <t t-if="selected_category" t-esc="selected_category.name"/>
-                            <t t-else="">Todas las categorías</t>
-                        </h2>
-                        <p class="mb-0" style="font-size: 14px; color: #6c757d;">
-                            <t t-esc="product_count"/> productos disponibles
-                        </p>
-                    </div>
-
-                    <!-- Category filters -->
-                    <div class="d-flex align-items-center" style="flex: 1; justify-content: flex-end;">
-                        <div class="tags-container">
-                            <div class="tags-wrapper">
-                                <t t-foreach="categories" t-as="cat">
-                                    <a t-att-href="'/subcategory?category_id=%s' % cat.id" 
-                                       class="tag-item clickable-tag">
-                                        <div class="tag-icon-container" t-if="cat.image_1920">
-                                            <img t-att-src="'/web/image/product.category/%s/image_1920' % cat.id"
-                                                 t-att-alt="cat.name"
-                                                 class="tag-icon"/>
+                                </div>
+                                
+                                <!-- Tags de Promoción -->
+                                <div class="filter-section mb-4">
+                                    <h5 style="color: #555; margin-bottom: 15px;">Promociones</h5>
+                                    <t t-foreach="promotion_tags" t-as="tag" t-key="tag.id">
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="radio" name="promotion" 
+                                                   t-att-value="tag.id" t-att-id="'promotion_' + str(tag.id)"
+                                                   t-att-checked="'checked' if current_filters.get('promotion_id') == tag.id else ''"
+                                                   onchange="updateFilters()"/>
+                                            <label class="form-check-label" t-att-for="'promotion_' + str(tag.id)">
+                                                <t t-esc="tag.name"/>
+                                            </label>
                                         </div>
-                                        <div class="tag-name">
-                                            <t t-esc="cat.name"/>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Área de Productos -->
+                        <div class="col-lg-9 col-md-8">
+                            <div class="products-grid">
+                                <!-- Vista móvil -->
+                                <div class="d-block d-md-none">
+                                    <t t-foreach="period_products" t-as="item">
+                                        <t t-set="product" t-value="item['product']" />
+                                        <div class="product-item-mobile mb-3">
+                                            <div class="card shadow-sm bg-white">
+                                                <div class="row g-0">
+                                                    <div class="col-4">
+                                                        <a t-att-href="'/shop/product/' + str(product.id)">
+                                                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                                 class="img-fluid h-100 w-100" 
+                                                                 style="object-fit: contain; min-height: 120px;" 
+                                                                 loading="lazy" />
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-8">
+                                                        <div class="card-body p-3">
+                                                            <h6 class="card-title mb-2" style="font-size: 0.9rem; line-height: 1.3;">
+                                                                <a t-att-href="'/shop/product/' + str(product.id)" class="text-decoration-none text-dark">
+                                                                    <t t-esc="product.name.upper()" />
+                                                                </a>
+                                                            </h6>
+                                                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                                                <span class="text-dark fw-bold" style="font-size: 18px;">
+                                                                    <t t-if="product.discounted_price &lt; product.list_price">
+                                                                        $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
+                                                                    </t>
+                                                                    <t t-else="">
+                                                                        $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                                    </t>
+                                                                </span>
+                                                                <span class="text-danger" style="font-size: 16px;">
+                                                                    <t t-if="product.discount_percentage">
+                                                                        <t t-esc="int(product.discount_percentage)" />% OFF
+                                                                    </t>
+                                                                    <t t-elif="product.fixed_discount">
+                                                                        -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
+                                                                    </t>
+                                                                </span>
+                                                            </div>
+                                                            <t t-if="product.free_shipping">
+                                                                <div class="mb-2">
+                                                                    <span class="text-orange" style="color: #FF5207; font-size: 0.8rem; font-weight: bold; font-style: italic;">
+                                                                        Envío gratis
+                                                                    </span>
+                                                                </div>
+                                                            </t>
+                                                            <p class="text-muted mb-2" style="font-size: 0.8rem;">
+                                                                Por <t t-esc="product.brand_type_id.name"/>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="tag-underline"></div>
-                                    </a>
-                                </t>
+                                    </t>
+                                </div>
+                                <!-- Vista desktop -->
+                                <div class="d-none d-md-block">
+                                    <div class="row">
+                                        <t t-foreach="period_products" t-as="item">
+                                            <t t-set="product" t-value="item['product']" />
+                                            <div class="col-lg-4 col-md-6 mb-4">
+                                                <div class="card shadow-sm bg-white h-100">
+                                                    <a t-att-href="'/shop/product/' + str(product.id)">
+                                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                             class="card-img-top" 
+                                                             style="object-fit: contain; height: 200px;"
+                                                             loading="lazy" />
+                                                    </a>
+                                                    <div class="card-body p-3">
+                                                        <h5 class="card-title mb-2" style="font-size: 1rem; line-height: 1.4;">
+                                                            <a t-att-href="'/shop/product/' + str(product.id)" class="text-decoration-none text-dark">
+                                                                <t t-esc="product.name.upper()" />
+                                                            </a>
+                                                        </h5>
+                                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                                            <span class="text-dark fw-bold" style="font-size: 20px;">
+                                                                <t t-if="product.discounted_price &lt; product.list_price">
+                                                                    $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
+                                                                </t>
+                                                                <t t-else="">
+                                                                    $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                                </t>
+                                                            </span>
+                                                            <span class="text-danger" style="font-size: 18px;">
+                                                                <t t-if="product.discount_percentage">
+                                                                    <t t-esc="int(product.discount_percentage)" />% OFF
+                                                                </t>
+                                                                <t t-elif="product.fixed_discount">
+                                                                    -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
+                                                                </t>
+                                                            </span>
+                                                        </div>
+                                                        <t t-if="product.free_shipping">
+                                                            <div class="mb-2">
+                                                                <span class="text-orange" style="color: #FF5207; font-size: 0.9rem; font-weight: bold; font-style: italic;">
+                                                                    Envío gratis
+                                                                </span>
+                                                            </div>
+                                                        </t>
+                                                        <p class="text-muted mb-0" style="font-size: 0.9rem;">
+                                                            Por <t t-esc="product.brand_type_id.name"/>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- ...existing code... -->
-
-                <!-- Categorías -->
-                <div class="mb-3">
-                    <h6 style="font-size: 14px; color: #333; margin-bottom: 8px; font-family: 'Questrial', sans-serif;">Categorías</h6>
-                    <div class="mobile-categories-grid">
-                        <t t-foreach="categories" t-as="cat">
-                            <a t-att-href="'/subcategory?category_id=%s%s' % (cat.id, '&amp;free_shipping=true' if current_filters['free_shipping'] else '')" 
-                               class="btn btn-sm btn-outline-secondary mb-2" style="font-size: 12px; padding: 4px 8px; font-family: 'Questrial', sans-serif;">
-                                <span t-esc="cat.name"/> (<span t-esc="len(cat.product_tmpl_ids)"/>)
-                            </a>
-                        </t>
-                    </div>
-                </div>
-
-                <!-- ...existing code... -->
-
-                <!-- Categorías -->
-                <div class="mb-3">
-                    <h5>Categorías</h5>
-                    <ul class="list-unstyled">
-                        <t t-foreach="categories" t-as="cat">
-                            <li>
-                                <a t-att-href="'/subcategory?category_id=%s%s' % (cat.id, '&amp;free_shipping=true' if current_filters['free_shipping'] else '')" style="color: #848484;">
-                                    <span t-esc="cat.name"/> (<span t-esc="len(cat.product_tmpl_ids)"/>)
-                                </a>
-                            </li>
-                        </t>
-                    </ul>
-                </div>
-
-                <!-- ...existing code... -->
-
-                <!-- Actualizar URLs de filtros para usar el controlador correcto -->
-                <form method="get" action="/subcategory">
-                    <div class="d-flex align-items-center">
-                        <input type="number" class="form-control me-2 bg-white" id="minPrice" name="min_price" placeholder="Desde" style="background-color: #ffffff;" />
-                        <span class="me-2">—</span>
-                        <input type="number" class="form-control me-2 bg-white" id="maxPrice" name="max_price" placeholder="Hasta" style="background-color: #ffffff;" />
-                        <!-- Mantener filtros actuales -->
-                        <t t-if="current_filters['category_id']">
-                            <input type="hidden" name="category_id" t-att-value="current_filters['category_id']"/>
-                        </t>
-                        <t t-if="current_filters['free_shipping']">
-                            <input type="hidden" name="free_shipping" value="true"/>
-                        </t>
-                        <button type="submit" class="btn" style="background-color: #5a5a5a; color: white;">Buscar</button>
-                    </div>
-                </form>
-
-                <!-- ...existing code... -->
             </div>
         </t>
     </template>
