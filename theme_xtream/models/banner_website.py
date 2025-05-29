@@ -62,6 +62,7 @@ class BannerImageLine(models.Model):
     is_active_carousel = fields.Boolean(string="Mostrar en Carrusel General", default=False)
     is_active_product_carousel = fields.Boolean(string="Mostrar en Carrusel de Productos", default=False)
     is_active_brand_carousel = fields.Boolean(string="Mostrar en Carrusel de Marcas", default=False)
+    
 
 
     @api.constrains('category_menu_images', 'selected_categories')
