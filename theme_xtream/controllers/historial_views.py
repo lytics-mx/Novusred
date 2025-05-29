@@ -3,8 +3,18 @@ from odoo.http import request
 from collections import defaultdict
 from datetime import datetime, timedelta
 import pytz
+import locale
 
 class ProductHistoryController(http.Controller):
+
+    def _get_month_name_spanish(self, date):
+        """Convierte una fecha a nombre de mes en español."""
+        months_spanish = {
+            1: 'Enero', 2: 'Febrero', 3: 'Marzo', 4: 'Abril',
+            5: 'Mayo', 6: 'Junio', 7: 'Julio', 8: 'Agosto',
+            9: 'Septiembre', 10: 'Octubre', 11: 'Noviembre', 12: 'Diciembre'
+        }
+        return f"{months_spanish[date.month]} {date.year}"
 
     @http.route(['/shop/history', '/shop/history/<string:period_filter>'], type='http', auth='user', website=True)
     def view_history(self, period_filter=None):
@@ -78,8 +88,8 @@ class ProductHistoryController(http.Controller):
                         'track_id': track.id
                     })
                 else:
-                    # Más de un mes
-                    month_name = visit_date.strftime('%B %Y')
+                    # Más de un mes - usar nombres en español
+                    month_name = self._get_month_name_spanish(visit_date)
                     month_periods.add(month_name)
                     if month_name not in grouped_history:
                         grouped_history[month_name] = []
