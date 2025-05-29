@@ -501,10 +501,22 @@
                                     <div class="card shadow-sm product-card mobile-product-card">
                                         <!-- Contador de tiempo de oferta -->
                                         <!-- Espacio aquí -->
-                                        <a t-att-href="'/shop/product/' + str(product.id)">
-                                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
-                                                class="card-img-top mobile-product-image"  />
-                                                        </a>
+                                        <t t-if="request.env['ir.config_parameter'].sudo().get_param('web.base.url')">
+                                            <!-- Desktop version -->
+                                            <div class="d-none d-lg-block">
+                                                <a t-att-href="'/shop/product/' + str(product.id)">
+                                                    <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                        class="card-img-top" style="height: 320px; object-fit: contain;" />
+                                                </a>
+                                            </div>
+                                            <!-- Mobile version -->
+                                            <div class="d-block d-lg-none">
+                                                <a t-att-href="'/shop/product/' + str(product.id)">
+                                                    <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                        class="card-img-top mobile-product-image" />
+                                                </a>
+                                            </div>
+                                        </t>
                                         <div style="height: 10px;"></div>
 
                                         <div class="card-body mobile-card-body">
