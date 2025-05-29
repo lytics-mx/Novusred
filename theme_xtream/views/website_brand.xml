@@ -464,14 +464,13 @@
                 <div style="height: 50px;"></div>
 
                 <!-- Más Categorías -->
+                <!-- ...existing code... -->
                 <section class="more-categories py-5">
                     <h2 class="text-center" style="font-family: 'Questrial', sans-serif; font-size: 25px;">MÁS CATEGORÍAS</h2>
                     <div class="container">
-                        <t t-set="category_banner" t-value="request.env['banner.image.line'].sudo().search([('name', '=', 'marcas'), ('is_active_carousel', '=', True)], limit=1)" />
+                        <t t-set="category_banner" t-value="request.env['banner.image.line'].sudo().search([('name', '=', 'categorias'), ('is_active_carousel', '=', True)], limit=1)" />
                         <t t-if="category_banner and category_banner.selected_categories and category_banner.category_menu_images">
-                            <t t-set="categories" t-value="category_banner.selected_categories" />
-                            <t t-set="images" t-value="category_banner.category_menu_images" />
-                            <t t-set="cat_img_pairs" t-value="list(zip(categories, images))" />
+                            <t t-set="cat_img_pairs" t-value="list(zip(category_banner.selected_categories, category_banner.category_menu_images))" />
                             <t t-if="len(cat_img_pairs) > 3">
                                 <!-- Carousel for more than 3 categories -->
                                 <div id="categoryMenuCarousel" class="carousel slide" data-bs-ride="carousel">
@@ -489,11 +488,11 @@
                                                                          style="width: 100%; height: 200px; object-fit: cover;" />
                                                                     <div style="position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0, 0, 0, 0.5); color: white; padding: 10px;">
                                                                         <h5 class="mb-0" t-esc="pair[0].name" style="font-size: 16px; font-weight: bold;"></h5>
-                                                                        <p class="mb-0" style="font-size: 12px;">Subcategoría destacada</p>
+                                                                        <!-- Show subcategories -->
+                                                                        <t t-foreach="pair[0].child_id" t-as="child">
+                                                                            <p class="mb-0" style="font-size: 12px;"><t t-esc="child.name"/></p>
+                                                                        </t>
                                                                     </div>
-                                                                </div>
-                                                                <div style="background-color: white; text-align: center; padding: 10px;">
-                                                                    <p class="mb-0" style="font-size: 14px; font-weight: bold; color: #333;">SUBCATEGORÍA</p>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -525,11 +524,11 @@
                                                          style="width: 100%; height: 200px; object-fit: cover;" />
                                                     <div style="position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0, 0, 0, 0.5); color: white; padding: 10px;">
                                                         <h5 class="mb-0" t-esc="pair[0].name" style="font-size: 16px; font-weight: bold;"></h5>
-                                                        <p class="mb-0" style="font-size: 12px;">Subcategoría destacada</p>
+                                                        <!-- Show subcategories -->
+                                                        <t t-foreach="pair[0].child_id" t-as="child">
+                                                            <p class="mb-0" style="font-size: 12px;"><t t-esc="child.name"/></p>
+                                                        </t>
                                                     </div>
-                                                </div>
-                                                <div style="background-color: white; text-align: center; padding: 10px;">
-                                                    <p class="mb-0" style="font-size: 14px; font-weight: bold; color: #333;">SUBCATEGORÍA</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -539,6 +538,7 @@
                         </t>
                     </div>
                 </section>
+                <!-- ...existing code... -->
 
                 <!-- Productos a Precio Especial -->
                 <section class="special-price-products py-5">
