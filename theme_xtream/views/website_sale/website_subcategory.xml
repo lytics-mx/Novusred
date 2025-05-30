@@ -54,7 +54,71 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Resto de filtros... -->
+                                <!-- Envío Gratis -->
+                                <div class="filter-section mb-4">
+                                    <h5 style="color: #555; margin-bottom: 15px;">Envío</h5>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="free-shipping" 
+                                               t-att-checked="'checked' if current_filters.get('free_shipping') else ''"
+                                               onchange="updateFilters()"/>
+                                        <label class="form-check-label" for="free-shipping">
+                                            Envío gratis
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Rango de Precios -->
+                                <div class="filter-section mb-4">
+                                    <h5 style="color: #555; margin-bottom: 15px;">Precio</h5>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <input type="number" id="min-price" class="form-control" placeholder="Mín" 
+                                                   t-att-value="current_filters.get('min_price', '')"
+                                                   onchange="updateFilters()"/>
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="number" id="max-price" class="form-control" placeholder="Máx" 
+                                                   t-att-value="current_filters.get('max_price', '')"
+                                                   onchange="updateFilters()"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Descuentos -->
+                                <div class="filter-section mb-4" t-if="discount_tags">
+                                    <h5 style="color: #555; margin-bottom: 15px;">Descuentos</h5>
+                                    <div id="discounts-container">
+                                        <t t-foreach="discount_tags" t-as="tag" t-key="tag.id">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="radio" name="discount" 
+                                                       t-att-value="tag.id" t-att-id="'discount_' + str(tag.id)"
+                                                       t-att-checked="'checked' if current_filters.get('discount_id') == tag.id else ''"
+                                                       onchange="updateFilters()"/>
+                                                <label class="form-check-label" t-att-for="'discount_' + str(tag.id)">
+                                                    <t t-esc="tag.name"/> - <t t-esc="tag.discount_percentage"/>% OFF
+                                                </label>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                                
+                                <!-- Promociones -->
+                                <div class="filter-section mb-4" t-if="promotion_tags">
+                                    <h5 style="color: #555; margin-bottom: 15px;">Promociones</h5>
+                                    <div id="promotions-container">
+                                        <t t-foreach="promotion_tags" t-as="tag" t-key="tag.id">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="radio" name="promotion" 
+                                                       t-att-value="tag.id" t-att-id="'promotion_' + str(tag.id)"
+                                                       t-att-checked="'checked' if current_filters.get('promotion_id') == tag.id else ''"
+                                                       onchange="updateFilters()"/>
+                                                <label class="form-check-label" t-att-for="'promotion_' + str(tag.id)">
+                                                    <t t-esc="tag.name"/>
+                                                </label>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         
@@ -141,19 +205,31 @@
                                             <div class="col-6">
                                                 <h5 class="mb-2" t-field="product_data['product'].name"/>
                                                 <p class="text-muted mb-2" t-field="product_data['product'].description_sale"/>
-                                                <div class="text-success" t-if="product_data['product'].is_free_shipping">Envío gratis</div>
+                                                <div class="text-success" t-if="product_data['product'].free_shipping">Envío gratis</div>
                                             </div>
                                             <!-- Precio y descuento -->
                                             <div class="col-3 text-end">
-                                                <div t-if="product_data['product'].has_discounted_price" class="text-danger mb-1">
-                                                    <span t-esc="product_data['product'].list_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
-                                                </div>
-                                                <div class="h5 mb-2">
-                                                    <span t-esc="product_data['product'].price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
-                                                </div>
-                                                <div t-if="product_data['product'].has_discounted_price" class="badge bg-danger">
-                                                    <t t-esc="((product_data['product'].list_price - product_data['product'].price) / product_data['product'].list_price * 100) // 1"/>% OFF
-                                                </div>
+                                                <t t-if="product_data['product'].discount_percentage > 0 or product_data['product'].fixed_discount > 0">
+                                                    <div class="text-decoration-line-through text-muted mb-1">
+                                                        <span t-esc="product_data['product'].list_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                                    </div>
+                                                    <div class="h5 mb-2 text-danger">
+                                                        <span t-esc="product_data['product'].discounted_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                                    </div>
+                                                    <div class="badge bg-danger">
+                                                        <t t-if="product_data['product'].discount_percentage > 0">
+                                                            <t t-esc="product_data['product'].discount_percentage"/>% OFF
+                                                        </t>
+                                                        <t t-else="">
+                                                            $<t t-esc="product_data['product'].fixed_discount"/> OFF
+                                                        </t>
+                                                    </div>
+                                                </t>
+                                                <t t-else="">
+                                                    <div class="h5 mb-2">
+                                                        <span t-esc="product_data['product'].list_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                                    </div>
+                                                </t>
                                             </div>
                                         </div>
                                     </div>
@@ -163,6 +239,92 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- JavaScript -->
+            <script type="text/javascript">
+                //<![CDATA[
+                function updateFilters() {
+                    const filters = {};
+                    
+                    const categorySelect = document.getElementById('category-select');
+                    if (categorySelect && categorySelect.value) {
+                        filters.category_id = categorySelect.value;
+                    }
+                    
+                    const subcategorySelect = document.getElementById('subcategory-select');
+                    if (subcategorySelect && subcategorySelect.value) {
+                        filters.subcategory_id = subcategorySelect.value;
+                    }
+                    
+                    const brandRadio = document.querySelector('input[name="brand"]:checked');
+                    if (brandRadio) {
+                        filters.brand_id = brandRadio.value;
+                    }
+                    
+                    const freeShipping = document.getElementById('free-shipping');
+                    if (freeShipping && freeShipping.checked) {
+                        filters.free_shipping = true;
+                    }
+                    
+                    const minPrice = document.getElementById('min-price');
+                    const maxPrice = document.getElementById('max-price');
+                    if (minPrice && minPrice.value) {
+                        filters.min_price = minPrice.value;
+                    }
+                    if (maxPrice && maxPrice.value) {
+                        filters.max_price = maxPrice.value;
+                    }
+                    
+                    const discountRadio = document.querySelector('input[name="discount"]:checked');
+                    if (discountRadio) {
+                        filters.discount_id = discountRadio.value;
+                    }
+                    
+                    const promotionRadio = document.querySelector('input[name="promotion"]:checked');
+                    if (promotionRadio) {
+                        filters.promotion_id = promotionRadio.value;
+                    }
+                    
+                    // Mantener ordenamiento actual
+                    const sortSelect = document.getElementById('sort-select');
+                    if (sortSelect && sortSelect.value) {
+                        filters.sort = sortSelect.value;
+                    }
+                    
+                    const urlParams = new URLSearchParams();
+                    Object.keys(filters).forEach(key => {
+                        if (filters[key]) {
+                            urlParams.append(key, filters[key]);
+                        }
+                    });
+                    
+                    const currentUrl = window.location.pathname;
+                    const newUrl = urlParams.toString() ? currentUrl + '?' + urlParams.toString() : currentUrl;
+                    window.location.href = newUrl;
+                }
+                
+                function updateSort() {
+                    updateFilters();
+                }
+                
+                document.addEventListener('DOMContentLoaded', function() {
+                    const categorySelect = document.getElementById('category-select');
+                    if (categorySelect) {
+                        categorySelect.addEventListener('change', function() {
+                            const categoryId = this.value;
+                            const subcategorySelect = document.getElementById('subcategory-select');
+                            
+                            if (categoryId) {
+                                subcategorySelect.style.display = 'block';
+                            } else {
+                                subcategorySelect.style.display = 'none';
+                                subcategorySelect.value = '';
+                            }
+                        });
+                    }
+                });
+                //]]>
+            </script>
         </t>
     </template>
 </odoo>
