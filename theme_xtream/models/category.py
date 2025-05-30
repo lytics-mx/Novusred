@@ -134,6 +134,12 @@ class CategoryController(http.Controller):
             brand_products = request.env['product.template'].sudo().search(brand_domain)
             available_brands = brand_products.mapped('brand_type_id').filtered(lambda b: b.name)
             
+            # Calcular contador de productos por marca
+            brand_counts = {}
+            for brand in available_brands:
+                brand_count = len(brand_products.filtered(lambda p: p.brand_type_id.id == brand.id))
+                brand_counts[brand.id] = brand_count
+            
             # Obtener tags de descuento SOLO de productos de la categoría seleccionada
             if category_id or subcategory_id:
                 # Obtener todos los tags de los productos de esta categoría
@@ -184,6 +190,7 @@ class CategoryController(http.Controller):
                 'selected_subcategory': selected_subcategory,
                 'selected_brand': selected_brand,
                 'available_brands': available_brands,
+                'brand_counts': brand_counts,  # Agregado contador de marcas
                 'products': products,
                 'period_products': period_products,
                 'product_count': product_count,
