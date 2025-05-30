@@ -22,14 +22,19 @@ class CategoryController(http.Controller):
                      discount_id=None, promotion_id=None, **kw):
             """
             Renderiza la página de subcategoría con filtros dinámicos.
-            Similar al controller de offers pero para categorías específicas.
+            SOLO productos publicados aparecerán en marcas, categorías, ofertas y rangos de precio.
             """
-            # Obtener todas las categorías principales
+            # Obtener todas las categorías principales QUE TENGAN PRODUCTOS PUBLICADOS
+            published_products_categories = request.env['product.template'].sudo().search([
+                ('website_published', '=', True)
+            ]).mapped('categ_id')
+            
             categories = request.env['product.category'].sudo().search([
-                ('parent_id', '=', False)
+                ('parent_id', '=', False),
+                ('id', 'in', published_products_categories.ids)
             ])
             
-            # Construir dominio base para productos publicados
+            # Construir dominio base SOLO para productos publicados
             domain = [('website_published', '=', True)]
             
             # Variables para la vista
@@ -44,10 +49,16 @@ class CategoryController(http.Controller):
                     category_id = int(category_id)
                     domain.append(('categ_id', 'child_of', category_id))
                     selected_category = request.env['product.category'].sudo().browse(category_id)
-                    # Buscar subcategorías que tengan esta categoría como padre
-                    subcategories = request.env['product.category'].sudo().search([
-                        ('parent_id', '=', category_id)
+                    
+                    # Buscar subcategorías QUE TENGAN PRODUCTOS PUBLICADOS
+                    category_published_products = request.env['product.template'].sudo().search([
+                        ('website_published', '=', True),
+                        ('categ_id', 'child_of', category_id)
                     ])
+                    subcategory_ids = category_published_products.mapped('categ_id').filtered(
+                        lambda c: c.parent_id.id == category_id
+                    )
+                    subcategories = subcategory_ids
                 except (ValueError, TypeError):
                     category_id = None
             
@@ -103,7 +114,7 @@ class CategoryController(http.Controller):
                 except (ValueError, TypeError):
                     promotion_id = None
             
-            # Obtener productos filtrados
+            # Obtener productos filtrados (SOLO PUBLICADOS)
             products = request.env['product.template'].sudo().search(domain)
             
             # Calcular precios con descuento (como en offers)
@@ -124,7 +135,7 @@ class CategoryController(http.Controller):
             
             product_count = len(products)
             
-            # Obtener marcas disponibles SOLO de los productos de la categoría/subcategoría seleccionada
+            # Obtener marcas disponibles SOLO de productos PUBLICADOS de la categoría/subcategoría seleccionada
             brand_domain = [('website_published', '=', True)]
             if category_id and not subcategory_id:
                 brand_domain.append(('categ_id', 'child_of', category_id))
@@ -134,15 +145,15 @@ class CategoryController(http.Controller):
             brand_products = request.env['product.template'].sudo().search(brand_domain)
             available_brands = brand_products.mapped('brand_type_id').filtered(lambda b: b.name)
             
-            # Calcular contador de productos por marca
+            # Calcular contador de productos PUBLICADOS por marca
             brand_counts = {}
             for brand in available_brands:
                 brand_count = len(brand_products.filtered(lambda p: p.brand_type_id.id == brand.id))
                 brand_counts[brand.id] = brand_count
             
-            # Obtener tags de descuento SOLO de productos de la categoría seleccionada
+            # Obtener tags de descuento SOLO de productos PUBLICADOS de la categoría seleccionada
             if category_id or subcategory_id:
-                # Obtener todos los tags de los productos de esta categoría
+                # Obtener todos los tags de los productos PUBLICADOS de esta categoría
                 category_products = request.env['product.template'].sudo().search(brand_domain)
                 all_category_tags = category_products.mapped('product_tag_ids')
                 
@@ -152,16 +163,14 @@ class CategoryController(http.Controller):
                 # Filtrar solo los tags que son de promoción
                 promotion_tags = all_category_tags.filtered(lambda t: not t.is_percentage)
             else:
-                # Si no hay categoría seleccionada, mostrar todos
-                discount_tags = request.env['product.tag'].sudo().search([
-                    ('is_percentage', '=', True),
-                    ('discount_percentage', '>', 0)
-                ])
-                promotion_tags = request.env['product.tag'].sudo().search([
-                    ('is_percentage', '=', False)
-                ])
+                # Si no hay categoría seleccionada, mostrar tags de TODOS los productos PUBLICADOS
+                all_published_products = request.env['product.template'].sudo().search([('website_published', '=', True)])
+                all_published_tags = all_published_products.mapped('product_tag_ids')
+                
+                discount_tags = all_published_tags.filtered(lambda t: t.is_percentage and t.discount_percentage > 0)
+                promotion_tags = all_published_tags.filtered(lambda t: not t.is_percentage)
             
-            # Calcular rangos de precios SOLO de productos de la categoría
+            # Calcular rangos de precios SOLO de productos PUBLICADOS de la categoría
             price_range_domain = brand_domain.copy()
             if free_shipping:
                 price_range_domain.append(('free_shipping', '=', True))
@@ -190,7 +199,7 @@ class CategoryController(http.Controller):
                 'selected_subcategory': selected_subcategory,
                 'selected_brand': selected_brand,
                 'available_brands': available_brands,
-                'brand_counts': brand_counts,  # Agregado contador de marcas
+                'brand_counts': brand_counts,
                 'products': products,
                 'period_products': period_products,
                 'product_count': product_count,
@@ -214,15 +223,21 @@ class CategoryController(http.Controller):
         @http.route('/category/get_subcategories', type='json', auth='public', website=True)
         def get_subcategories(self, category_id):
             try:
-                subcategories = request.env['product.category'].sudo().search([
-                    ('parent_id', '=', int(category_id))
+                # Solo mostrar subcategorías que tengan productos PUBLICADOS
+                published_products = request.env['product.template'].sudo().search([
+                    ('website_published', '=', True),
+                    ('categ_id', 'child_of', int(category_id))
                 ])
-                return [{'id': subcat.id, 'name': subcat.name} for subcat in subcategories]
+                subcategory_ids = published_products.mapped('categ_id').filtered(
+                    lambda c: c.parent_id.id == int(category_id)
+                )
+                return [{'id': subcat.id, 'name': subcat.name} for subcat in subcategory_ids]
             except (ValueError, TypeError):
                 return []
         
         @http.route('/category/get_brands', type='json', auth='public', website=True)
         def get_brands(self, category_id=None, subcategory_id=None):
+            # SOLO productos PUBLICADOS
             domain = [('website_published', '=', True)]
             try:
                 if subcategory_id:
@@ -235,6 +250,7 @@ class CategoryController(http.Controller):
                 
                 result = []
                 for brand in brands:
+                    # Contar solo productos PUBLICADOS
                     brand_count = len(products.filtered(lambda p: p.brand_type_id.id == brand.id))
                     result.append({
                         'id': brand.id,
