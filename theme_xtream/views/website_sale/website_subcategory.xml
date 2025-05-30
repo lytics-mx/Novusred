@@ -249,59 +249,59 @@
             <script type="text/javascript">
                 //<![CDATA[
                 function updateFilters() {
-                    const filters = {};
+                    console.log('updateFilters called');
                     
                     // Obtener filtros actuales de la URL
                     const urlParams = new URLSearchParams(window.location.search);
+                    console.log('Current URL params:', urlParams.toString());
                     
-                    // Mantener categoría y subcategoría siempre
-                    if (urlParams.get('category_id')) {
-                        filters.category_id = urlParams.get('category_id');
-                    }
-                    if (urlParams.get('subcategory_id')) {
-                        filters.subcategory_id = urlParams.get('subcategory_id');
-                    }
+                    // Crear objeto con filtros
+                    const filters = {};
                     
-                    // Mantener marca si está seleccionada
-                    if (urlParams.get('brand_id')) {
-                        filters.brand_id = urlParams.get('brand_id');
-                    }
+                    // Mantener categoría y subcategoría de la URL actual
+                    const currentCategoryId = urlParams.get('category_id');
+                    const currentSubcategoryId = urlParams.get('subcategory_id');
+                    const currentBrandId = urlParams.get('brand_id');
+                    const currentPriceRange = urlParams.get('price_range');
+                    const currentDiscountId = urlParams.get('discount_id');
+                    const currentPromotionId = urlParams.get('promotion_id');
+                    const currentSort = urlParams.get('sort');
                     
-                    // Mantener otros filtros activos
-                    if (urlParams.get('price_range')) {
-                        filters.price_range = urlParams.get('price_range');
-                    }
-                    if (urlParams.get('discount_id')) {
-                        filters.discount_id = urlParams.get('discount_id');
-                    }
-                    if (urlParams.get('promotion_id')) {
-                        filters.promotion_id = urlParams.get('promotion_id');
-                    }
-                    if (urlParams.get('sort')) {
-                        filters.sort = urlParams.get('sort');
-                    }
+                    if (currentCategoryId) filters.category_id = currentCategoryId;
+                    if (currentSubcategoryId) filters.subcategory_id = currentSubcategoryId;
+                    if (currentBrandId) filters.brand_id = currentBrandId;
+                    if (currentPriceRange) filters.price_range = currentPriceRange;
+                    if (currentDiscountId) filters.discount_id = currentDiscountId;
+                    if (currentPromotionId) filters.promotion_id = currentPromotionId;
+                    if (currentSort) filters.sort = currentSort;
                     
                     // Verificar estado del checkbox de envío gratis
-                    const freeShipping = document.getElementById('free-shipping');
-                    if (freeShipping) {
-                        if (freeShipping.checked) {
-                            filters.free_shipping = 'true';
-                        }
-                        // Si no está checked, NO agregamos el parámetro (se omite)
-                        // Esto significa que mostrará TODOS los productos
+                    const freeShippingCheckbox = document.getElementById('free-shipping');
+                    console.log('Free shipping checkbox found:', freeShippingCheckbox);
+                    console.log('Free shipping checked:', freeShippingCheckbox ? freeShippingCheckbox.checked : 'not found');
+                    
+                    if (freeShippingCheckbox && freeShippingCheckbox.checked) {
+                        filters.free_shipping = 'true';
+                        console.log('Setting free_shipping to true');
+                    } else {
+                        console.log('Not setting free_shipping (will show all products)');
                     }
                     
-                    // Verificar dropdown de subcategorías si existe
+                    // Verificar dropdown de subcategorías
                     const subcategorySelect = document.getElementById('subcategory-select');
                     if (subcategorySelect && subcategorySelect.value) {
                         filters.subcategory_id = subcategorySelect.value;
+                        console.log('Subcategory from dropdown:', subcategorySelect.value);
                     }
                     
                     // Verificar selector de ordenamiento
                     const sortSelect = document.getElementById('sort-select');
                     if (sortSelect && sortSelect.value && sortSelect.value !== 'relevance') {
                         filters.sort = sortSelect.value;
+                        console.log('Sort from dropdown:', sortSelect.value);
                     }
+                    
+                    console.log('Final filters object:', filters);
                     
                     // Construir nueva URL
                     const newUrlParams = new URLSearchParams();
@@ -311,16 +311,33 @@
                         }
                     });
                     
-                    const currentUrl = window.location.pathname;
-                    const newUrl = newUrlParams.toString() ? currentUrl + '?' + newUrlParams.toString() : currentUrl;
+                    const newUrl = '/subcategory' + (newUrlParams.toString() ? '?' + newUrlParams.toString() : '');
+                    console.log('Redirecting to:', newUrl);
+                    
                     window.location.href = newUrl;
                 }
                 
                 function updateSort() {
+                    console.log('updateSort called');
                     updateFilters();
                 }
                 
+                // Asegurar que el DOM esté cargado
                 document.addEventListener('DOMContentLoaded', function() {
+                    console.log('DOM loaded');
+                    
+                    // Verificar que el checkbox existe
+                    const freeShippingCheckbox = document.getElementById('free-shipping');
+                    console.log('Free shipping checkbox on load:', freeShippingCheckbox);
+                    
+                    if (freeShippingCheckbox) {
+                        freeShippingCheckbox.addEventListener('change', function() {
+                            console.log('Free shipping checkbox changed to:', this.checked);
+                            updateFilters();
+                        });
+                    }
+                    
+                    // Manejar categorías
                     const categorySelect = document.getElementById('category-select');
                     if (categorySelect) {
                         categorySelect.addEventListener('change', function() {
