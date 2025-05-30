@@ -75,7 +75,9 @@ class CategoryController(http.Controller):
         
         # Filtro por envío gratis
         if free_shipping:
-            domain.append(('free_shipping', '=', True))
+            # El parámetro llega como string, verificar si es 'true'
+            if str(free_shipping).lower() == 'true':
+                domain.append(('free_shipping', '=', True))
         
         # Filtro por rango de precios predefinidos
         if price_range:
