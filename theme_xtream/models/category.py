@@ -9,7 +9,7 @@ class CategoryController(http.Controller):
 
     @http.route('/subcategory', auth='public', website=True)
     def category(self, category_id=None, subcategory_id=None, brand_id=None, 
-                 free_shipping=None, min_price=None, max_price=None, 
+                 free_shipping=None, min_price=None, max_price=None, price_range=None,
                  discount_id=None, promotion_id=None, sort=None, **kw):
         """
         Renderiza la página de subcategoría con filtros dinámicos.
@@ -200,7 +200,44 @@ class CategoryController(http.Controller):
             '500_1000': len(range_products.filtered(lambda p: 500 < p.discounted_price <= 1000)),
             '1000_plus': len(range_products.filtered(lambda p: p.discounted_price > 1000)),
         }
+        # Filtro por rango de precios predefinidos
+        if price_range:
+            if price_range == '0_500':
+                domain.append(('discounted_price', '>', 0))
+                domain.append(('discounted_price', '<=', 500))
+            elif price_range == '500_1000':
+                domain.append(('discounted_price', '>', 500))
+                domain.append(('discounted_price', '<=', 1000))
+            elif price_range == '1000_plus':
+                domain.append(('discounted_price', '>', 1000))
         
+        # Filtro por rango de precios personalizado (mantener para compatibilidad)
+        if min_price:
+            try:
+                domain.append(('discounted_price', '>=', float(min_price)))
+            except (ValueError, TypeError):
+                min_price = None
+        if max_price:
+            try:
+                domain.append(('discounted_price', '<=', float(max_price)))
+            except (ValueError, TypeError):
+                max_price = None
+
+        discount_tag_counts = {}
+        promotion_tag_counts = {}
+        
+        if discount_tags:
+            for tag in discount_tags:
+                count = len(category_products.filtered(lambda p: tag in p.product_tag_ids))
+                discount_tag_counts[tag.id] = count
+                tag.product_count = count
+        
+        if promotion_tags:
+            for tag in promotion_tags:
+                count = len(category_products.filtered(lambda p: tag in p.product_tag_ids))
+                promotion_tag_counts[tag.id] = count
+                tag.product_count = count
+                
         values = {
             'categories': categories,
             'subcategories': subcategories,
@@ -222,6 +259,7 @@ class CategoryController(http.Controller):
                 'free_shipping': free_shipping,
                 'min_price': min_price,
                 'max_price': max_price,
+                'price_range': price_range,  # Agregar price_range
                 'discount_id': discount_id,
                 'promotion_id': promotion_id,
                 'sort': sort,

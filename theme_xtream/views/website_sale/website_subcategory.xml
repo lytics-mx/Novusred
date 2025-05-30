@@ -6,13 +6,18 @@
                     <div class="row">
                         <!-- Sidebar de Filtros -->
                         <div class="col-lg-3 col-md-4">
-                            <div class="filters-sidebar" style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
-                                <h4 style="margin-bottom: 20px; color: #333;">Filtros</h4>
-                                
+                            <div class="filters-sidebar" style="padding: 20px;">
+                                <!-- Product Count -->
+                                <div class="filter-section mb-4">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span><t t-esc="product_count"/> productos</span>
+                                    </div>
+                                </div>
+
                                 <!-- Categorías -->
                                 <div class="filter-section mb-4">
-                                    <h5 style="color: #555; margin-bottom: 15px;">Categorías</h5>
-                                    <select id="category-select" class="form-select mb-2" onchange="updateFilters()">
+                                    <h6 class="mb-2">Categoría</h6>
+                                    <select id="category-select" class="form-select form-select-sm mb-2" onchange="updateFilters()">
                                         <option value="">Todas las categorías</option>
                                         <t t-foreach="categories" t-as="category" t-key="category.id">
                                             <option t-att-value="category.id" 
@@ -23,8 +28,8 @@
                                     </select>
                                     
                                     <!-- Subcategorías -->
-                                    <select id="subcategory-select" class="form-select" onchange="updateFilters()" 
-                                            t-att-style="'display: none' if not subcategories else ''">
+                                    <select id="subcategory-select" class="form-select form-select-sm" onchange="updateFilters()" 
+                                            t-att-style="'display: block' if subcategories else 'display: none'">
                                         <option value="">Todas las subcategorías</option>
                                         <t t-foreach="subcategories" t-as="subcategory" t-key="subcategory.id">
                                             <option t-att-value="subcategory.id"
@@ -34,86 +39,100 @@
                                         </t>
                                     </select>
                                 </div>
-                                
-                                <!-- Marcas -->
+
+                                <!-- Free Shipping Toggle -->
                                 <div class="filter-section mb-4">
-                                    <h5 style="color: #555; margin-bottom: 15px;">Marcas</h5>
-                                    <div id="brands-container">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span>Envío gratis</span>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="free-shipping" 
+                                                   t-att-checked="'checked' if current_filters.get('free_shipping') else ''"
+                                                   onchange="updateFilters()"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Brands (Marca) -->
+                                <div class="filter-section mb-4">
+                                    <h6 class="mb-2">Marca</h6>
+                                    <div class="brands-list">
                                         <t t-foreach="available_brands" t-as="brand" t-key="brand.id">
-                                            <div class="form-check mb-2">
+                                            <div class="form-check mb-1">
                                                 <input class="form-check-input" type="radio" name="brand" 
                                                        t-att-value="brand.id" t-att-id="'brand_' + str(brand.id)"
                                                        t-att-checked="'checked' if current_filters.get('brand_id') == brand.id else ''"
                                                        onchange="updateFilters()"/>
-                                                <label class="form-check-label" t-att-for="'brand_' + str(brand.id)">
+                                                <label class="form-check-label small" t-att-for="'brand_' + str(brand.id)">
                                                     <t t-esc="brand.name"/>
-                                                    <small class="text-muted">(<t t-esc="brand_counts.get(brand.id, 0)"/>)</small>
+                                                    (<t t-esc="brand_counts.get(brand.id, 0)"/>)
                                                 </label>
                                             </div>
                                         </t>
+                                        <a href="#" class="small">Ver todos</a>
                                     </div>
                                 </div>
-                                
-                                <!-- Envío Gratis -->
+
+                                <!-- Price Range -->
                                 <div class="filter-section mb-4">
-                                    <h5 style="color: #555; margin-bottom: 15px;">Envío</h5>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="free-shipping" 
-                                               t-att-checked="'checked' if current_filters.get('free_shipping') else ''"
-                                               onchange="updateFilters()"/>
-                                        <label class="form-check-label" for="free-shipping">
-                                            Envío gratis
-                                        </label>
+                                    <h6 class="mb-2">Precio</h6>
+                                    <div class="price-options">
+                                        <div class="form-check mb-1">
+                                            <input type="radio" class="form-check-input" name="price_range" value="0_500" id="price1"
+                                                   t-att-checked="'checked' if current_filters.get('price_range') == '0_500' else ''"
+                                                   onchange="updateFilters()"/>
+                                            <label class="form-check-label small" for="price1">
+                                                Hasta $500 (<t t-esc="price_ranges.get('0_500', 0)"/>)
+                                            </label>
+                                        </div>
+                                        <div class="form-check mb-1">
+                                            <input type="radio" class="form-check-input" name="price_range" value="500_1000" id="price2"
+                                                   t-att-checked="'checked' if current_filters.get('price_range') == '500_1000' else ''"
+                                                   onchange="updateFilters()"/>
+                                            <label class="form-check-label small" for="price2">
+                                                De $500 a $1000 (<t t-esc="price_ranges.get('500_1000', 0)"/>)
+                                            </label>
+                                        </div>
+                                        <div class="form-check mb-1">
+                                            <input type="radio" class="form-check-input" name="price_range" value="1000_plus" id="price3"
+                                                   t-att-checked="'checked' if current_filters.get('price_range') == '1000_plus' else ''"
+                                                   onchange="updateFilters()"/>
+                                            <label class="form-check-label small" for="price3">
+                                                Más de $1000 (<t t-esc="price_ranges.get('1000_plus', 0)"/>)
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
-                                
-                                <!-- Rango de Precios -->
-                                <div class="filter-section mb-4">
-                                    <h5 style="color: #555; margin-bottom: 15px;">Precio</h5>
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <input type="number" id="min-price" class="form-control" placeholder="Mín" 
-                                                   t-att-value="current_filters.get('min_price', '')"
-                                                   onchange="updateFilters()"/>
-                                        </div>
-                                        <div class="col-6">
-                                            <input type="number" id="max-price" class="form-control" placeholder="Máx" 
-                                                   t-att-value="current_filters.get('max_price', '')"
-                                                   onchange="updateFilters()"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Descuentos -->
+
+                                <!-- Discounts -->
                                 <div class="filter-section mb-4" t-if="discount_tags">
-                                    <h5 style="color: #555; margin-bottom: 15px;">Descuentos</h5>
-                                    <div id="discounts-container">
+                                    <h6 class="mb-2">Descuentos</h6>
+                                    <div class="discount-options">
                                         <t t-foreach="discount_tags" t-as="tag" t-key="tag.id">
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input" type="radio" name="discount" 
-                                                       t-att-value="tag.id" t-att-id="'discount_' + str(tag.id)"
+                                            <div class="form-check mb-1">
+                                                <input type="radio" class="form-check-input" name="discount" 
+                                                       t-att-value="tag.id" t-att-id="'disc' + str(tag.id)"
                                                        t-att-checked="'checked' if current_filters.get('discount_id') == tag.id else ''"
                                                        onchange="updateFilters()"/>
-                                                <label class="form-check-label" t-att-for="'discount_' + str(tag.id)">
-                                                    <t t-esc="tag.name"/> - <t t-esc="tag.discount_percentage"/>% OFF
+                                                <label class="form-check-label small" t-att-for="'disc' + str(tag.id)">
+                                                    <t t-esc="tag.name"/> - <t t-esc="tag.discount_percentage"/>% OFF (<t t-esc="tag.product_count or 0"/>)
                                                 </label>
                                             </div>
                                         </t>
                                     </div>
                                 </div>
-                                
-                                <!-- Promociones -->
+
+                                <!-- Promotion Type -->
                                 <div class="filter-section mb-4" t-if="promotion_tags">
-                                    <h5 style="color: #555; margin-bottom: 15px;">Promociones</h5>
-                                    <div id="promotions-container">
+                                    <h6 class="mb-2">Tipo de promoción</h6>
+                                    <div class="promotion-options">
                                         <t t-foreach="promotion_tags" t-as="tag" t-key="tag.id">
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input" type="radio" name="promotion" 
-                                                       t-att-value="tag.id" t-att-id="'promotion_' + str(tag.id)"
+                                            <div class="form-check mb-1">
+                                                <input type="radio" class="form-check-input" name="promotion" 
+                                                       t-att-value="tag.id" t-att-id="'promo' + str(tag.id)"
                                                        t-att-checked="'checked' if current_filters.get('promotion_id') == tag.id else ''"
                                                        onchange="updateFilters()"/>
-                                                <label class="form-check-label" t-att-for="'promotion_' + str(tag.id)">
-                                                    <t t-esc="tag.name"/>
+                                                <label class="form-check-label small" t-att-for="'promo' + str(tag.id)">
+                                                    <t t-esc="tag.name"/> (<t t-esc="tag.product_count or 0"/>)
                                                 </label>
                                             </div>
                                         </t>
@@ -266,13 +285,10 @@
                         filters.free_shipping = true;
                     }
                     
-                    const minPrice = document.getElementById('min-price');
-                    const maxPrice = document.getElementById('max-price');
-                    if (minPrice && minPrice.value) {
-                        filters.min_price = minPrice.value;
-                    }
-                    if (maxPrice && maxPrice.value) {
-                        filters.max_price = maxPrice.value;
+                    // Rangos de precio
+                    const priceRangeRadio = document.querySelector('input[name="price_range"]:checked');
+                    if (priceRangeRadio) {
+                        filters.price_range = priceRangeRadio.value;
                     }
                     
                     const discountRadio = document.querySelector('input[name="discount"]:checked');
