@@ -233,13 +233,11 @@ class CategoryController(http.Controller):
             for tag in discount_tags:
                 count = len(category_products.filtered(lambda p: tag in p.product_tag_ids))
                 discount_tag_counts[tag.id] = count
-                tag.product_count = count
         
         if promotion_tags:
             for tag in promotion_tags:
                 count = len(category_products.filtered(lambda p: tag in p.product_tag_ids))
                 promotion_tag_counts[tag.id] = count
-                tag.product_count = count
                 
         values = {
             'categories': categories,
