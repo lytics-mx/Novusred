@@ -132,7 +132,55 @@
                         </div>
                         
                         <div class="col-lg-9 col-md-8">
-                        
+                            <!-- Header con breadcrumb y ordenamiento -->
+                            <div class="products-header mb-4">
+                                <div class="row align-items-center">
+                                    <!-- Breadcrumb -->
+                                    <div class="col-md-8">
+                                        <nav aria-label="breadcrumb">
+                                            <ol class="breadcrumb mb-0">
+                                                <li class="breadcrumb-item">
+                                                    <a href="/subcategory">Todas las categorías</a>
+                                                </li>
+                                                <t t-if="selected_category">
+                                                    <li class="breadcrumb-item">
+                                                        <a t-att-href="'/subcategory?category_id=' + str(selected_category.id)">
+                                                            <t t-esc="selected_category.name"/>
+                                                        </a>
+                                                    </li>
+                                                </t>
+                                                <t t-if="selected_subcategory">
+                                                    <li class="breadcrumb-item active" aria-current="page">
+                                                        <t t-esc="selected_subcategory.name"/>
+                                                    </li>
+                                                </t>
+                                                <t t-if="selected_brand">
+                                                    <li class="breadcrumb-item active" aria-current="page">
+                                                        <t t-esc="selected_brand.name"/>
+                                                    </li>
+                                                </t>
+                                            </ol>
+                                        </nav>
+                                    </div>
+                                    
+                                    <!-- Ordenamiento -->
+                                    <div class="col-md-4 text-end">
+                                        <div class="d-flex align-items-center justify-content-end">
+                                            <label for="sort-select" class="form-label me-2 mb-0 small">Ordenar por:</label>
+                                            <select id="sort-select" class="form-select form-select-sm" style="width: auto;" onchange="updateSort()">
+                                                <option value="relevance" t-att-selected="'selected' if current_filters.get('sort') == 'relevance' or not current_filters.get('sort') else ''">Más relevante</option>
+                                                <option value="newest" t-att-selected="'selected' if current_filters.get('sort') == 'newest' else ''">Más reciente</option>
+                                                <option value="best_sellers" t-att-selected="'selected' if current_filters.get('sort') == 'best_sellers' else ''">Más vendidos</option>
+                                                <option value="offers" t-att-selected="'selected' if current_filters.get('sort') == 'offers' else ''">Ofertas</option>
+                                                <option value="price_low" t-att-selected="'selected' if current_filters.get('sort') == 'price_low' else ''">Precio: menor a mayor</option>
+                                                <option value="price_high" t-att-selected="'selected' if current_filters.get('sort') == 'price_high' else ''">Precio: mayor a menor</option>
+                                                <option value="alphabetical" t-att-selected="'selected' if current_filters.get('sort') == 'alphabetical' else ''">A-Z</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         <!-- Área de Productos -->
                             <div class="products-list">
                                 <t t-foreach="period_products" t-as="product_data" t-key="product_data['product'].id">
@@ -204,6 +252,12 @@
                         filters.free_shipping = true;
                     }
                     
+                    // Mantener ordenamiento actual
+                    const sortSelect = document.getElementById('sort-select');
+                    if (sortSelect && sortSelect.value) {
+                        filters.sort = sortSelect.value;
+                    }
+                    
                     const urlParams = new URLSearchParams();
                     Object.keys(filters).forEach(key => {
                         if (filters[key]) {
@@ -214,6 +268,10 @@
                     const currentUrl = window.location.pathname;
                     const newUrl = urlParams.toString() ? currentUrl + '?' + urlParams.toString() : currentUrl;
                     window.location.href = newUrl;
+                }
+                
+                function updateSort() {
+                    updateFilters(); // Reutilizar la función existente
                 }
                 
                 document.addEventListener('DOMContentLoaded', function() {
