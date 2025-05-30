@@ -127,10 +127,36 @@
                                 </div>
                             </div>
                             
-                            <!-- Grid de productos -->
-                            <div class="products-grid">
+                            <!-- Lista de productos -->
+                            <div class="products-list">
                                 <t t-foreach="period_products" t-as="product_data" t-key="product_data['product'].id">
-                                    <!-- Aquí va el template de cada producto -->
+                                    <div class="product-list-item mb-3 p-3" style="border: 1px solid #dee2e6; border-radius: 8px;">
+                                        <div class="row align-items-center">
+                                            <!-- Imagen del producto -->
+                                            <div class="col-3">
+                                                <img t-att-src="'/web/image/product.template/%s/image_1024' % product_data['product'].id" 
+                                                     class="img-fluid" alt="Product Image" style="max-height: 150px; object-fit: contain;"/>
+                                            </div>
+                                            <!-- Detalles del producto -->
+                                            <div class="col-6">
+                                                <h5 class="mb-2" t-field="product_data['product'].name"/>
+                                                <p class="text-muted mb-2" t-field="product_data['product'].description_sale"/>
+                                                <div class="text-success" t-if="product_data['product'].is_free_shipping">Envío gratis</div>
+                                            </div>
+                                            <!-- Precio y descuento -->
+                                            <div class="col-3 text-end">
+                                                <div t-if="product_data['product'].has_discounted_price" class="text-danger mb-1">
+                                                    <span t-esc="product_data['product'].list_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                                </div>
+                                                <div class="h5 mb-2">
+                                                    <span t-esc="product_data['product'].price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                                </div>
+                                                <div t-if="product_data['product'].has_discounted_price" class="badge bg-danger">
+                                                    <t t-esc="((product_data['product'].list_price - product_data['product'].price) / product_data['product'].list_price * 100) // 1"/>% OFF
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </t>
                             </div>
                         </div>
