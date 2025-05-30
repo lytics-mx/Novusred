@@ -188,7 +188,9 @@ class CategoryController(http.Controller):
         
         # Calcular rangos de precios
         price_range_domain = brand_domain.copy()
-        if free_shipping:
+        # NO agregar el filtro de free_shipping aquí automáticamente
+        # Solo agregarlo si está activo (true)
+        if free_shipping and str(free_shipping).lower() == 'true':
             price_range_domain.append(('free_shipping', '=', True))
         
         range_products = request.env['product.template'].sudo().search(price_range_domain)

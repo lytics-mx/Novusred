@@ -59,7 +59,7 @@
                                         <span style="color: #6c757d">Envío gratis</span>
                                         <div class="form-check form-switch">
                                             <input class="form-check-input" type="checkbox" id="free-shipping" 
-                                                   t-att-checked="'checked' if current_filters.get('free_shipping') else ''"
+                                                   t-att-checked="'checked' if str(current_filters.get('free_shipping', '')).lower() == 'true' else ''"
                                                    onchange="updateFilters()"
                                                    style="cursor: pointer"/>
                                         </div>
@@ -286,9 +286,9 @@
                     if (freeShipping) {
                         if (freeShipping.checked) {
                             filters.free_shipping = 'true';
-                        } else {
-                            filters.free_shipping = 'false'; // Enviar false explícitamente
                         }
+                        // Si no está checked, NO agregamos el parámetro (se omite)
+                        // Esto significa que mostrará TODOS los productos
                     }
                     
                     // Verificar dropdown de subcategorías si existe
@@ -317,7 +317,7 @@
                 }
                 
                 function updateSort() {
-                    updateFilters(); // Reutilizar la función existente
+                    updateFilters();
                 }
                 
                 document.addEventListener('DOMContentLoaded', function() {
