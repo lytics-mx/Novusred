@@ -625,103 +625,67 @@
                                                                     Computadoras Y Accesorios
                                                                 </h3>
                                                                 <div class="row justify-content-center" style="font-size: 14px;">
-                                                                    <!-- Todos -->
+                                                                    <!-- Desktop columns remain unchanged -->
                                                                     <div class="col-md-3 mb-4">
                                                                         <span style="font-weight: bold;">Todos</span>
                                                                         <ul style="list-style: none; padding-left: 0;">
-                                                                            <t t-set="all_published_subcats" t-value="request.env['product.template'].sudo().search([('website_published', '=', True)]).mapped('categ_id').filtered(lambda c: c.parent_id)"/>
-                                                                            <t t-foreach="all_published_subcats[:18]" t-as="subcat">
+                                                                            <t t-set="all_subcats" t-value="request.env['product.category'].sudo().search([('parent_id','!=',False)], limit=18)"/>
+                                                                            <t t-foreach="all_subcats" t-as="subcat">
                                                                                 <li>
-                                                                                    <a t-att-href="'/subcategory?subcategory_id=' + str(subcat.id)" 
-                                                                                       class="text-decoration-none text-dark">
+                                                                                    <a t-att-href="'/subcategory?subcategory_id=' + str(subcat.id)" class="text-decoration-none text-dark">
                                                                                         <t t-esc="subcat.name"/>
                                                                                     </a>
                                                                                 </li>
                                                                             </t>
                                                                         </ul>
                                                                     </div>
-                                                                    
-                                                                    <!-- Control de Acceso -->
                                                                     <div class="col-md-3 mb-4">
-                                                                        <t t-set="control_acceso" t-value="request.env['product.category'].sudo().search([('name','=','Control de Acceso')], limit=1)"/>
-                                                                        <t t-if="control_acceso">
-                                                                            <t t-set="control_published_products" t-value="request.env['product.template'].sudo().search([('website_published', '=', True), ('categ_id', 'child_of', control_acceso.id)])"/>
-                                                                            <t t-if="control_published_products">
-                                                                                <span style="font-weight: bold;">
-                                                                                    <a t-att-href="'/subcategory?category_id=' + str(control_acceso.id)" 
-                                                                                       class="text-decoration-none text-dark fw-bold">
-                                                                                        Control de Acceso
-                                                                                    </a>
-                                                                                </span>
-                                                                                <ul style="list-style: none; padding-left: 0;">
-                                                                                    <t t-set="control_published_subcats" t-value="control_published_products.mapped('categ_id').filtered(lambda c: c.parent_id.id == control_acceso.id)"/>
-                                                                                    <t t-foreach="control_published_subcats" t-as="subcat">
-                                                                                        <li>
-                                                                                            <a t-att-href="'/subcategory?category_id=' + str(control_acceso.id) + '&amp;subcategory_id=' + str(subcat.id)" 
-                                                                                               class="text-decoration-none text-dark">
-                                                                                                <t t-esc="subcat.name"/>
-                                                                                            </a>
-                                                                                        </li>
-                                                                                    </t>
-                                                                                </ul>
+                                                                        <span style="font-weight: bold;">Control de Acceso</span>
+                                                                        <ul style="list-style: none; padding-left: 0;">
+                                                                            <t t-set="control_acceso" t-value="request.env['product.category'].sudo().search([('name','=','Control de Acceso')], limit=1)"/>
+                                                                            <t t-if="control_acceso">
+                                                                                <t t-foreach="control_acceso.child_id" t-as="subcat">
+                                                                                    <li>
+                                                                                        <a t-att-href="'/subcategory?category_id=' + str(control_acceso.id) + '&amp;subcategory_id=' + str(subcat.id)" class="text-decoration-none text-dark">
+                                                                                            <t t-esc="subcat.name"/>
+                                                                                        </a>
+                                                                                    </li>
+                                                                                </t>
                                                                             </t>
-                                                                        </t>
+                                                                        </ul>
                                                                     </div>
-                                                                    
-                                                                    <!-- Saleable -->
-                                                                    <div class="col-md-3 col-12 mb-4">
+                                                                <!-- Saleable -->
+                                                                <div class="col-md-3 col-12 mb-4">
+                                                                    <span style="font-weight: bold;">Saleable</span>
+                                                                    <ul style="list-style: none; padding-left: 0;">
                                                                         <t t-set="saleable" t-value="request.env['product.category'].sudo().search([('name','=','Saleable')], limit=1)"/>
                                                                         <t t-if="saleable">
-                                                                            <t t-set="saleable_published_products" t-value="request.env['product.template'].sudo().search([('website_published', '=', True), ('categ_id', 'child_of', saleable.id)])"/>
-                                                                            <t t-if="saleable_published_products">
-                                                                                <span style="font-weight: bold;">
-                                                                                    <a t-att-href="'/subcategory?category_id=' + str(saleable.id)" 
-                                                                                       class="text-decoration-none text-dark fw-bold">
-                                                                                        Saleable
+                                                                            <t t-foreach="saleable.child_id" t-as="subcat">
+                                                                                <li>
+                                                                                    <a t-att-href="'/subcategory?category_id=' + str(saleable.id) + '&amp;subcategory_id=' + str(subcat.id)" class="text-decoration-none text-dark">
+                                                                                        <t t-esc="subcat.name"/>
                                                                                     </a>
-                                                                                </span>
-                                                                                <ul style="list-style: none; padding-left: 0;">
-                                                                                    <t t-set="saleable_published_subcats" t-value="saleable_published_products.mapped('categ_id').filtered(lambda c: c.parent_id.id == saleable.id)"/>
-                                                                                    <t t-foreach="saleable_published_subcats" t-as="subcat">
-                                                                                        <li>
-                                                                                            <a t-att-href="'/subcategory?category_id=' + str(saleable.id) + '&amp;subcategory_id=' + str(subcat.id)" 
-                                                                                               class="text-decoration-none text-dark">
-                                                                                                <t t-esc="subcat.name"/>
-                                                                                            </a>
-                                                                                        </li>
-                                                                                    </t>
-                                                                                </ul>
+                                                                                </li>
                                                                             </t>
                                                                         </t>
-                                                                    </div>
-                                                                    
-                                                                    <!-- Videovigilancia -->
-                                                                    <div class="col-md-3 col-12 mb-4">
+                                                                    </ul>
+                                                                </div>
+                                                                <!-- Videovigilancia -->
+                                                                <div class="col-md-3 col-12 mb-4">
+                                                                    <span style="font-weight: bold;">Videovigilancia</span>
+                                                                    <ul style="list-style: none; padding-left: 0;">
                                                                         <t t-set="videovigilancia" t-value="request.env['product.category'].sudo().search([('name','=','Videovigilancia')], limit=1)"/>
                                                                         <t t-if="videovigilancia">
-                                                                            <t t-set="video_published_products" t-value="request.env['product.template'].sudo().search([('website_published', '=', True), ('categ_id', 'child_of', videovigilancia.id)])"/>
-                                                                            <t t-if="video_published_products">
-                                                                                <span style="font-weight: bold;">
-                                                                                    <a t-att-href="'/subcategory?category_id=' + str(videovigilancia.id)" 
-                                                                                       class="text-decoration-none text-dark fw-bold">
-                                                                                        Videovigilancia
+                                                                            <t t-foreach="videovigilancia.child_id" t-as="subcat">
+                                                                                <li>
+                                                                                    <a t-att-href="'/subcategory?category_id=' + str(videovigilancia.id) + '&amp;subcategory_id=' + str(subcat.id)" class="text-decoration-none text-dark">
+                                                                                        <t t-esc="subcat.name"/>
                                                                                     </a>
-                                                                                </span>
-                                                                                <ul style="list-style: none; padding-left: 0;">
-                                                                                    <t t-set="video_published_subcats" t-value="video_published_products.mapped('categ_id').filtered(lambda c: c.parent_id.id == videovigilancia.id)"/>
-                                                                                    <t t-foreach="video_published_subcats" t-as="subcat">
-                                                                                        <li>
-                                                                                            <a t-att-href="'/subcategory?category_id=' + str(videovigilancia.id) + '&amp;subcategory_id=' + str(subcat.id)" 
-                                                                                               class="text-decoration-none text-dark">
-                                                                                                <t t-esc="subcat.name"/>
-                                                                                            </a>
-                                                                                        </li>
-                                                                                    </t>
-                                                                                </ul>
+                                                                                </li>
                                                                             </t>
                                                                         </t>
-                                                                    </div>
-                                                                </div>
+                                                                    </ul>
+                                                                </div>                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
