@@ -104,18 +104,17 @@
                                 </div>
 
                                 <!-- Discounts -->
+                                <!-- Discounts -->
                                 <div class="filter-section mb-4" t-if="discount_tags">
                                     <h6 class="mb-2">Descuentos</h6>
                                     <div class="discount-options">
                                         <t t-foreach="discount_tags" t-as="tag" t-key="tag.id">
-                                            <div class="form-check mb-1">
-                                                <input type="radio" class="form-check-input" name="discount" 
-                                                       t-att-value="tag.id" t-att-id="'disc' + str(tag.id)"
-                                                       t-att-checked="'checked' if current_filters.get('discount_id') == tag.id else ''"
-                                                       onchange="updateFilters()"/>
-                                                <label class="form-check-label small" t-att-for="'disc' + str(tag.id)">
-                                                    <t t-esc="tag.name"/> - <t t-esc="tag.discount_percentage"/>% OFF (<t t-esc="tag.product_count or 0"/>)
-                                                </label>
+                                            <div class="mb-1">
+                                                <a t-att-href="'/subcategory?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('brand_id') and ('brand_id=' + str(current_filters.get('brand_id')) + '&amp;') or '') + 'discount_id=' + str(tag.id)" 
+                                                   class="text-decoration-none small"
+                                                   t-att-style="'color: #007bff; font-weight: bold;' if current_filters.get('discount_id') == tag.id else 'color: #6c757d;'">
+                                                    <t t-esc="tag.name"/> - <t t-esc="tag.discount_percentage"/>% OFF (<t t-esc="discount_tag_counts.get(tag.id, 0)"/>)
+                                                </a>
                                             </div>
                                         </t>
                                     </div>
@@ -126,14 +125,12 @@
                                     <h6 class="mb-2">Tipo de promoción</h6>
                                     <div class="promotion-options">
                                         <t t-foreach="promotion_tags" t-as="tag" t-key="tag.id">
-                                            <div class="form-check mb-1">
-                                                <input type="radio" class="form-check-input" name="promotion" 
-                                                       t-att-value="tag.id" t-att-id="'promo' + str(tag.id)"
-                                                       t-att-checked="'checked' if current_filters.get('promotion_id') == tag.id else ''"
-                                                       onchange="updateFilters()"/>
-                                                <label class="form-check-label small" t-att-for="'promo' + str(tag.id)">
-                                                    <t t-esc="tag.name"/> (<t t-esc="tag.product_count or 0"/>)
-                                                </label>
+                                            <div class="mb-1">
+                                                <a t-att-href="'/subcategory?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('brand_id') and ('brand_id=' + str(current_filters.get('brand_id')) + '&amp;') or '') + 'promotion_id=' + str(tag.id)" 
+                                                   class="text-decoration-none small"
+                                                   t-att-style="'color: #007bff; font-weight: bold;' if current_filters.get('promotion_id') == tag.id else 'color: #6c757d;'">
+                                                    <t t-esc="tag.name"/> (<t t-esc="promotion_tag_counts.get(tag.id, 0)"/>)
+                                                </a>
                                             </div>
                                         </t>
                                     </div>
