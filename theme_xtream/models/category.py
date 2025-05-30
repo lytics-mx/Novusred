@@ -207,13 +207,16 @@ class CategoryController(http.Controller):
         }
         
         # AGREGAR PRODUCT_COUNT A LOS TAGS
+        discount_tag_counts = {}
+        promotion_tag_counts = {}
+        
         for tag in discount_tags:
             count = len(category_products.filtered(lambda p: tag in p.product_tag_ids))
-            tag.product_count = count
+            discount_tag_counts[tag.id] = count
         
         for tag in promotion_tags:
             count = len(category_products.filtered(lambda p: tag in p.product_tag_ids))
-            tag.product_count = count
+            promotion_tag_counts[tag.id] = count
         
         values = {
             'categories': categories,
@@ -228,6 +231,8 @@ class CategoryController(http.Controller):
             'product_count': product_count,
             'discount_tags': discount_tags,
             'promotion_tags': promotion_tags,
+            'discount_tag_counts': discount_tag_counts,  # Agregar diccionario
+            'promotion_tag_counts': promotion_tag_counts,  # Agregar diccionario
             'price_ranges': price_ranges,
             'current_filters': {
                 'category_id': category_id,
