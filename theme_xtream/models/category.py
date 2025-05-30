@@ -226,6 +226,9 @@ class CategoryController(http.Controller):
         discount_tag_counts = {}
         promotion_tag_counts = {}
         
+        # Initialize category_products before using it
+        category_products = request.env['product.template'].sudo().search(brand_domain)
+        
         if discount_tags:
             for tag in discount_tags:
                 count = len(category_products.filtered(lambda p: tag in p.product_tag_ids))
