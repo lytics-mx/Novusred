@@ -277,18 +277,13 @@
                                 <div class="mb-3">
                                     <h6 style="font-size: 14px; color: #333; margin-bottom: 8px; font-family: 'Questrial', sans-serif;">Tipos de oferta</h6>
                                     <div class="d-flex flex-wrap gap-2">
-                                        <a t-att-href="'/shop/category/all?offers=true&amp;type=day%s' % ('&amp;free_shipping=true' if free_shipping else '')" 
-                                           class="btn btn-sm btn-outline-secondary" style="font-size: 12px; padding: 4px 8px; font-family: 'Questrial', sans-serif;">
-                                            Oferta del día
-                                        </a>
-                                        <a t-att-href="'/shop/category/all?offers=true&amp;type=flash%s' % ('&amp;free_shipping=true' if free_shipping else '')" 
-                                           class="btn btn-sm btn-outline-secondary" style="font-size: 12px; padding: 4px 8px; font-family: 'Questrial', sans-serif;">
-                                            Oferta relámpago
-                                        </a>
-                                        <a t-att-href="'/shop/category/all?offers=true&amp;type=current%s' % ('&amp;free_shipping=true' if free_shipping else '')" 
-                                           class="btn btn-sm btn-outline-secondary" style="font-size: 12px; padding: 4px 8px; font-family: 'Questrial', sans-serif;">
-                                            Ofertas activas
-                                        </a>
+                                        <t t-foreach="tags_with_discount" t-as="tag">
+                                            <a t-att-href="'/offers?tag_id=%s%s' % (tag.id, '&amp;free_shipping=true' if free_shipping else '')"
+                                               class="btn btn-sm btn-outline-secondary"
+                                               style="font-size: 12px; padding: 4px 8px; font-family: 'Questrial', sans-serif;">
+                                                <t t-esc="tag.name"/>
+                                            </a>
+                                        </t>
                                     </div>
                                 </div>
                                 

@@ -203,6 +203,20 @@ class OffersController(http.Controller):
         all_total_products = request.env['product.template'].sudo().search(total_domain)
         total_products_with_discount = all_total_products.filtered(lambda p: p.list_price > p.discounted_price)
         
+        # Obtener tags con al menos un producto con discount_percentage > 0
+        ProductTag = request.env['product.tag'].sudo()
+        tags_with_discount = []
+        for tag in ProductTag.search([('visible_on_ecommerce', '=', True)]):
+            # Busca productos con este tag y descuento real
+            prods = request.env['product.template'].sudo().search([
+                ('website_published', '=', True),
+                ('product_tag_ids', 'in', tag.id),
+                ('discount_percentage', '>', 0)
+            ])
+            if prods:
+                tags_with_discount.append(tag)
+
+
         return request.render('theme_xtream.offers_template', {
             'discounted_products': filtered_products,
             'categories_with_count': categories_with_count,
@@ -212,6 +226,7 @@ class OffersController(http.Controller):
             'oferta_relampago': oferta_relampago,
             'all_categories': main_categories,
             'free_shipping': free_shipping,
+            'tags_with_discount': tags_with_discount,
             'product_tags': product_tags,
             'selected_tag_id': tag_id,  # Para mostrar cuál tag está seleccionado
 
@@ -395,7 +410,18 @@ class OffersController(http.Controller):
         # Calcular total correcto
         all_total_products = request.env['product.template'].sudo().search(total_domain)
         total_products_with_discount = all_total_products.filtered(lambda p: p.list_price > p.discounted_price)
-    
+        ProductTag = request.env['product.tag'].sudo()
+        tags_with_discount = []
+        for tag in ProductTag.search([('visible_on_ecommerce', '=', True)]):
+            # Busca productos con este tag y descuento real
+            prods = request.env['product.template'].sudo().search([
+                ('website_published', '=', True),
+                ('product_tag_ids', 'in', tag.id),
+                ('discount_percentage', '>', 0)
+            ])
+            if prods:
+                tags_with_discount.append(tag)    
+                
         return request.render('theme_xtream.offers_template', {
             'discounted_products': products,
             'current_category': category,
@@ -407,4 +433,6 @@ class OffersController(http.Controller):
             'categories_with_count': categories_with_count,
             'all_categories': main_categories,
             'product_tags': product_tags,
+            'tags_with_discount': tags_with_discount,
+
         })
