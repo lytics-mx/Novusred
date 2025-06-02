@@ -258,38 +258,47 @@ class CategoryController(http.Controller):
         discount_ranges = [5, 10, 15, 20, 25, 30, 40, 50]
         discount_tags = []
         discount_tag_counts = {}
+        discount_tag_counts_general = {}
         
         for percent in discount_ranges:
-            # Solo cuenta productos con exactamente ese porcentaje de descuento
-            count = request.env['product.template'].sudo().search_count([
+            # Con filtros actuales
+            domain_with_filters = domain.copy()
+            domain_with_filters.append(('discount_percentage', '=', percent))
+            count = request.env['product.template'].sudo().search_count(domain_with_filters)
+            # Sin filtros (solo descuento)
+            count_general = request.env['product.template'].sudo().search_count([
                 ('website_published', '=', True),
                 ('discount_percentage', '=', percent),
-                # ...agrega aquí tus filtros de categoría/subcategoría si es necesario...
             ])
-            if count > 0:
+            if count_general > 0:
                 tag = {
                     'id': percent,
                     'name': f'Desde {percent}% OFF'
                 }
                 discount_tags.append(tag)
                 discount_tag_counts[percent] = count
-        
+                discount_tag_counts_general[percent] = count_general
 
         # Si tienes una lista de nombres de promociones:
         promotion_tag_objs = request.env['product.tag'].sudo().search([('is_active', '=', True)])
-        
         promotion_tags = []
         promotion_tag_counts = {}
+        promotion_tag_counts_general = {}
         
         for tag in promotion_tag_objs:
-            count = request.env['product.template'].sudo().search_count([
+            # Con filtros actuales
+            domain_with_filters = domain.copy()
+            domain_with_filters.append(('product_tag_ids', 'in', tag.id))
+            count = request.env['product.template'].sudo().search_count(domain_with_filters)
+            # Sin filtros (solo promoción)
+            count_general = request.env['product.template'].sudo().search_count([
                 ('website_published', '=', True),
                 ('product_tag_ids', 'in', tag.id),
             ])
-            if count > 0:
+            if count_general > 0:
                 promotion_tags.append(tag)
                 promotion_tag_counts[tag.id] = count
-
+                promotion_tag_counts_general[tag.id] = count_general
 
         values = {
             'categories': categories,
