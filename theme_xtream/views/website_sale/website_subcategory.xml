@@ -316,14 +316,15 @@
                             <!-- ...existing code... -->
                             <!-- PAGINACIÓN -->
                             <t t-if="total_pages > 1">
-                                <div class="d-flex justify-content-start mt-4">
+                                <div class="d-flex justify-content-center mt-4">
                                     <nav aria-label="Paginación de productos">
-                                        <ul class="pagination mb-0">
+                                        <ul class="pagination mb-0" style="background: transparent;">
                                             <!-- Botón anterior -->
                                             <li class="page-item" t-att-class="'disabled' if current_page == 1 else ''">
                                                 <a class="page-link"
                                                    t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % (current_page-1)]) if current_page &gt; 1 else '#'"
-                                                   aria-label="Anterior">
+                                                   aria-label="Anterior"
+                                                   style="border: none; background: transparent; color: #bdbdbd; font-size: 18px;">
                                                     <span aria-hidden="true">&#171;</span>
                                                 </a>
                                             </li>
@@ -334,30 +335,34 @@
                                             <t t-if="start_page &gt; 1">
                                                 <li class="page-item">
                                                     <a class="page-link"
-                                                       t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=1'])">1</a>
+                                                       t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=1'])"
+                                                       style="border: none; background: transparent; color: #757575; font-size: 16px;">1</a>
                                                 </li>
-                                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                                <li class="page-item disabled"><span class="page-link" style="border: none; background: transparent; color: #bdbdbd;">...</span></li>
                                             </t>
                                             <t t-foreach="range(start_page, end_page+1)" t-as="page">
                                                 <li class="page-item" t-att-class="'active' if page == current_page else ''">
                                                     <a class="page-link"
-                                                       t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % page]) if page != current_page else '#'">
+                                                       t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % page]) if page != current_page else '#'"
+                                                       t-att-style="'border: none; background: #e0e0e0; color: #757575; font-size: 16px; margin: 0 2px;' if page == current_page else 'border: none; background: transparent; color: #757575; font-size: 16px; margin: 0 2px;'">
                                                         <t t-esc="page"/>
                                                     </a>
                                                 </li>
                                             </t>
                                             <t t-if="end_page &lt; total_pages">
-                                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                                <li class="page-item disabled"><span class="page-link" style="border: none; background: transparent; color: #bdbdbd;">...</span></li>
                                                 <li class="page-item">
                                                     <a class="page-link"
-                                                       t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % total_pages])"><t t-esc="total_pages"/></a>
+                                                       t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % total_pages])"
+                                                       style="border: none; background: transparent; color: #757575; font-size: 16px;"><t t-esc="total_pages"/></a>
                                                 </li>
                                             </t>
                                             <!-- Botón siguiente -->
                                             <li class="page-item" t-att-class="'disabled' if current_page == total_pages else ''">
                                                 <a class="page-link"
                                                    t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % (current_page+1)]) if current_page &lt; total_pages else '#'"
-                                                   aria-label="Siguiente">
+                                                   aria-label="Siguiente"
+                                                   style="border: none; background: transparent; color: #bdbdbd; font-size: 18px;">
                                                     <span aria-hidden="true">&#187;</span>
                                                 </a>
                                             </li>
