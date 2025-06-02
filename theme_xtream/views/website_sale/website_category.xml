@@ -691,11 +691,16 @@
                                                                             <t t-set="camara_vigilancia" t-value="request.env['product.category'].sudo().search([('name','=','Cámara de Vigilancia')], limit=1)"/>
                                                                             <t t-if="camara_vigilancia">
                                                                                 <t t-foreach="camara_vigilancia.child_id" t-as="subcat">
-                                                                                    <li>
-                                                                                        <a t-att-href="'/subcategory?category_id=' + str(camara_vigilancia.id) + '&amp;subcategory_id=' + str(subcat.id)" class="text-decoration-none text-dark">
-                                                                                            <t t-esc="subcat.name"/>
-                                                                                        </a>
+                                                                                    <li style="font-weight: 500; margin-top: 5px;">
+                                                                                        <t t-esc="subcat.name"/>
                                                                                     </li>
+                                                                                    <t t-foreach="subcat.child_id" t-as="subsubcat">
+                                                                                        <li style="margin-left: 18px;">
+                                                                                            <a t-att-href="'/subcategory?category_id=' + str(subcat.id) + '&amp;subcategory_id=' + str(subsubcat.id)" class="text-decoration-none text-dark">
+                                                                                                <t t-esc="subsubcat.name"/>
+                                                                                            </a>
+                                                                                        </li>
+                                                                                    </t>
                                                                                 </t>
                                                                             </t>
                                                                             <li style="font-weight: bold; margin-top: 10px;">Licencias y software</li>
