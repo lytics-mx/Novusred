@@ -64,6 +64,10 @@ class CategoryController(http.Controller):
             except (ValueError, TypeError):
                 subcategory_id = None
         
+        selected_subcategory_children = []
+        if selected_subcategory:
+            selected_subcategory_children = request.env['product.category'].sudo().search([('parent_id', '=', selected_subcategory.id)])
+        
         # Filtro por marca
         if brand_id:
             try:
@@ -251,6 +255,7 @@ class CategoryController(http.Controller):
         start = (current_page - 1) * per_page
         end = start + per_page
         period_products = period_products[start:end]
+        
 
 
 
@@ -261,7 +266,7 @@ class CategoryController(http.Controller):
             'forced_brands': forced_brands,
             'other_brands': other_brands,
             'product_count': product_count,  # <- ahora sí está definida
-
+            'selected_subcategory_children': selected_subcategory_children,
             'subcategories': subcategories,
             'selected_category': selected_category,
             'selected_subcategory': selected_subcategory,
