@@ -19,3 +19,7 @@ class WebsiteBrand(http.Controller):
             'brand_type': brand_type_rec,
             'products': products,
         })
+    
+    @http.route('/brand', auth='public', website=True)
+    def home(self):
+        return http.request.render('theme_xtream.website_brand')  
