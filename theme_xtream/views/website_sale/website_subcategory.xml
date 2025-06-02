@@ -187,14 +187,14 @@
                                 </script>
 
                                 <!-- Brands (Marca) -->
+                                <!-- ...existing code... -->
                                 <div class="filter-section mb-4" t-if="available_brands">
                                     <h6 class="mb-2">Marca</h6>
-                                    <div class="brands-list">
-                                        <t t-set="max_visible_brands" t-value="5"/>
+                                    <div class="brands-list" id="brands-list">
+                                        <t t-set="max_visible" t-value="4"/>
                                         <t t-foreach="available_brands" t-as="brand" t-key="brand.id">
-                                            <div class="mb-1"
-                                                 t-attf-style="display: #{'none' if loop.index > max_visible_brands else 'block'}"
-                                                 t-att-class="'brand-item' + (' extra-brand' if loop.index > max_visible_brands else '')">
+                                            <div class="mb-1 brand-item"
+                                                 t-att-style="'display: none;' if loop.index > max_visible else ''">
                                                 <a t-att-href="'/subcategory?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'brand_id=' + str(brand.id)" 
                                                    class="text-decoration-none small"
                                                    t-att-style="'color: #007bff; font-weight: bold;' if current_filters.get('brand_id') == brand.id else 'color: #6c757d;'">
@@ -203,27 +203,26 @@
                                                 </a>
                                             </div>
                                         </t>
-                                        <t t-if="len(available_brands) > max_visible_brands">
-                                            <div class="mb-1">
-                                                <a href="javascript:void(0);" id="show-all-brands" class="text-primary small" style="cursor:pointer;">Ver todas</a>
-                                            </div>
+                                        <t t-if="len(available_brands) > max_visible">
+                                            <button id="show-all-brands" class="btn btn-link p-0 small" type="button" style="color: #007bff;">Ver todos</button>
                                         </t>
                                     </div>
-                                    <script type="text/javascript">
-                                        document.addEventListener('DOMContentLoaded', function() {
-                                            var showAllBtn = document.getElementById('show-all-brands');
-                                            if (showAllBtn) {
-                                                showAllBtn.addEventListener('click', function() {
-                                                    var extraBrands = document.querySelectorAll('.extra-brand');
-                                                    extraBrands.forEach(function(el) {
-                                                        el.style.display = 'block';
-                                                    });
-                                                    showAllBtn.style.display = 'none';
-                                                });
-                                            }
-                                        });
-                                    </script>
                                 </div>
+                                <script type="text/javascript">
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        var btn = document.getElementById('show-all-brands');
+                                        if (btn) {
+                                            btn.addEventListener('click', function() {
+                                                var items = document.querySelectorAll('#brands-list .brand-item');
+                                                for (var i = 0; i < items.length; i++) {
+                                                    items[i].style.display = '';
+                                                }
+                                                btn.style.display = 'none';
+                                            });
+                                        }
+                                    });
+                                </script>
+                                <!-- ...existing code... -->
 
                                 <!-- Price Range -->
                                 <div class="filter-section mb-4">
