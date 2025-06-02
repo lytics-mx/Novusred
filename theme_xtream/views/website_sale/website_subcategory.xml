@@ -313,90 +313,104 @@
                     </div>
                     
                     <!-- Productos en oferta -->
-                    <div class="col-lg-9 col-md-8 col-12">
-                        <div class="row mobile-products-grid">
-                            <t t-foreach="discounted_products" t-as="product">
-                                <div class="col-6 col-md-6 col-lg-4 mobile-product-col">
-                                    <div class="card shadow-sm product-card mobile-product-card">
-                                        <!-- Contador de tiempo de oferta -->
-                                        <!-- Espacio aquí -->
-                                        <t t-if="request.env['ir.config_parameter'].sudo().get_param('web.base.url')">
-                                            <!-- Desktop version -->
-                                            <div class="d-none d-lg-block">
-                                                <a t-att-href="'/shop/product/' + str(product.id)">
-                                                    <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
-                                                        class="card-img-top" style="height: 300px; object-fit: contain;" />
-                                                </a>
+                            <div class="products-list">
+                                 <t t-foreach="period_products" t-as="product_data" t-key="product_data['product'].id">
+                                    <div class="product-list-item mb-3 p-3" style="border: 1px solid #dee2e6; border-radius: 8px;">
+                                        <div class="row align-items-center">
+                                            <!-- Imagen del producto -->
+                                            <div class="col-3">
+                                                <img t-att-src="'/web/image/product.template/%s/image_1024' % product_data['product'].id" 
+                                                     class="img-fluid" alt="Product Image" style="max-height: 150px; object-fit: contain;"/>
                                             </div>
-                                            <!-- Mobile version -->
-                                            <div class="d-block d-lg-none">
-                                                <a t-att-href="'/shop/product/' + str(product.id)">
-                                                    <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
-                                                        class="card-img-top mobile-product-image" />
-                                                </a>
+                                            <!-- Detalles del producto -->
+                                            <div class="col-6">
+                                                <h5 class="mb-2" t-field="product_data['product'].name"/>
+                                                <p class="text-muted mb-2" t-field="product_data['product'].description_sale"/>
+                                                <div class="text-success" t-if="product_data['product'].free_shipping">Envío gratis</div>
                                             </div>
-                                        </t>
-                                        <div style="height: 10px;"></div>
-
-                                        <div class="card-body mobile-card-body">
-                                            <div class="mt-auto">
-                                                <t t-if="product.discounted_price &lt; product.list_price">
-                                                    <t t-if="product.product_tag_ids">
-                                                        <div class="d-flex justify-content-start mb-2 mobile-badge-container">
-                                                            <span class="badge bg-primary mobile-badge">
-                                                                <t t-esc="product.product_tag_ids[0].name if product.product_tag_ids else ''"/>
-                                                            </span>
-                                                        </div>
-                                                    </t>
-                                                    <div class="mt-0 mobile-discount-amount">
-                                                        <span class="text-muted" style="font-size: 18px;">
-                                                             $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                                        </span>
-                                                    </div>                                                    
-                                                    <div class="d-flex align-items-center justify-content-between mobile-price-container">
-                                                        <span class="text-dark fw-bold mobile-main-price">
-                                                            $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
-                                                        </span>
-                                                        <span class="text-danger mobile-discount">
-                                                            <t t-if="product.discount_percentage">
-                                                                <t t-esc="int(product.discount_percentage)" />% OFF
-                                                            </t>
-                                                            <t t-elif="product.fixed_discount">
-                                                                -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
-                                                            </t>
-                                                        </span>
+                                            <!-- Precio y descuento -->
+                                            <div class="col-3 text-end">
+                                                <t t-if="product_data['product'].discount_percentage > 0 or product_data['product'].fixed_discount > 0">
+                                                    <div class="text-decoration-line-through text-muted mb-1">
+                                                        <span t-esc="product_data['product'].list_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
                                                     </div>
-                                                    <div class="mt-0 mobile-discount-amount">
-                                                        <span class="text-muted">
-                                                            $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" /> descuento
-                                                        </span>
+                                                    <div class="h5 mb-2 text-danger">
+                                                        <span t-esc="product_data['product'].discounted_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                                    </div>
+                                                    <div class="badge bg-danger">
+                                                        <t t-if="product_data['product'].discount_percentage > 0">
+                                                            <t t-esc="product_data['product'].discount_percentage"/>% OFF
+                                                        </t>
+                                                        <t t-else="">
+                                                            $<t t-esc="product_data['product'].fixed_discount"/> OFF
+                                                        </t>
                                                     </div>
                                                 </t>
                                                 <t t-else="">
-                                                    <span class="fw-bold d-block mobile-main-price">
-                                                        $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                                    </span>
-                                                </t>
-                                                <t t-if="not product.product_tag_ids">
-                                                    <div class="mobile-spacer"></div>
-                                                </t>
-                                                <t t-if="product.free_shipping">
-                                                    <div class="mt-0 mobile-shipping">
-                                                        <span class="text-orange mobile-shipping-text">
-                                                            Envío gratis
-                                                        </span>
+                                                    <div class="h5 mb-2">
+                                                        <span t-esc="product_data['product'].list_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
                                                     </div>
                                                 </t>
                                             </div>
-                                            <h6 class="card-title mb-2" style="font-size: 16px; line-height: 1.2; max-height: 2.4em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
-                                                <t t-esc="product.name" />
-                                            </h6>
                                         </div>
                                     </div>
+                                </t>
+                            </div>
+                            <!-- PAGINACIÓN -->
+                            <!-- ...existing code... -->
+                            <!-- PAGINACIÓN -->
+                            <t t-if="total_pages > 1">
+                                <div class="d-flex justify-content-start mt-4">
+                                    <nav aria-label="Paginación de productos">
+                                        <ul class="pagination mb-0">
+                                            <!-- Botón anterior -->
+                                            <li class="page-item" t-att-class="'disabled' if current_page == 1 else ''">
+                                                <a class="page-link"
+                                                   t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % (current_page-1)]) if current_page &gt; 1 else '#'"
+                                                   aria-label="Anterior">
+                                                    <span aria-hidden="true">&#171;</span>
+                                                </a>
+                                            </li>
+                                            <!-- Números de página dinámicos -->
+                                            <t t-set="window_size" t-value="5"/>
+                                            <t t-set="start_page" t-value="max(1, min(current_page - window_size//2, total_pages - window_size + 1))"/>
+                                            <t t-set="end_page" t-value="min(total_pages, start_page + window_size - 1)"/>
+                                            <t t-if="start_page &gt; 1">
+                                                <li class="page-item">
+                                                    <a class="page-link"
+                                                       t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=1'])">1</a>
+                                                </li>
+                                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                            </t>
+                                            <t t-foreach="range(start_page, end_page+1)" t-as="page">
+                                                <li class="page-item" t-att-class="'active' if page == current_page else ''">
+                                                    <a class="page-link"
+                                                       t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % page]) if page != current_page else '#'">
+                                                        <t t-esc="page"/>
+                                                    </a>
+                                                </li>
+                                            </t>
+                                            <t t-if="end_page &lt; total_pages">
+                                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                                <li class="page-item">
+                                                    <a class="page-link"
+                                                       t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % total_pages])"><t t-esc="total_pages"/></a>
+                                                </li>
+                                            </t>
+                                            <!-- Botón siguiente -->
+                                            <li class="page-item" t-att-class="'disabled' if current_page == total_pages else ''">
+                                                <a class="page-link"
+                                                   t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % (current_page+1)]) if current_page &lt; total_pages else '#'"
+                                                   aria-label="Siguiente">
+                                                    <span aria-hidden="true">&#187;</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </nav>
                                 </div>
                             </t>
+                            <!-- ...existing code... -->                          
                         </div>
-                    </div>
 
                 </div>
 
