@@ -313,35 +313,37 @@
                             <!-- ...existing code... -->
                             <!-- PAGINACIÓN -->
                             <t t-if="total_pages > 1">
-                                <nav aria-label="Paginación de productos" class="mt-4">
-                                    <ul class="pagination justify-content-center">
-                                        <!-- Botón anterior -->
-                                        <li class="page-item" t-att-class="'disabled' if current_page == 1 else ''">
-                                            <a class="page-link"
-                                               t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % (current_page-1)]) if current_page &gt; 1 else '#'"
-                                               aria-label="Anterior">
-                                                <span aria-hidden="true">&#171;</span>
-                                            </a>
-                                        </li>
-                                        <!-- Números de página -->
-                                        <t t-foreach="range(1, total_pages+1)" t-as="page">
-                                            <li class="page-item" t-att-class="'active' if page == current_page else ''">
+                                <div class="d-flex justify-content-start mt-4">
+                                    <nav aria-label="Paginación de productos">
+                                        <ul class="pagination mb-0">
+                                            <!-- Botón anterior -->
+                                            <li class="page-item" t-att-class="'disabled' if current_page == 1 else ''">
                                                 <a class="page-link"
-                                                   t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % page]) if page != current_page else '#'">
-                                                    <t t-esc="page"/>
+                                                   t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % (current_page-1)]) if current_page &gt; 1 else '#'"
+                                                   aria-label="Anterior">
+                                                    <span aria-hidden="true">&#171;</span>
                                                 </a>
                                             </li>
-                                        </t>
-                                        <!-- Botón siguiente -->
-                                        <li class="page-item" t-att-class="'disabled' if current_page == total_pages else ''">
-                                            <a class="page-link"
-                                               t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % (current_page+1)]) if current_page &lt; total_pages else '#'"
-                                               aria-label="Siguiente">
-                                                <span aria-hidden="true">&#187;</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </nav>
+                                            <!-- Números de página -->
+                                            <t t-foreach="range(1, total_pages+1)" t-as="page">
+                                                <li class="page-item" t-att-class="'active' if page == current_page else ''">
+                                                    <a class="page-link"
+                                                       t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % page]) if page != current_page else '#'">
+                                                        <t t-esc="page"/>
+                                                    </a>
+                                                </li>
+                                            </t>
+                                            <!-- Botón siguiente -->
+                                            <li class="page-item" t-att-class="'disabled' if current_page == total_pages else ''">
+                                                <a class="page-link"
+                                                   t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % (current_page+1)]) if current_page &lt; total_pages else '#'"
+                                                   aria-label="Siguiente">
+                                                    <span aria-hidden="true">&#187;</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
                             </t>
                             <!-- ...existing code... -->                          
                         </div>
