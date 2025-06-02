@@ -112,7 +112,8 @@ class OffersController(http.Controller):
         product_tags = request.env['product.tag'].sudo().search([
             ('visible_on_ecommerce', '=', True)
         ])
-        
+        carousel_tags = len(product_tags) > 6
+            
         # Resto de tu lógica existente para productos, categorías, etc.
         # ...existing code...
         
@@ -214,6 +215,8 @@ class OffersController(http.Controller):
             'free_shipping': free_shipping,
             'product_tags': product_tags,
             'selected_tag_id': tag_id,  # Para mostrar cuál tag está seleccionado
+            'product_tags': product_tags,
+            'carousel_tags': carousel_tags,
 
         })
         
@@ -265,8 +268,9 @@ class OffersController(http.Controller):
             ]) > 0
         ]
         product_tags = request.env['product.tag'].sudo().search([
-            ('visible_on_ecommerce', '=', True)  # Solo los visibles en ecommerce
-        ], limit=6)
+            ('visible_on_ecommerce', '=', True)
+        ])
+        carousel_tags = len(product_tags) > 6
 
         categories_with_count = []
         for cat in main_categories:
@@ -407,4 +411,6 @@ class OffersController(http.Controller):
             'categories_with_count': categories_with_count,
             'all_categories': main_categories,
             'product_tags': product_tags,
+            'product_tags': product_tags,
+            'carousel_tags': carousel_tags,
         })
