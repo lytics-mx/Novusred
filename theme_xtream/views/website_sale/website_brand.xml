@@ -283,14 +283,15 @@
                         </div>
                     </div>
                 </section>
-
-                <t t-if="request.user_agent and (request.user_agent.platform in ['android', 'iphone', 'ipad'] or 'Mobile' in request.httprequest.user_agent.string)">
-                    <section class="more-categories py-5">
+                <section class="more-categories py-5">
+                    <div class="d-block d-md-none">
                         <h2 class="text-center" style="font-family: 'Questrial', sans-serif; font-size: 25px;">MÁS CATEGORÍAS</h2>
-                        <div class="container">
-                            <t t-set="category_banner" t-value="request.env['banner.image.line'].sudo().search([('name', '=', 'categorias')], limit=1)" />
-                            <t t-if="category_banner and category_banner.selected_categories and category_banner.category_menu_images">
-                                <t t-set="cat_img_pairs" t-value="list(zip(category_banner.selected_categories, category_banner.category_menu_images))" />
+                    </div>
+                    <div class="container">
+                        <t t-set="category_banner" t-value="request.env['banner.image.line'].sudo().search([('name', '=', 'categorias')], limit=1)" />
+                        <t t-if="category_banner and category_banner.selected_categories and category_banner.category_menu_images">
+                            <t t-set="cat_img_pairs" t-value="list(zip(category_banner.selected_categories, category_banner.category_menu_images))" />
+                            
                             <!-- Mobile view (1 item per slide) -->
                             <div class="d-block d-md-none">
                                 <div id="categoryMobileCarousel" class="carousel slide" data-bs-ride="carousel">
@@ -340,12 +341,7 @@
                             </div>                         
                         </t>
                     </div>
-                    </section>
-                </t>
-                
-                
-
-
+                </section>                
                 <div style="height: 50px;"></div>
 
                 <!-- Más Categorías -->
