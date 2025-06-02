@@ -111,9 +111,9 @@ class CategoryController(http.Controller):
         if discount_id:
             try:
                 discount_id = int(discount_id)
-                domain.append(('product_tag_ids', 'in', [discount_id]))
-            except (ValueError, TypeError):
-                discount_id = None
+                domain.append(('discount_percentage', '>=', discount_id))
+            except ValueError:
+                pass
         
         # Filtro por tags de promoción
         if promotion_id:
