@@ -270,43 +270,69 @@
 
                         <!-- Área de Productos -->
                             <div class="products-list">
-                                 <t t-foreach="period_products" t-as="product_data" t-key="product_data['product'].id">
-                                    <div class="product-list-item p-3" style="background: #fff; border: 1px solid #dee2e6; border-radius: 8px; margin-bottom: 0; margin-top: 0;">
+                                <t t-foreach="period_products" t-as="product_data" t-key="product_data['product'].id">
+                                    <div class="product-list-item p-3 mb-3" style="background: #fff; border: 1px solid #dee2e6; border-radius: 8px;">
                                         <div class="row align-items-center">
                                             <!-- Imagen del producto -->
                                             <div class="col-3">
-                                                <img t-att-src="'/web/image/product.template/%s/image_1024' % product_data['product'].id" 
-                                                     class="img-fluid" alt="Product Image" style="max-height: 150px; object-fit: contain;"/>
+                                                <img t-att-src="'/web/image/product.template/%s/image_1024' % product_data['product'].id"
+                                                     class="img-fluid" alt="Product Image" style="max-height: 110px; object-fit: contain;"/>
                                             </div>
                                             <!-- Detalles del producto -->
-                                            <div class="col-6">
-                                                <h5 class="mb-2" t-field="product_data['product'].name"/>
-                                                <p class="text-muted mb-2" t-field="product_data['product'].description_sale"/>
-                                                <div class="text-success" t-if="product_data['product'].free_shipping">Envío gratis</div>
-                                            </div>
-                                            <!-- Precio y descuento -->
-                                            <div class="col-3 text-end">
-                                                <t t-if="product_data['product'].discount_percentage > 0 or product_data['product'].fixed_discount > 0">
-                                                    <div class="text-decoration-line-through text-muted mb-1">
-                                                        <span t-esc="product_data['product'].list_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                            <div class="col-9">
+                                                <div class="d-flex align-items-center mb-1">
+                                                    <t t-if="product_data['product'].offer_tag">
+                                                        <span class="badge" style="background: #2988f5; color: #fff; font-size: 12px; font-weight: 600; margin-right: 8px;">
+                                                            <t t-esc="product_data['product'].offer_tag"/>
+                                                        </span>
+                                                    </t>
+                                                </div>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="flex-grow-1">
+                                                        <div style="font-size: 16px; font-weight: bold; text-transform: uppercase; line-height: 1.1;">
+                                                            <t t-esc="product_data['product'].name"/>
+                                                        </div>
+                                                        <div style="font-size: 13px; color: #757575; margin-bottom: 2px;">
+                                                            por <t t-esc="product_data['product'].brand_id and product_data['product'].brand_id.name or ''"/>
+                                                        </div>
                                                     </div>
-                                                    <div class="h5 mb-2 text-danger">
-                                                        <span t-esc="product_data['product'].discounted_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
-                                                    </div>
-                                                    <div class="badge bg-danger">
-                                                        <t t-if="product_data['product'].discount_percentage > 0">
-                                                            <t t-esc="product_data['product'].discount_percentage"/>% OFF
+                                                </div>
+                                                <div class="d-flex align-items-end mt-2">
+                                                    <div>
+                                                        <t t-if="product_data['product'].discount_percentage > 0 or product_data['product'].fixed_discount > 0">
+                                                            <div style="font-size: 18px; color: #bdbdbd; text-decoration: line-through; font-weight: 400;">
+                                                                <span t-esc="product_data['product'].list_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                                            </div>
+                                                            <div style="font-size: 28px; font-weight: bold; color: #ff5207; line-height: 1;">
+                                                                <span t-esc="product_data['product'].discounted_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                                                <t t-if="product_data['product'].discount_percentage > 0">
+                                                                    <span style="font-size: 16px; color: #ff5207; font-weight: 600; margin-left: 6px;">
+                                                                        <t t-esc="product_data['product'].discount_percentage"/>% OFF
+                                                                    </span>
+                                                                </t>
+                                                            </div>
+                                                            <div style="font-size: 15px; color: #212121; font-style: italic; margin-top: 2px;">
+                                                                <t t-if="product_data['product'].discount_percentage > 0">
+                                                                    <t t-set="discount_value" t-value="product_data['product'].list_price - product_data['product'].discounted_price"/>
+                                                                    $<t t-esc="int(discount_value)"/> de descuento
+                                                                </t>
+                                                                <t t-else="">
+                                                                    $<t t-esc="int(product_data['product'].fixed_discount)"/> de descuento
+                                                                </t>
+                                                            </div>
                                                         </t>
                                                         <t t-else="">
-                                                            $<t t-esc="product_data['product'].fixed_discount"/> OFF
+                                                            <div style="font-size: 28px; font-weight: bold; color: #212121;">
+                                                                <span t-esc="product_data['product'].list_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                                            </div>
+                                                        </t>
+                                                        <t t-if="product_data['product'].free_shipping">
+                                                            <div style="color: #ff5207; font-size: 15px; font-style: italic; font-weight: bold; margin-top: 2px;">
+                                                                Envío gratis
+                                                            </div>
                                                         </t>
                                                     </div>
-                                                </t>
-                                                <t t-else="">
-                                                    <div class="h5 mb-2">
-                                                        <span t-esc="product_data['product'].list_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
-                                                    </div>
-                                                </t>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
