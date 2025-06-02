@@ -111,7 +111,7 @@ class CategoryController(http.Controller):
         if discount_id:
             try:
                 discount_id = int(discount_id)
-                domain.append(('discount_percentage', '>=', discount_id))
+                domain.append(('discount_percentage', '=', discount_id))  # Solo ese %
             except ValueError:
                 pass
         
@@ -275,6 +275,19 @@ class CategoryController(http.Controller):
                 discount_tags.append(tag)
                 discount_tag_counts[percent] = count
         
+        promotion_tags = []
+        promotion_tag_counts = {}
+
+        promotion_tag_objs = request.env['product.tag'].sudo().search([('type', '=', 'promotion')])
+        for tag in promotion_tag_objs:
+            count = request.env['product.template'].sudo().search_count([
+                ('website_published', '=', True),
+                ('product_tag_ids', 'in', tag.id),
+                # ...agrega aquí tus filtros de categoría/subcategoría si es necesario...
+            ])
+            if count > 0:
+                promotion_tags.append(tag)
+                promotion_tag_counts[tag.id] = count
 
 
 
@@ -288,6 +301,8 @@ class CategoryController(http.Controller):
             'selected_subcategory_children': selected_subcategory_children,
             'discount_tags': discount_tags,
             'discount_tag_counts': discount_tag_counts,
+            'promotion_tags': promotion_tags,
+            'promotion_tag_counts': promotion_tag_counts,
 
             'subcategories': subcategories,
             'selected_category': selected_category,
