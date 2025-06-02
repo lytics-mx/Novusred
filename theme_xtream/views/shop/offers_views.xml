@@ -15,30 +15,118 @@
                     </div>
                     <!-- Iconos de tags -->
                     <div class="d-flex align-items-center justify-content-center" style="flex: 2;">
-                        <div class="tags-container w-100"
-                            t-attf-class="{{ 'tags-carousel' if product_tags and len(product_tags) >= 6 else '' }}">
+                        <div class="tags-container w-100">
                             <div style="height: 25px;"></div>
                             <t t-if="product_tags">
-                                <div class="tags-wrapper d-flex justify-content-center align-items-center">
-                                    <t t-foreach="product_tags" t-as="tag">
-                                        <div class="text-center position-relative tag-item clickable-tag" 
-                                            t-att-data-tag-id="tag.id"
-                                            t-att-data-tag-name="tag.name">
-                                            <!-- Imagen del tag -->
-                                            <div class="tag-icon-container">
-                                                <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
-                                                    t-att-alt="tag.name"
-                                                    class="tag-icon" />
+                                <div class="tags-carousel-wrapper">
+                                    <div class="tags-wrapper d-flex justify-content-center align-items-center">
+                                        <t t-foreach="product_tags" t-as="tag">
+                                            <div class="text-center position-relative tag-item clickable-tag" 
+                                                 t-att-data-tag-id="tag.id"
+                                                 t-att-data-tag-name="tag.name">
+                                                <!-- Imagen del tag -->
+                                                <div class="tag-icon-container">
+                                                    <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
+                                                         t-att-alt="tag.name"
+                                                         class="tag-icon" />
+                                                </div>
+                                                <!-- Nombre del tag -->
+                                                <div class="tag-name">
+                                                    <t t-esc="tag.name" />
+                                                </div>
+                                                <!-- Línea azul (solo visible al hover) -->
+                                                <div class="tag-underline"></div>
                                             </div>
-                                            <!-- Nombre del tag -->
-                                            <div class="tag-name">
-                                                <t t-esc="tag.name" />
-                                            </div>
-                                            <!-- Línea azul (solo visible al hover) -->
-                                            <div class="tag-underline"></div>
-                                        </div>
-                                    </t>
+                                        </t>
+                                    </div>
+                                    <!-- Carousel controls -->
+                                    <button type="button" class="carousel-control-prev d-none" style="position:absolute;left:0;top:50%;transform:translateY(-50%);z-index:2;background:rgba(255,255,255,0.7);border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;">
+                                        <span style="font-size:20px;">&#8249;</span>
+                                    </button>
+                                    <button type="button" class="carousel-control-next d-none" style="position:absolute;right:0;top:50%;transform:translateY(-50%);z-index:2;background:rgba(255,255,255,0.7);border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;">
+                                        <span style="font-size:20px;">&#8250;</span>
+                                    </button>
                                 </div>
+                                <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const wrapper = document.querySelector('.tags-wrapper');
+                                    const items = wrapper ? wrapper.querySelectorAll('.tag-item') : [];
+                                    const prevBtn = document.querySelector('.carousel-control-prev');
+                                    const nextBtn = document.querySelector('.carousel-control-next');
+                                    const visibleCount = 6;
+                                    let currentIndex = 0;
+
+                                    function updateCarousel() {
+                                        if (items.length <= visibleCount) {
+                                            // No carousel needed
+                                            if (prevBtn) prevBtn.classList.add('d-none');
+                                            if (nextBtn) nextBtn.classList.add('d-none');
+                                            wrapper.style.transform = 'translateX(0)';
+                                            return;
+                                        }
+                                        if (prevBtn) prevBtn.classList.remove('d-none');
+                                        if (nextBtn) nextBtn.classList.remove('d-none');
+                                        // Calculate width per item
+                                        const itemWidth = items[0].offsetWidth + 20; // 20px gap
+                                        wrapper.style.transition = 'transform 0.3s ease';
+                                        wrapper.style.transform = 'translateX(' + (-currentIndex * itemWidth) + 'px)';
+                                        // Disable prev/next if at ends
+                                        prevBtn.disabled = currentIndex === 0;
+                                        nextBtn.disabled = currentIndex >= items.length - visibleCount;
+                                    }
+
+                                    if (nextBtn) {
+                                        nextBtn.addEventListener('click', function() {
+                                            if (currentIndex < items.length - visibleCount) {
+                                                currentIndex++;
+                                                updateCarousel();
+                                            }
+                                        });
+                                    }
+                                    if (prevBtn) {
+                                        prevBtn.addEventListener('click', function() {
+                                            if (currentIndex > 0) {
+                                                currentIndex--;
+                                                updateCarousel();
+                                            }
+                                        });
+                                    }
+
+                                    window.addEventListener('resize', function() {
+                                        updateCarousel();
+                                    });
+
+                                    // Initial update
+                                    setTimeout(updateCarousel, 200);
+                                });
+                                </script>
+                                <style>
+                                    .tags-carousel-wrapper {
+                                        position: relative;
+                                        width: 100%;
+                                        overflow: hidden;
+                                    }
+                                    .tags-wrapper {
+                                        transition: transform 0.3s ease;
+                                        will-change: transform;
+                                    }
+                                    .carousel-control-prev,
+                                    .carousel-control-next {
+                                        cursor: pointer;
+                                    }
+                                    @media (max-width: 991.98px) {
+                                        /* Show 4 tags in carousel for tablet */
+                                        .tags-carousel-wrapper .tags-wrapper .tag-item {
+                                            min-width: 70px;
+                                        }
+                                    }
+                                    @media (max-width: 767.98px) {
+                                        /* Show 3 tags in carousel for mobile */
+                                        .tags-carousel-wrapper .tags-wrapper .tag-item {
+                                            min-width: 60px;
+                                        }
+                                    }
+                                </style>
                             </t>
                             <t t-else="">
                                 <div style="color: #666; font-size: 14px; padding: 10px;">
@@ -50,41 +138,6 @@
                     
                     <!-- CSS para manejar el hover y responsive -->
                     <style>
-
-
-                    /* Carrusel horizontal para tags cuando hay más de 6 */
-                    .tags-carousel .tags-wrapper {
-                        flex-wrap: nowrap !important;
-                        overflow-x: auto;
-                        overflow-y: hidden;
-                        -webkit-overflow-scrolling: touch;
-                        scrollbar-width: thin;
-                        scrollbar-color: #ccc #f8f9fa;
-                        justify-content: flex-start !important;
-                        gap: 20px;
-                    }
-                    .tags-carousel .tags-wrapper::-webkit-scrollbar {
-                        height: 6px;
-                        background: #f8f9fa;
-                    }
-                    .tags-carousel .tags-wrapper::-webkit-scrollbar-thumb {
-                        background: #ccc;
-                        border-radius: 3px;
-                    }
-                    .tags-carousel .tag-item {
-                        flex: 0 0 auto;
-                    }
-
-                    /* Opcional: ocultar scrollbar en móvil */
-                    @media (max-width: 767.98px) {
-                        .tags-carousel .tags-wrapper {
-                            scrollbar-width: none;
-                        }
-                        .tags-carousel .tags-wrapper::-webkit-scrollbar {
-                            display: none;
-                        }
-                    }
-
                     /* Estilos base para tags */
                     .tags-container {
                         overflow: hidden;
