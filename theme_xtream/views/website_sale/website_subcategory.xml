@@ -280,12 +280,39 @@
                                             </div>
                                             <!-- Detalles del producto -->
                                             <div class="col-6">
-                                                <h5 class="mb-2" t-esc="product_data['product'].name.upper()[:40] + ('…' if len(product_data['product'].name) > 40 else '')"/>
-                                                <p class="text-muted mb-2" t-field="product_data['product'].description_sale"/>
+                                                <h5 class="mb-2" t-field="product_data['product'].name"/>
+                                                <p class="text-muted mb-2 text-uppercase" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                                    <t t-esc="product_data['product'].description_sale"/>
+                                                </p>
+                                                <h5 class="mb-2" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                                    <t t-esc="product_data['product'].name"/>
+                                                </h5>
                                                 <div class="text-success" t-if="product_data['product'].free_shipping">Envío gratis</div>
                                             </div>
                                             <!-- Precio y descuento -->
-                                            
+                                            <div class="col-3 text-end">
+                                                <t t-if="product_data['product'].discount_percentage > 0 or product_data['product'].fixed_discount > 0">
+                                                    <div class="text-decoration-line-through text-muted mb-1">
+                                                        <span t-esc="product_data['product'].list_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                                    </div>
+                                                    <div class="h5 mb-2 text-danger">
+                                                        <span t-esc="product_data['product'].discounted_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                                    </div>
+                                                    <div class="badge bg-danger">
+                                                        <t t-if="product_data['product'].discount_percentage > 0">
+                                                            <t t-esc="product_data['product'].discount_percentage"/>% OFF
+                                                        </t>
+                                                        <t t-else="">
+                                                            $<t t-esc="product_data['product'].fixed_discount"/> OFF
+                                                        </t>
+                                                    </div>
+                                                </t>
+                                                <t t-else="">
+                                                    <div class="h5 mb-2">
+                                                        <span t-esc="product_data['product'].list_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                                    </div>
+                                                </t>
+                                            </div>
                                         </div>
                                     </div>
                                 </t>
