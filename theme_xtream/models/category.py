@@ -255,18 +255,17 @@ class CategoryController(http.Controller):
         start = (current_page - 1) * per_page
         end = start + per_page
         period_products = period_products[start:end]
-        discount_ranges = [5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90]
+        discount_ranges = [5, 10, 15, 20, 25, 30, 40, 50]
         discount_tags = []
         discount_tag_counts = {}
-
+        
         for percent in discount_ranges:
-            # Busca productos publicados con al menos ese porcentaje de descuento
-            products_with_discount = request.env['product.template'].sudo().search([
+            # Solo cuenta productos con exactamente ese porcentaje de descuento
+            count = request.env['product.template'].sudo().search_count([
                 ('website_published', '=', True),
-                ('discount_percentage', '>=', percent),
+                ('discount_percentage', '=', percent),
                 # ...agrega aquí tus filtros de categoría/subcategoría si es necesario...
             ])
-            count = len(products_with_discount)
             if count > 0:
                 tag = {
                     'id': percent,
@@ -275,23 +274,21 @@ class CategoryController(http.Controller):
                 discount_tags.append(tag)
                 discount_tag_counts[percent] = count
         
-        # Si tienes una lista de nombres de promociones:
-        promotion_names = ['oferta del día', 'Oferta relampago', '']
-        promotion_tag_objs = request.env['product.tag'].sudo().search([('name', 'in', promotion_names)])
 
+        # Si tienes una lista de nombres de promociones:
+        promotion_tag_objs = request.env['product.tag'].sudo().search([('is_active', '=', True)])
+        
         promotion_tags = []
         promotion_tag_counts = {}
-
+        
         for tag in promotion_tag_objs:
             count = request.env['product.template'].sudo().search_count([
                 ('website_published', '=', True),
                 ('product_tag_ids', 'in', tag.id),
-                # ...agrega aquí tus filtros de categoría/subcategoría si es necesario...
             ])
             if count > 0:
                 promotion_tags.append(tag)
                 promotion_tag_counts[tag.id] = count
-
 
 
         values = {
