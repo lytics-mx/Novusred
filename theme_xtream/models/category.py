@@ -276,7 +276,7 @@ class CategoryController(http.Controller):
                 discount_tag_counts[percent] = count
         
         # Si tienes una lista de nombres de promociones:
-        promotion_names = ['oferta del día', 'oferta relampago', '']
+        promotion_names = ['oferta del día', 'Oferta relampago', '']
         promotion_tag_objs = request.env['product.tag'].sudo().search([('name', 'in', promotion_names)])
 
         promotion_tags = []
