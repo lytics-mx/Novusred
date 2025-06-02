@@ -79,28 +79,38 @@
 
                                 <!-- Categorías -->
                                 <div class="filter-section mb-4">
-                                    <!-- <h6 class="mb-2">Categoría</h6>
-                                    <select id="category-select" class="form-select form-select-sm mb-2" onchange="updateFilters()">
-                                        <option value="">Todas las categorías</option>
-                                        <t t-foreach="categories" t-as="category" t-key="category.id">
-                                            <option t-att-value="category.id" 
-                                                    t-att-selected="'selected' if current_filters.get('category_id') == category.id else ''">
-                                                <t t-esc="category.name"/>
-                                            </option>
+                                    <div>
+                                        <t t-if="selected_category">
+                                            <div class="mb-1">
+                                                <a t-att-href="'/subcategory?category_id=' + str(selected_category.id)"
+                                                   class="fw-bold"
+                                                   t-att-style="'color: #007bff;'">
+                                                    <t t-esc="selected_category.name"/>
+                                                </a>
+                                            </div>
+                                            <t t-if="selected_subcategory">
+                                                <div class="ms-3 mb-1">
+                                                    <a t-att-href="'/subcategory?category_id=' + str(selected_category.id) + '&amp;subcategory_id=' + str(selected_subcategory.id)"
+                                                       class="fw-bold"
+                                                       t-att-style="'color: #FF5207;'">
+                                                        <t t-esc="selected_subcategory.name"/>
+                                                    </a>
+                                                </div>
+                                                <t t-if="selected_subcategory.child_ids">
+                                                    <div class="ms-4">
+                                                        <t t-foreach="selected_subcategory.child_ids" t-as="child" t-key="child.id">
+                                                            <div class="mb-1">
+                                                                <a t-att-href="'/subcategory?category_id=' + str(selected_category.id) + '&amp;subcategory_id=' + str(child.id)"
+                                                                   t-att-style="'color: #6c757d;'">
+                                                                    <t t-esc="child.name"/>
+                                                                </a>
+                                                            </div>
+                                                        </t>
+                                                    </div>
+                                                </t>
+                                            </t>
                                         </t>
-                                    </select> -->
-                                    
-                                    <!-- Subcategorías -->
-                                    <select id="subcategory-select" class="form-select form-select-sm" onchange="updateFilters()" 
-                                            t-att-style="'display: block' if subcategories else 'display: none'">
-                                        <option value="">Todas las subcategorías</option>
-                                        <t t-foreach="subcategories" t-as="subcategory" t-key="subcategory.id">
-                                            <option t-att-value="subcategory.id"
-                                                    t-att-selected="'selected' if current_filters.get('subcategory_id') == subcategory.id else ''">
-                                                <t t-esc="subcategory.name"/>
-                                            </option>
-                                        </t>
-                                    </select>
+                                    </div>
                                 </div>
 
                                 <!-- Free Shipping Toggle -->
