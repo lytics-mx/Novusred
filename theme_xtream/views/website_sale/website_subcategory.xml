@@ -271,7 +271,7 @@
                         <!-- Área de Productos -->
                             <div class="products-list">
                                  <t t-foreach="period_products" t-as="product_data" t-key="product_data['product'].id">
-                                    <div class="product-list-item p-3" style="background: #fff; border: 1px solid #dee2e6; border-radius: 8px; margin-bottom: 0; margin-top: 0;">
+                                    <div class="product-list-item mb-3 p-3" style="border: 1px solid #dee2e6; border-radius: 8px;">
                                         <div class="row align-items-center">
                                             <!-- Imagen del producto -->
                                             <div class="col-3">
@@ -280,42 +280,12 @@
                                             </div>
                                             <!-- Detalles del producto -->
                                             <div class="col-6">
-                                                <h5 class="mb-2 text-uppercase" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                                    <t t-esc="product_data['product'].name"/>
-                                                    ...
-                                                </h5>
+                                                <h5 class="mb-2" t-esc="product_data['product'].name.upper()[:40] + ('…' if len(product_data['product'].name) > 40 else '')"/>
+                                                <p class="text-muted mb-2" t-field="product_data['product'].description_sale"/>
+                                                <div class="text-success" t-if="product_data['product'].free_shipping">Envío gratis</div>
                                             </div>
                                             <!-- Precio y descuento -->
-                                            <!-- Precio y descuento debajo del nombre del producto, alineado a la izquierda -->
-                                            <div class="col-6">
-                                                <h5 class="mb-2 text-uppercase" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                                    <t t-esc="product_data['product'].name"/>
-                                                    ...
-                                                </h5>
-                                                <div>
-                                                    <t t-if="product_data['product'].discount_percentage > 0 or product_data['product'].fixed_discount > 0">
-                                                        <div class="text-decoration-line-through text-muted mb-1">
-                                                            <span t-esc="product_data['product'].list_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
-                                                        </div>
-                                                        <div class="h5 mb-2 text-danger">
-                                                            <span t-esc="product_data['product'].discounted_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
-                                                        </div>
-                                                        <div class="badge bg-danger">
-                                                            <t t-if="product_data['product'].discount_percentage > 0">
-                                                                <t t-esc="product_data['product'].discount_percentage"/>% OFF
-                                                            </t>
-                                                            <t t-else="">
-                                                                $<t t-esc="product_data['product'].fixed_discount"/> OFF
-                                                            </t>
-                                                        </div>
-                                                    </t>
-                                                    <t t-else="">
-                                                        <div class="h5 mb-2">
-                                                            <span t-esc="product_data['product'].list_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
-                                                        </div>
-                                                    </t>
-                                                </div>
-                                            </div>
+                                            
                                         </div>
                                     </div>
                                 </t>
@@ -324,15 +294,14 @@
                             <!-- ...existing code... -->
                             <!-- PAGINACIÓN -->
                             <t t-if="total_pages > 1">
-                                <div class="d-flex justify-content-center mt-4">
+                                <div class="d-flex justify-content-start mt-4">
                                     <nav aria-label="Paginación de productos">
-                                        <ul class="pagination mb-0" style="background: transparent;">
+                                        <ul class="pagination mb-0">
                                             <!-- Botón anterior -->
                                             <li class="page-item" t-att-class="'disabled' if current_page == 1 else ''">
                                                 <a class="page-link"
                                                    t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % (current_page-1)]) if current_page &gt; 1 else '#'"
-                                                   aria-label="Anterior"
-                                                   style="border: none; background: transparent; color: #bdbdbd; font-size: 18px;">
+                                                   aria-label="Anterior">
                                                     <span aria-hidden="true">&#171;</span>
                                                 </a>
                                             </li>
@@ -343,34 +312,30 @@
                                             <t t-if="start_page &gt; 1">
                                                 <li class="page-item">
                                                     <a class="page-link"
-                                                       t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=1'])"
-                                                       style="border: none; background: transparent; color: #757575; font-size: 16px;">1</a>
+                                                       t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=1'])">1</a>
                                                 </li>
-                                                <li class="page-item disabled"><span class="page-link" style="border: none; background: transparent; color: #bdbdbd;">...</span></li>
+                                                <li class="page-item disabled"><span class="page-link">...</span></li>
                                             </t>
                                             <t t-foreach="range(start_page, end_page+1)" t-as="page">
                                                 <li class="page-item" t-att-class="'active' if page == current_page else ''">
                                                     <a class="page-link"
-                                                       t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % page]) if page != current_page else '#'"
-                                                       t-att-style="'border: none; background: #e0e0e0; color: #757575; font-size: 16px; margin: 0 2px;' if page == current_page else 'border: none; background: transparent; color: #757575; font-size: 16px; margin: 0 2px;'">
+                                                       t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % page]) if page != current_page else '#'">
                                                         <t t-esc="page"/>
                                                     </a>
                                                 </li>
                                             </t>
                                             <t t-if="end_page &lt; total_pages">
-                                                <li class="page-item disabled"><span class="page-link" style="border: none; background: transparent; color: #bdbdbd;">...</span></li>
+                                                <li class="page-item disabled"><span class="page-link">...</span></li>
                                                 <li class="page-item">
                                                     <a class="page-link"
-                                                       t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % total_pages])"
-                                                       style="border: none; background: transparent; color: #757575; font-size: 16px;"><t t-esc="total_pages"/></a>
+                                                       t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % total_pages])"><t t-esc="total_pages"/></a>
                                                 </li>
                                             </t>
                                             <!-- Botón siguiente -->
                                             <li class="page-item" t-att-class="'disabled' if current_page == total_pages else ''">
                                                 <a class="page-link"
                                                    t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % (current_page+1)]) if current_page &lt; total_pages else '#'"
-                                                   aria-label="Siguiente"
-                                                   style="border: none; background: transparent; color: #bdbdbd; font-size: 18px;">
+                                                   aria-label="Siguiente">
                                                     <span aria-hidden="true">&#187;</span>
                                                 </a>
                                             </li>
