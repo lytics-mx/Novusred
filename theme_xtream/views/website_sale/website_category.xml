@@ -648,10 +648,15 @@
                                                                                 <li style="font-weight: bold; margin-bottom: 8px;">
                                                                                     <t t-esc="first_parent.name"/>
                                                                                 </li>
-                                                                                <t t-foreach="first_parent.child_id" t-as="subcat">
-                                                                                    <li>
-                                                                                        <t t-esc="subcat.name"/>
-                                                                                    </li>
+                                                                                <t t-if="first_parent.child_id">
+                                                                                    <t t-set="first_subcat" t-value="first_parent.child_id[0] if len(first_parent.child_id) > 0 else False"/>
+                                                                                    <t t-if="first_subcat and first_subcat.child_id">
+                                                                                        <t t-foreach="first_subcat.child_id" t-as="subsubcat">
+                                                                                            <li>
+                                                                                                <t t-esc="subsubcat.name"/>
+                                                                                            </li>
+                                                                                        </t>
+                                                                                    </t>
                                                                                 </t>
                                                                             </ul>
                                                                         </div>
