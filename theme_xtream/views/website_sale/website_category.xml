@@ -682,16 +682,21 @@
                                                                         </div>
                                                                     </t>
                                                                     <!-- Columna 3 -->
-                                                                    <div>
-                                                                        <ul style="list-style: none; padding-left: 0; font-size: 14px;">
-                                                                            <li style="font-weight: bold; margin-bottom: 8px;">Monitores y pantallas</li>
-                                                                            <li>Accesorios monitores y pantallas</li>
-                                                                            <li>Mouse y teclado</li>
-                                                                            <li>PC armada</li>
-                                                                            <li>PC de escritorio</li>
-                                                                            <li>Punto de venta</li>
-                                                                        </ul>
-                                                                    </div>
+                                                                    <t t-set="third_parent" t-value="request.env['product.category'].sudo().search([('parent_id','!=',False), ('child_id','!=',False)], offset=2, limit=1)"/>
+                                                                    <t t-if="third_parent">
+                                                                        <div>
+                                                                            <ul style="list-style: none; padding-left: 0; font-size: 14px;">
+                                                                                <li style="font-weight: bold; margin-bottom: 8px;">
+                                                                                    <t t-esc="third_parent.name"/>
+                                                                                </li>
+                                                                                <t t-foreach="third_parent.child_id" t-as="subcat">
+                                                                                    <li>
+                                                                                        <t t-esc="subcat.name"/>
+                                                                                    </li>
+                                                                                </t>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </t>
                                                                 </div>
                                                             </div>
                                                         </div>
