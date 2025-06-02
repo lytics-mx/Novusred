@@ -155,6 +155,14 @@ class CategoryController(http.Controller):
             })
         
       
+        forced_brand_names = [
+            'EPCOM PROFESSIONAL',
+            'HiLook by HIKVISION',
+            'ADEMCO (HONEYWELL)',
+            'HIKVISION',
+            'EZVIZ'
+        ]
+
         # Obtener marcas disponibles SOLO de productos PUBLICADOS de la categoría/subcategoría seleccionada
         brand_domain = domain.copy()
         # Remueve cualquier filtro de marca activo para contar correctamente
@@ -164,14 +172,6 @@ class CategoryController(http.Controller):
         available_brands = brand_products.mapped('brand_type_id').filtered(
             lambda b: b.name and brand_products.filtered(lambda p: p.brand_type_id.id == b.id)
         )
-        product_count = len(products)
-        forced_brand_names = [
-            'EPCOM PROFESSIONAL',
-            'HiLook by HIKVISION',
-            'ADEMCO (HONEYWELL)',
-            'HIKVISION',
-            'EZVIZ'
-        ]
 
         forced_brands = []
         other_brands = []
@@ -179,7 +179,9 @@ class CategoryController(http.Controller):
             if brand.name in forced_brand_names:
                 forced_brands.append(brand)
             else:
-                other_brands.append(brand)  
+                other_brands.append(brand)
+
+
         # Calcular contador de productos PUBLICADOS por marca, usando los mismos filtros
         brand_counts = {}
         for brand in available_brands:
