@@ -180,6 +180,8 @@ class CategoryController(http.Controller):
                 forced_brands.append(brand)
             else:
                 other_brands.append(brand)
+        
+        product_count = len(products)
 
 
         # Calcular contador de productos PUBLICADOS por marca, usando los mismos filtros
@@ -256,6 +258,7 @@ class CategoryController(http.Controller):
             'total_pages': total_pages,
             'forced_brands': forced_brands,
             'other_brands': other_brands,
+            'product_count': product_count,  # <- ahora sí está definida
 
             'subcategories': subcategories,
             'selected_category': selected_category,
