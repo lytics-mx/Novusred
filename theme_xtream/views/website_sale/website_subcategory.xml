@@ -267,7 +267,7 @@
 
                         <!-- Área de Productos -->
                             <div class="products-list">
-                                <t t-foreach="period_products" t-as="product_data" t-key="product_data['product'].id">
+                                 <t t-foreach="period_products" t-as="product_data" t-key="product_data['product'].id">
                                     <div class="product-list-item mb-3 p-3" style="border: 1px solid #dee2e6; border-radius: 8px;">
                                         <div class="row align-items-center">
                                             <!-- Imagen del producto -->
@@ -309,6 +309,38 @@
                                     </div>
                                 </t>
                             </div>
+                            <!-- PAGINACIÓN -->
+                            <t t-if="total_pages > 1">
+                                <nav aria-label="Paginación de productos" class="mt-4">
+                                    <ul class="pagination justify-content-center">
+                                        <!-- Botón anterior -->
+                                        <li class="page-item" t-att-class="'disabled' if current_page == 1 else ''">
+                                            <a class="page-link"
+                                            t-att-href="'/subcategory?' + (request.httprequest.query_string.decode('utf-8').replace('page=%s' % current_page, 'page=%s' % (current_page-1)) if current_page > 1 else '#')"
+                                            aria-label="Anterior">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                        <!-- Números de página -->
+                                        <t t-foreach="range(1, total_pages+1)" t-as="page">
+                                            <li class="page-item" t-att-class="'active' if page == current_page else ''">
+                                                <a class="page-link"
+                                                t-att-href="'/subcategory?' + (request.httprequest.query_string.decode('utf-8').replace('page=%s' % current_page, 'page=%s' % page) if page != current_page else '#')">
+                                                    <t t-esc="page"/>
+                                                </a>
+                                            </li>
+                                        </t>
+                                        <!-- Botón siguiente -->
+                                        <li class="page-item" t-att-class="'disabled' if current_page == total_pages else ''">
+                                            <a class="page-link"
+                                            t-att-href="'/subcategory?' + (request.httprequest.query_string.decode('utf-8').replace('page=%s' % current_page, 'page=%s' % (current_page+1)) if current_page < total_pages else '#')"
+                                            aria-label="Siguiente">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </t>                            
                         </div>
     
                     </div>
