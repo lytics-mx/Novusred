@@ -157,22 +157,20 @@ class CategoryController(http.Controller):
         product_count = len(products)
         
         # Obtener marcas disponibles SOLO de productos PUBLICADOS de la categoría/subcategoría seleccionada
-        brand_domain = [('website_published', '=', True)]
-        if category_id and not subcategory_id:
-            brand_domain.append(('categ_id', 'child_of', category_id))
-        elif subcategory_id:
-            brand_domain.append(('categ_id', '=', subcategory_id))
-        
+        brand_domain = domain.copy()
+        # Remueve cualquier filtro de marca activo para contar correctamente
+        brand_domain = [d for d in brand_domain if d[0] != 'brand_type_id']
+
         brand_products = request.env['product.template'].sudo().search(brand_domain)
         available_brands = brand_products.mapped('brand_type_id').filtered(
             lambda b: b.name and brand_products.filtered(lambda p: p.brand_type_id.id == b.id)
         )
-        # Calcular contador de productos PUBLICADOS por marca
+
+        # Calcular contador de productos PUBLICADOS por marca, usando los mismos filtros
         brand_counts = {}
         for brand in available_brands:
-            brand_count = len(brand_products.filtered(lambda p: p.brand_type_id.id == brand.id))
-            brand_counts[brand.id] = brand_count
-        
+            count = len(brand_products.filtered(lambda p: p.brand_type_id.id == brand.id))
+            brand_counts[brand.id] = count
         # Obtener tags de descuento SOLO de productos PUBLICADOS de la categoría seleccionada
         if category_id or subcategory_id:
             category_products = request.env['product.template'].sudo().search(brand_domain)
