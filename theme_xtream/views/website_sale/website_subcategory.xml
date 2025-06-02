@@ -324,13 +324,30 @@
                                                     <span aria-hidden="true">&#171;</span>
                                                 </a>
                                             </li>
-                                            <!-- Números de página -->
-                                            <t t-foreach="range(1, total_pages+1)" t-as="page">
+                                            <!-- Números de página dinámicos -->
+                                            <t t-set="window_size" t-value="5"/>
+                                            <t t-set="start_page" t-value="max(1, min(current_page - window_size//2, total_pages - window_size + 1))"/>
+                                            <t t-set="end_page" t-value="min(total_pages, start_page + window_size - 1)"/>
+                                            <t t-if="start_page &gt; 1">
+                                                <li class="page-item">
+                                                    <a class="page-link"
+                                                       t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=1'])">1</a>
+                                                </li>
+                                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                            </t>
+                                            <t t-foreach="range(start_page, end_page+1)" t-as="page">
                                                 <li class="page-item" t-att-class="'active' if page == current_page else ''">
                                                     <a class="page-link"
                                                        t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % page]) if page != current_page else '#'">
                                                         <t t-esc="page"/>
                                                     </a>
+                                                </li>
+                                            </t>
+                                            <t t-if="end_page &lt; total_pages">
+                                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                                <li class="page-item">
+                                                    <a class="page-link"
+                                                       t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % total_pages])"><t t-esc="total_pages"/></a>
                                                 </li>
                                             </t>
                                             <!-- Botón siguiente -->
