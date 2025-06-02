@@ -657,26 +657,30 @@
                                                                         </div>
                                                                     </t>
                                                                     <!-- Columna 2 -->
-                                                                    <div>
-                                                                        <ul style="list-style: none; padding-left: 0; font-size: 14px;">
-                                                                            <li style="font-weight: bold; margin-bottom: 8px;">Cables de audio y video</li>
-                                                                            <li>Proyectores</li>
-                                                                            <li style="font-weight: bold; margin-top: 10px;">Impresión y copiado</li>
-                                                                            <li>Consumibles para impresora</li>
-                                                                            <li>Impresoras</li>
-                                                                            <li>Multifuncionales</li>
-                                                                            <li>Toner</li>
-                                                                            <li>Cartuchos para impresora</li>
-                                                                            <li>Papelería</li>
-                                                                            <li style="font-weight: bold; margin-top: 10px;">Computadoras portátiles</li>
-                                                                            <li>Accesorios para laptops</li>
-                                                                            <li>Laptop</li>
-                                                                            <li style="font-weight: bold; margin-top: 10px;">Licencias y software</li>
-                                                                            <li>Aspel</li>
-                                                                            <li>Microsoft Windows</li>
-                                                                            <li>ZKTeco Software</li>
-                                                                        </ul>
-                                                                    </div>
+                                                                    <t t-set="second_parent" t-value="request.env['product.category'].sudo().search([('parent_id','=',False), ('child_id','!=',False)], offset=1, limit=1)"/>
+                                                                    <t t-if="second_parent">
+                                                                        <div>
+                                                                            <ul style="list-style: none; padding-left: 0; font-size: 14px;">
+                                                                                <li style="font-weight: bold; margin-bottom: 8px;">
+                                                                                    <t t-esc="second_parent.name"/>
+                                                                                </li>
+                                                                                <t t-foreach="second_parent.child_id" t-as="subcat">
+                                                                                    <li>
+                                                                                        <span style="font-weight: bold;"><t t-esc="subcat.name"/></span>
+                                                                                        <t t-if="subcat.child_id">
+                                                                                            <ul style="list-style: none; padding-left: 15px;">
+                                                                                                <t t-foreach="subcat.child_id" t-as="subsubcat">
+                                                                                                    <li>
+                                                                                                        <t t-esc="subsubcat.name"/>
+                                                                                                    </li>
+                                                                                                </t>
+                                                                                            </ul>
+                                                                                        </t>
+                                                                                    </li>
+                                                                                </t>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </t>
                                                                     <!-- Columna 3 -->
                                                                     <div>
                                                                         <ul style="list-style: none; padding-left: 0; font-size: 14px;">
