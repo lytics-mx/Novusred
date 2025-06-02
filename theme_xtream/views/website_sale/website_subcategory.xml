@@ -67,6 +67,9 @@
                                             <t t-elif="selected_category">
                                                 <t t-esc="selected_category.name"/>
                                             </t>
+                                            <t t-else="">
+                                                Todos los productos
+                                            </t>
                                         </h4>
                                         <span class="text-muted small">
                                             <t t-esc="product_count"/> productos
@@ -233,7 +236,7 @@
                                 <!-- Price Range -->
                                 <div class="filter-section mb-4">
                                     <h6 class="mb-2">Precio</h6>
-                                    <div class="price-options">
+                                    <div class="price-options mb-2">
                                         <div class="mb-1">
                                             <a t-att-href="'/subcategory?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('brand_id') and ('brand_id=' + str(current_filters.get('brand_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'price_range=0_500'" 
                                                class="text-decoration-none small"
@@ -256,6 +259,37 @@
                                             </a>
                                         </div>
                                     </div>
+                                    <!-- Rango personalizado -->
+                                    <form id="custom-price-form" class="d-flex align-items-center" style="gap: 8px;" onsubmit="return customPriceSearch(event)">
+                                        <input type="number" min="0" class="form-control form-control-sm" id="min-price" placeholder="Mín" style="width: 80px;" t-att-value="current_filters.get('min_price', '')"/>
+                                        <span class="mx-1" style="color: #888;">-</span>
+                                        <input type="number" min="0" class="form-control form-control-sm" id="max-price" placeholder="Máx" style="width: 80px;" t-att-value="current_filters.get('max_price', '')"/>
+                                        <button type="submit" class="btn btn-secondary btn-sm" style="background: #aaa; border: none;">
+                                            <img src="/web/static/src/img/search.svg" alt="Buscar" style="width: 18px; height: 18px; vertical-align: middle;"/>
+                                        </button>
+                                    </form>
+                                    <script type="text/javascript">
+                                        function customPriceSearch(e) {
+                                            e.preventDefault();
+                                            var min = document.getElementById('min-price').value;
+                                            var max = document.getElementById('max-price').value;
+                                            var urlParams = new URLSearchParams(window.location.search);
+
+                                            // Remove any existing price_range
+                                            urlParams.delete('price_range');
+
+                                            // Set min_price and max_price if present
+                                            if (min) urlParams.set('min_price', min);
+                                            else urlParams.delete('min_price');
+                                            if (max) urlParams.set('max_price', max);
+                                            else urlParams.delete('max_price');
+
+                                            // Keep other filters
+                                            var newUrl = '/subcategory?' + urlParams.toString();
+                                            window.location.href = newUrl;
+                                            return false;
+                                        }
+                                    </script>
                                 </div>
 
                                 <!-- Discounts -->
