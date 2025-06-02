@@ -1,0 +1,141 @@
+<template id="website_view_product_xtream" inherit_id="website_sale.product">
+    <xpath expr="//div[@id='wrap']" position="replace">
+        <div id="wrap" class="oe_structure">
+            <div class="container" style="background:#f5f5f5; padding: 20px;">
+                <div class="row">
+                    <!-- Breadcrumb -->
+                    <div class="col-12 mb-2">
+                        <a href="#" class="text-primary">Volver</a>
+                        <span class="mx-2">&gt;</span>
+                        <a href="#" class="text-primary">Computadoras y Accesorios</a>
+                        <span class="mx-2">&gt;</span>
+                        <span class="text-secondary">Gamer</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- Product Image -->
+                    <div class="col-md-4">
+                        <img t-att-src="product.image_1920_url" class="img-fluid rounded" style="background:#fff; padding:10px;"/>
+                    </div>
+                    <!-- Product Info -->
+                    <div class="col-md-5">
+                        <h3 t-esc="product.name"/>
+                        <div class="mb-2">
+                            <span class="h4 text-success" t-esc="product.website_price"/>
+                            <span class="text-danger ml-2" t-if="product.list_price &gt; product.website_price">
+                                <t t-esc="'%d%% OFF' % int(100 - (product.website_price / product.list_price * 100))"/>
+                            </span>
+                        </div>
+                        <div class="mb-2">
+                            <span class="text-muted">12 cuotas disponibles</span>
+                        </div>
+                        <div class="mb-2">
+                            <span class="badge badge-success">En stock: <t t-esc="product.qty_available"/></span>
+                        </div>
+                        <div class="mb-2">
+                            <span class="text-muted">SKU: <t t-esc="product.default_code"/></span>
+                        </div>
+                        <div class="mb-2">
+                            <span class="text-muted">Vendido y enviado por: <b>NovusRed</b></span>
+                        </div>
+                        <div class="mb-2">
+                            <img src="/theme_xtream/static/src/img/visa_mastercard.png" height="24"/>
+                        </div>
+                        <button class="btn btn-primary btn-block mb-2">Agregar al carrito</button>
+                        <button class="btn btn-outline-primary btn-block">Comprar</button>
+                    </div>
+                    <!-- Brand & Promotions -->
+                    <div class="col-md-3">
+                        <div class="card mb-3">
+                            <div class="card-body text-center">
+                                <img src="/theme_xtream/static/src/img/dahua_logo.png" height="40"/>
+                                <div class="mt-2">
+                                    <span class="text-muted">Dahua</span><br/>
+                                    <span class="small">Más de 3000 productos</span>
+                                </div>
+                                <a href="#" class="btn btn-primary btn-sm mt-2">Ver la marca</a>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">Promociones</div>
+                            <div class="card-body p-2">
+                                <t t-foreach="promotions" t-as="promo">
+                                    <div class="mb-2">
+                                        <img t-att-src="promo.image_url" class="img-thumbnail" style="width:50px;"/>
+                                        <span class="small" t-esc="promo.name"/>
+                                        <div class="text-danger" t-esc="promo.discount"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Productos que podrían interesarte -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <h5>Productos que podrían interesarte</h5>
+                        <div class="d-flex flex-row">
+                            <t t-foreach="suggested_products" t-as="sug">
+                                <div class="card mr-2" style="width:180px;">
+                                    <img t-att-src="sug.image_url" class="card-img-top"/>
+                                    <div class="card-body p-2">
+                                        <div class="small" t-esc="sug.name"/>
+                                        <div class="text-success" t-esc="sug.price"/>
+                                        <div class="text-danger small" t-esc="sug.discount"/>
+                                    </div>
+                                </div>
+                            </t>
+                            <!-- Combo total -->
+                            <div class="card ml-2" style="width:180px; background:#f9f9f9;">
+                                <div class="card-body text-center">
+                                    <div>Precio total:</div>
+                                    <div class="h5 text-success">$900,000</div>
+                                    <button class="btn btn-primary btn-sm mt-2">Comprar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Descripción -->
+                <div class="row mt-4">
+                    <div class="col-md-8">
+                        <h5>Descripción</h5>
+                        <ul>
+                            <li>Procesador: Intel i7-9750H 2.6GHz-4.5GHz</li>
+                            <li>Memoria RAM: 16GB DDR4</li>
+                            <li>Almacenamiento: 512GB SSD M.2</li>
+                            <li>Pantalla: 15.6" FHD, 1920x1080, 144Hz</li>
+                            <li>Gráficos: NVIDIA GTX 1660Ti 6GB</li>
+                            <li>Dimensiones: 36.3 x 25.5 x 2.6 cm</li>
+                            <li>Peso: 2.3 kg</li>
+                        </ul>
+                        <h5>Ficha técnica</h5>
+                        <table class="table table-sm">
+                            <tr><td>Modelo</td><td>GX-HT1231W</td></tr>
+                            <tr><td>Referencia</td><td>123456</td></tr>
+                            <tr><td>Fecha</td><td>2022-03-11 10:23:52</td></tr>
+                        </table>
+                    </div>
+                </div>
+                <!-- De la misma marca -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <h5>De la misma marca</h5>
+                        <div class="d-flex flex-row">
+                            <t t-foreach="same_brand_products" t-as="brand_prod">
+                                <div class="card mr-2" style="width:180px;">
+                                    <img t-att-src="brand_prod.image_url" class="card-img-top"/>
+                                    <div class="card-body p-2">
+                                        <div class="small" t-esc="brand_prod.name"/>
+                                        <div class="text-success" t-esc="brand_prod.price"/>
+                                        <div class="text-danger small" t-esc="brand_prod.discount"/>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </xpath>
+</template>
