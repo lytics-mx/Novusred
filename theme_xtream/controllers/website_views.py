@@ -111,7 +111,7 @@ class OffersController(http.Controller):
         )
         product_tags = request.env['product.tag'].sudo().search([
             ('visible_on_ecommerce', '=', True)
-        ], limit=6)
+        ])
         
         # Resto de tu lógica existente para productos, categorías, etc.
         # ...existing code...
