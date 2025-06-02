@@ -687,9 +687,17 @@
                                                                                     </t>
                                                                                 </t>
                                                                             </t>
-                                                                            <li style="font-weight: bold; margin-top: 10px;">Computadoras portátiles</li>
-                                                                            <li>Accesorios para laptops</li>
-                                                                            <li>Laptop</li>
+                                                                            <li style="font-weight: bold; margin-top: 10px;">Cámaras de Vigilancia</li>
+                                                                            <t t-set="camara_vigilancia" t-value="request.env['product.category'].sudo().search([('name','=','Cámara de Vigilancia')], limit=1)"/>
+                                                                            <t t-if="camara_vigilancia">
+                                                                                <t t-foreach="camara_vigilancia.child_id" t-as="subcat">
+                                                                                    <li>
+                                                                                        <a t-att-href="'/subcategory?category_id=' + str(camara_vigilancia.id) + '&amp;subcategory_id=' + str(subcat.id)" class="text-decoration-none text-dark">
+                                                                                            <t t-esc="subcat.name"/>
+                                                                                        </a>
+                                                                                    </li>
+                                                                                </t>
+                                                                            </t>
                                                                             <li style="font-weight: bold; margin-top: 10px;">Licencias y software</li>
                                                                             <li>Aspel</li>
                                                                             <li>Microsoft Windows</li>
