@@ -246,14 +246,15 @@
                         
                         <div class="o_wsale_products_grid_table_wrapper">
                             <t t-set="discounted_products" t-value="request.env['product.template'].sudo().search([
-                                ('website_published', '=', True)
-                            ], order='create_date desc')" />
+                                ('website_published', '=', True),
+                                ('product_tag_ids', '!=', False)
+                            ], order='create_date desc', limit=10)" />
 
                             <!-- Desktop View -->
                             <div class="d-none d-md-block">
                                 <div class="row g-3">
-                                    <t t-foreach="discounted_products" t-as="product">
-                                        <div class="col-lg-2 col-md-3 col-sm-4">
+                                    <t t-foreach="discounted_products[:5]" t-as="product">
+                                        <div class="col-lg col-md-4">
                                             <div class="card h-100 shadow-sm product-card">
                                                 <a t-att-href="'/shop/product/' + str(product.id)" class="h-100">
                                                     <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%;">
@@ -279,6 +280,7 @@
                                                                     $<t t-esc="'{:,}'.format(int(product.list_price))" />
                                                                 </span>
                                                             </div>
+
                                                             <div class="d-flex align-items-center justify-content-between mobile-price-container">
                                                                 <span class="text-dark fw-bold mobile-main-price" style="font-size: 28px; color: #000; font-weight: bold;">
                                                                     $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
