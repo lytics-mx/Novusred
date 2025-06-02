@@ -255,6 +255,25 @@ class CategoryController(http.Controller):
         start = (current_page - 1) * per_page
         end = start + per_page
         period_products = period_products[start:end]
+        discount_ranges = [5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90]
+        discount_tags = []
+        discount_tag_counts = {}
+
+        for percent in discount_ranges:
+            # Busca productos publicados con al menos ese porcentaje de descuento
+            products_with_discount = request.env['product.template'].sudo().search([
+                ('website_published', '=', True),
+                ('discount_percentage', '>=', percent),
+                # ...agrega aquí tus filtros de categoría/subcategoría si es necesario...
+            ])
+            count = len(products_with_discount)
+            if count > 0:
+                tag = {
+                    'id': percent,
+                    'name': f'Desde {percent}% OFF'
+                }
+                discount_tags.append(tag)
+                discount_tag_counts[percent] = count
         
 
 
@@ -267,6 +286,9 @@ class CategoryController(http.Controller):
             'other_brands': other_brands,
             'product_count': product_count,  # <- ahora sí está definida
             'selected_subcategory_children': selected_subcategory_children,
+            'discount_tags': discount_tags,
+            'discount_tag_counts': discount_tag_counts,
+
             'subcategories': subcategories,
             'selected_category': selected_category,
             'selected_subcategory': selected_subcategory,
