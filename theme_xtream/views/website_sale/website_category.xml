@@ -714,24 +714,15 @@
                                                                     <!-- Columna 3 -->
                                                                     <div>
                                                                         <ul style="list-style: none; padding-left: 0; font-size: 14px;">
-                                                                            <li style="font-weight: bold; margin-bottom: 8px;">Kit de Cámaras</li>
+                                                                            <li style="font-weight: bold; margin-top: 10px;">Kit de Cámaras</li>
                                                                             <t t-set="kit_camaras" t-value="request.env['product.category'].sudo().search([('name','=','Kit de Cámaras')], limit=1)"/>
                                                                             <t t-if="kit_camaras">
                                                                                 <t t-foreach="kit_camaras.child_id" t-as="subcat">
-                                                                                    <li style="font-weight: bold; margin-bottom: 6px;">
-                                                                                        <t t-esc="subcat.name"/>
+                                                                                    <li>
+                                                                                        <a t-att-href="'/subcategory?category_id=' + str(kit_camaras.id) + '&amp;subcategory_id=' + str(subcat.id)" class="text-decoration-none text-dark">
+                                                                                            <t t-esc="subcat.name"/>
+                                                                                        </a>
                                                                                     </li>
-                                                                                    <t t-if="subcat.child_id">
-                                                                                        <ul style="list-style: none; padding-left: 15px; font-size: 13px;">
-                                                                                            <t t-foreach="subcat.child_id" t-as="subsubcat">
-                                                                                                <li>
-                                                                                                    <a t-att-href="'/subcategory?category_id=' + str(kit_camaras.id) + '&amp;subcategory_id=' + str(subsubcat.id)" class="text-decoration-none text-dark">
-                                                                                                        <t t-esc="subsubcat.name"/>
-                                                                                                    </a>
-                                                                                                </li>
-                                                                                            </t>
-                                                                                        </ul>
-                                                                                    </t>
                                                                                 </t>
                                                                             </t>
                                                                         </ul>
