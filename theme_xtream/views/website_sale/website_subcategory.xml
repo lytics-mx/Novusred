@@ -267,7 +267,12 @@
 
                         <!-- Área de Productos -->
                             <div class="products-list">
-                                <t t-foreach="period_products" t-as="product_data" t-key="product_data['product'].id">
+                                <t t-set="products_per_page" t-value="5"/>
+                                <t t-set="page" t-value="int(request.params.get('page', 1))"/>
+                                <t t-set="total_products" t-value="period_products | length"/>
+                                <t t-set="start" t-value="(page - 1) * products_per_page"/>
+                                <t t-set="end" t-value="start + products_per_page"/>
+                                <t t-foreach="period_products[start:end]" t-as="product_data" t-key="product_data['product'].id">
                                     <div class="product-list-item mb-3 p-3" style="border: 1px solid #dee2e6; border-radius: 8px;">
                                         <div class="row align-items-center">
                                             <!-- Imagen del producto -->
@@ -309,6 +314,29 @@
                                     </div>
                                 </t>
                             </div>
+                            <!-- Pagination Controls -->
+                            <t t-set="total_pages" t-value="(total_products // products_per_page) + (1 if total_products % products_per_page else 0)"/>
+                            <nav aria-label="Page navigation" t-if="total_pages &gt; 1">
+                                <ul class="pagination justify-content-center mt-4">
+                                    <li class="page-item" t-att-class="'disabled' if page &lt;= 1 else ''">
+                                        <a class="page-link" t-att-href="'?page=%d' % (page-1) + (('&amp;' + request.httprequest.query_string.decode('utf-8')).replace('page=%d' % page, '').replace('&&', '&').strip('&') if page &gt; 1 else '')" aria-label="Anterior">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    <t t-foreach="range(1, total_pages+1)" t-as="p">
+                                        <li class="page-item" t-att-class="'active' if p == page else ''">
+                                            <a class="page-link" t-att-href="'?page=%d' % p + (('&amp;' + request.httprequest.query_string.decode('utf-8')).replace('page=%d' % page, '').replace('&&', '&').strip('&') if page != p else '')">
+                                                <t t-esc="p"/>
+                                            </a>
+                                        </li>
+                                    </t>
+                                    <li class="page-item" t-att-class="'disabled' if page &gt;= total_pages else ''">
+                                        <a class="page-link" t-att-href="'?page=%d' % (page+1) + (('&amp;' + request.httprequest.query_string.decode('utf-8')).replace('page=%d' % page, '').replace('&&', '&').strip('&') if page &lt; total_pages else '')" aria-label="Siguiente">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
                         </div>
     
                     </div>
