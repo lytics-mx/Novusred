@@ -175,10 +175,12 @@ class CategoryController(http.Controller):
 
         forced_brands = []
         other_brands = []
-        for brand in available_brands:
-            if brand.name in forced_brand_names:
+        for name in forced_brand_names:
+            brand = next((b for b in available_brands if b.name == name), None)
+            if brand:
                 forced_brands.append(brand)
-            else:
+        for brand in available_brands:
+            if brand.name not in forced_brand_names:
                 other_brands.append(brand)
         
         product_count = len(products)

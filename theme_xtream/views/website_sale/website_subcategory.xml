@@ -188,39 +188,33 @@
 
                                 <!-- Brands (Marca) -->
                                 <!-- ...existing code... -->
-                                <div class="filter-section mb-4" t-if="available_brands">
+                                <div class="filter-section mb-4" t-if="forced_brands or other_brands">
                                     <h6 class="mb-2">Marca</h6>
                                     <div class="brands-list" id="brands-list">
                                         <!-- Mostrar primero las 5 marcas forzadas -->
-                                        <t t-set="forced_brands" t-value="['EPCOM PROFESSIONAL', 'HiLook by HIKVISION', 'ADEMCO (HONEYWELL)', 'HIKVISION', 'EZVIZ']"/>
-                                        <t t-foreach="forced_brands" t-as="forced_brand" t-key="forced_brand">
-                                            <t t-set="brand_data" t-value="next((b for b in available_brands if b.name == forced_brand), None)"/>
-                                            <t t-if="brand_data">
-                                                <div class="mb-1 brand-item" style="">
-                                                    <a t-att-href="'/subcategory?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'brand_id=' + str(brand_data.id)" 
-                                                       class="text-decoration-none small"
-                                                       t-att-style="'color: #007bff; font-weight: bold;' if current_filters.get('brand_id') == brand_data.id else 'color: #6c757d;'">
-                                                        <t t-esc="brand_data.name"/>
-                                                        (<t t-esc="brand_counts.get(brand_data.id, 0)"/>)
-                                                    </a>
-                                                </div>
-                                            </t>
+                                        <t t-foreach="forced_brands" t-as="brand_data" t-key="brand_data.id">
+                                            <div class="mb-1 brand-item">
+                                                <a t-att-href="'/subcategory?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'brand_id=' + str(brand_data.id)" 
+                                                   class="text-decoration-none small"
+                                                   t-att-style="'color: #007bff; font-weight: bold;' if current_filters.get('brand_id') == brand_data.id else 'color: #6c757d;'">
+                                                    <t t-esc="brand_data.name"/>
+                                                    (<t t-esc="brand_counts.get(brand_data.id, 0)"/>)
+                                                </a>
+                                            </div>
                                         </t>
-                                        <!-- Mostrar el resto de marcas (no forzadas) ocultas inicialmente -->
-                                        <t t-foreach="available_brands" t-as="brand_data" t-key="brand_data.id">
-                                            <t t-if="brand_data.name not in forced_brands">
-                                                <div class="mb-1 brand-item extra-brand" style="display:none;">
-                                                    <a t-att-href="'/subcategory?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'brand_id=' + str(brand_data.id)" 
-                                                       class="text-decoration-none small"
-                                                       t-att-style="'color: #007bff; font-weight: bold;' if current_filters.get('brand_id') == brand_data.id else 'color: #6c757d;'">
-                                                        <t t-esc="brand_data.name"/>
-                                                        (<t t-esc="brand_counts.get(brand_data.id, 0)"/>)
-                                                    </a>
-                                                </div>
-                                            </t>
+                                        <!-- Mostrar el resto de marcas ocultas inicialmente -->
+                                        <t t-foreach="other_brands" t-as="brand_data" t-key="brand_data.id">
+                                            <div class="mb-1 brand-item extra-brand" style="display:none;">
+                                                <a t-att-href="'/subcategory?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'brand_id=' + str(brand_data.id)" 
+                                                   class="text-decoration-none small"
+                                                   t-att-style="'color: #007bff; font-weight: bold;' if current_filters.get('brand_id') == brand_data.id else 'color: #6c757d;'">
+                                                    <t t-esc="brand_data.name"/>
+                                                    (<t t-esc="brand_counts.get(brand_data.id, 0)"/>)
+                                                </a>
+                                            </div>
                                         </t>
                                     </div>
-                                    <t t-if="len(available_brands) > 5">
+                                    <t t-if="other_brands">
                                         <button id="show-all-brands" class="btn btn-link p-0 small" type="button" style="color: #007bff;">Ver todas</button>
                                     </t>
                                 </div>
