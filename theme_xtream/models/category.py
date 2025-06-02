@@ -259,7 +259,7 @@ class CategoryController(http.Controller):
         discount_tags = []
         discount_tag_counts = {}
         discount_tag_counts_general = {}
-        
+
         for percent in discount_ranges:
             # Con filtros actuales
             domain_with_filters = domain.copy()
@@ -279,12 +279,12 @@ class CategoryController(http.Controller):
                 discount_tag_counts[percent] = count
                 discount_tag_counts_general[percent] = count_general
 
-        # Si tienes una lista de nombres de promociones:
+        # --- PROMOCIONES ---
         promotion_tag_objs = request.env['product.tag'].sudo().search([('is_active', '=', True)])
         promotion_tags = []
         promotion_tag_counts = {}
         promotion_tag_counts_general = {}
-        
+
         for tag in promotion_tag_objs:
             # Con filtros actuales
             domain_with_filters = domain.copy()
@@ -310,8 +310,10 @@ class CategoryController(http.Controller):
             'selected_subcategory_children': selected_subcategory_children,
             'discount_tags': discount_tags,
             'discount_tag_counts': discount_tag_counts,
+            'discount_tag_counts_general': discount_tag_counts_general,
             'promotion_tags': promotion_tags,
             'promotion_tag_counts': promotion_tag_counts,
+            'promotion_tag_counts_general': promotion_tag_counts_general,
 
             'subcategories': subcategories,
             'selected_category': selected_category,
@@ -322,10 +324,9 @@ class CategoryController(http.Controller):
             'products': products,
             'period_products': period_products,
             'product_count': product_count,
-            'discount_tags': discount_tags,
-            'promotion_tags': promotion_tags,
-            'discount_tag_counts': discount_tag_counts,  # Agregar diccionario
-            'promotion_tag_counts': promotion_tag_counts,  # Agregar diccionario
+        
+            
+            
             'price_ranges': price_ranges,
             'current_filters': {
                 'category_id': category_id,
