@@ -193,9 +193,10 @@
                                     <div class="brands-list" id="brands-list">
                                         <t t-foreach="available_brands[:5]" t-as="brand" t-key="brand.id">
                                             <div class="mb-1 brand-item">
-                                                <a t-att-href="'/subcategory?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '' + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'brand_id=' + str(brand.id)" 
-                                                   class="text-decoration-none small"
-                                                   t-att-style="'color: #007bff; font-weight: bold;' if current_filters.get('brand_id') == brand.id else 'color: #6c757d;'">
+                                                <a
+                                                    t-att-href="'/subcategory?' + '&amp;'.join([('%s=%s' % (k, v)) for k, v in current_filters.items() if v and k != 'brand_id'] + ['brand_id=%s' % brand.id])"
+                                                    class="text-decoration-none small"
+                                                    t-att-style="'color: #007bff; font-weight: bold;' if current_filters.get('brand_id') == brand.id else 'color: #6c757d;'">
                                                     <t t-esc="brand.name"/>
                                                     (<t t-esc="brand_counts.get(brand.id, 0)"/>)
                                                 </a>
@@ -205,9 +206,10 @@
                                             <div id="more-brands" style="display: none;">
                                                 <t t-foreach="available_brands[5:]" t-as="brand" t-key="brand.id">
                                                     <div class="mb-1 brand-item">
-                                                        <a t-att-href="'/subcategory?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '' + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'brand_id=' + str(brand.id)" 
-                                                           class="text-decoration-none small"
-                                                           t-att-style="'color: #007bff; font-weight: bold;' if current_filters.get('brand_id') == brand.id else 'color: #6c757d;'">
+                                                        <a
+                                                            t-att-href="'/subcategory?' + '&amp;'.join([('%s=%s' % (k, v)) for k, v in current_filters.items() if v and k != 'brand_id'] + ['brand_id=%s' % brand.id])"
+                                                            class="text-decoration-none small"
+                                                            t-att-style="'color: #007bff; font-weight: bold;' if current_filters.get('brand_id') == brand.id else 'color: #6c757d;'">
                                                             <t t-esc="brand.name"/>
                                                             (<t t-esc="brand_counts.get(brand.id, 0)"/>)
                                                         </a>
