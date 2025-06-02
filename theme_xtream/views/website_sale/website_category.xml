@@ -639,77 +639,111 @@
                                                                 <h3 style="font-family: 'Questrial', sans-serif; font-size: 20px; text-align: center; margin-bottom: 30px;">
                                                                     Computadoras Y Accesorios
                                                                 </h3>
-                                                                <div class="row justify-content-center" style="font-size: 14px;">
-                                                                    <!-- Desktop columns remain unchanged -->
-                                                                    <div class="col-md-10 mx-auto">
-                                                                        <div class="d-flex justify-content-center" style="gap: 60px;">
-                                                                            <!-- Todos -->
-                                                                            <div>
-                                                                                <span style="font-weight: bold; display: block; margin-bottom: 8px;">Todos</span>
-                                                                                <ul style="list-style: none; padding-left: 0; margin-bottom: 0;">
-                                                                                    <t t-set="all_subcats" t-value="request.env['product.category'].sudo().search([('parent_id','!=',False)], limit=18)"/>
-                                                                                    <t t-foreach="all_subcats" t-as="subcat">
-                                                                                        <li style="margin-bottom: 2px;">
-                                                                                            <a t-att-href="'/subcategory?subcategory_id=' + str(subcat.id)" class="text-decoration-none text-dark" style="font-weight: normal;">
-                                                                                                <t t-esc="subcat.name"/>
-                                                                                            </a>
-                                                                                        </li>
-                                                                                    </t>
-                                                                                </ul>
-                                                                            </div>
-                                                                            <!-- Control de Acceso -->
-                                                                            <div>
-                                                                                <span style="font-weight: bold; display: block; margin-bottom: 8px;">Control de Acceso</span>
-                                                                                <ul style="list-style: none; padding-left: 0; margin-bottom: 0;">
-                                                                                    <t t-set="control_acceso" t-value="request.env['product.category'].sudo().search([('name','=','Control de Acceso')], limit=1)"/>
-                                                                                    <t t-if="control_acceso">
-                                                                                        <t t-foreach="control_acceso.child_id" t-as="subcat">
-                                                                                            <li style="margin-bottom: 2px;">
-                                                                                                <a t-att-href="'/subcategory?category_id=' + str(control_acceso.id) + '&amp;subcategory_id=' + str(subcat.id)" class="text-decoration-none text-dark" style="font-weight: normal;">
-                                                                                                    <t t-esc="subcat.name"/>
-                                                                                                </a>
-                                                                                            </li>
-                                                                                        </t>
-                                                                                    </t>
-                                                                                </ul>
-                                                                            </div>
-                                                                            <!-- Saleable -->
-                                                                            <div>
-                                                                                <span style="font-weight: bold; display: block; margin-bottom: 8px;">Saleable</span>
-                                                                                <ul style="list-style: none; padding-left: 0; margin-bottom: 0;">
-                                                                                    <t t-set="saleable" t-value="request.env['product.category'].sudo().search([('name','=','Saleable')], limit=1)"/>
-                                                                                    <t t-if="saleable">
-                                                                                        <t t-foreach="saleable.child_id" t-as="subcat">
-                                                                                            <li style="margin-bottom: 2px;">
-                                                                                                <a t-att-href="'/subcategory?category_id=' + str(saleable.id) + '&amp;subcategory_id=' + str(subcat.id)" class="text-decoration-none text-dark" style="font-weight: normal;">
-                                                                                                    <t t-esc="subcat.name"/>
-                                                                                                </a>
-                                                                                            </li>
-                                                                                        </t>
-                                                                                    </t>
-                                                                                </ul>
-                                                                            </div>
-                                                                            <!-- Videovigilancia -->
-                                                                            <div>
-                                                                                <span style="font-weight: bold; display: block; margin-bottom: 8px;">Videovigilancia</span>
-                                                                                <ul style="list-style: none; padding-left: 0; margin-bottom: 0;">
-                                                                                    <t t-set="videovigilancia" t-value="request.env['product.category'].sudo().search([('name','=','Videovigilancia')], limit=1)"/>
-                                                                                    <t t-if="videovigilancia">
-                                                                                        <t t-foreach="videovigilancia.child_id" t-as="subcat">
-                                                                                            <li style="margin-bottom: 2px;">
-                                                                                                <a t-att-href="'/subcategory?category_id=' + str(videovigilancia.id) + '&amp;subcategory_id=' + str(subcat.id)" class="text-decoration-none text-dark" style="font-weight: normal;">
-                                                                                                    <t t-esc="subcat.name"/>
-                                                                                                </a>
-                                                                                            </li>
-                                                                                        </t>
-                                                                                    </t>
-                                                                                </ul>
-                                                                            </div>
-                                                                        </div>
+                                                                <div class="d-flex justify-content-center" style="gap: 60px;">
+                                                                    <!-- Columna 1 -->
+                                                                    <div>
+                                                                        <ul style="list-style: none; padding-left: 0; margin-bottom: 0;">
+                                                                            <t t-set="cat1" t-value="request.env['product.category'].sudo().search([('name','=','Computadoras y accesorios')], limit=1)"/>
+                                                                            <t t-if="cat1">
+                                                                                <li style="font-weight: bold; margin-bottom: 6px;">
+                                                                                    <t t-esc="cat1.name"/>
+                                                                                </li>
+                                                                                <t t-foreach="cat1.child_id" t-as="child">
+                                                                                    <li>
+                                                                                        <t t-esc="child.name"/>
+                                                                                    </li>
+                                                                                </t>
+                                                                            </t>
+                                                                            <t t-set="cat2" t-value="request.env['product.category'].sudo().search([('name','=','Almacenamiento de datos')], limit=1)"/>
+                                                                            <t t-if="cat2">
+                                                                                <li style="font-weight: bold; margin-top: 10px;">
+                                                                                    <t t-esc="cat2.name"/>
+                                                                                </li>
+                                                                                <t t-foreach="cat2.child_id" t-as="child">
+                                                                                    <li>
+                                                                                        <t t-esc="child.name"/>
+                                                                                    </li>
+                                                                                </t>
+                                                                            </t>
+                                                                            <t t-set="cat3" t-value="request.env['product.category'].sudo().search([('name','=','Audio y video')], limit=1)"/>
+                                                                            <t t-if="cat3">
+                                                                                <li style="font-weight: bold; margin-top: 10px;">
+                                                                                    <t t-esc="cat3.name"/>
+                                                                                </li>
+                                                                                <t t-foreach="cat3.child_id" t-as="child">
+                                                                                    <li>
+                                                                                        <t t-esc="child.name"/>
+                                                                                    </li>
+                                                                                </t>
+                                                                            </t>
+                                                                        </ul>
                                                                     </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                                    <!-- Columna 2 -->
+                                                                    <div>
+                                                                        <ul style="list-style: none; padding-left: 0; margin-bottom: 0;">
+                                                                            <t t-set="cat4" t-value="request.env['product.category'].sudo().search([('name','=','Cables de audio y video')], limit=1)"/>
+                                                                            <t t-if="cat4">
+                                                                                <li style="font-weight: bold; margin-bottom: 6px;">
+                                                                                    <t t-esc="cat4.name"/>
+                                                                                </li>
+                                                                                <t t-foreach="cat4.child_id" t-as="child">
+                                                                                    <li>
+                                                                                        <t t-esc="child.name"/>
+                                                                                    </li>
+                                                                                </t>
+                                                                            </t>
+                                                                            <t t-set="cat5" t-value="request.env['product.category'].sudo().search([('name','=','Impresión y copiado')], limit=1)"/>
+                                                                            <t t-if="cat5">
+                                                                                <li style="font-weight: bold; margin-top: 10px;">
+                                                                                    <t t-esc="cat5.name"/>
+                                                                                </li>
+                                                                                <t t-foreach="cat5.child_id" t-as="child">
+                                                                                    <li>
+                                                                                        <t t-esc="child.name"/>
+                                                                                    </li>
+                                                                                </t>
+                                                                            </t>
+                                                                            <t t-set="cat6" t-value="request.env['product.category'].sudo().search([('name','=','Computadoras portátiles')], limit=1)"/>
+                                                                            <t t-if="cat6">
+                                                                                <li style="font-weight: bold; margin-top: 10px;">
+                                                                                    <t t-esc="cat6.name"/>
+                                                                                </li>
+                                                                                <t t-foreach="cat6.child_id" t-as="child">
+                                                                                    <li>
+                                                                                        <t t-esc="child.name"/>
+                                                                                    </li>
+                                                                                </t>
+                                                                            </t>
+                                                                            <t t-set="cat7" t-value="request.env['product.category'].sudo().search([('name','=','Licencias y software')], limit=1)"/>
+                                                                            <t t-if="cat7">
+                                                                                <li style="font-weight: bold; margin-top: 10px;">
+                                                                                    <t t-esc="cat7.name"/>
+                                                                                </li>
+                                                                                <t t-foreach="cat7.child_id" t-as="child">
+                                                                                    <li>
+                                                                                        <t t-esc="child.name"/>
+                                                                                    </li>
+                                                                                </t>
+                                                                            </t>
+                                                                        </ul>
+                                                                    </div>
+                                                                    <!-- Columna 3 -->
+                                                                    <div>
+                                                                        <ul style="list-style: none; padding-left: 0; margin-bottom: 0;">
+                                                                            <t t-set="cat8" t-value="request.env['product.category'].sudo().search([('name','=','Monitores y pantallas')], limit=1)"/>
+                                                                            <t t-if="cat8">
+                                                                                <li style="font-weight: bold; margin-bottom: 6px;">
+                                                                                    <t t-esc="cat8.name"/>
+                                                                                </li>
+                                                                                <t t-foreach="cat8.child_id" t-as="child">
+                                                                                    <li>
+                                                                                        <t t-esc="child.name"/>
+                                                                                    </li>
+                                                                                </t>
+                                                                            </t>
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
 
                                                     <!-- Mobile View with Accordion -->
                                                     <div class="d-block d-md-none">
@@ -845,7 +879,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </section>
                                             
             </div>
         </t>
