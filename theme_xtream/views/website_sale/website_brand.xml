@@ -133,9 +133,9 @@
                             <t t-set="discounted_products" t-value="(products if products is defined else request.env['product.template'].sudo().search([('website_published', '=', True), ('product_tag_ids', '!=', False)], order='create_date desc', limit=10)) or []" />
                             <!-- Desktop View -->
                             <div class="d-none d-md-block">
-                                <div class="row g-3">
+                                <div class="row g-3" style="display: flex; flex-wrap: wrap;">
                                     <t t-foreach="discounted_products" t-as="product">
-                                        <div class="col-lg-2-4 col-md-4 col-sm-6" style="flex: 0 0 20%; max-width: 20%;">
+                                        <div class="col-lg-2-4 col-md-4 col-sm-6" style="flex: 0 0 20%; max-width: 20%; min-width: 220px;">
                                             <div class="card h-100 shadow-sm product-card">
                                                 <a t-att-href="'/shop/product/' + str(product.id)" class="h-100">
                                                     <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%;">
@@ -204,6 +204,20 @@
                                         </div>
                                     </t>
                                 </div>
+                                <style>
+                                    @media (max-width: 1400px) {
+                                        .col-lg-2-4 { flex: 0 0 25%; max-width: 25%; }
+                                    }
+                                    @media (max-width: 1200px) {
+                                        .col-lg-2-4, .col-md-4 { flex: 0 0 33.3333%; max-width: 33.3333%; }
+                                    }
+                                    @media (max-width: 992px) {
+                                        .col-lg-2-4, .col-md-4, .col-sm-6 { flex: 0 0 50%; max-width: 50%; }
+                                    }
+                                    @media (max-width: 768px) {
+                                        .col-lg-2-4, .col-md-4, .col-sm-6 { flex: 0 0 100%; max-width: 100%; }
+                                    }
+                                </style>
                             </div>
 
                             <!-- Mobile View -->
