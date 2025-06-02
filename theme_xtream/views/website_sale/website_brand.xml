@@ -208,7 +208,7 @@
 
                             <!-- Mobile View -->
                             <div class="d-md-none">
-                                <div class="row g-2">
+                                 <div class="row g-2">
                                     <t t-foreach="discounted_products[:4]" t-as="product">
                                         <div class="col-6">
                                             <div class="card h-100 shadow-sm product-card">
@@ -283,7 +283,69 @@
                         </div>
                     </div>
                 </section>
+
+                <t t-if="request.user_agent and (request.user_agent.platform in ['android', 'iphone', 'ipad'] or 'Mobile' in request.httprequest.user_agent.string)">
+                    <section class="more-categories py-5">
+                        <h2 class="text-center" style="font-family: 'Questrial', sans-serif; font-size: 25px;">MÁS CATEGORÍAS</h2>
+                        <div class="container">
+                            <t t-set="category_banner" t-value="request.env['banner.image.line'].sudo().search([('name', '=', 'categorias')], limit=1)" />
+                            <t t-if="category_banner and category_banner.selected_categories and category_banner.category_menu_images">
+                                <t t-set="cat_img_pairs" t-value="list(zip(category_banner.selected_categories, category_banner.category_menu_images))" />
+                            <!-- Mobile view (1 item per slide) -->
+                            <div class="d-block d-md-none">
+                                <div id="categoryMobileCarousel" class="carousel slide" data-bs-ride="carousel">
+                                    <div class="carousel-inner">
+                                        <t t-set="first" t-value="True"/>
+                                        <t t-foreach="cat_img_pairs" t-as="pair">
+                                            <div t-att-class="'carousel-item' + (' active' if first else '')">
+                                                <t t-set="first" t-value="False"/>
+                                                <div class="card shadow h-100 mx-2" style="border-radius: 10px; overflow: hidden; border: none;">
+                                                    <div style="position: relative;">
+                                                        <img t-att-src="'/web/image/' + str(pair[1].id)" 
+                                                             alt="Category Image" 
+                                                             class="img-fluid" 
+                                                             style="width: 100%; height: 180px; object-fit: cover;" />
+                                                        <!-- Overlay blanco desde el nombre hasta abajo -->
+                                                        <div class="card-img-overlay d-flex flex-column justify-content-end p-0"
+                                                             style="background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 100%);">
+                                                            <div style="background: #fff; border-radius: 0 0 10px 10px; padding: 12px 12px 10px 12px; width: 100%; box-shadow: 0 -2px 8px rgba(0,0,0,0.10);">
+                                                                <h5 class="mb-2" style="font-size: 14px; font-weight: bold; color: #222;">
+                                                                    <t t-esc="pair[0].name"/>
+                                                                </h5>
+                                                                <div class="subcategories">
+                                                                    <t t-foreach="pair[0].child_id[:2]" t-as="child">
+                                                                        <p class="text-dark mb-1" style="font-size: 11px; opacity: 0.9;">
+                                                                            <t t-esc="child.name"/>
+                                                                        </p>
+                                                                    </t>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <t t-if="len(cat_img_pairs) > 1">
+                                        <button class="carousel-control-prev" type="button" data-bs-target="#categoryMobileCarousel" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Anterior</span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button" data-bs-target="#categoryMobileCarousel" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Siguiente</span>
+                                        </button>
+                                    </t>
+                                </div>
+                            </div>                         
+                        </t>
+                    </div>
+                    </section>
+                </t>
                 
+                
+
+
                 <div style="height: 50px;"></div>
 
                 <!-- Más Categorías -->
