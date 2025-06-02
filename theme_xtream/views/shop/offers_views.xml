@@ -14,72 +14,41 @@
                         </div>
                     </div>
                     <!-- Iconos de tags -->
-                    <div class="tags-container w-100">
-                        <div style="height: 25px;"></div>
-                        <t t-if="product_tags">
-                            <t t-if="carousel_tags">
-                                <!-- Carrusel dinámico de tags -->
-                                <div id="tagsCarousel" class="carousel slide" data-bs-ride="carousel">
-                                    <div class="carousel-inner">
-                                        <t t-set="chunks" t-value="[product_tags[i:i+6] for i in range(0, len(product_tags), 6)]"/>
-                                        <t t-foreach="chunks" t-as="chunk" t-foreach-index="idx">
-                                            <div t-attf-class="carousel-item #{'active' if idx == 0 else ''}">
-                                                <div class="tags-wrapper d-flex justify-content-center align-items-center">
-                                                    <t t-foreach="chunk" t-as="tag">
-                                                        <div class="text-center position-relative tag-item clickable-tag"
-                                                             t-att-data-tag-id="tag.id"
-                                                             t-att-data-tag-name="tag.name">
-                                                            <div class="tag-icon-container">
-                                                                <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
-                                                                     t-att-alt="tag.name"
-                                                                     class="tag-icon" />
-                                                            </div>
-                                                            <div class="tag-name">
-                                                                <t t-esc="tag.name" />
-                                                            </div>
-                                                            <div class="tag-underline"></div>
-                                                        </div>
-                                                    </t>
-                                                </div>
-                                            </div>
-                                        </t>
-                                    </div>
-                                    <button class="carousel-control-prev" type="button" data-bs-target="#tagsCarousel" data-bs-slide="prev">
-                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Anterior</span>
-                                    </button>
-                                    <button class="carousel-control-next" type="button" data-bs-target="#tagsCarousel" data-bs-slide="next">
-                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Siguiente</span>
-                                    </button>
-                                </div>
-                            </t>
-                            <t t-else="">
-                                <!-- Lista normal de tags -->
+                    <div class="d-flex align-items-center justify-content-center" style="flex: 2;">
+                        <div class="tags-container w-100">
+                            <div style="height: 25px;"></div>
+                            <t t-if="product_tags">
                                 <div class="tags-wrapper d-flex justify-content-center align-items-center">
                                     <t t-foreach="product_tags" t-as="tag">
-                                        <div class="text-center position-relative tag-item clickable-tag"
+                                        <div class="text-center position-relative tag-item clickable-tag" 
                                              t-att-data-tag-id="tag.id"
                                              t-att-data-tag-name="tag.name">
+                                            
+                                            <!-- Imagen del tag -->
                                             <div class="tag-icon-container">
                                                 <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
                                                      t-att-alt="tag.name"
                                                      class="tag-icon" />
                                             </div>
+                                            
+                                            <!-- Nombre del tag -->
                                             <div class="tag-name">
                                                 <t t-esc="tag.name" />
                                             </div>
+                                            
+                                            <!-- Línea azul (solo visible al hover) -->
                                             <div class="tag-underline"></div>
                                         </div>
                                     </t>
                                 </div>
                             </t>
-                        </t>
-                        <t t-else="">
-                            <div style="color: #666; font-size: 14px; padding: 10px;">
-                                No hay categorías disponibles
-                            </div>
-                        </t>
+                            
+                            <t t-else="">
+                                <div style="color: #666; font-size: 14px; padding: 10px;">
+                                    No hay categorías disponibles
+                                </div>
+                            </t>
+                        </div>
                     </div>
                     
                     <!-- CSS para manejar el hover y responsive -->
