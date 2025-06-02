@@ -165,7 +165,7 @@ class CategoryController(http.Controller):
         
         brand_products = request.env['product.template'].sudo().search(brand_domain)
         available_brands = brand_products.mapped('brand_type_id').filtered(
-            lambda b: b.name and brand_products.filtered(lambda p: p.brand_type_id.id == b.id and p.website_published)
+            lambda b: b.name and brand_products.filtered(lambda p: p.brand_type_id.id == b.id)
         )
         # Calcular contador de productos PUBLICADOS por marca
         brand_counts = {}
