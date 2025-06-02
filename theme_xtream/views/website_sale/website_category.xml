@@ -661,15 +661,32 @@
                                                                     <!-- Columna 2 -->
                                                                     <div>
                                                                         <ul style="list-style: none; padding-left: 0; font-size: 14px;">
-                                                                            <li style="font-weight: bold; margin-bottom: 8px;">Cables de audio y video</li>
-                                                                            <li>Proyectores</li>
-                                                                            <li style="font-weight: bold; margin-top: 10px;">Impresión y copiado</li>
-                                                                            <li>Consumibles para impresora</li>
-                                                                            <li>Impresoras</li>
-                                                                            <li>Multifuncionales</li>
-                                                                            <li>Toner</li>
-                                                                            <li>Cartuchos para impresora</li>
-                                                                            <li>Papelería</li>
+                                                                            <li style="font-weight: bold; margin-bottom: 8px;">Saleable</li>
+                                                                            <t t-set="saleable" t-value="request.env['product.category'].sudo().search([('name','=','Saleable')], limit=1)"/>
+                                                                            <t t-if="saleable">
+                                                                                <t t-foreach="saleable.child_id" t-as="subcat">
+                                                                                    <t t-foreach="subcat.child_id" t-as="subsubcat">
+                                                                                        <li>
+                                                                                            <a t-att-href="'/subcategory?category_id=' + str(saleable.id) + '&amp;subcategory_id=' + str(subsubcat.id)" class="text-decoration-none text-dark">
+                                                                                                <t t-esc="subsubcat.name"/>
+                                                                                            </a>
+                                                                                        </li>
+                                                                                    </t>
+                                                                                </t>
+                                                                            </t>
+                                                                            <li style="font-weight: bold; margin-bottom: 8px;">Videovigilancia</li>
+                                                                            <t t-set="videovigilancia" t-value="request.env['product.category'].sudo().search([('name','=','Videovigilancia')], limit=1)"/>
+                                                                            <t t-if="videovigilancia">
+                                                                                <t t-foreach="videovigilancia.child_id" t-as="subcat">
+                                                                                    <t t-foreach="subcat.child_id" t-as="subsubcat">
+                                                                                        <li>
+                                                                                            <a t-att-href="'/subcategory?category_id=' + str(videovigilancia.id) + '&amp;subcategory_id=' + str(subsubcat.id)" class="text-decoration-none text-dark">
+                                                                                                <t t-esc="subsubcat.name"/>
+                                                                                            </a>
+                                                                                        </li>
+                                                                                    </t>
+                                                                                </t>
+                                                                            </t>
                                                                             <li style="font-weight: bold; margin-top: 10px;">Computadoras portátiles</li>
                                                                             <li>Accesorios para laptops</li>
                                                                             <li>Laptop</li>
