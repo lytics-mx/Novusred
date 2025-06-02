@@ -219,9 +219,27 @@ class CategoryController(http.Controller):
         for tag in promotion_tags:
             count = len(category_products.filtered(lambda p: tag in p.product_tag_ids))
             promotion_tag_counts[tag.id] = count
-        
+
+        try:
+            current_page = int(request.params.get('page', 1))
+        except Exception:
+            current_page = 1
+
+        per_page = 5
+        total_products = len(period_products)
+        total_pages = max(1, (total_products + per_page - 1) // per_page)
+        start = (current_page - 1) * per_page
+        end = start + per_page
+        period_products = period_products[start:end]
+
+
+
         values = {
             'categories': categories,
+            'current_page': current_page,
+            'total_pages': total_pages,
+
+
             'subcategories': subcategories,
             'selected_category': selected_category,
             'selected_subcategory': selected_subcategory,
