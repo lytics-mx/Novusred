@@ -641,24 +641,41 @@
                                                                 </h3>
                                                                 <div class="d-flex justify-content-center" style="gap: 60px;">
                                                                     <!-- Columna 1 -->
+                                                                    <t t-set="compu_cat" t-value="request.env['product.category'].sudo().search([('name','=','Computadoras y accesorios')], limit=1)"/>
                                                                     <div>
                                                                         <ul style="list-style: none; padding-left: 0; font-size: 14px;">
-                                                                            <li style="font-weight: bold; margin-bottom: 8px;">Computadoras y accesorios</li>
-                                                                            <li>Gamer</li>
-                                                                            <li>Apple</li>
-                                                                            <li>Productos electrónicos</li>
-                                                                            <li>Mantenimiento preventivo</li>
-                                                                            <li style="font-weight: bold; margin-top: 10px;">Almacenamiento de datos</li>
-                                                                            <li>CD-DVD</li>
-                                                                            <li>Disco duro</li>
-                                                                            <li>Disco duro externo</li>
-                                                                            <li>Disco SSD</li>
-                                                                            <li>Memoria SD</li>
-                                                                            <li>Memoria USB</li>
-                                                                            <li>Servidor NAS</li>
-                                                                            <li style="font-weight: bold; margin-top: 10px;">Audio y video</li>
-                                                                            <li>Audífonos y bocinas</li>
-                                                                            <li>Adaptadores de audio y video</li>
+                                                                            <t t-if="compu_cat and compu_cat.child_id">
+                                                                                <t t-set="first_subcat" t-value="compu_cat.child_id[0]"/>
+                                                                                <li style="font-weight: bold; margin-bottom: 8px;">
+                                                                                    <t t-esc="first_subcat.name"/>
+                                                                                </li>
+                                                                                <t t-if="first_subcat.child_id">
+                                                                                    <ul style="list-style: none; padding-left: 15px; font-size: 14px;">
+                                                                                        <t t-foreach="first_subcat.child_id" t-as="subsubcat">
+                                                                                            <li>
+                                                                                                <t t-esc="subsubcat.name"/>
+                                                                                            </li>
+                                                                                        </t>
+                                                                                    </ul>
+                                                                                </t>
+                                                                            </t>
+                                                                            <t t-else="">
+                                                                                <li>Gamer</li>
+                                                                                <li>Apple</li>
+                                                                                <li>Productos electrónicos</li>
+                                                                                <li>Mantenimiento preventivo</li>
+                                                                                <li style="font-weight: bold; margin-top: 10px;">Almacenamiento de datos</li>
+                                                                                <li>CD-DVD</li>
+                                                                                <li>Disco duro</li>
+                                                                                <li>Disco duro externo</li>
+                                                                                <li>Disco SSD</li>
+                                                                                <li>Memoria SD</li>
+                                                                                <li>Memoria USB</li>
+                                                                                <li>Servidor NAS</li>
+                                                                                <li style="font-weight: bold; margin-top: 10px;">Audio y video</li>
+                                                                                <li>Audífonos y bocinas</li>
+                                                                                <li>Adaptadores de audio y video</li>
+                                                                            </t>
                                                                         </ul>
                                                                     </div>
                                                                     <!-- Columna 2 -->
