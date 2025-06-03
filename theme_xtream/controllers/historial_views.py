@@ -138,3 +138,4 @@ class ProductHistoryController(http.Controller):
 
         # Redirigir de vuelta al historial
         return request.redirect('/shop/history')
+    

@@ -18,104 +18,29 @@
                         <div class="tags-container w-100">
                             <div style="height: 25px;"></div>
                             <t t-if="product_tags">
-                                <div class="tags-wrapper d-flex justify-content-center align-items-center tags-carousel"
-                                     t-att-data-carousel="len(product_tags) > 6"
-                                     id="tags-carousel-wrapper"
-                                     style="overflow-x: hidden; flex-wrap: nowrap;">
-                                    <t t-foreach="product_tags[:6]" t-as="tag" t-key="tag.id">
-                                        <div class="text-center position-relative tag-item clickable-tag"
+                                <div class="tags-wrapper d-flex justify-content-center align-items-center">
+                                    <t t-foreach="product_tags" t-as="tag">
+                                        <div class="text-center position-relative tag-item clickable-tag" 
                                              t-att-data-tag-id="tag.id"
                                              t-att-data-tag-name="tag.name">
+                                            
+                                            <!-- Imagen del tag -->
                                             <div class="tag-icon-container">
                                                 <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
                                                      t-att-alt="tag.name"
                                                      class="tag-icon" />
                                             </div>
+                                            
+                                            <!-- Nombre del tag -->
                                             <div class="tag-name">
                                                 <t t-esc="tag.name" />
                                             </div>
+                                            
+                                            <!-- Línea azul (solo visible al hover) -->
                                             <div class="tag-underline"></div>
                                         </div>
                                     </t>
                                 </div>
-                                <t t-if="len(product_tags) > 6">
-                                    <div class="tags-carousel-controls d-flex justify-content-center mt-2">
-                                        <button type="button" class="btn btn-sm btn-light me-2" id="tags-carousel-prev">&#8592;</button>
-                                        <span id="tags-carousel-page" style="min-width: 40px; text-align: center;">1 / <t t-esc="(len(product_tags) + 5) // 6"/></span>
-                                        <button type="button" class="btn btn-sm btn-light" id="tags-carousel-next">&#8594;</button>
-                                    </div>
-                                    <script>
-                                    document.addEventListener('DOMContentLoaded', function() {
-                                        var tags = JSON.parse('<t t-raw="product_tags | tojson" />');
-                                        var wrapper = document.getElementById('tags-carousel-wrapper');
-                                        var prevBtn = document.getElementById('tags-carousel-prev');
-                                        var nextBtn = document.getElementById('tags-carousel-next');
-                                        var pageSpan = document.getElementById('tags-carousel-page');
-                                        var page = 0;
-                                        var pageSize = 6;
-                                        var totalPages = Math.ceil(tags.length / pageSize);
-
-                                        function renderPage() {
-                                            wrapper.innerHTML = '';
-                                            var start = page * pageSize;
-                                            var end = Math.min(start + pageSize, tags.length);
-                                            for (var i = start; i < end; i++) {
-                                                var tag = tags[i];
-                                                var div = document.createElement('div');
-                                                div.className = 'text-center position-relative tag-item clickable-tag';
-                                                div.setAttribute('data-tag-id', tag.id);
-                                                div.setAttribute('data-tag-name', tag.name);
-
-                                                var iconContainer = document.createElement('div');
-                                                iconContainer.className = 'tag-icon-container';
-                                                var img = document.createElement('img');
-                                                img.className = 'tag-icon';
-                                                img.src = '/web/image/product.tag/' + tag.id + '/image';
-                                                img.alt = tag.name;
-                                                iconContainer.appendChild(img);
-
-                                                var nameDiv = document.createElement('div');
-                                                nameDiv.className = 'tag-name';
-                                                nameDiv.textContent = tag.name;
-
-                                                var underline = document.createElement('div');
-                                                underline.className = 'tag-underline';
-
-                                                div.appendChild(iconContainer);
-                                                div.appendChild(nameDiv);
-                                                div.appendChild(underline);
-
-                                                wrapper.appendChild(div);
-                                            }
-                                            pageSpan.textContent = (page + 1) + ' / ' + totalPages;
-                                        }
-
-                                        prevBtn.addEventListener('click', function() {
-                                            if (page > 0) {
-                                                page--;
-                                                renderPage();
-                                            }
-                                        });
-                                        nextBtn.addEventListener('click', function() {
-                                            if (page < totalPages - 1) {
-                                                page++;
-                                                renderPage();
-                                            }
-                                        });
-
-                                        renderPage();
-                                    });
-                                    </script>
-                                    <style>
-                                    .tags-carousel {
-                                        overflow-x: hidden !important;
-                                        flex-wrap: nowrap !important;
-                                    }
-                                    .tags-carousel .tag-item {
-                                        margin-right: 10px;
-                                    }
-                                    </style>
-                                </t>
                             </t>
                             
                             <t t-else="">
