@@ -18,68 +18,111 @@
                         <div class="tags-container w-100">
                             <div style="height: 25px;"></div>
                             <t t-if="product_tags">
-                                <div class="tags-carousel-container position-relative" style="width: 100%;">
-                                    <div class="tags-wrapper d-flex justify-content-center align-items-center flex-nowrap" id="tagsCarouselWrapper">
-                                        <t t-foreach="product_tags" t-as="tag" t-foreach-index="idx">
-                                            <div class="text-center position-relative tag-item clickable-tag"
-                                                 t-att-data-tag-id="tag.id"
-                                                 t-att-data-tag-name="tag.name"
-                                                 t-att-data-idx="idx"
-                                                 style="display: none;">
-                                                <div class="tag-icon-container">
-                                                    <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
-                                                         t-att-alt="tag.name"
-                                                         class="tag-icon" />
-                                                </div>
-                                                <div class="tag-name">
-                                                    <t t-esc="tag.name" />
-                                                </div>
-                                                <div class="tag-underline"></div>
+                                <div class="tags-wrapper d-flex justify-content-center align-items-center tags-carousel"
+                                     t-att-data-carousel="len(product_tags) > 6"
+                                     id="tags-carousel-wrapper"
+                                     style="overflow-x: hidden; flex-wrap: nowrap;">
+                                    <t t-foreach="product_tags[:6]" t-as="tag" t-key="tag.id">
+                                        <div class="text-center position-relative tag-item clickable-tag"
+                                             t-att-data-tag-id="tag.id"
+                                             t-att-data-tag-name="tag.name">
+                                            <div class="tag-icon-container">
+                                                <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
+                                                     t-att-alt="tag.name"
+                                                     class="tag-icon" />
                                             </div>
-                                        </t>
-                                    </div>
-                                    <t t-if="len(product_tags) > 6">
-                                        <button type="button" class="btn btn-sm btn-light me-2" id="tags-carousel-prev" style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); z-index: 2;">
-                                                                                    &amp;#8592;
-                                                                                </button>
-                                                                                <button type="button" class="btn btn-sm btn-light" id="tags-carousel-next" style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); z-index: 2;">
-                                                                                    &amp;#8594;
-                                                                                </button>
+                                            <div class="tag-name">
+                                                <t t-esc="tag.name" />
+                                            </div>
+                                            <div class="tag-underline"></div>
+                                        </div>
                                     </t>
                                 </div>
-                                <script>
-                                document.addEventListener('DOMContentLoaded', function() {
-                                    const items = Array.from(document.querySelectorAll('#tagsCarouselWrapper .tag-item'));
-                                    const prevBtn = document.getElementById('tags-carousel-prev');
-                                    const nextBtn = document.getElementById('tags-carousel-next');
-                                    const perPage = 6;
-                                    let page = 0;
-                                    function showPage() {
-                                        items.forEach((item, idx) => {
-                                            item.style.display = (idx >= page * perPage && idx < (page + 1) * perPage) ? '' : 'none';
-                                        });
-                                        if (prevBtn) prevBtn.disabled = page === 0;
-                                        if (nextBtn) nextBtn.disabled = (page + 1) * perPage >= items.length;
-                                    }
-                                    if (items.length) showPage();
-                                    if (prevBtn && nextBtn) {
+                                <t t-if="len(product_tags) > 6">
+                                    <div class="tags-carousel-controls d-flex justify-content-center mt-2">
+                                        <button type="button" class="btn btn-sm btn-light me-2" id="tags-carousel-prev">&#8592;</button>
+                                        <span id="tags-carousel-page" style="min-width: 40px; text-align: center;">1 / <t t-esc="(len(product_tags) + 5) // 6"/></span>
+                                        <button type="button" class="btn btn-sm btn-light" id="tags-carousel-next">&#8594;</button>
+                                    </div>
+                                    <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        var tags = JSON.parse('<t t-raw="product_tags | tojson" />');
+                                        var wrapper = document.getElementById('tags-carousel-wrapper');
+                                        var prevBtn = document.getElementById('tags-carousel-prev');
+                                        var nextBtn = document.getElementById('tags-carousel-next');
+                                        var pageSpan = document.getElementById('tags-carousel-page');
+                                        var page = 0;
+                                        var pageSize = 6;
+                                        var totalPages = Math.ceil(tags.length / pageSize);
+
+                                        function renderPage() {
+                                            wrapper.innerHTML = '';
+                                            var start = page * pageSize;
+                                            var end = Math.min(start + pageSize, tags.length);
+                                            for (var i = start; i < end; i++) {
+                                                var tag = tags[i];
+                                                var div = document.createElement('div');
+                                                div.className = 'text-center position-relative tag-item clickable-tag';
+                                                div.setAttribute('data-tag-id', tag.id);
+                                                div.setAttribute('data-tag-name', tag.name);
+
+                                                var iconContainer = document.createElement('div');
+                                                iconContainer.className = 'tag-icon-container';
+                                                var img = document.createElement('img');
+                                                img.className = 'tag-icon';
+                                                img.src = '/web/image/product.tag/' + tag.id + '/image';
+                                                img.alt = tag.name;
+                                                iconContainer.appendChild(img);
+
+                                                var nameDiv = document.createElement('div');
+                                                nameDiv.className = 'tag-name';
+                                                nameDiv.textContent = tag.name;
+
+                                                var underline = document.createElement('div');
+                                                underline.className = 'tag-underline';
+
+                                                div.appendChild(iconContainer);
+                                                div.appendChild(nameDiv);
+                                                div.appendChild(underline);
+
+                                                wrapper.appendChild(div);
+                                            }
+                                            pageSpan.textContent = (page + 1) + ' / ' + totalPages;
+                                        }
+
                                         prevBtn.addEventListener('click', function() {
-                                            if (page > 0) { page--; showPage(); }
+                                            if (page > 0) {
+                                                page--;
+                                                renderPage();
+                                            }
                                         });
                                         nextBtn.addEventListener('click', function() {
-                                            if ((page + 1) * perPage < items.length) { page++; showPage(); }
+                                            if (page < totalPages - 1) {
+                                                page++;
+                                                renderPage();
+                                            }
                                         });
+
+                                        renderPage();
+                                    });
+                                    </script>
+                                    <style>
+                                    .tags-carousel {
+                                        overflow-x: hidden !important;
+                                        flex-wrap: nowrap !important;
                                     }
-                                });
-                                </script>
+                                    .tags-carousel .tag-item {
+                                        margin-right: 10px;
+                                    }
+                                    </style>
+                                </t>
                             </t>
+                            
                             <t t-else="">
                                 <div style="color: #666; font-size: 14px; padding: 10px;">
                                     No hay categorías disponibles
                                 </div>
                             </t>
-                            
-
                         </div>
                     </div>
                     
