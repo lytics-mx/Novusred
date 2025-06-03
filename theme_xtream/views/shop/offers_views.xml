@@ -18,74 +18,68 @@
                         <div class="tags-container w-100">
                             <div style="height: 25px;"></div>
                             <t t-if="product_tags">
-                                <div t-attf-class="tags-wrapper d-flex justify-content-center align-items-center #{'tags-carousel' if len(product_tags) > 6 else ''}" 
-                                     t-att-data-carousel="len(product_tags) > 6">
-                                    <t t-foreach="product_tags" t-as="tag">
-                                        <div class="text-center position-relative tag-item clickable-tag" 
-                                             t-att-data-tag-id="tag.id"
-                                             t-att-data-tag-name="tag.name">
-                                            <!-- Imagen del tag -->
-                                            <div class="tag-icon-container">
-                                                <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
-                                                     t-att-alt="tag.name"
-                                                     class="tag-icon" />
+                                <div class="tags-carousel-container position-relative" style="width: 100%;">
+                                    <div class="tags-wrapper d-flex justify-content-center align-items-center flex-nowrap" id="tagsCarouselWrapper">
+                                        <t t-foreach="product_tags" t-as="tag" t-foreach-index="idx">
+                                            <div class="text-center position-relative tag-item clickable-tag"
+                                                 t-att-data-tag-id="tag.id"
+                                                 t-att-data-tag-name="tag.name"
+                                                 t-att-data-idx="idx"
+                                                 style="display: none;">
+                                                <div class="tag-icon-container">
+                                                    <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
+                                                         t-att-alt="tag.name"
+                                                         class="tag-icon" />
+                                                </div>
+                                                <div class="tag-name">
+                                                    <t t-esc="tag.name" />
+                                                </div>
+                                                <div class="tag-underline"></div>
                                             </div>
-                                            <!-- Nombre del tag -->
-                                            <div class="tag-name">
-                                                <t t-esc="tag.name" />
-                                            </div>
-                                            <!-- Línea azul (solo visible al hover) -->
-                                            <div class="tag-underline"></div>
-                                        </div>
-                                    </t>
-                                </div>
-                                <t t-if="len(product_tags) > 6">
-                                    <!-- Carrusel controles -->
-                                    <div class="tags-carousel-controls d-flex justify-content-center mt-2">
-                                        <button type="button" class="btn btn-sm btn-light me-2" id="tags-carousel-prev">
+                                        </t>
+                                    </div>
+                                    <t t-if="len(product_tags) > 6">
+                                        <button type="button" class="btn btn-sm btn-light me-2" id="tags-carousel-prev" style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); z-index: 2;">
                                             &#8592;
                                         </button>
-                                        <button type="button" class="btn btn-sm btn-light" id="tags-carousel-next">
+                                        <button type="button" class="btn btn-sm btn-light" id="tags-carousel-next" style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); z-index: 2;">
                                             &#8594;
                                         </button>
-                                    </div>
-                                    <script>
-                                    document.addEventListener('DOMContentLoaded', function() {
-                                        var wrapper = document.querySelector('.tags-carousel');
-                                        if (!wrapper) return;
-                                        var scrollAmount = 120;
-                                        var prevBtn = document.getElementById('tags-carousel-prev');
-                                        var nextBtn = document.getElementById('tags-carousel-next');
+                                    </t>
+                                </div>
+                                <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const items = Array.from(document.querySelectorAll('#tagsCarouselWrapper .tag-item'));
+                                    const prevBtn = document.getElementById('tags-carousel-prev');
+                                    const nextBtn = document.getElementById('tags-carousel-next');
+                                    const perPage = 6;
+                                    let page = 0;
+                                    function showPage() {
+                                        items.forEach((item, idx) => {
+                                            item.style.display = (idx >= page * perPage && idx < (page + 1) * perPage) ? '' : 'none';
+                                        });
+                                        if (prevBtn) prevBtn.disabled = page === 0;
+                                        if (nextBtn) nextBtn.disabled = (page + 1) * perPage >= items.length;
+                                    }
+                                    if (items.length) showPage();
+                                    if (prevBtn && nextBtn) {
                                         prevBtn.addEventListener('click', function() {
-                                            wrapper.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+                                            if (page > 0) { page--; showPage(); }
                                         });
                                         nextBtn.addEventListener('click', function() {
-                                            wrapper.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+                                            if ((page + 1) * perPage < items.length) { page++; showPage(); }
                                         });
-                                    });
-                                    </script>
-                                    <style>
-                                    .tags-carousel {
-                                        overflow-x: auto !important;
-                                        flex-wrap: nowrap !important;
-                                        scrollbar-width: none;
-                                        -ms-overflow-style: none;
                                     }
-                                    .tags-carousel::-webkit-scrollbar {
-                                        display: none;
-                                    }
-                                    .tags-carousel .tag-item {
-                                        margin-right: 10px;
-                                    }
-                                    </style>
-                                </t>
+                                });
+                                </script>
                             </t>
-                            
                             <t t-else="">
                                 <div style="color: #666; font-size: 14px; padding: 10px;">
                                     No hay categorías disponibles
                                 </div>
                             </t>
+                            
+
                         </div>
                     </div>
                     
