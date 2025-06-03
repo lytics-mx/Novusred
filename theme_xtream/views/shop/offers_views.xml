@@ -18,81 +18,67 @@
                         <div class="tags-container w-100">
                             <div style="height: 25px;"></div>
                             <t t-if="product_tags">
-                                <div class="tags-carousel-container position-relative">
-                                    <div class="tags-wrapper d-flex justify-content-center align-items-center" id="tagsCarouselWrapper" style="overflow: hidden;">
-                                        <t t-foreach="product_tags" t-as="tag">
-                                            <div class="text-center position-relative tag-item clickable-tag"
-                                                 t-att-data-tag-id="tag.id"
-                                                 t-att-data-tag-name="tag.name">
-                                                <!-- Imagen del tag -->
-                                                <div class="tag-icon-container">
-                                                    <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
-                                                         t-att-alt="tag.name"
-                                                         class="tag-icon" />
-                                                </div>
-                                                <!-- Nombre del tag -->
-                                                <div class="tag-name">
-                                                    <t t-esc="tag.name" />
-                                                </div>
-                                                <!-- Línea azul (solo visible al hover) -->
-                                                <div class="tag-underline"></div>
+                                <div t-attf-class="tags-wrapper d-flex justify-content-center align-items-center #{'tags-carousel' if len(product_tags) > 6 else ''}" 
+                                     t-att-data-carousel="len(product_tags) > 6">
+                                    <t t-foreach="product_tags" t-as="tag">
+                                        <div class="text-center position-relative tag-item clickable-tag" 
+                                             t-att-data-tag-id="tag.id"
+                                             t-att-data-tag-name="tag.name">
+                                            <!-- Imagen del tag -->
+                                            <div class="tag-icon-container">
+                                                <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
+                                                     t-att-alt="tag.name"
+                                                     class="tag-icon" />
                                             </div>
-                                        </t>
-                                    </div>
-                                    <!-- Carousel controls -->
-                                    <button type="button" class="carousel-control-prev d-none" id="tagsCarouselPrev" style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); background: none; border: none; z-index: 2;">
-                                        <span style="font-size: 2rem;">&#8249;</span>
-                                    </button>
-                                    <button type="button" class="carousel-control-next d-none" id="tagsCarouselNext" style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); background: none; border: none; z-index: 2;">
-                                        <span style="font-size: 2rem;">&#8250;</span>
-                                    </button>
+                                            <!-- Nombre del tag -->
+                                            <div class="tag-name">
+                                                <t t-esc="tag.name" />
+                                            </div>
+                                            <!-- Línea azul (solo visible al hover) -->
+                                            <div class="tag-underline"></div>
+                                        </div>
+                                    </t>
                                 </div>
-                                <script>
-                                document.addEventListener('DOMContentLoaded', function() {
-                                    const wrapper = document.getElementById('tagsCarouselWrapper');
-                                    const items = wrapper ? wrapper.querySelectorAll('.tag-item') : [];
-                                    const prevBtn = document.getElementById('tagsCarouselPrev');
-                                    const nextBtn = document.getElementById('tagsCarouselNext');
-                                    const itemsPerPage = 6;
-                                    let currentPage = 0;
-                                    const totalPages = Math.ceil(items.length / itemsPerPage);
-
-                                    function updateCarousel() {
-                                        items.forEach((item, idx) => {
-                                            if (idx >= currentPage * itemsPerPage && idx < (currentPage + 1) * itemsPerPage) {
-                                                item.style.display = '';
-                                            } else {
-                                                item.style.display = 'none';
-                                            }
-                                        });
-                                        if (totalPages > 1) {
-                                            prevBtn.classList.remove('d-none');
-                                            nextBtn.classList.remove('d-none');
-                                            prevBtn.disabled = currentPage === 0;
-                                            nextBtn.disabled = currentPage === totalPages - 1;
-                                        } else {
-                                            prevBtn.classList.add('d-none');
-                                            nextBtn.classList.add('d-none');
-                                        }
-                                    }
-
-                                    if (wrapper && items.length > itemsPerPage) {
-                                        updateCarousel();
+                                <t t-if="len(product_tags) > 6">
+                                    <!-- Carrusel controles -->
+                                    <div class="tags-carousel-controls d-flex justify-content-center mt-2">
+                                        <button type="button" class="btn btn-sm btn-light me-2" id="tags-carousel-prev">
+                                            &#8592;
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-light" id="tags-carousel-next">
+                                            &#8594;
+                                        </button>
+                                    </div>
+                                    <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        var wrapper = document.querySelector('.tags-carousel');
+                                        if (!wrapper) return;
+                                        var scrollAmount = 120;
+                                        var prevBtn = document.getElementById('tags-carousel-prev');
+                                        var nextBtn = document.getElementById('tags-carousel-next');
                                         prevBtn.addEventListener('click', function() {
-                                            if (currentPage > 0) {
-                                                currentPage--;
-                                                updateCarousel();
-                                            }
+                                            wrapper.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
                                         });
                                         nextBtn.addEventListener('click', function() {
-                                            if (currentPage < totalPages - 1) {
-                                                currentPage++;
-                                                updateCarousel();
-                                            }
+                                            wrapper.scrollBy({ left: scrollAmount, behavior: 'smooth' });
                                         });
+                                    });
+                                    </script>
+                                    <style>
+                                    .tags-carousel {
+                                        overflow-x: auto !important;
+                                        flex-wrap: nowrap !important;
+                                        scrollbar-width: none;
+                                        -ms-overflow-style: none;
                                     }
-                                });
-                                </script>
+                                    .tags-carousel::-webkit-scrollbar {
+                                        display: none;
+                                    }
+                                    .tags-carousel .tag-item {
+                                        margin-right: 10px;
+                                    }
+                                    </style>
+                                </t>
                             </t>
                             
                             <t t-else="">
