@@ -109,14 +109,9 @@ class OffersController(http.Controller):
             key=lambda p: p.product_tag_ids[0].start_date,
             reverse=True
         )
-        # Obtener todos los tags activos y visibles
         product_tags = request.env['product.tag'].sudo().search([
-            ('visible_on_ecommerce', '=', True),
-            ('is_active', '=', True)
-        ])
-
-        # Bandera para carrusel si hay más de 6 tags
-        carousel_tags = len(product_tags) > 6
+            ('visible_on_ecommerce', '=', True)
+        ], limit=6)
         
         # Resto de tu lógica existente para productos, categorías, etc.
         # ...existing code...
@@ -233,7 +228,6 @@ class OffersController(http.Controller):
             'free_shipping': free_shipping,
             'tags_with_discount': tags_with_discount,
             'product_tags': product_tags,
-            'carousel_tags': carousel_tags,  # Bandera para carrusel de tags
             'selected_tag_id': tag_id,  # Para mostrar cuál tag está seleccionado
 
         })
@@ -285,14 +279,9 @@ class OffersController(http.Controller):
                 ('categ_id', 'child_of', cat.id)
             ]) > 0
         ]
-        # Obtener todos los tags activos y visibles
         product_tags = request.env['product.tag'].sudo().search([
-            ('visible_on_ecommerce', '=', True),
-            ('is_active', '=', True)
-        ])
-
-        # Bandera para carrusel si hay más de 6 tags
-        carousel_tags = len(product_tags) > 6
+            ('visible_on_ecommerce', '=', True)  # Solo los visibles en ecommerce
+        ], limit=6)
 
         categories_with_count = []
         for cat in main_categories:
@@ -432,7 +421,7 @@ class OffersController(http.Controller):
             ])
             if prods:
                 tags_with_discount.append(tag)    
-
+                
         return request.render('theme_xtream.offers_template', {
             'discounted_products': products,
             'current_category': category,
@@ -445,6 +434,5 @@ class OffersController(http.Controller):
             'all_categories': main_categories,
             'product_tags': product_tags,
             'tags_with_discount': tags_with_discount,
-            'carousel_tags': carousel_tags,            
 
         })
