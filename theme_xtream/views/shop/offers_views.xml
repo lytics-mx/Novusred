@@ -15,53 +15,15 @@
                     </div>
                     <!-- Iconos de tags -->
                     <div class="tags-container w-100">
-                        <div style="height: 25px;"></div>
                         <t t-if="product_tags">
-                            <t t-if="carousel_tags">
-                                <!-- Carrusel solo en desktop -->
-                                <div class="d-none d-md-block">
-                                    <div id="tagsCarousel" class="carousel slide" data-bs-ride="false">
-                                        <div class="carousel-inner">
-                                            <t t-set="chunks" t-value="[product_tags[i:i+6] for i in range(0, len(product_tags), 6)]"/>
-                                            <t t-foreach="chunks" t-as="chunk" t-foreach-index="idx">
-                                                <div t-attf-class="carousel-item #{'active' if idx == 0 else ''}">
-                                                    <div class="tags-wrapper d-flex justify-content-center align-items-center">
-                                                        <t t-foreach="chunk" t-as="tag">
-                                                            <div class="text-center position-relative tag-item clickable-tag"
-                                                                 t-att-data-tag-id="tag.id"
-                                                                 t-att-data-tag-name="tag.name">
-                                                                <div class="tag-icon-container">
-                                                                    <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
-                                                                         t-att-alt="tag.name"
-                                                                         class="tag-icon" />
-                                                                </div>
-                                                                <div class="tag-name">
-                                                                    <t t-esc="tag.name" />
-                                                                </div>
-                                                                <div class="tag-underline"></div>
-                                                            </div>
-                                                        </t>
-                                                    </div>
-                                                </div>
-                                            </t>
-                                        </div>
-                                        <button class="carousel-control-prev" type="button" data-bs-target="#tagsCarousel" data-bs-slide="prev">
-                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                            <span class="visually-hidden">Anterior</span>
-                                        </button>
-                                        <button class="carousel-control-next" type="button" data-bs-target="#tagsCarousel" data-bs-slide="next">
-                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                            <span class="visually-hidden">Siguiente</span>
-                                        </button>
-                                    </div>
-                                </div>
-                                <!-- Scroll horizontal en móvil -->
-                                <div class="d-block d-md-none">
-                                    <div class="tags-wrapper d-flex justify-content-center align-items-center">
-                                        <t t-foreach="product_tags" t-as="tag">
+                            <div id="tagsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false" style="width:100%;">
+                                <div class="carousel-inner">
+                                    <t t-foreach="product_tags" t-as="tag" t-foreach-index="idx">
+                                        <div t-attf-class="carousel-item tag-carousel-item #{'active' if idx == 0 else ''}">
                                             <div class="text-center position-relative tag-item clickable-tag"
                                                  t-att-data-tag-id="tag.id"
-                                                 t-att-data-tag-name="tag.name">
+                                                 t-att-data-tag-name="tag.name"
+                                                 style="margin-bottom: 8px;">
                                                 <div class="tag-icon-container">
                                                     <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
                                                          t-att-alt="tag.name"
@@ -70,32 +32,21 @@
                                                 <div class="tag-name">
                                                     <t t-esc="tag.name" />
                                                 </div>
-                                                <div class="tag-underline"></div>
+                                                <div class="tag-underline" t-if="active_tag_id == tag.id" style="width:100%;opacity:1;"></div>
+                                                <div class="tag-underline" t-if="active_tag_id != tag.id"></div>
                                             </div>
-                                        </t>
-                                    </div>
-                                </div>
-                            </t>
-                            <t t-else="">
-                                <!-- Siempre scroll horizontal si no es carrusel -->
-                                <div class="tags-wrapper d-flex justify-content-center align-items-center">
-                                    <t t-foreach="product_tags" t-as="tag">
-                                        <div class="text-center position-relative tag-item clickable-tag"
-                                             t-att-data-tag-id="tag.id"
-                                             t-att-data-tag-name="tag.name">
-                                            <div class="tag-icon-container">
-                                                <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
-                                                     t-att-alt="tag.name"
-                                                     class="tag-icon" />
-                                            </div>
-                                            <div class="tag-name">
-                                                <t t-esc="tag.name" />
-                                            </div>
-                                            <div class="tag-underline"></div>
                                         </div>
                                     </t>
                                 </div>
-                            </t>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#tagsCarousel" data-bs-slide="prev" style="filter: invert(1);">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Anterior</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#tagsCarousel" data-bs-slide="next" style="filter: invert(1);">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Siguiente</span>
+                                </button>
+                            </div>
                         </t>
                         <t t-else="">
                             <div style="color: #666; font-size: 14px; padding: 10px;">
@@ -103,6 +54,18 @@
                             </div>
                         </t>
                     </div>
+                    <style>
+                        /* Ajustes para el carrusel de tags */
+                        #tagsCarousel {
+                            max-width: 350px;
+                            margin: 0 auto;
+                        }
+                        .tag-carousel-item {
+                            display: flex !important;
+                            justify-content: center;
+                            align-items: center;
+                        }
+                    </style>
                     
                     <!-- CSS para manejar el hover y responsive -->
                     <style>
