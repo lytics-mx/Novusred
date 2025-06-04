@@ -277,7 +277,7 @@
                         <t t-set="category_ids" t-value="request.env['product.template'].sudo().search([('brand_type_id', '=', brand_type.id), ('website_published', '=', True)]).mapped('categ_id').ids"/>
                         <t t-set="categories" t-value="request.env['product.category'].sudo().browse(category_ids)"/>
                         <t t-set="child_categories" t-value="categories.mapped('child_id')"/>
-                        <t t-set="cat_img_pairs" t-value="[(cat, cat.image_1920) for cat in categories]"/>
+                        <t t-set="cat_img_pairs" t-value="[(cat, cat.image_1920) for cat in child_categories if cat.image_1920]"/>
                             <!-- Mobile view (1 item per slide) -->
                             <div class="d-block d-md-none">
                                 <div id="categoryMobileCarousel" class="carousel slide" data-bs-ride="carousel">
