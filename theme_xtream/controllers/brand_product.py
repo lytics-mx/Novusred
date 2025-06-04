@@ -25,8 +25,8 @@ class WebsiteBrand(http.Controller):
             if brand:
                 # Codifica el name para la URL
                 brand_name_url = urllib.parse.quote(brand.name)
-                return http.redirect('/brand/%s' % brand_name_url)
-        return http.redirect('/brand')    
+                return request.redirect('/brand/%s' % brand_name_url)
+        return request.redirect('/brand')   
 
     @http.route('/brand', auth='public', website=True)
     def home(self):
