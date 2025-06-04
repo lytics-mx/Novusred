@@ -3,62 +3,57 @@
     <template id="brand_search" name="Marca de Búsqueda">
         <t t-call="website.layout">
             <div id="wrap" class="oe_structure oe_empty" style="font-family: 'Questrial', sans-serif;">
-                <!-- Verifica que la ruta de la imagen sea válidas -->
                 <t t-if="brand_type and brand_type.cover_image">
-                    <!-- Mostrar cover_image de la marca -->
-                    <div style="position: relative;">
+                    <!-- Mostrar cover_image de la marca de forma destacada -->
+                    <div class="brand-cover-container" style="display: flex; justify-content: center; align-items: center; margin-bottom: 30px;">
                         <img t-att-src="'/web/image/brand.type/' + str(brand_type.id) + '/cover_image'"
-                             alt="Brand Cover"
-                             class="img-fluid"
-                             style="width: 100%; height: auto; max-height: 200px; object-fit: cover;" />
-                        <div class="d-none d-md-block" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
+                             alt="Portada de la Marca"
+                             class="img-fluid shadow"
+                             style="max-width: 600px; width: 100%; height: auto; max-height: 250px; object-fit: contain; border-radius: 16px; background: #fff;" />
                     </div>
                 </t>
                 <t t-elif="active_brand_banner">
                     <t t-if="len(active_brand_banner.brand_images) == 1">
                         <!-- Single image, no carousel -->
-                        <div style="position: relative;">
+                        <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 30px;">
                             <img t-att-src="'/web/image/' + str(active_brand_banner.brand_images[0].id)" 
                                  alt="Brand Image" 
-                                 class="img-fluid"
-                                 style="width: 100%; height: auto; max-height: 200px; object-fit: cover;" />
-                            <div class="d-none d-md-block" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
+                                 class="img-fluid shadow"
+                                 style="max-width: 600px; width: 100%; height: auto; max-height: 250px; object-fit: contain; border-radius: 16px; background: #fff;" />
                         </div>
                     </t>
                     <t t-elif="len(active_brand_banner.brand_images) > 1">
                         <!-- Carousel for multiple images -->
-                        <div id="brandImagesCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div id="brandImagesCarousel" class="carousel slide" data-bs-ride="carousel" style="margin-bottom: 30px;">
                             <div class="carousel-inner">
                                 <t t-foreach="active_brand_banner.brand_images" t-as="image" t-key="image.id">
-                                    <div t-att-class="'carousel-item' + (' active' if image == active_brand_banner.brand_images[0] else '')" style="position: relative;">
+                                    <div t-att-class="'carousel-item' + (' active' if image == active_brand_banner.brand_images[0] else '')" style="display: flex; justify-content: center; align-items: center;">
                                         <img t-att-src="'/web/image/' + str(image.id)" 
                                              alt="Brand Image" 
-                                             class="img-fluid"
-                                             style="width: 100%; height: auto; max-height: 200px; object-fit: cover;" />
-                                        <div class="d-none d-md-block" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
+                                             class="img-fluid shadow"
+                                             style="max-width: 600px; width: 100%; height: auto; max-height: 250px; object-fit: contain; border-radius: 16px; background: #fff;" />
                                     </div>
                                 </t>
                             </div>
                             <!-- Carousel controls -->
                             <button class="carousel-control-prev" type="button" data-bs-target="#brandImagesCarousel" data-bs-slide="prev">
                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Previous</span>
+                                <span class="visually-hidden">Anterior</span>
                             </button>
                             <button class="carousel-control-next" type="button" data-bs-target="#brandImagesCarousel" data-bs-slide="next">
                                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Next</span>
+                                <span class="visually-hidden">Siguiente</span>
                             </button>
                         </div>
                     </t>
                 </t>
                 <t t-else="">
-                    <!-- Default image if no active brand banner -->
-                    <div style="position: relative;">
-                        <img src="/theme_xtream/static/src/img/product-img/imagenes_home.png" 
-                             alt="Default Image" 
+                    <!-- Imagen por defecto si no hay portada ni banner -->
+                    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 30px;">
+                        <img src="/theme_xtream/static/src/img/product-img/imagenes_home.png"
+                             alt="Default Image"
                              class="img-fluid"
-                             style="width: 100%; height: auto; max-height: 200px; object-fit: cover;" />
-                        <div class="d-none d-md-block" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
+                             style="max-width: 600px; width: 100%; height: auto; max-height: 250px; object-fit: contain; border-radius: 16px; background: #fff;" />
                     </div>
                 </t>
                                 
