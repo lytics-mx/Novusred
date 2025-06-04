@@ -12,10 +12,19 @@ class WebsiteBrand(http.Controller):
 
         products = request.env['product.template'].sudo().search([('brand_type_id', '=', brand_type_rec.id)])
 
-        return request.render('theme_xtream.website_brand', {
+        return request.render('theme_xtream.brand_search', {
             'brand_type': brand_type_rec,
             'products': products,
         })
+    
+    @http.route('/brand_search_redirect', type='http', auth='public', website=True)
+    def brand_search_redirect(self, search=None, **kwargs):
+        if search:
+            brand = request.env['brand.type'].sudo().search([('name', 'ilike', search)], limit=1)
+            if brand and brand.slug:
+                return http.redirect('/brand/%s' % brand.slug)
+        # Si no encuentra marca, puedes redirigir a la página general de marcas o mostrar productos normales
+        return http.redirect('/brand')    
 
     @http.route('/brand', auth='public', website=True)
     def home(self):

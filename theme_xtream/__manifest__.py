@@ -88,6 +88,7 @@
         
         # 'views/view_product.xml',
         
+        'views/website_sale/search/brand_search.xml',
         # 'views/website_sale/shop_filters.xml',
 
         'data/ir_cron_data.xml',
