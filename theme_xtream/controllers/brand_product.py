@@ -14,12 +14,12 @@ class WebsiteBrand(http.Controller):
         products = request.env['product.template'].sudo().search([('brand_type_id', '=', brand_type_rec.id)])
 
         # Obtener el icover_image de la marca
-        icover_image = brand_type_rec.icover_image if hasattr(brand_type_rec, 'icover_image') else False
+        cover_image = brand_type_rec.cover_image if hasattr(brand_type_rec, 'cover_image') else False
 
         return request.render('theme_xtream.brand_search', {
             'brand_type': brand_type_rec,
             'products': products,
-            'icover_image': icover_image,
+            'cover_image': cover_image,
         })
     @http.route('/brand_search_redirect', type='http', auth='public', website=True)
     def brand_search_redirect(self, search=None, **kwargs):
