@@ -280,9 +280,12 @@
                                         <div class="item px-2">
                                             <a t-att-href="'/brand/' + brand_type.slug + '?subcat_id=' + str(child.id)">
                                                 <div class="card h-100 shadow-sm text-center" style="cursor:pointer;">
-                                                    <img t-att-src="'/web/image/product.category/' + str(child.id) + '/image_1920'"
-                                                         class="img-fluid mb-2"
-                                                         style="max-height:80px;" />
+                                                    <img
+                                                        t-att-src="child.banner_image and ('/web/image/product.category/' + str(child.id) + '/banner_image') or ('/web/image/product.category/' + str(child.id) + '/image_1920')"
+                                                        class="img-fluid mb-2"
+                                                        style="max-height:80px;"
+                                                        t-att-alt="child.name"
+                                                    />
                                                     <div class="card-body p-2">
                                                         <span style="font-size: 13px;"><t t-esc="child.name"/></span>
                                                     </div>
@@ -294,27 +297,7 @@
                             </div>
                         </div>
                     </div>
-                </section>
-                
-                <t t-javascript="true">
-                    <script>
-                        odoo.define('theme_xtream.brand_mobile_categories_carousel', function (require) {
-                            $(document).ready(function(){
-                                $('#brand-mobile-categories-carousel').owlCarousel({
-                                    loop: false,
-                                    margin: 10,
-                                    nav: true,
-                                    dots: false,
-                                    responsive: {
-                                        0: { items: 2 },
-                                        480: { items: 3 },
-                                        768: { items: 4 }
-                                    }
-                                });
-                            });
-                        });
-                    </script>
-                </t>            
+                </section>            
 
                 <!-- Más Categorías -->
                 <!-- ...existing code... -->

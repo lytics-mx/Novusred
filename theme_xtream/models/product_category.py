@@ -8,7 +8,7 @@ class ProductCategory(models.Model):
 
     icon = fields.Binary(string="Category Icon")  # Campo para subir el ícono
     is_visible_in_menu = fields.Boolean(string="Visible", default=False)  # Campo booleano para habilitar visibilidad
-
+    banner_image = fields.Binary(string="Imagen de Banner")  # <-- Nuevo campo para banner
     def get_visible_categories(self):
         """Obtiene las categorías principales y subcategorías visibles."""
         categories = self.env['product.category'].search([('is_visible_in_menu', '=', True), ('parent_id', '=', False)])
