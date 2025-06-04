@@ -10,17 +10,16 @@ class WebsiteBrand(http.Controller):
         brand_type_rec = BrandType.sudo().search([('name', 'ilike', brand_name)], limit=1)
         if not brand_type_rec:
             return request.not_found()
-
+    
         products = request.env['product.template'].sudo().search([('brand_type_id', '=', brand_type_rec.id)])
-
-        # Buscar el banner alternativo solo si no hay cover_image
+    
         active_brand_banner = None
         if not brand_type_rec.cover_image:
             active_brand_banner = request.env['banner.image.line'].sudo().search([
                 ('is_active_brand_carousel', '=', True),
                 ('name', '=', 'marcas')
             ], limit=1)
-
+    
         return request.render('theme_xtream.brand_search', {
             'brand_type': brand_type_rec,
             'products': products,
