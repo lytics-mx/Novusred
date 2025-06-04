@@ -47,13 +47,3 @@ class WebsiteBrand(http.Controller):
             'products': products,
         })
     
-    @http.route('/brand/fix_slugs', auth='user')
-    def fix_slugs(self, **kwargs):
-        BrandType = http.request.env['brand.type'].sudo()
-        for brand in BrandType.search([]):
-            if not brand.slug:
-                slug = brand.name.lower()
-                slug = re.sub(r'[^a-z0-9]+', '-', slug)
-                slug = slug.strip('-')
-                brand.slug = slug
-        return "Slugs actualizados"   
