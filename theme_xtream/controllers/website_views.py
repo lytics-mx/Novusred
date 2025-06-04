@@ -109,12 +109,9 @@ class OffersController(http.Controller):
             key=lambda p: p.product_tag_ids[0].start_date,
             reverse=True
         )
-        # ...existing code...
         product_tags = request.env['product.tag'].sudo().search([
-            ('visible_on_ecommerce', '=', True),
-            ('is_active', '=', True)
-        ])  # <-- SIN limit
-        # ...existing code...
+            ('visible_on_ecommerce', '=', True)
+        ], limit=6)
         
         # Resto de tu lógica existente para productos, categorías, etc.
         # ...existing code...
@@ -282,12 +279,10 @@ class OffersController(http.Controller):
                 ('categ_id', 'child_of', cat.id)
             ]) > 0
         ]
-        # ...existing code...
         product_tags = request.env['product.tag'].sudo().search([
-            ('visible_on_ecommerce', '=', True),
-            ('is_active', '=', True)
-        ])  # <-- SIN limit
-        # ...existing code...
+            ('visible_on_ecommerce', '=', True)  # Solo los visibles en ecommerce
+        ], limit=6)
+
         categories_with_count = []
         for cat in main_categories:
             cat_domain = [
