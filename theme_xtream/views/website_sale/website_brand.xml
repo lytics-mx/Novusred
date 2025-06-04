@@ -8,24 +8,24 @@
                 <t t-if="active_brand_banner">
                     <t t-if="len(active_brand_banner.brand_images) == 1">
                         <!-- Single image, no carousel -->
-                        <div style="position: relative; width: 100%; max-width: 1920px; height: 380px; margin: 0 auto; top: 143px;">
+                        <div style="position: relative;">
                             <img t-att-src="'/web/image/' + str(active_brand_banner.brand_images[0].id)" 
                                  alt="Brand Image" 
                                  class="img-fluid"
-                                 style="width: 100%; height: 100%; max-width: 1920px; max-height: 380px; object-fit: cover;" />
+                                 style="width: 100%; height: auto; max-height: 200px; object-fit: cover;" /> <!-- Added max-height for mobile -->
                             <div class="d-none d-md-block" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
                         </div>
                     </t>
                     <t t-elif="len(active_brand_banner.brand_images) > 1">
                         <!-- Carousel for multiple images -->
-                        <div id="brandImagesCarousel" class="carousel slide" data-bs-ride="carousel" style="width: 100%; max-width: 1920px; height: 380px; margin: 0 auto; top: 143px;">
-                            <div class="carousel-inner" style="width: 100%; height: 100%;">
+                        <div id="brandImagesCarousel" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
                                 <t t-foreach="active_brand_banner.brand_images" t-as="image" t-key="image.id">
-                                    <div t-att-class="'carousel-item' + (' active' if image == active_brand_banner.brand_images[0] else '')" style="position: relative; width: 100%; height: 100%;">
+                                    <div t-att-class="'carousel-item' + (' active' if image == active_brand_banner.brand_images[0] else '')" style="position: relative;">
                                         <img t-att-src="'/web/image/' + str(image.id)" 
                                              alt="Brand Image" 
                                              class="img-fluid"
-                                             style="width: 100%; height: 100%; max-width: 1920px; max-height: 380px; object-fit: cover;" />
+                                             style="width: 100%; height: auto; max-height: 200px; object-fit: cover;" /> <!-- Added max-height for mobile -->
                                         <div class="d-none d-md-block" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
                                     </div>
                                 </t>
@@ -44,14 +44,14 @@
                 </t>
                 <t t-else="">
                     <!-- Default image if no active brand banner -->
-                    <div style="position: relative; width: 100%; max-width: 1920px; height: 380px; margin: 0 auto; top: 143px;">
+                    <div style="position: relative;">
                         <img src="/theme_xtream/static/src/img/product-img/imagenes_home.png" 
                              alt="Default Image" 
                              class="img-fluid"
-                             style="width: 100%; height: 100%; max-width: 1920px; max-height: 380px; object-fit: cover;" />
+                             style="width: 100%; height: auto; max-height: 200px; object-fit: cover;" /> <!-- Added max-height for mobile -->
                         <div class="d-none d-md-block" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
                     </div>
-                </t>
+                </t>                
                 <div style="height: 50px;"></div>
 
                 
@@ -130,7 +130,7 @@
                             <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px; margin-bottom: 0;">MEJORES OFERTAS</h2>
                         </div>
                         <div class="o_wsale_products_grid_table_wrapper">
-                            <t t-set="discounted_products" t-value="(products if products is defined else request.env['product.template'].sudo().search([('website_published', '=', True), ('product_tag_ids', '!=', False)], order='create_date desc')) or []" />
+                            <t t-set="discounted_products" t-value="(products if products is defined else request.env['product.template'].sudo().search([('website_published', '=', True)], order='create_date desc')) or []" />
                             <!-- Desktop View -->
                             <div class="d-none d-md-block">
                                 <div class="row g-3" style="display: flex; flex-wrap: wrap;">
