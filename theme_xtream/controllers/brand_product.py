@@ -7,9 +7,7 @@ class WebsiteBrand(http.Controller):
     @http.route('/brand/<string:brand_name>', auth='public', website=True)
     def brand_products(self, brand_name):
         BrandType = request.env['brand.type']
-        brand_type_rec = BrandType.sudo().search([('name', 'ilike', brand_name)], limit=1)
-        if not brand_type_rec:
-            return request.not_found()
+        brand_type_rec = BrandType.sudo().search([('slug', '=', brand_name), ('active', '=', True)], limit=1)
 
         # Solo productos publicados de esa marca
         products = request.env['product.template'].sudo().search([

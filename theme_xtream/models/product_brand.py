@@ -1,5 +1,6 @@
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
+import re
 
 class BrandType(models.Model):
     _name = 'brand.type'
@@ -33,7 +34,34 @@ class BrandType(models.Model):
         domain="[('brand_type_id', '=', id)]",
         help="Selecciona hasta 3 productos relacionados a esta marca."
     )
+    slug = fields.Char(string='Slug', required=True, index=True)
 
+    @api.onchange('name')
+    def _onchange_name_slug(self):
+        if self.name:
+            # Genera un slug amigable para URL
+            slug = self.name.lower()
+            slug = re.sub(r'[^a-z0-9]+', '-', slug)
+            slug = slug.strip('-')
+            self.slug = slug
+
+    @api.model
+    def create(self, vals):
+        if 'name' in vals and not vals.get('slug'):
+            slug = vals['name'].lower()
+            slug = re.sub(r'[^a-z0-9]+', '-', slug)
+            slug = slug.strip('-')
+            vals['slug'] = slug
+        return super().create(vals)
+
+    def write(self, vals):
+        if 'name' in vals and not vals.get('slug'):
+            slug = vals['name'].lower()
+            slug = re.sub(r'[^a-z0-9]+', '-', slug)
+            slug = slug.strip('-')
+            vals['slug'] = slug
+        return super().write(vals)
+    
     @api.onchange('product_ids')
     def _onchange_product_ids_limit(self):
         if self.product_ids and len(self.product_ids) > 3:
