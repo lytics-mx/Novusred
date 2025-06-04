@@ -272,62 +272,49 @@
                 <section class="more-categories py-5">
                     <div class="d-block d-md-none">
                         <h2 class="text-center" style="font-family: 'Questrial', sans-serif; font-size: 25px;">MÁS CATEGORÍAS</h2>
-                    </div>
-                    <div class="container">
-                        <t t-set="category_ids" t-value="request.env['product.template'].sudo().search([('brand_type_id', '=', brand_type.id), ('website_published', '=', True)]).mapped('categ_id').ids"/>
-                        <t t-set="categories" t-value="request.env['product.category'].sudo().browse(category_ids)"/>
-                        <t t-set="child_categories" t-value="categories.mapped('child_id')"/>
-                        <t t-set="cat_img_pairs" t-value="[(cat, cat.image_1920) for cat in child_categories if cat.image_1920]"/>
-                            <!-- Mobile view (1 item per slide) -->
-                            <div class="d-block d-md-none">
-                                <div id="categoryMobileCarousel" class="carousel slide" data-bs-ride="carousel">
-                                    <div class="carousel-inner">
-                                        <t t-set="first" t-value="True"/>
-                                        <t t-foreach="cat_img_pairs" t-as="pair">
-                                            <div t-att-class="'carousel-item' + (' active' if first else '')">
-                                                <t t-set="first" t-value="False"/>
-                                                <div class="card shadow h-100 mx-2" style="border-radius: 10px; overflow: hidden; border: none;">
-                                                    <div style="position: relative;">
-                                                        <img t-att-src="'/web/image/' + str(pair[1].id)" 
-                                                             alt="Category Image" 
-                                                             class="img-fluid" 
-                                                             style="width: 100%; height: 180px; object-fit: cover;" />
-                                                        <!-- Overlay blanco desde el nombre hasta abajo -->
-                                                        <div class="card-img-overlay d-flex flex-column justify-content-end p-0"
-                                                             style="background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 100%);">
-                                                            <div style="background: #fff; border-radius: 0 0 10px 10px; padding: 12px 12px 10px 12px; width: 100%; box-shadow: 0 -2px 8px rgba(0,0,0,0.10);">
-                                                                <h5 class="mb-2" style="font-size: 14px; font-weight: bold; color: #222;">
-                                                                    <t t-esc="pair[0].name"/>
-                                                                </h5>
-                                                                <div class="subcategories">
-                                                                    <t t-foreach="pair[0].child_id[:2]" t-as="child">
-                                                                        <p class="text-dark mb-1" style="font-size: 11px; opacity: 0.9;">
-                                                                            <t t-esc="child.name"/>
-                                                                        </p>
-                                                                    </t>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                        <div class="container">
+                            <t t-set="brand_categories" t-value="discounted_products and discounted_products.mapped('categ_id') or []"/>
+                            <div class="owl-carousel owl-theme" id="brand-mobile-categories-carousel">
+                                <t t-foreach="brand_categories" t-as="cat">
+                                    <t t-foreach="cat.child_id" t-as="child">
+                                        <div class="item px-2">
+                                            <a t-att-href="'/brand/' + brand_type.slug + '?subcat_id=' + str(child.id)">
+                                                <div class="card h-100 shadow-sm text-center" style="cursor:pointer;">
+                                                    <img t-att-src="'/web/image/product.category/' + str(child.id) + '/image_1920'"
+                                                         class="img-fluid mb-2"
+                                                         style="max-height:80px;" />
+                                                    <div class="card-body p-2">
+                                                        <span style="font-size: 13px;"><t t-esc="child.name"/></span>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </t>
-                                    </div>
-                                    <t t-if="len(cat_img_pairs) > 1">
-                                        <button class="carousel-control-prev" type="button" data-bs-target="#categoryMobileCarousel" data-bs-slide="prev">
-                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                            <span class="visually-hidden">Anterior</span>
-                                        </button>
-                                        <button class="carousel-control-next" type="button" data-bs-target="#categoryMobileCarousel" data-bs-slide="next">
-                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                            <span class="visually-hidden">Siguiente</span>
-                                        </button>
+                                            </a>
+                                        </div>
                                     </t>
-                                </div>
-                            </div>                         
-                        </t>
+                                </t>
+                            </div>
+                        </div>
                     </div>
-                </section>                
+                </section>
+                
+                <t t-javascript="true">
+                    <script>
+                        odoo.define('theme_xtream.brand_mobile_categories_carousel', function (require) {
+                            $(document).ready(function(){
+                                $('#brand-mobile-categories-carousel').owlCarousel({
+                                    loop: false,
+                                    margin: 10,
+                                    nav: true,
+                                    dots: false,
+                                    responsive: {
+                                        0: { items: 2 },
+                                        480: { items: 3 },
+                                        768: { items: 4 }
+                                    }
+                                });
+                            });
+                        });
+                    </script>
+                </t>            
 
                 <!-- Más Categorías -->
                 <!-- ...existing code... -->
