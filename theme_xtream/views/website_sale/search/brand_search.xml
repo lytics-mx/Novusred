@@ -4,54 +4,26 @@
         <t t-call="website.layout">
             <div id="wrap" class="oe_structure oe_empty" style="font-family: 'Questrial', sans-serif;">
                 <!-- Verifica que la ruta de la imagen sea válidas -->
-                <t t-set="active_brand_banner" t-value="request.env['banner.image.line'].sudo().search([('is_active_brand_carousel', '=', True), ('name', '=', 'marcas')], limit=1)" />
-                <t t-if="active_brand_banner">
-                    <t t-if="len(active_brand_banner.brand_images) == 1">
-                        <!-- Single image, no carousel -->
-                        <div style="position: relative;">
-                            <img t-att-src="'/web/image/' + str(active_brand_banner.brand_images[0].id)" 
-                                 alt="Brand Image" 
-                                 class="img-fluid"
-                                 style="width: 100%; height: auto; max-height: 200px; object-fit: cover;" /> <!-- Added max-height for mobile -->
-                            <div class="d-none d-md-block" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
-                        </div>
-                    </t>
-                    <t t-elif="len(active_brand_banner.brand_images) > 1">
-                        <!-- Carousel for multiple images -->
-                        <div id="brandImagesCarousel" class="carousel slide" data-bs-ride="carousel">
-                            <div class="carousel-inner">
-                                <t t-foreach="active_brand_banner.brand_images" t-as="image" t-key="image.id">
-                                    <div t-att-class="'carousel-item' + (' active' if image == active_brand_banner.brand_images[0] else '')" style="position: relative;">
-                                        <img t-att-src="'/web/image/' + str(image.id)" 
-                                             alt="Brand Image" 
-                                             class="img-fluid"
-                                             style="width: 100%; height: auto; max-height: 200px; object-fit: cover;" /> <!-- Added max-height for mobile -->
-                                        <div class="d-none d-md-block" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
-                                    </div>
-                                </t>
-                            </div>
-                            <!-- Carousel controls -->
-                            <button class="carousel-control-prev" type="button" data-bs-target="#brandImagesCarousel" data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Previous</span>
-                            </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#brandImagesCarousel" data-bs-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Next</span>
-                            </button>
-                        </div>
-                    </t>
+
+
+                <t t-if="brand_type and brand_type.cover_image">
+                    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 30px;">
+                        <img t-att-src="'/web/image/brand.type/' + str(brand_type.id) + '/cover_image'"
+                             alt="Portada de la Marca"
+                             class="img-fluid shadow"
+                             style="max-width: 600px; width: 100%; height: auto; max-height: 250px; object-fit: contain; border-radius: 16px; background: #fff;" />
+                    </div>
                 </t>
                 <t t-else="">
-                    <!-- Default image if no active brand banner -->
                     <div style="position: relative;">
                         <img src="/theme_xtream/static/src/img/product-img/imagenes_home.png" 
                              alt="Default Image" 
                              class="img-fluid"
-                             style="width: 100%; height: auto; max-height: 200px; object-fit: cover;" /> <!-- Added max-height for mobile -->
+                             style="width: 100%; height: auto; max-height: 200px; object-fit: cover;" />
                         <div class="d-none d-md-block" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
                     </div>
-                </t>                
+                </t>
+                
                 <div style="height: 50px;"></div>
 
                 

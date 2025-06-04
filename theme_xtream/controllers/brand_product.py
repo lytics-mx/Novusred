@@ -37,7 +37,8 @@ class WebsiteBrand(http.Controller):
 
     @http.route('/brand', auth='public', website=True)
     def home(self):
-        products = request.env['product.template'].sudo().search([('website_published', '=', True)], order='create_date desc', limit=10)
+        # Mostrar todas las marcas con su cover_image
+        brands = request.env['brand.type'].sudo().search([])
         return http.request.render('theme_xtream.website_brand', {
-            'products': products,
+            'brands': brands,
         })
