@@ -47,15 +47,15 @@ class BrandType(models.Model):
 
     @api.model
     def create(self, vals):
-        if 'name' in vals and not vals.get('slug'):
+        if 'name' in vals:
             slug = vals['name'].lower()
             slug = re.sub(r'[^a-z0-9]+', '-', slug)
             slug = slug.strip('-')
             vals['slug'] = slug
         return super().create(vals)
-
+    
     def write(self, vals):
-        if 'name' in vals and not vals.get('slug'):
+        if 'name' in vals:
             slug = vals['name'].lower()
             slug = re.sub(r'[^a-z0-9]+', '-', slug)
             slug = slug.strip('-')
