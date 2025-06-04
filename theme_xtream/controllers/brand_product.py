@@ -8,12 +8,14 @@ class WebsiteBrand(http.Controller):
     @http.route('/brand/<string:brand_name>', auth='public', website=True)
     def brand_products(self, brand_name):
         BrandType = request.env['brand.type']
+        # Busca el slug en minúsculas para que coincida siempre
         brand_type_rec = BrandType.sudo().search([
             ('slug', '=', brand_name.lower()),
             ('active', '=', True)
         ], limit=1)
+        if not brand_type_rec:
+            return request.not_found()
 
-        # Solo productos publicados de esa marca
         products = request.env['product.template'].sudo().search([
             ('brand_type_id', '=', brand_type_rec.id),
             ('website_published', '=', True)
@@ -29,7 +31,7 @@ class WebsiteBrand(http.Controller):
         if search:
             brand = request.env['brand.type'].sudo().search([('name', 'ilike', search)], limit=1)
             if brand:
-                brand_name_url = brand.slug
+                brand_name_url = brand.slug  # <-- Si slug está vacío, esto es False
                 return request.redirect('/brand/%s' % brand_name_url)
         return request.redirect('/brand')
 
