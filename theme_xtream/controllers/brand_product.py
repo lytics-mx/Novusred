@@ -7,7 +7,7 @@ class WebsiteBrand(http.Controller):
     @http.route('/brand/<string:brand_name>', auth='public', website=True)
     def brand_products(self, brand_name):
         BrandType = request.env['brand.type']
-        brand_type_rec = BrandType.sudo().search([('name', 'ilike', brand_name)], limit=1)
+        brand_type_rec = BrandType.sudo().search([('name', 'ilike', brand_name)], limit=1)        
         if not brand_type_rec:
             return request.not_found()
 
@@ -15,11 +15,10 @@ class WebsiteBrand(http.Controller):
 
         # Obtener el icover_image de la marca
         cover_image = brand_type_rec.cover_image if hasattr(brand_type_rec, 'cover_image') else False
-
+        
         return request.render('theme_xtream.brand_search', {
             'brand_type': brand_type_rec,
             'products': products,
-            'cover_image': cover_image,
         })
     @http.route('/brand_search_redirect', type='http', auth='public', website=True)
     def brand_search_redirect(self, search=None, **kwargs):
