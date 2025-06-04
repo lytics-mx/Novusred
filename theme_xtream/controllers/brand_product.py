@@ -20,10 +20,16 @@ class WebsiteBrand(http.Controller):
             ('brand_type_id', '=', brand_type_rec.id),
             ('website_published', '=', True)
         ])
-
+        # Obtén todas las categorías de los productos de la marca
+        category_ids = products.mapped('categ_id').ids
+        categories = request.env['product.category'].sudo().browse(category_ids)
+        child_categories = categories.mapped('child_id')
+        
         return request.render('theme_xtream.brand_search', {
             'brand_type': brand_type_rec,
             'products': products,
+            'categories': categories,
+            'child_categories': child_categories,
         })
 
     @http.route('/brand_search_redirect', type='http', auth='public', website=True)
