@@ -10,22 +10,17 @@ class WebsiteBrand(http.Controller):
         brand_type_rec = BrandType.sudo().search([('name', 'ilike', brand_name)], limit=1)
         if not brand_type_rec:
             return request.not_found()
-    
+
         products = request.env['product.template'].sudo().search([('brand_type_id', '=', brand_type_rec.id)])
-    
-        active_brand_banner = None
-        if not brand_type_rec.cover_image:
-            active_brand_banner = request.env['banner.image.line'].sudo().search([
-                ('is_active_brand_carousel', '=', True),
-                ('name', '=', 'marcas')
-            ], limit=1)
-    
+
+        # Obtener el icover_image de la marca
+        icover_image = brand_type_rec.icover_image if hasattr(brand_type_rec, 'icover_image') else False
+
         return request.render('theme_xtream.brand_search', {
             'brand_type': brand_type_rec,
             'products': products,
-            'active_brand_banner': active_brand_banner,
+            'icover_image': icover_image,
         })
-    
     @http.route('/brand_search_redirect', type='http', auth='public', website=True)
     def brand_search_redirect(self, search=None, **kwargs):
         if search:
