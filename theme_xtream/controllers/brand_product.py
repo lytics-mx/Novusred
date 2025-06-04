@@ -7,38 +7,31 @@ class WebsiteBrand(http.Controller):
     @http.route('/brand/<string:brand_name>', auth='public', website=True)
     def brand_products(self, brand_name):
         BrandType = request.env['brand.type']
-        brand_type_rec = BrandType.sudo().search([('name', 'ilike', brand_name)], limit=1)        
+        brand_type_rec = BrandType.sudo().search([('name', 'ilike', brand_name)], limit=1)
         if not brand_type_rec:
             return request.not_found()
 
-        # Solo productos publicados de esa marca
-        products = request.env['product.template'].sudo().search([
-            ('brand_type_id', '=', brand_type_rec.id),
-            ('website_published', '=', True)
-        ])
+        products = request.env['product.template'].sudo().search([('brand_type_id', '=', brand_type_rec.id)])
 
-        # Obtener el cover_image de la marca
-        cover_image = getattr(brand_type_rec, 'cover_image', False)
-        
         return request.render('theme_xtream.brand_search', {
             'brand_type': brand_type_rec,
             'products': products,
-            'cover_image': cover_image,  # <-- pásalo al template
+            
         })
-
+    
     @http.route('/brand_search_redirect', type='http', auth='public', website=True)
     def brand_search_redirect(self, search=None, **kwargs):
         if search:
             brand = request.env['brand.type'].sudo().search([('name', 'ilike', search)], limit=1)
             if brand:
+                # Codifica el name para la URL
                 brand_name_url = urllib.parse.quote(brand.name)
                 return request.redirect('/brand/%s' % brand_name_url)
         return request.redirect('/brand')   
 
     @http.route('/brand', auth='public', website=True)
     def home(self):
-        # Mostrar todas las marcas con su cover_image
-        brands = request.env['brand.type'].sudo().search([])
+        products = request.env['product.template'].sudo().search([('website_published', '=', True)], order='create_date desc', limit=10)
         return http.request.render('theme_xtream.website_brand', {
-            'brands': brands,
+            'products': products,
         })
