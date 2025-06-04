@@ -1,12 +1,13 @@
 from odoo import http
 from odoo.http import request
+import urllib.parse
 
 class WebsiteBrand(http.Controller):
 
-    @http.route('/brand/<string:brand_type>', auth='public', website=True)
-    def brand_products(self, brand_type):
+    @http.route('/brand/<string:brand_name>', auth='public', website=True)
+    def brand_products(self, brand_name):
         BrandType = request.env['brand.type']
-        brand_type_rec = BrandType.sudo().search([('slug', '=', brand_type)], limit=1)
+        brand_type_rec = BrandType.sudo().search([('name', 'ilike', brand_name)], limit=1)
         if not brand_type_rec:
             return request.not_found()
 
@@ -21,14 +22,14 @@ class WebsiteBrand(http.Controller):
     def brand_search_redirect(self, search=None, **kwargs):
         if search:
             brand = request.env['brand.type'].sudo().search([('name', 'ilike', search)], limit=1)
-            if brand and brand.slug:
-                return http.redirect('/brand/%s' % brand.slug)
-        # Si no encuentra marca, puedes redirigir a la página general de marcas o mostrar productos normales
+            if brand:
+                # Codifica el name para la URL
+                brand_name_url = urllib.parse.quote(brand.name)
+                return http.redirect('/brand/%s' % brand_name_url)
         return http.redirect('/brand')    
 
     @http.route('/brand', auth='public', website=True)
     def home(self):
-        # Mostrar productos normales si no hay marca seleccionada
         products = request.env['product.template'].sudo().search([('website_published', '=', True)], order='create_date desc', limit=10)
         return http.request.render('theme_xtream.website_brand', {
             'products': products,
