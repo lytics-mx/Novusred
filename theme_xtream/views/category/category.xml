@@ -2,15 +2,21 @@
     <record id="view_product_category_form_inherit" model="ir.ui.view">
         <field name="name">product.category.form.inherit</field>
         <field name="model">product.category</field>
-        <field name="inherit_id" ref="product.product_category_form_view"/> <!-- Cambiado al ID correcto -->
+        <field name="inherit_id" ref="product.product_category_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='name']" position="after">
                 <field name="icon" widget="image" class="oe_avatar" options="{'preview_image': 'icon'}"/>
-            </xpath>       
-            <!-- Ubicar el nuevo campo debajo de 'parent_id' -->
+            </xpath>
             <xpath expr="//field[@name='parent_id']" position="after">
                 <field name="is_visible_in_menu"/>
-                <field name="banner_image" widget="image" string="Imagen de Banner"/>
+            </xpath>
+            <!-- Notebook agregado debajo de los campos anteriores -->
+            <xpath expr="//field[@name='is_visible_in_menu']" position="after">
+                <notebook>
+                    <page string="Banner">
+                        <field name="banner_image" widget="image" string="Imagen de Banner"/>
+                    </page>
+                </notebook>
             </xpath>
         </field>
     </record>

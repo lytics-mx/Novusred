@@ -28,10 +28,14 @@ class WebsiteBrand(http.Controller):
         category_ids = products.mapped('categ_id').ids
         categories = request.env['product.category'].sudo().browse(category_ids)
 
+        # Obtener la imagen de banner del campo banner_image
+        banner_image = brand_type_rec.banner_image if brand_type_rec else False
+
         return request.render('theme_xtream.brand_search', {
             'brand_type': brand_type_rec,
             'products': products,
             'categories': categories,
+            'banner_image': banner_image,
         })
 
     @http.route('/brand_search_redirect', type='http', auth='public', website=True)
