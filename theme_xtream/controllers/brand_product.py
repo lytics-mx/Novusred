@@ -11,21 +11,26 @@ class WebsiteBrand(http.Controller):
         if not brand_type_rec:
             return request.not_found()
 
-        products = request.env['product.template'].sudo().search([('brand_type_id', '=', brand_type_rec.id)])
+        # Solo productos publicados de esa marca
+        products = request.env['product.template'].sudo().search([
+            ('brand_type_id', '=', brand_type_rec.id),
+            ('website_published', '=', True)
+        ])
 
-        # Obtener el icover_image de la marca
-        cover_image = brand_type_rec.cover_image if hasattr(brand_type_rec, 'cover_image') else False
+        # Obtener el cover_image de la marca
+        cover_image = getattr(brand_type_rec, 'cover_image', False)
         
         return request.render('theme_xtream.brand_search', {
             'brand_type': brand_type_rec,
             'products': products,
+            'cover_image': cover_image,  # <-- pásalo al template
         })
+
     @http.route('/brand_search_redirect', type='http', auth='public', website=True)
     def brand_search_redirect(self, search=None, **kwargs):
         if search:
             brand = request.env['brand.type'].sudo().search([('name', 'ilike', search)], limit=1)
             if brand:
-                # Codifica el name para la URL
                 brand_name_url = urllib.parse.quote(brand.name)
                 return request.redirect('/brand/%s' % brand_name_url)
         return request.redirect('/brand')   
