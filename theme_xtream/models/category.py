@@ -255,7 +255,16 @@ class CategoryController(http.Controller):
         start = (current_page - 1) * per_page
         end = start + per_page
         period_products = period_products[start:end]
-        discount_ranges = [5, 10, 15, 20, 25, 30, 40, 50]
+        # Obtener los valores únicos de discount_percentage de los tags activos con is_percentage=True
+        discount_ranges = sorted({
+            tag.discount_percentage
+            for tag in request.env['product.tag'].sudo().search([
+            ('is_active', '=', True),
+            ('is_percentage', '=', True),
+            ('discount_percentage', '>', 0)
+            ])
+            if tag.discount_percentage
+        })
         discount_tags = []
         discount_tag_counts = {}
         discount_tag_counts_general = {}
