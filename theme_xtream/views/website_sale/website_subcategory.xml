@@ -121,7 +121,7 @@
                                     <div class="form-check form-switch bg-white">
                                         <input class="form-check-input" type="checkbox" id="freeShippingToggle"
                                             t-att-checked="'checked' if str(current_filters.get('free_shipping', '')).lower() == 'true' else None" />
-                                        <label class="form-check-label" for="freeShippingToggle" style="background-color: white; font-size: 15px;">
+                                        <label class="form-check-label" for="freeShippingToggle" style="background-color: white; font-size: 12px;">
                                             Solo productos con envío gratis
                                         </label>
                                     </div>
@@ -270,13 +270,29 @@
                                         </div>
                                     </div>
                                     <!-- Rango personalizado -->
-                                    <form id="custom-price-form" class="d-flex align-items-center" style="gap: 8px;" onsubmit="return customPriceSearch(event)">
-                                        <input type="number" min="0" class="form-control form-control-sm" id="min-price" placeholder="Mín" style="width: 80px;" t-att-value="current_filters.get('min_price', '')"/>
+                                    <form id="custom-price-form" class="d-flex align-items-center flex-wrap flex-md-nowrap" style="gap: 8px;" onsubmit="return customPriceSearch(event)">
+                                        <input type="number" min="0" class="form-control form-control-sm mb-2 mb-md-0" id="min-price" placeholder="Mín" style="width: 80px; min-width: 0;" t-att-value="current_filters.get('min_price', '')"/>
                                         <span class="mx-1" style="color: #888;">-</span>
-                                        <input type="number" min="0" class="form-control form-control-sm" id="max-price" placeholder="Máx" style="width: 80px;" t-att-value="current_filters.get('max_price', '')"/>
-                                        <button type="submit" class="btn" style="background-color: #5a5a5a; color: white;">Buscar</button>
-
+                                        <input type="number" min="0" class="form-control form-control-sm mb-2 mb-md-0" id="max-price" placeholder="Máx" style="width: 80px; min-width: 0;" t-att-value="current_filters.get('max_price', '')"/>
+                                        <button type="submit" class="btn w-100 w-md-auto" style="background-color: #5a5a5a; color: white; min-width: 80px;">Buscar</button>
                                     </form>
+                                    <style>
+                                    @media (max-width: 767.98px) {
+                                        #custom-price-form {
+                                            flex-direction: column !important;
+                                            align-items: stretch !important;
+                                            gap: 4px !important;
+                                        }
+                                        #custom-price-form input,
+                                        #custom-price-form button {
+                                            width: 100% !important;
+                                            min-width: 0 !important;
+                                        }
+                                        #custom-price-form .mx-1 {
+                                            display: none !important;
+                                        }
+                                    }
+                                    </style>
                                     <script type="text/javascript">
                                         function customPriceSearch(e) {
                                             e.preventDefault();
