@@ -29,9 +29,14 @@ class WebsiteBrand(http.Controller):
     @http.route('/brand_search_redirect', type='http', auth='public', website=True)
     def brand_search_redirect(self, search=None, **kwargs):
         if search:
-            brand = request.env['brand.type'].sudo().search([('name', 'ilike', search)], limit=1)
+            BrandType = request.env['brand.type'].sudo()
+            # Primero busca coincidencia exacta (insensible a mayúsculas)
+            brand = BrandType.search([('name', '=', search)], limit=1)
+            if not brand:
+                # Si no hay coincidencia exacta, busca parcial
+                brand = BrandType.search([('name', 'ilike', search)], limit=1)
             if brand:
-                brand_name_url = brand.slug  # <-- Si slug está vacío, esto es False
+                brand_name_url = brand.slug
                 return request.redirect('/brand/%s' % brand_name_url)
         return request.redirect('/brand')
 
