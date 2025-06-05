@@ -392,3 +392,48 @@ class CategoryController(http.Controller):
             return result
         except (ValueError, TypeError):
             return []
+        
+    @http.route('/category_search', auth='public', website=True)
+    def category_search(self, search=None, **kwargs):
+        """
+        Busca categorías y muestra los resultados usando la plantilla category_search.
+        """
+        categories = []
+        products = []
+        if search:
+            # Buscar categorías cuyo nombre contenga el texto buscado (case-insensitive)
+            categories = request.env['product.category'].sudo().search([
+                ('name', 'ilike', search)
+            ])
+            # Opcional: buscar productos relacionados a esas categorías
+            products = request.env['product.template'].sudo().search([
+                ('website_published', '=', True),
+                ('categ_id', 'in', categories.ids)
+            ])
+        values = {
+            'search': search,
+            'categories': categories,
+            'products': products,
+        }
+        return request.render('theme_xtream.category_search', values)
+    
+    @http.route('/category/<string:slug>', auth='public', website=True)
+    def category_by_slug(self, slug, **kwargs):
+        # Buscar la categoría por slug
+        category = request.env['product.category'].sudo().search([('slug', '=', slug)], limit=1)
+        if not category:
+            return request.not_found()
+
+        # Buscar productos publicados en esa categoría (y subcategorías)
+        products = request.env['product.template'].sudo().search([
+            ('website_published', '=', True),
+            ('categ_id', 'child_of', category.id)
+        ])
+
+        # Puedes agregar más lógica de filtros, paginación, etc. si lo necesitas
+
+        values = {
+            'category': category,
+            'products': products,
+        }
+        return request.render('theme_xtream.category_search', values)

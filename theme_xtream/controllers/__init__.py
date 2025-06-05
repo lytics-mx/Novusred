@@ -26,3 +26,5 @@ from . import product_views
 # from . import brand_type
 from . import brand_product
 from . import img_banner
+from . import category
+from . import search
