@@ -7,7 +7,7 @@ class WebsiteSearch(http.Controller):
     @http.route('/search_redirect', auth='public', website=True)
     def search_redirect(self, search='', search_type='all', **kw):
         if search_type == 'brand':
-            return request.redirect('/brand_search?search=%s' % search)
+            return request.redirect('/brand_search_redirect?search=%s' % search)
         elif search_type == 'category':
             return request.redirect('/category_search?search=%s' % search)
         else:
