@@ -5,7 +5,6 @@ from pytz import timezone
 
 class OffersController(http.Controller):
 
-    @http.route('/offers', type='http', auth='public', website=True)
     def offers(self, free_shipping=False, **kwargs):
         tag_id = kwargs.get('tag_id')
         brand_type_id = kwargs.get('brand_type_id')
@@ -13,6 +12,7 @@ class OffersController(http.Controller):
         min_price = kwargs.get('min_price')
         max_price = kwargs.get('max_price')
         type_offer = request.params.get('type')
+        offers = kwargs.get('offers', 'false').lower() == 'true' 
 
         domain = [
             ('website_published', '=', True),
@@ -304,7 +304,7 @@ class OffersController(http.Controller):
             'min_price': min_price,
             'max_price': max_price,
             'type_offer': type_offer,
-            
+
         })
         
 
