@@ -243,7 +243,18 @@ class OffersController(http.Controller):
         min_price = kwargs.get('min_price')
         max_price = kwargs.get('max_price')
         type_offer = request.params.get('type')
-    
+        tag_id = kwargs.get('tag_id')
+        brand_type_id = kwargs.get('brand_type_id')
+
+        domain = [
+            ('website_published', '=', True),
+            ('sale_ok', '=', True),
+            '|',
+            ('discount_percentage', '>', 0),
+            ('fixed_discount', '>', 0)
+        ]
+
+ 
         # Guardar el estado de free_shipping en la sesión del usuario
         # para mantenerlo entre diferentes páginas y filtros
         if 'free_shipping' in kwargs:
@@ -254,7 +265,10 @@ class OffersController(http.Controller):
     
         domain = [
             ('website_published', '=', True),
-            ('product_tag_ids', '!=', False)
+            ('sale_ok', '=', True),
+            '|',
+            ('discount_percentage', '>', 0),
+            ('fixed_discount', '>', 0)
         ]
         
         # Aplicar filtro de free_shipping si está activo
@@ -329,7 +343,17 @@ class OffersController(http.Controller):
                 domain.append(('list_price', '<=', float(max_price)))
             except Exception:
                 pass
-    
+        if tag_id:
+            try:
+                domain.append(('product_tag_ids', 'in', [int(tag_id)]))
+            except Exception:
+                pass
+
+        if brand_type_id:
+            try:
+                domain.append(('brand_type_id', '=', int(brand_type_id)))
+            except Exception:
+                pass       
         # IMPORTANTE: Primero BUSCAR los productos
         products = request.env['product.template'].sudo().search(domain)
         
@@ -440,5 +464,7 @@ class OffersController(http.Controller):
             'all_categories': main_categories,
             'product_tags': product_tags,
             'tags_with_discount': tags_with_discount,
+            'selected_tag_id': tag_id,
+            'selected_brand_type_id': brand_type_id,
 
         })
