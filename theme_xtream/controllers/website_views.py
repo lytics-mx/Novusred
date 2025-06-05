@@ -7,11 +7,8 @@ class OffersController(http.Controller):
 
     @http.route('/offers', type='http', auth='public', website=True)
     def offers(self, free_shipping=False, **kwargs):
-        """Renderiza la página de productos en oferta."""
-    
-        # Obtener el parámetro tag_id de la URL
         tag_id = kwargs.get('tag_id')
-        brand_type_id = kwargs.get('brand_type_id')  # <-- Nuevo parámetro
+        brand_type_id = kwargs.get('brand_type_id')
 
         domain = [
             ('website_published', '=', True),
@@ -23,16 +20,14 @@ class OffersController(http.Controller):
 
         if tag_id:
             try:
-                tag_id = int(tag_id)
-                domain.append(('product_tag_ids', 'in', [tag_id]))
-            except (ValueError, TypeError):
+                domain.append(('product_tag_ids', 'in', [int(tag_id)]))
+            except Exception:
                 pass
 
         if brand_type_id:
             try:
-                brand_type_id = int(brand_type_id)
-                domain.append(('brand_type_id', '=', brand_type_id))
-            except (ValueError, TypeError):
+                domain.append(('brand_type_id', '=', int(brand_type_id)))
+            except Exception:
                 pass
 
         # Filtro de envío gratis si está activo

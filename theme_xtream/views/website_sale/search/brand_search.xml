@@ -27,74 +27,64 @@
 
                 
                 <!-- Encuentra lo que buscas -->
-                <section class="find-what-you-need text-center py-3">
-                    <h2 style="font-size: 25px; text-align: center;">ENCUENTRA LO QUE BUSCAS</h2>
-                    <div class="container-fluid px-4">
-                        <div style="height: 20px;"></div>
-                        
-                        <div class="d-flex align-items-start justify-content-center w-100">
-                            <div class="tags-container w-100">
-                                <t t-set="product_tags" t-value="request.env['product.tag'].sudo().search([])"/>
-                                
-                                <t t-if="product_tags">
-                                    <!-- Mobile view stays the same -->
-                                    <div class="d-block d-md-none">
-                                        <div class="row g-3" style="margin: 0 auto;">
-                                            <t t-foreach="product_tags[0:4]" t-as="tag">
-                                                <div class="col-3 px-2">
-                                                    <a t-att-href="'/offers?tag_id=' + str(tag.id)" class="text-decoration-none">
-                                                        <div class="text-center position-relative tag-item clickable-tag">
-                                                            <div class="tag-icon-container" style="width: 85px; height: 85px; border-radius: 50%; background-color: #ffffff; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
-                                                                <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
-                                                                     t-att-alt="tag.name"
-                                                                     class="tag-icon"
-                                                                     style="width: 45px; height: 45px;" />
-                                                            </div>
-                                                            <div class="tag-name" style="font-size: 12px; margin-top: 8px; color: #000; line-height: 1.2;">
-                                                                <t t-esc="tag.name" />
-                                                            </div>
-                                                        </div>
-                                                    </a>
+                <div class="tags-container w-100">
+                    <t t-set="product_tags" t-value="request.env['product.tag'].sudo().search([
+                        ('product_tmpl_ids.brand_type_id', '=', brand_type.id),
+                        ('product_tmpl_ids.website_published', '=', True)
+                    ], limit=6)"/>
+                    
+                    <t t-if="product_tags">
+                        <!-- Mobile view -->
+                        <div class="d-block d-md-none">
+                            <div class="row g-3" style="margin: 0 auto;">
+                                <t t-foreach="product_tags" t-as="tag">
+                                    <div class="col-3 px-2">
+                                        <a t-att-href="'/offers?tag_id=%s&brand_type_id=%s' % (tag.id, brand_type.id)" class="text-decoration-none">
+                                            <div class="text-center position-relative tag-item clickable-tag">
+                                                <div class="tag-icon-container" style="width: 85px; height: 85px; border-radius: 50%; background-color: #ffffff; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                                                    <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
+                                                         t-att-alt="tag.name"
+                                                         class="tag-icon"
+                                                         style="width: 45px; height: 45px;" />
                                                 </div>
-                                            </t>
-                                        </div>
-                                    </div>
-
-                                    <!-- Modified Desktop view with more separation between icons -->
-                                    <div class="d-none d-md-block">
-                                        <div class="d-flex justify-content-center" style="margin: 0 auto; gap: 87px; max-width: 1000px;">
-                                            <t t-foreach="product_tags[:6]" t-as="tag">
-                                                <div>
-                                                    <a t-att-href="'/offers?tag_id=' + str(tag.id)" class="text-decoration-none">
-                                                        
-                                                        <div class="text-center position-relative tag-item clickable-tag">
-                                                            <div class="tag-icon-container" style="width: 140px; height: 140px; border-radius: 50%; background-color: #ffffff; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); position: relative;">
-                                                                <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
-                                                                     t-att-alt="tag.name"
-                                                                     class="tag-icon"
-                                                                     style="width: 75px; height: 75px; object-fit: contain; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" />
-                                                            </div>
-                                                            <div class="tag-name" style="font-size: 18px; margin-top: 12px; color: #000; line-height: 1.2; font-weight: 500;">
-                                                                <t t-esc="tag.name" />
-                                                            </div>
-                                                        </div>
-                                                    </a>
+                                                <div class="tag-name" style="font-size: 12px; margin-top: 8px; color: #000; line-height: 1.2;">
+                                                    <t t-esc="tag.name" />
                                                 </div>
-                                            </t>
-                                        </div>
-                                    </div>
-                                </t>
-                                
-                                <t t-else="">
-                                    <div style="color: #666; font-size: 14px; padding: 10px;">
-                                        No hay categorías disponibles
+                                            </div>
+                                        </a>
                                     </div>
                                 </t>
                             </div>
                         </div>
-                    </div>
-                </section>
-
+                        <!-- Desktop view -->
+                        <div class="d-none d-md-block">
+                            <div class="d-flex justify-content-center" style="margin: 0 auto; gap: 87px; max-width: 1000px;">
+                                <t t-foreach="product_tags" t-as="tag">
+                                    <div>
+                                        <a t-att-href="'/offers?tag_id=%s&brand_type_id=%s' % (tag.id, brand_type.id)" class="text-decoration-none">
+                                            <div class="text-center position-relative tag-item clickable-tag">
+                                                <div class="tag-icon-container" style="width: 140px; height: 140px; border-radius: 50%; background-color: #ffffff; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); position: relative;">
+                                                    <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
+                                                         t-att-alt="tag.name"
+                                                         class="tag-icon"
+                                                         style="width: 75px; height: 75px; object-fit: contain; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" />
+                                                </div>
+                                                <div class="tag-name" style="font-size: 18px; margin-top: 12px; color: #000; line-height: 1.2; font-weight: 500;">
+                                                    <t t-esc="tag.name" />
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div style="color: #666; font-size: 14px; padding: 10px;">
+                            No hay categorías disponibles
+                        </div>
+                    </t>
+                </div>
                 <!-- Mejores Ofertas -->
                 <section class="best-offers py-5">
                     <div class="container mt-4">
