@@ -246,14 +246,6 @@ class OffersController(http.Controller):
         tag_id = kwargs.get('tag_id')
         brand_type_id = kwargs.get('brand_type_id')
 
-        domain = [
-            ('website_published', '=', True),
-            ('sale_ok', '=', True),
-            '|',
-            ('discount_percentage', '>', 0),
-            ('fixed_discount', '>', 0)
-        ]
-
  
         # Guardar el estado de free_shipping en la sesión del usuario
         # para mantenerlo entre diferentes páginas y filtros
