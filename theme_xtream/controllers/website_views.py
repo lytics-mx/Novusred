@@ -11,8 +11,8 @@ class OffersController(http.Controller):
     
         # Obtener el parámetro tag_id de la URL
         tag_id = kwargs.get('tag_id')
-        
-        # Construir el dominio base para productos en oferta
+        brand_type_id = kwargs.get('brand_type_id')  # <-- Nuevo parámetro
+
         domain = [
             ('website_published', '=', True),
             ('sale_ok', '=', True),
@@ -20,16 +20,21 @@ class OffersController(http.Controller):
             ('discount_percentage', '>', 0),
             ('fixed_discount', '>', 0)
         ]
-        
-        # Si se especifica un tag_id, filtrar por ese tag
+
         if tag_id:
             try:
                 tag_id = int(tag_id)
                 domain.append(('product_tag_ids', 'in', [tag_id]))
             except (ValueError, TypeError):
-                # Si tag_id no es válido, ignorar el filtro
                 pass
-        
+
+        if brand_type_id:
+            try:
+                brand_type_id = int(brand_type_id)
+                domain.append(('brand_type_id', '=', brand_type_id))
+            except (ValueError, TypeError):
+                pass
+
         # Filtro de envío gratis si está activo
         free_shipping = kwargs.get('free_shipping') == 'true'
         if free_shipping:
