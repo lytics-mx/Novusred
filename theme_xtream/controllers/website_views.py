@@ -9,6 +9,10 @@ class OffersController(http.Controller):
     def offers(self, free_shipping=False, **kwargs):
         tag_id = kwargs.get('tag_id')
         brand_type_id = kwargs.get('brand_type_id')
+        offer_type = kwargs.get('type')
+        min_price = kwargs.get('min_price')
+        max_price = kwargs.get('max_price')
+        type_offer = request.params.get('type')
 
         domain = [
             ('website_published', '=', True),
@@ -29,7 +33,73 @@ class OffersController(http.Controller):
                 domain.append(('brand_type_id', '=', int(brand_type_id)))
             except Exception:
                 pass
+        category_id = request.params.get('category_id')
+        if category_id:
+            domain.append(('categ_id', 'child_of', int(category_id)))
+        if offers:
+            domain.append(('discounted_price', '>', 0))
+        
+        if offer_type:
+            tag = request.env['product.tag'].sudo().search([('name', 'ilike', offer_type)], limit=1)
+            if tag:
+                domain.append(('product_tag_ids', 'in', tag.id))
+        
+        if min_price:
+            try:
+                domain.append(('list_price', '>=', float(min_price)))
+            except Exception:
+                pass
 
+        if max_price:
+            try:
+                domain.append(('list_price', '<=', float(max_price)))
+            except Exception:
+                pass
+
+        if type_offer in ['day', 'flash', 'current']:
+        
+            filtered = []
+            remaining_times = {}  # Diccionario para almacenar los tiempos restantes
+            now = Datetime.now(timezone('America/Mexico_City'))
+            
+            for p in products:
+                for tag in p.product_tag_ids:
+                    if tag.start_date and tag.end_date:
+                        start = tag.start_date
+                        end = tag.end_date
+                        if isinstance(start, str):
+                            start = Datetime.fromisoformat(start)
+                        if isinstance(end, str):
+                            end = Datetime.fromisoformat(end)
+                        
+                        # Convertir a objetos datetime conscientes de la zona horaria
+                        if start.tzinfo is None:
+                            start = start.replace(tzinfo=timezone('UTC'))
+                            start = start.astimezone(timezone('America/Mexico_City'))
+                        if end.tzinfo is None:
+                            end = end.replace(tzinfo=timezone('UTC'))
+                            end = end.astimezone(timezone('America/Mexico_City'))
+                        
+                        duration = (end - start).total_seconds() / 3600.0
+                        
+                        if type_offer == 'day' and 23.5 <= duration <= 24.5:
+                            filtered.append(p)
+                            break  # Ya cumple, no revises más etiquetas
+                        elif type_offer == 'flash' and 0 < duration <= 6:
+                            filtered.append(p)
+                            break
+                        elif type_offer == 'current' and start <= now <= end:
+                            # Para ofertas activas actualmente
+                            filtered.append(p)
+                            # Calcular tiempo restante
+                            remaining_time = end - now
+                            remaining_hours = int(remaining_time.total_seconds() / 3600)
+                            remaining_minutes = int((remaining_time.total_seconds() % 3600) / 60)
+                            # Almacenar en el diccionario usando el ID del producto como clave
+                            remaining_times[p.id] = f"{remaining_hours}h {remaining_minutes}m"
+                            break
+            products = filtered
+                
         # Filtro de envío gratis si está activo
         free_shipping = kwargs.get('free_shipping') == 'true'
         if free_shipping:
@@ -230,6 +300,11 @@ class OffersController(http.Controller):
             'product_tags': product_tags,
             'selected_tag_id': tag_id,
             'selected_brand_type_id': brand_type_id,
+            'offer_type': offer_type,
+            'min_price': min_price,
+            'max_price': max_price,
+            'type_offer': type_offer,
+            
         })
         
 
