@@ -43,18 +43,19 @@ class WebsiteBrand(http.Controller):
                 ]) > 0
             )
             if valid_children:
-                # Creamos una copia de la categoría solo con los hijos válidos
-                cat.child_id = valid_children
-                valid_categories.append(cat)
-        categories = request.env['product.category'].browse([cat.id for cat in valid_categories])
+                # No modificar cat.child_id, solo pasar los hijos válidos al template
+                valid_categories.append({
+                    'cat': cat,
+                    'valid_children': valid_children,
+                })
 
         # Obtener la imagen de banner del campo banner_image de la primera categoría (si existe)
-        banner_image = categories[0].banner_image if categories and hasattr(categories[0], 'banner_image') else False
+        banner_image = valid_categories[0]['cat'].banner_image if valid_categories and hasattr(valid_categories[0]['cat'], 'banner_image') else False
 
         return request.render('theme_xtream.brand_search', {
             'brand_type': brand_type_rec,
             'products': products,
-            'categories': categories,
+            'categories': valid_categories,  # Ahora es una lista de dicts
             'banner_image': banner_image,
         })
 
