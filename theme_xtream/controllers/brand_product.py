@@ -28,9 +28,25 @@ class WebsiteBrand(http.Controller):
         if not products:
             return request.redirect('/brand')
 
-        # Categorías y subcategorías para el template
+        # Categorías principales de los productos
         category_ids = products.mapped('categ_id').ids
         categories = request.env['product.category'].sudo().browse(category_ids)
+
+        # Filtrar solo subcategorías (child) que tengan productos publicados de la marca
+        valid_categories = []
+        for cat in categories:
+            valid_children = cat.child_id.filtered(
+                lambda c: request.env['product.template'].sudo().search_count([
+                    ('categ_id', '=', c.id),
+                    ('brand_type_id', '=', brand_type_rec.id),
+                    ('website_published', '=', True)
+                ]) > 0
+            )
+            if valid_children:
+                # Creamos una copia de la categoría solo con los hijos válidos
+                cat.child_id = valid_children
+                valid_categories.append(cat)
+        categories = request.env['product.category'].browse([cat.id for cat in valid_categories])
 
         # Obtener la imagen de banner del campo banner_image de la primera categoría (si existe)
         banner_image = categories[0].banner_image if categories and hasattr(categories[0], 'banner_image') else False
