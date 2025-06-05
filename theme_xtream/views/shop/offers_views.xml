@@ -432,7 +432,12 @@
                                 <ul class="list-unstyled">
                                     <t t-foreach="categories_with_count" t-as="cat">
                                         <li>
-                                            <a t-att-href="'/shop/category/all?offers=true&amp;category_id=%s%s' % (cat['id'], '&amp;free_shipping=true' if free_shipping else '')" style="color: #848484;">
+                                            <a t-att-href="'/offers?category_id=%s%s%s' % (
+                                                cat['id'],
+                                                '&amp;tag_id=%s' % selected_tag_id if selected_tag_id else '',
+                                                '&amp;brand_type_id=%s' % selected_brand_type_id if selected_brand_type_id else ''
+                                            )"
+                                            style="color: #848484;">
                                                 <span t-esc="cat['name']"/> (<span t-esc="cat['product_count']"/>)
                                             </a>
                                         </li>
