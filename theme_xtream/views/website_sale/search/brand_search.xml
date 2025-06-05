@@ -280,12 +280,12 @@
                                     <div class="carousel-inner">
                                         <t t-set="first" t-value="True"/>
                                         <t t-foreach="categories" t-as="cat">
-                                            <t t-if="cat.child_id">
+                                            <t t-foreach="cat.child_id" t-as="child">
                                                 <div t-att-class="'carousel-item' + (' active' if first else '')">
                                                     <t t-set="first" t-value="False"/>
                                                     <div class="card shadow h-100 mx-2" style="border-radius: 10px; overflow: hidden; border: none;">
                                                         <div style="position: relative;">
-                                                            <img t-att-src="'/web/image/product.category/' + str(cat.id) + '/banner_image'"
+                                                            <img t-att-src="'/web/image/product.category/' + str(child.id) + '/banner_image'"
                                                                  alt="Category Banner"
                                                                  class="img-fluid"
                                                                  style="width: 100%; height: 180px; object-fit: cover;" />
@@ -293,12 +293,12 @@
                                                                  style="background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 100%);">
                                                                 <div style="background: #fff; border-radius: 0 0 10px 10px; padding: 12px 12px 10px 12px; width: 100%; box-shadow: 0 -2px 8px rgba(0,0,0,0.10);">
                                                                     <h5 class="mb-2" style="font-size: 14px; font-weight: bold; color: #222;">
-                                                                        <t t-esc="cat.name"/>
+                                                                        <t t-esc="child.name"/>
                                                                     </h5>
                                                                     <div class="subcategories">
-                                                                        <t t-foreach="cat.child_id[:2]" t-as="child">
+                                                                        <t t-foreach="child.child_id[:2]" t-as="subchild">
                                                                             <p class="text-dark mb-1" style="font-size: 11px; opacity: 0.9;">
-                                                                                <t t-esc="child.name"/>
+                                                                                <t t-esc="subchild.name"/>
                                                                             </p>
                                                                         </t>
                                                                     </div>
@@ -310,7 +310,7 @@
                                             </t>
                                         </t>
                                     </div>
-                                    <t t-if="len([cat for cat in categories if cat.child_id]) > 1">
+                                    <t t-if="sum([len(cat.child_id) for cat in categories]) > 1">
                                         <button class="carousel-control-prev" type="button" data-bs-target="#categoryMobileCarousel" data-bs-slide="prev">
                                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                             <span class="visually-hidden">Anterior</span>
