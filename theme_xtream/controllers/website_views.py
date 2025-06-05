@@ -319,10 +319,16 @@ class OffersController(http.Controller):
                 domain.append(('product_tag_ids', 'in', tag.id))
         
         if min_price:
-            domain.append(('discounted_price', '>=', float(min_price)))
-        
+            try:
+                domain.append(('list_price', '>=', float(min_price)))
+            except Exception:
+                pass
+
         if max_price:
-            domain.append(('discounted_price', '<=', float(max_price)))
+            try:
+                domain.append(('list_price', '<=', float(max_price)))
+            except Exception:
+                pass
     
         # IMPORTANTE: Primero BUSCAR los productos
         products = request.env['product.template'].sudo().search(domain)
