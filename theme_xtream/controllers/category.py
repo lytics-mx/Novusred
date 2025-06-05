@@ -10,7 +10,7 @@ class CategoryController(http.Controller):
     @http.route('/subcategory', auth='public', website=True)
     def category(self, category_id=None, subcategory_id=None, brand_id=None, 
                  free_shipping=None, min_price=None, max_price=None, price_range=None,
-                 discount_id=None, promotion_id=None, sort=None, **kw):
+                 discount_id=None, promotion_id=None, sort=None, search=None, **kw):
         """
         Renderiza la página de subcategoría con filtros dinámicos.
         SOLO productos publicados aparecerán en marcas, categorías, ofertas y rangos de precio.
@@ -35,6 +35,9 @@ class CategoryController(http.Controller):
         selected_brand = None
         subcategories = []
         
+        if search:
+            domain.append(('name', 'ilike', search))
+
         # Filtro por categoría (ESTE ES EL PRINCIPAL)
         if category_id:
             try:

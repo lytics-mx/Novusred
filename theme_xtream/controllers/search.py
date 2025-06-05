@@ -11,5 +11,5 @@ class WebsiteSearch(http.Controller):
         elif search_type == 'category':
             return request.redirect('/category_search?search=%s' % search)
         else:
-            # Lógica para búsqueda general (puedes personalizar)
-            return request.redirect('/shop?search=%s' % search)
+            # Redirige a /subcategory mostrando solo el producto buscado
+            return request.redirect('/subcategory?search=%s' % search)
