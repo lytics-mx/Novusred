@@ -107,7 +107,7 @@
                                 <div class="row g-3" style="display: flex; flex-wrap: wrap;">
                                     <t t-foreach="discounted_products" t-as="product">
                                         <div class="col-lg-2-4 col-md-4 col-sm-6" style="flex: 0 0 20%; max-width: 20%; min-width: 220px;">
-                                            <div class="card h-100 shadow-sm product-card">
+                                            <div class="card h-100 shadow-sm product-card d-flex flex-column">
                                                 <a t-att-href="'/shop/product/' + str(product.id)" class="h-100">
                                                     <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%;">
                                                         <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
@@ -117,7 +117,8 @@
                                                              onmouseout="this.style.transform='scale(1)'" />
                                                     </div>
                                                 </a>
-                                                <div class="card-body mobile-card-body">
+                                                <div class="card-body mobile-card-body d-flex flex-column justify-content-between flex-grow-1">
+
                                                     <div class="mt-auto">
                                                         <t t-if="product.discounted_price &lt; product.list_price">
                                                             <t t-if="product.product_tag_ids">
@@ -419,7 +420,21 @@
                         </div>
                     </div>
                 </section>                
-<style>
+                        <style>
+
+                        .product-card {
+                            display: flex;
+                            flex-direction: column;
+                            height: 100%;
+                            min-height: 320px; /* o el valor que prefieras */
+                        }
+
+                        .mobile-card-body {
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: space-between;
+                            flex-grow: 1;
+                        }                        
                             /* Regla global para envío gratis - aplicar a todos los tamaños */
                             .mobile-shipping-text {
                                 color: #FF5207 !important;
