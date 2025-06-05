@@ -24,17 +24,17 @@ class WebsiteBrand(http.Controller):
 
         products = request.env['product.template'].sudo().search(domain)
 
+        # Si no hay productos publicados, redirige a /brand
+        if not products:
+            return request.redirect('/brand')
+
         # Categorías y subcategorías para el template
         category_ids = products.mapped('categ_id').ids
         categories = request.env['product.category'].sudo().browse(category_ids)
 
-        # Obtener la imagen de banner del campo banner_image
-        # ...existing code...
-        
         # Obtener la imagen de banner del campo banner_image de la primera categoría (si existe)
         banner_image = categories[0].banner_image if categories and hasattr(categories[0], 'banner_image') else False
-        
-        # ...existing code...
+
         return request.render('theme_xtream.brand_search', {
             'brand_type': brand_type_rec,
             'products': products,
