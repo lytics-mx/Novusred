@@ -29,8 +29,12 @@ class WebsiteBrand(http.Controller):
         categories = request.env['product.category'].sudo().browse(category_ids)
 
         # Obtener la imagen de banner del campo banner_image
-        banner_image = brand_type_rec.banner_image if brand_type_rec else False
-
+        # ...existing code...
+        
+        # Obtener la imagen de banner del campo banner_image de la primera categoría (si existe)
+        banner_image = categories[0].banner_image if categories and hasattr(categories[0], 'banner_image') else False
+        
+        # ...existing code...
         return request.render('theme_xtream.brand_search', {
             'brand_type': brand_type_rec,
             'products': products,
