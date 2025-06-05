@@ -228,8 +228,8 @@ class OffersController(http.Controller):
             'free_shipping': free_shipping,
             'tags_with_discount': tags_with_discount,
             'product_tags': product_tags,
-            'selected_tag_id': tag_id,  # Para mostrar cuál tag está seleccionado
-
+            'selected_tag_id': tag_id,
+            'selected_brand_type_id': brand_type_id,
         })
         
 
