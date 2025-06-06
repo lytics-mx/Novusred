@@ -18,14 +18,8 @@ class OffersController(http.Controller):
 
         brands_with_count = []
         for brand in all_brand_types:
-            brand_domain = [
-                ('website_published', '=', True),
-                ('product_tag_ids', '!=', False),
-                ('brand_type_id', '=', brand.id),
-            ]
-            if free_shipping:
-                brand_domain.append(('free_shipping', '=', True))
-            # Solo contar productos con descuento real
+            brand_domain = domain.copy()
+            brand_domain.append(('brand_type_id', '=', brand.id))
             brand_products = request.env['product.template'].sudo().search(brand_domain)
             brand_products_with_discount = brand_products.filtered(lambda p: p.list_price > p.discounted_price)
             prod_count = len(brand_products_with_discount)
@@ -34,7 +28,7 @@ class OffersController(http.Controller):
                     'id': brand.id,
                     'name': brand.name,
                     'product_count': prod_count,
-                })        
+                })      
         # Construir el dominio base para productos en oferta
         domain = [
             ('website_published', '=', True),
@@ -43,22 +37,19 @@ class OffersController(http.Controller):
             ('discount_percentage', '>', 0),
             ('fixed_discount', '>', 0)
         ]
-        
-        # Si se especifica un tag_id, filtrar por ese tag
         if tag_id:
             try:
-                tag_id = int(tag_id)
-                domain.append(('product_tag_ids', 'in', [tag_id]))
-            except (ValueError, TypeError):
-                # Si tag_id no es válido, ignorar el filtro
+                domain.append(('product_tag_ids', 'in', [int(tag_id)]))
+            except Exception:
                 pass
-        
         if brand_type_id:
             try:
                 domain.append(('brand_type_id', '=', int(brand_type_id)))
-            except Exception:   
-                # Si brand_type_id no es válido, ignorar el filtro
-                pass  
+            except Exception:
+                pass
+        if free_shipping:
+            domain.append(('free_shipping', '=', True))
+
 
         # Filtro de envío gratis si está activo
         free_shipping = kwargs.get('free_shipping') == 'true'
@@ -101,6 +92,7 @@ class OffersController(http.Controller):
         # Obtener productos con etiquetas que tienen descuento real
         products = request.env['product.template'].sudo().search(domain)
         discounted_products = products.filtered(lambda p: p.list_price > p.discounted_price)
+
         
         # Ordenar por etiquetas y mostrar solo productos con descuento
         filtered_products = []
@@ -219,22 +211,11 @@ class OffersController(http.Controller):
         # Obtener categorías con conteo correcto
         categories_with_count = []
         for cat in main_categories:
-            cat_domain = [
-                ('website_published', '=', True),
-                ('product_tag_ids', '!=', False),
-                ('categ_id', 'child_of', cat.id)
-            ]
-            if free_shipping:
-                cat_domain.append(('free_shipping', '=', True))
-            if brand_type_id:
-                cat_domain.append(('brand_type_id', '=', brand_type_id))
-
-                
-            # Obtener productos de la categoría y filtrar por descuento real
+            cat_domain = domain.copy()
+            cat_domain.append(('categ_id', 'child_of', cat.id))
             cat_products = request.env['product.template'].sudo().search(cat_domain)
             cat_products_with_discount = cat_products.filtered(lambda p: p.list_price > p.discounted_price)
             prod_count = len(cat_products_with_discount)
-            
             if prod_count > 0:
                 categories_with_count.append({
                     'id': cat.id,
@@ -301,14 +282,8 @@ class OffersController(http.Controller):
 
         brands_with_count = []
         for brand in all_brand_types:
-            brand_domain = [
-                ('website_published', '=', True),
-                ('product_tag_ids', '!=', False),
-                ('brand_type_id', '=', brand.id),
-            ]
-            if free_shipping:
-                brand_domain.append(('free_shipping', '=', True))
-            # Solo contar productos con descuento real
+            brand_domain = domain.copy()
+            brand_domain.append(('brand_type_id', '=', brand.id))
             brand_products = request.env['product.template'].sudo().search(brand_domain)
             brand_products_with_discount = brand_products.filtered(lambda p: p.list_price > p.discounted_price)
             prod_count = len(brand_products_with_discount)
@@ -318,7 +293,6 @@ class OffersController(http.Controller):
                     'name': brand.name,
                     'product_count': prod_count,
                 })
-
 
         # Guardar el estado de free_shipping en la sesión del usuario
         # para mantenerlo entre diferentes páginas y filtros
@@ -338,22 +312,20 @@ class OffersController(http.Controller):
             ('discount_percentage', '>', 0),
             ('fixed_discount', '>', 0)
         ]
-        
-        # Si se especifica un tag_id, filtrar por ese tag
         if tag_id:
             try:
-                tag_id = int(tag_id)
-                domain.append(('product_tag_ids', 'in', [tag_id]))
-            except (ValueError, TypeError):
-                # Si tag_id no es válido, ignorar el filtro
+                domain.append(('product_tag_ids', 'in', [int(tag_id)]))
+            except Exception:
                 pass
-        
         if brand_type_id:
             try:
                 domain.append(('brand_type_id', '=', int(brand_type_id)))
-            except Exception:   
-                # Si brand_type_id no es válido, ignorar el filtro
-                pass  
+            except Exception:
+                pass
+        if free_shipping:
+            domain.append(('free_shipping', '=', True))
+
+
 
         # Aplicar filtro de free_shipping si está activo
         if free_shipping:
@@ -385,27 +357,18 @@ class OffersController(http.Controller):
 
         categories_with_count = []
         for cat in main_categories:
-            cat_domain = [
-                ('website_published', '=', True),
-                ('product_tag_ids', '!=', False),
-                ('categ_id', 'child_of', cat.id)
-            ]
-            if free_shipping:
-                cat_domain.append(('free_shipping', '=', True))
-            if brand_type_id:
-                cat_domain.append(('brand_type_id', '=', brand_type_id))
-                
-            # Obtener productos de la categoría y filtrar por descuento real
+            cat_domain = domain.copy()
+            cat_domain.append(('categ_id', 'child_of', cat.id))
             cat_products = request.env['product.template'].sudo().search(cat_domain)
             cat_products_with_discount = cat_products.filtered(lambda p: p.list_price > p.discounted_price)
             prod_count = len(cat_products_with_discount)
-            
-            if prod_count > 0:  # Solo incluir categorías con productos que cumplan el filtro
+            if prod_count > 0:
                 categories_with_count.append({
                     'id': cat.id,
                     'name': cat.name,
                     'product_count': prod_count,
                 })
+
                     
         category_id = request.params.get('category_id')
         if category_id:
@@ -436,6 +399,7 @@ class OffersController(http.Controller):
     
         # IMPORTANTE: Primero BUSCAR los productos
         products = request.env['product.template'].sudo().search(domain)
+        discounted_products = products.filtered(lambda p: p.list_price > p.discounted_price)
         
         # LUEGO filtrar por descuento real
         products = products.filtered(lambda p: p.list_price > p.discounted_price)
