@@ -377,20 +377,23 @@ class CategoryController(http.Controller):
         
     @http.route('/category_search', auth='public', website=True)
     def category_search(self, search=None, **kwargs):
-        categories = []
+        # Mostrar siempre todas las categorías visibles en menú
+        categories = request.env['product.category'].sudo().search([
+            ('is_visible_in_menu', '=', True)
+        ])
         
         products = []
         category = None
         brands = []
-        
+    
         if search:
-            categories = request.env['product.category'].sudo().search([
+            searched_categories = request.env['product.category'].sudo().search([
                 '|',
                 ('name', 'ilike', search),
                 ('slug', '=', search.lower().replace(' ', '-'))
             ])
-            if categories:
-                category = categories[0]
+            if searched_categories:
+                category = searched_categories[0]
                 # Solo marcas de productos publicados en esa categoría (y subcategorías)
                 products_in_cat = request.env['product.template'].sudo().search([
                     ('website_published', '=', True),
@@ -399,11 +402,9 @@ class CategoryController(http.Controller):
                 brands = products_in_cat.mapped('brand_type_id').filtered(lambda b: b.icon_image and b.active)
             products = request.env['product.template'].sudo().search([
                 ('website_published', '=', True),
-                ('categ_id', 'in', categories.ids)
+                ('categ_id', 'in', searched_categories.ids)
             ])
         else:
-            # Mostrar todas las categorías principales si no hay búsqueda
-            categories = request.env['product.category'].sudo().search([('parent_id', '=', False)])
             brands = request.env['brand.type'].sudo().search([
                 ('icon_image', '!=', False),
                 ('active', '=', True)
@@ -413,7 +414,7 @@ class CategoryController(http.Controller):
             'categories': categories,
             'category': category,
             'products': products,
-            'brands': brands,  # <-- pasa solo las marcas relacionadas
+            'brands': brands,
         }
         return request.render('theme_xtream.category_search', values)
         
