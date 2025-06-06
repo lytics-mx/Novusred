@@ -377,11 +377,8 @@ class CategoryController(http.Controller):
         
     @http.route('/category_search', auth='public', website=True)
     def category_search(self, search=None, **kwargs):
-        categories = request.env['product.category'].sudo().search([
-            '|',
-            ('name', 'ilike', search),
-            ('slug', '=', search.lower().replace(' ', '-'))
-        ])        
+        categories = []
+        
         products = []
         category = None
         brands = []
