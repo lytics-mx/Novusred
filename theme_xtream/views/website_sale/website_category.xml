@@ -9,12 +9,10 @@
                     <t t-if="len(active_brand_banner.brand_images) == 1">
                         <!-- Single image, no carousel -->
                         <div style="position: relative;">
-                            <a t-att-href="'/subcategory?brand_id=' + str(active_brand_banner.brand_images[0].brand_id.id)">
-                                <img t-att-src="'/web/image/' + str(active_brand_banner.brand_images[0].id)" 
-                                     alt="Brand Image" 
-                                     class="img-fluid"
-                                     style="width: 100%; height: auto; max-height: 200px; object-fit: cover;" />
-                            </a>
+                            <img t-att-src="'/web/image/' + str(active_brand_banner.brand_images[0].id)" 
+                                 alt="Brand Image" 
+                                 class="img-fluid"
+                                 style="width: 100%; height: auto; max-height: 200px; object-fit: cover;" /> <!-- Added max-height for mobile -->
                             <div class="d-none d-md-block" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
                         </div>
                     </t>
@@ -24,12 +22,10 @@
                             <div class="carousel-inner">
                                 <t t-foreach="active_brand_banner.brand_images" t-as="image" t-key="image.id">
                                     <div t-att-class="'carousel-item' + (' active' if image == active_brand_banner.brand_images[0] else '')" style="position: relative;">
-                                        <a t-att-href="'/subcategory?brand_id=' + str(image.brand_id.id)">
-                                            <img t-att-src="'/web/image/' + str(image.id)" 
-                                                 alt="Brand Image" 
-                                                 class="img-fluid"
-                                                 style="width: 100%; height: auto; max-height: 200px; object-fit: cover;" />
-                                        </a>
+                                        <img t-att-src="'/web/image/' + str(image.id)" 
+                                             alt="Brand Image" 
+                                             class="img-fluid"
+                                             style="width: 100%; height: auto; max-height: 200px; object-fit: cover;" /> <!-- Added max-height for mobile -->
                                         <div class="d-none d-md-block" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
                                     </div>
                                 </t>
@@ -79,12 +75,14 @@
                                             <div class="row g-3" style="margin: 10px 0;">
                                                 <t t-foreach="brands[i:min(i+3, len(brands))]" t-as="brand">
                                                     <div class="col-4" style="padding: 10px;">
-                                                        <div class="brand-card h-100 d-flex align-items-center justify-content-center" 
-                                                             style="background-color: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); padding: 20px; margin: 5px;">
-                                                            <img t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')"
-                                                                 alt="Ícono de la Marca"
-                                                                 style="width: 100%; height: auto; object-fit: contain;" />
-                                                        </div>
+                                                        <a t-att-href="'/subcategory?brand_id=' + str(brand.id)">
+                                                            <div class="brand-card h-100 d-flex align-items-center justify-content-center" 
+                                                                 style="background-color: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); padding: 20px; margin: 5px;">
+                                                                <img t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')"
+                                                                     alt="Ícono de la Marca"
+                                                                     style="width: 100%; height: auto; object-fit: contain;" />
+                                                            </div>
+                                                        </a>
                                                     </div>
                                                 </t>
                                             </div>
@@ -105,12 +103,14 @@
                             <div class="row g-3" style="margin: 10px 0;">
                                 <t t-foreach="brands" t-as="brand">
                                     <div class="col-4" style="padding: 10px;">
-                                        <div class="brand-card h-100 d-flex align-items-center justify-content-center" 
-                                             style="background-color: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); padding: 20px; margin: 5px;">
-                                            <img t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')"
-                                                 alt="Ícono de la Marca"
-                                                 style="width: 100%; height: auto; object-fit: contain;" />
-                                        </div>
+                                        <a t-att-href="'/subcategory?brand_id=' + str(brand.id)">
+                                            <div class="brand-card h-100 d-flex align-items-center justify-content-center" 
+                                                 style="background-color: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); padding: 20px; margin: 5px;">
+                                                <img t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')"
+                                                     alt="Ícono de la Marca"
+                                                     style="width: 100%; height: auto; object-fit: contain;" />
+                                            </div>
+                                        </a>
                                     </div>
                                 </t>
                             </div>
@@ -127,12 +127,14 @@
                                             <div class="row g-4" style="margin: 10px 0;">
                                                 <t t-foreach="brands[i:min(i+4, len(brands))]" t-as="brand">
                                                     <div class="col-3" style="padding: 10px;">
-                                                        <div class="brand-card h-100 d-flex align-items-center justify-content-center" 
-                                                             style="background-color: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); padding: 25px; margin: 5px;">
-                                                            <img t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')"
-                                                                 alt="Ícono de la Marca"
-                                                                 style="width: 90%; height: auto; object-fit: contain;" />
-                                                        </div>
+                                                        <a t-att-href="'/subcategory?brand_id=' + str(brand.id)">
+                                                            <div class="brand-card h-100 d-flex align-items-center justify-content-center" 
+                                                                 style="background-color: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); padding: 25px; margin: 5px;">
+                                                                <img t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')"
+                                                                     alt="Ícono de la Marca"
+                                                                     style="width: 90%; height: auto; object-fit: contain;" />
+                                                            </div>
+                                                        </a>
                                                     </div>
                                                 </t>
                                             </div>
@@ -154,12 +156,14 @@
                             <div class="row g-4" style="margin: 10px 0;">
                                 <t t-foreach="brands" t-as="brand">
                                     <div class="col-3" style="padding: 10px;">
-                                        <div class="brand-card h-100 d-flex align-items-center justify-content-center" 
-                                             style="background-color: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); padding: 25px; margin: 5px;">
-                                            <img t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')"
-                                                 alt="Ícono de la Marca"
-                                                 style="width: 90%; height: auto; object-fit: contain;" />
-                                        </div>
+                                        <a t-att-href="'/subcategory?brand_id=' + str(brand.id)">
+                                            <div class="brand-card h-100 d-flex align-items-center justify-content-center" 
+                                                 style="background-color: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); padding: 25px; margin: 5px;">
+                                                <img t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')"
+                                                     alt="Ícono de la Marca"
+                                                     style="width: 90%; height: auto; object-fit: contain;" />
+                                            </div>
+                                        </a>
                                     </div>
                                 </t>
                             </div>
