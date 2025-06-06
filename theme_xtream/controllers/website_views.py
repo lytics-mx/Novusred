@@ -42,7 +42,7 @@ class OffersController(http.Controller):
         free_shipping = kwargs.get('free_shipping') == 'true'
         if free_shipping:
             domain.append(('free_shipping', '=', True))
-        
+
         # Obtener productos filtrados
         Product = request.env['product.template']
         discounted_products = Product.search(domain)
@@ -95,10 +95,11 @@ class OffersController(http.Controller):
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False),
         ]
-        
-        # Aplicar filtro de free_shipping al dominio de categorías si está activo
         if free_shipping:
             category_domain.append(('free_shipping', '=', True))
+        if brand_type_id:
+            category_domain.append(('brand_type_id', '=', brand_type_id))
+
         
         main_categories = [
             cat for cat in all_categories
@@ -136,6 +137,9 @@ class OffersController(http.Controller):
         ]
         if free_shipping:
             total_domain.append(('free_shipping', '=', True))
+        if brand_type_id:
+            total_domain.append(('brand_type_id', '=', brand_type_id))
+
             
         total_products = request.env['product.template'].sudo().search_count(total_domain)
         
@@ -164,9 +168,11 @@ class OffersController(http.Controller):
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False),
         ]
-        
         if free_shipping:
             price_range_domain.append(('free_shipping', '=', True))
+        if brand_type_id:
+            price_range_domain.append(('brand_type_id', '=', brand_type_id))
+
 
         # Obtener todos los productos y filtrar por descuento real
         all_products = request.env['product.template'].sudo().search(price_range_domain)
@@ -191,9 +197,11 @@ class OffersController(http.Controller):
                 ('product_tag_ids', '!=', False),
                 ('categ_id', 'child_of', cat.id)
             ]
-            
             if free_shipping:
                 cat_domain.append(('free_shipping', '=', True))
+            if brand_type_id:
+                cat_domain.append(('brand_type_id', '=', brand_type_id))
+
                 
             # Obtener productos de la categoría y filtrar por descuento real
             cat_products = request.env['product.template'].sudo().search(cat_domain)
@@ -261,7 +269,10 @@ class OffersController(http.Controller):
             request.session['free_shipping'] = free_shipping
         else:
             # Si no viene en los parámetros, usar el valor guardado en sesión (si existe)
-            free_shipping = request.session.get('free_shipping', False)
+            free_shipping = kwargs.get('free_shipping') == 'true'
+            if free_shipping:
+                domain.append(('free_shipping', '=', True))
+
     
         domain = [
             ('website_published', '=', True),
@@ -277,9 +288,11 @@ class OffersController(http.Controller):
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False),
         ]
-        
         if free_shipping:
             category_domain.append(('free_shipping', '=', True))
+        if brand_type_id:
+            category_domain.append(('brand_type_id', '=', brand_type_id))
+
         
         # Solo mostrar categorías principales que tengan productos según los filtros actuales
         all_categories = request.env['product.category'].sudo().search([])
@@ -301,9 +314,10 @@ class OffersController(http.Controller):
                 ('product_tag_ids', '!=', False),
                 ('categ_id', 'child_of', cat.id)
             ]
-            
             if free_shipping:
                 cat_domain.append(('free_shipping', '=', True))
+            if brand_type_id:
+                cat_domain.append(('brand_type_id', '=', brand_type_id))
                 
             # Obtener productos de la categoría y filtrar por descuento real
             cat_products = request.env['product.template'].sudo().search(cat_domain)
@@ -401,9 +415,13 @@ class OffersController(http.Controller):
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False)
         ]
-        
         if free_shipping:
             total_domain.append(('free_shipping', '=', True))
+        if brand_type_id:
+            total_domain.append(('brand_type_id', '=', brand_type_id))
+        if category_id:
+            total_domain.append(('categ_id', 'child_of', int(category_id)))
+
             
         total_products = request.env['product.template'].sudo().search_count(total_domain)
     
@@ -412,9 +430,11 @@ class OffersController(http.Controller):
             ('website_published', '=', True),
             ('product_tag_ids', '!=', False),
         ]
-        
         if free_shipping:
             price_range_domain.append(('free_shipping', '=', True))
+        if brand_type_id:
+            price_range_domain.append(('brand_type_id', '=', brand_type_id))
+
 
         # Obtener todos los productos y filtrar por descuento real
         all_products = request.env['product.template'].sudo().search(price_range_domain)
@@ -455,5 +475,6 @@ class OffersController(http.Controller):
             'product_tags': product_tags,
             'tags_with_discount': tags_with_discount,
             'selected_brand_type_id': brand_type_id,  # Para mostrar cuál brand_type está seleccionado
+            
 
         })
