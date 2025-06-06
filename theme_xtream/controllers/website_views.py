@@ -1,20 +1,18 @@
 from odoo import http
 from odoo.http import request
-from datetime import datetime as Datetime
-from pytz import timezone
 
 class OffersController(http.Controller):
 
     @http.route('/offers', type='http', auth='public', website=True)
     def offers(self, **kwargs):
-        # --- 1. Obtener parámetros de filtro ---
         tag_id = kwargs.get('tag_id')
         brand_type_id = kwargs.get('brand_type_id')
+        category_id = kwargs.get('category_id')
         free_shipping = kwargs.get('free_shipping', 'false').lower() == 'true'
         min_price = kwargs.get('min_price')
         max_price = kwargs.get('max_price')
 
-        # --- 2. Construir dominio base ---
+        # 1. Dominio base con todos los filtros activos
         domain = [
             ('website_published', '=', True),
             ('sale_ok', '=', True),
@@ -32,6 +30,11 @@ class OffersController(http.Controller):
                 domain.append(('brand_type_id', '=', int(brand_type_id)))
             except Exception:
                 pass
+        if category_id:
+            try:
+                domain.append(('categ_id', 'child_of', int(category_id)))
+            except Exception:
+                pass
         if free_shipping:
             domain.append(('free_shipping', '=', True))
         if min_price:
@@ -45,24 +48,25 @@ class OffersController(http.Controller):
             except Exception:
                 pass
 
-        # --- 3. Buscar productos filtrados y con descuento real ---
         Product = request.env['product.template'].sudo()
         products = Product.search(domain)
         discounted_products = products.filtered(lambda p: p.list_price > p.discounted_price)
 
-        # --- 4. Calcular price_ranges ---
+        # 2. Price ranges (usando el mismo dominio)
         price_ranges = {
             '0_500': len(discounted_products.filtered(lambda p: 0 < p.discounted_price <= 500)),
             '500_1000': len(discounted_products.filtered(lambda p: 500 < p.discounted_price <= 1000)),
             '1000_plus': len(discounted_products.filtered(lambda p: p.discounted_price > 1000)),
         }
 
-        # --- 5. Obtener marcas y categorías con conteo ---
+        # 3. Marcas con conteo (usando el mismo dominio base + filtro de marca)
         BrandType = request.env['brand.type'].sudo()
         all_brand_types = BrandType.search([])
         brands_with_count = []
         for brand in all_brand_types:
             brand_domain = domain.copy()
+            # Quita el filtro de marca actual si existe, para que el conteo sea correcto
+            brand_domain = [d for d in brand_domain if not (isinstance(d, tuple) and d[0] == 'brand_type_id')]
             brand_domain.append(('brand_type_id', '=', brand.id))
             brand_products = Product.search(brand_domain)
             brand_products_with_discount = brand_products.filtered(lambda p: p.list_price > p.discounted_price)
@@ -74,6 +78,7 @@ class OffersController(http.Controller):
                     'product_count': prod_count,
                 })
 
+        # 4. Categorías con conteo (usando el mismo dominio base + filtro de categoría)
         all_categories = request.env['product.category'].sudo().search([])
         main_categories = [
             cat for cat in all_categories
@@ -82,6 +87,8 @@ class OffersController(http.Controller):
         categories_with_count = []
         for cat in main_categories:
             cat_domain = domain.copy()
+            # Quita el filtro de categoría actual si existe, para que el conteo sea correcto
+            cat_domain = [d for d in cat_domain if not (isinstance(d, tuple) and d[0] == 'categ_id')]
             cat_domain.append(('categ_id', 'child_of', cat.id))
             cat_products = Product.search(cat_domain)
             cat_products_with_discount = cat_products.filtered(lambda p: p.list_price > p.discounted_price)
@@ -93,16 +100,18 @@ class OffersController(http.Controller):
                     'product_count': prod_count,
                 })
 
-        # --- 6. Obtener tags con descuento ---
+        # 5. Tags con descuento (usando el mismo dominio base + filtro de tag)
         ProductTag = request.env['product.tag'].sudo()
         tags_with_discount = []
         for tag in ProductTag.search([('visible_on_ecommerce', '=', True)]):
-            prods = Product.search(domain + [('product_tag_ids', 'in', tag.id)])
+            tag_domain = domain.copy()
+            tag_domain = [d for d in tag_domain if not (isinstance(d, tuple) and d[0] == 'product_tag_ids')]
+            tag_domain.append(('product_tag_ids', 'in', tag.id))
+            prods = Product.search(tag_domain)
             prods_with_discount = prods.filtered(lambda p: p.list_price > p.discounted_price)
             if prods_with_discount:
                 tags_with_discount.append(tag)
 
-        # --- 7. Renderizar plantilla ---
         return request.render('theme_xtream.offers_template', {
             'discounted_products': discounted_products,
             'categories_with_count': categories_with_count,
@@ -113,5 +122,8 @@ class OffersController(http.Controller):
             'tags_with_discount': tags_with_discount,
             'selected_tag_id': tag_id,
             'selected_brand_type_id': brand_type_id,
+            'selected_category_id': category_id,
             'brands_with_count': brands_with_count,
+            'min_price': min_price,
+            'max_price': max_price,
         })
