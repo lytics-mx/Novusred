@@ -207,10 +207,11 @@ class CategoryController(http.Controller):
             promotion_tags = all_published_tags.filtered(lambda t: not t.is_percentage)
 
         # Calcular rangos de precios (para los contadores)
-        price_range_domain = brand_domain.copy()
+        price_range_domain = domain.copy()
+        # Si tienes algún filtro de precio en domain, quítalo aquí (en tu caso, no hay porque los aplicas en Python)
         if free_shipping:
             price_range_domain.append(('free_shipping', '=', True))
-        range_products = request.env['product.template'].sudo().search(price_range_domain + [('qty_available', '>', 0)])
+        range_products = request.env['product.template'].sudo().search(price_range_domain)
         for product in range_products:
             if product.discount_percentage > 0:
                 product.discounted_price = product.list_price * (1 - product.discount_percentage / 100)
@@ -335,6 +336,7 @@ class CategoryController(http.Controller):
         }
         
         return request.render('theme_xtream.website_subcategory', values)
+    
     @http.route('/category/get_subcategories', type='json', auth='public', website=True)
     def get_subcategories(self, category_id):
         try:
