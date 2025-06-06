@@ -42,12 +42,12 @@
                                             </ul>
                                         </div>
                                         <!-- Select solo en pantallas grandes/medianas -->
-                                        <select name="search_type" class="form-select d-none d-lg-block"
+                                        <!-- <select name="search_type" class="form-select d-none d-lg-block"
                                                 style="max-width: 120px; border-radius: 20px; font-size: 14px; height: 36px;">
                                             <option value="all">Todo</option>
                                             <option value="brand">Marca</option>
                                             <option value="category">Categoría</option>
-                                        </select>
+                                        </select> -->
                                         <button class="btn btn-outline-secondary" type="submit"
                                                 style="border-radius: 20px; height: 36px;">
                                             <i class="fa fa-search"></i>
@@ -61,5 +61,32 @@
                 </nav>
             </header>
         </xpath>
+                <!-- ...existing code... -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var dropdownItems = document.querySelectorAll('.dropdown-menu .dropdown-item');
+                var searchInput = document.querySelector('input[name="search"]');
+                var searchTypeInput = document.querySelector('input[name="search_type"]');
+                dropdownItems.forEach(function(item) {
+                    item.addEventListener('click', function() {
+                        var value = '';
+                        var placeholder = '';
+                        if (this.textContent.includes('Todo')) {
+                            value = 'all';
+                            placeholder = 'Buscar productos...';
+                        } else if (this.textContent.includes('Marca')) {
+                            value = 'brand';
+                            placeholder = 'Buscar marca...';
+                        } else if (this.textContent.includes('Categoría')) {
+                            value = 'category';
+                            placeholder = 'Buscar categoría...';
+                        }
+                        searchTypeInput.value = value;
+                        searchInput.placeholder = placeholder;
+                    });
+                });
+            });
+        </script>
+        <!-- ...existing code... -->
     </template>
 </odoo>
