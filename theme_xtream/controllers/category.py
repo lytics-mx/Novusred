@@ -382,11 +382,16 @@ class CategoryController(http.Controller):
         """
         categories = []
         products = []
+        category = None
         if search:
-            # Buscar categorías cuyo nombre contenga el texto buscado (case-insensitive)
+            # Buscar por nombre o slug
             categories = request.env['product.category'].sudo().search([
-                ('name', 'ilike', search)
+                '|',
+                ('name', 'ilike', search),
+                ('slug', '=', search.lower().replace(' ', '-'))
             ])
+            if categories:
+                category = categories[0]
             # Opcional: buscar productos relacionados a esas categorías
             products = request.env['product.template'].sudo().search([
                 ('website_published', '=', True),
@@ -395,10 +400,11 @@ class CategoryController(http.Controller):
         values = {
             'search': search,
             'categories': categories,
+            'category': category,  # <-- para mostrar el banner
             'products': products,
         }
         return request.render('theme_xtream.category_search', values)
-    
+        
     @http.route('/category/<string:slug>', auth='public', website=True)
     def category_by_slug(self, slug, **kwargs):
         # Buscar la categoría por slug
