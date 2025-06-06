@@ -21,38 +21,19 @@ class OffersController(http.Controller):
             ('fixed_discount', '>', 0)
         ]
         if tag_id:
-            try:
-                domain.append(('product_tag_ids', 'in', [int(tag_id)]))
-            except Exception:
-                pass
+            domain.append(('product_tag_ids', 'in', [int(tag_id)]))
         if brand_type_id:
-            try:
-                domain.append(('brand_type_id', '=', int(brand_type_id)))
-            except Exception:
-                pass
+            domain.append(('brand_type_id', '=', int(brand_type_id)))
         if category_id:
-            try:
-                domain.append(('categ_id', 'child_of', int(category_id)))
-            except Exception:
-                pass
+            domain.append(('categ_id', 'child_of', int(category_id)))
         if free_shipping:
             domain.append(('free_shipping', '=', True))
-        if min_price:
-            try:
-                domain.append(('discounted_price', '>=', float(min_price)))
-            except Exception:
-                pass
-        if max_price:
-            try:
-                domain.append(('discounted_price', '<=', float(max_price)))
-            except Exception:
-                pass
 
         Product = request.env['product.template'].sudo()
         products = Product.search(domain)
         discounted_products = products.filtered(lambda p: p.list_price > (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price))
 
-        # Filtro de precio en Python
+        # Filtro de precio en Python (no en el dominio)
         if min_price:
             try:
                 min_price_val = float(min_price)
@@ -69,52 +50,43 @@ class OffersController(http.Controller):
                 )
             except Exception:
                 pass
-        # 2. Price ranges (usando el mismo dominio)
+
+        # Price ranges: SIEMPRE usar el dominio base (sin quitar ningún filtro)
         price_ranges = {
-            '0_500': len(discounted_products.filtered(lambda p: 0 < (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price) <= 500)),
-            '500_1000': len(discounted_products.filtered(lambda p: 500 < (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price) <= 1000)),
-            '1000_plus': len(discounted_products.filtered(lambda p: (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price) > 1000)),
+            '0_500': len(products.filtered(lambda p: 0 < (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price) <= 500 and p.list_price > (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price))),
+            '500_1000': len(products.filtered(lambda p: 500 < (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price) <= 1000 and p.list_price > (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price))),
+            '1000_plus': len(products.filtered(lambda p: (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price) > 1000 and p.list_price > (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price))),
         }
 
-
-        # 3. Marcas con conteo (usando el mismo dominio base + filtro de marca)
-        BrandType = request.env['brand.type'].sudo()
-        all_brand_types = BrandType.search([])
+        # Marcas con conteo: quita solo el filtro de marca, deja los demás
         brands_with_count = []
         for brand in all_brand_types:
-            brand_domain = domain.copy()
-            # Quita el filtro de marca actual si existe, para que el conteo sea correcto
-            brand_domain = [d for d in brand_domain if not (isinstance(d, tuple) and d[0] == 'brand_type_id')]
+            brand_domain = [d for d in domain if not (isinstance(d, tuple) and d[0] == 'brand_type_id')]
             brand_domain.append(('brand_type_id', '=', brand.id))
             brand_products = Product.search(brand_domain)
-            brand_products_with_discount = brand_products.filtered(lambda p: p.list_price > p.discounted_price)
+            brand_products_with_discount = brand_products.filtered(lambda p: p.list_price > (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price))
+            # Aplica el filtro de precio si está activo
+            if min_price:
+                try:
+                    min_price_val = float(min_price)
+                    brand_products_with_discount = brand_products_with_discount.filtered(
+                        lambda p: (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price) >= min_price_val
+                    )
+                except Exception:
+                    pass
+            if max_price:
+                try:
+                    max_price_val = float(max_price)
+                    brand_products_with_discount = brand_products_with_discount.filtered(
+                        lambda p: (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price) <= max_price_val
+                    )
+                except Exception:
+                    pass
             prod_count = len(brand_products_with_discount)
             if prod_count > 0:
                 brands_with_count.append({
                     'id': brand.id,
                     'name': brand.name,
-                    'product_count': prod_count,
-                })
-
-        # 4. Categorías con conteo (usando el mismo dominio base + filtro de categoría)
-        all_categories = request.env['product.category'].sudo().search([])
-        main_categories = [
-            cat for cat in all_categories
-            if Product.search_count(domain + [('categ_id', 'child_of', cat.id)]) > 0
-        ]
-        categories_with_count = []
-        for cat in main_categories:
-            cat_domain = domain.copy()
-            # Quita el filtro de categoría actual si existe, para que el conteo sea correcto
-            cat_domain = [d for d in cat_domain if not (isinstance(d, tuple) and d[0] == 'categ_id')]
-            cat_domain.append(('categ_id', 'child_of', cat.id))
-            cat_products = Product.search(cat_domain)
-            cat_products_with_discount = cat_products.filtered(lambda p: p.list_price > p.discounted_price)
-            prod_count = len(cat_products_with_discount)
-            if prod_count > 0:
-                categories_with_count.append({
-                    'id': cat.id,
-                    'name': cat.name,
                     'product_count': prod_count,
                 })
 
