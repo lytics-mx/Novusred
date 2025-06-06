@@ -377,14 +377,11 @@ class CategoryController(http.Controller):
         
     @http.route('/category_search', auth='public', website=True)
     def category_search(self, search=None, **kwargs):
-        """
-        Busca categorías y muestra los resultados usando la plantilla category_search.
-        """
         categories = []
         products = []
         category = None
+        brands = []
         if search:
-            # Buscar por nombre o slug
             categories = request.env['product.category'].sudo().search([
                 '|',
                 ('name', 'ilike', search),
@@ -392,16 +389,28 @@ class CategoryController(http.Controller):
             ])
             if categories:
                 category = categories[0]
-            # Opcional: buscar productos relacionados a esas categorías
+                # Solo marcas de productos publicados en esa categoría (y subcategorías)
+                products_in_cat = request.env['product.template'].sudo().search([
+                    ('website_published', '=', True),
+                    ('categ_id', 'child_of', category.id)
+                ])
+                brands = products_in_cat.mapped('brand_type_id').filtered(lambda b: b.icon_image and b.active)
             products = request.env['product.template'].sudo().search([
                 ('website_published', '=', True),
                 ('categ_id', 'in', categories.ids)
             ])
+        else:
+            # Si no hay búsqueda, puedes mostrar todas las marcas activas (opcional)
+            brands = request.env['brand.type'].sudo().search([
+                ('icon_image', '!=', False),
+                ('active', '=', True)
+            ])
         values = {
             'search': search,
             'categories': categories,
-            'category': category,  # <-- para mostrar el banner
+            'category': category,
             'products': products,
+            'brands': brands,  # <-- pasa solo las marcas relacionadas
         }
         return request.render('theme_xtream.category_search', values)
         
