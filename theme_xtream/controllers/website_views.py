@@ -161,6 +161,11 @@ class OffersController(http.Controller):
             total_domain.append(('free_shipping', '=', True))
         if brand_type_id:
             total_domain.append(('brand_type_id', '=', brand_type_id))
+        if tag_id:
+            try:
+                total_domain.append(('product_tag_ids', 'in', [int(tag_id)]))
+            except Exception:
+                pass
 
             
         total_products = request.env['product.template'].sudo().search_count(total_domain)
@@ -286,6 +291,9 @@ class OffersController(http.Controller):
         type_offer = request.params.get('type')
 
         brand_type_id = kwargs.get('brand_type_id')
+        tag_id = kwargs.get('tag_id')
+
+
 
         # Obtener todas las marcas (brand types) visibles
         BrandType = request.env['product.brand.type'].sudo()
@@ -325,9 +333,28 @@ class OffersController(http.Controller):
     
         domain = [
             ('website_published', '=', True),
-            ('product_tag_ids', '!=', False)
+            ('sale_ok', '=', True),
+            '|',
+            ('discount_percentage', '>', 0),
+            ('fixed_discount', '>', 0)
         ]
         
+        # Si se especifica un tag_id, filtrar por ese tag
+        if tag_id:
+            try:
+                tag_id = int(tag_id)
+                domain.append(('product_tag_ids', 'in', [tag_id]))
+            except (ValueError, TypeError):
+                # Si tag_id no es válido, ignorar el filtro
+                pass
+        
+        if brand_type_id:
+            try:
+                domain.append(('brand_type_id', '=', int(brand_type_id)))
+            except Exception:   
+                # Si brand_type_id no es válido, ignorar el filtro
+                pass  
+
         # Aplicar filtro de free_shipping si está activo
         if free_shipping:
             domain.append(('free_shipping', '=', True))
@@ -468,8 +495,11 @@ class OffersController(http.Controller):
             total_domain.append(('free_shipping', '=', True))
         if brand_type_id:
             total_domain.append(('brand_type_id', '=', brand_type_id))
-        if category_id:
-            total_domain.append(('categ_id', 'child_of', int(category_id)))
+        if tag_id:
+            try:
+                total_domain.append(('product_tag_ids', 'in', [int(tag_id)]))
+            except Exception:
+                pass
 
             
         total_products = request.env['product.template'].sudo().search_count(total_domain)
