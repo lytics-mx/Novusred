@@ -26,7 +26,7 @@ class CategoryController(http.Controller):
             ('id', 'in', published_products_categories.ids)
         ])
         
-        # Construir dominio base SOLO para productos publicados
+        # Construir dominio base SOLO para productos publicados (sin filtros de precio)
         domain = [('website_published', '=', True), ('qty_available', '>', 0)]
         
         # Variables para la vista
@@ -84,12 +84,38 @@ class CategoryController(http.Controller):
         
         # Filtro por envío gratis
         if free_shipping:
-            # El parámetro llega como string, verificar si es 'true'
             if str(free_shipping).lower() == 'true':
                 domain.append(('free_shipping', '=', True))
-            # Si es 'false' o cualquier otro valor, no agregar filtro (mostrar todos)
         
-        # Filtro por rango de precios predefinidos
+        # Filtro por descuentos (tags con descuento)
+        if discount_id:
+            try:
+                discount_id = int(discount_id)
+                domain.append(('discount_percentage', '=', discount_id))  # Solo ese %
+            except ValueError:
+                pass
+        
+        # Filtro por tags de promoción
+        if promotion_id:
+            try:
+                promotion_id = int(promotion_id)
+                domain.append(('product_tag_ids', 'in', [promotion_id]))
+            except (ValueError, TypeError):
+                promotion_id = None
+
+        # Obtener productos filtrados (SOLO PUBLICADOS, sin filtro de precio)
+        products = request.env['product.template'].sudo().search(domain)
+
+        # Calcular precios con descuento
+        for product in products:
+            if product.discount_percentage > 0:
+                product.discounted_price = product.list_price * (1 - product.discount_percentage / 100)
+            elif product.fixed_discount > 0:
+                product.discounted_price = max(0, product.list_price - product.fixed_discount)
+            else:
+                product.discounted_price = product.list_price
+
+        # Filtro de precio en Python (NO en el dominio)
         if price_range:
             if price_range == '0_500':
                 products = products.filtered(lambda p: 0 < p.discounted_price <= 500)
@@ -109,38 +135,7 @@ class CategoryController(http.Controller):
                 products = products.filtered(lambda p: p.discounted_price <= max_price_val)
             except Exception:
                 pass
-        
-        # Filtro por rango de precios personalizado (mantener para compatibilidad)
-        if min_price:
-            try:
-                domain.append(('discounted_price', '>=', float(min_price)))
-            except (ValueError, TypeError):
-                min_price = None
-        if max_price:
-            try:
-                domain.append(('discounted_price', '<=', float(max_price)))
-            except (ValueError, TypeError):
-                max_price = None
-        
-        # Filtro por descuentos (tags con descuento)
-        if discount_id:
-            try:
-                discount_id = int(discount_id)
-                domain.append(('discount_percentage', '=', discount_id))  # Solo ese %
-            except ValueError:
-                pass
-        
-        # Filtro por tags de promoción
-        if promotion_id:
-            try:
-                promotion_id = int(promotion_id)
-                domain.append(('product_tag_ids', 'in', [promotion_id]))
-            except (ValueError, TypeError):
-                promotion_id = None
-        
-        # Obtener productos filtrados (SOLO PUBLICADOS)
-        products = request.env['product.template'].sudo().search(domain)
-        
+
         # APLICAR ORDENAMIENTO
         if sort == 'newest':
             products = products.sorted('create_date', reverse=True)
@@ -156,25 +151,14 @@ class CategoryController(http.Controller):
             products = products.sorted('name')
         else:  # relevance (default) - más vendidos
             products = products.sorted(lambda p: getattr(p, 'sales_count', 0), reverse=True)
-        
-        # Calcular precios con descuento
-        for product in products:
-            if product.discount_percentage > 0:
-                product.discounted_price = product.list_price * (1 - product.discount_percentage / 100)
-            elif product.fixed_discount > 0:
-                product.discounted_price = max(0, product.list_price - product.fixed_discount)
-            else:
-                product.discounted_price = product.list_price
 
-        
         # Formatear productos para la vista
         period_products = []
         for product in products:
             period_products.append({
                 'product': product
             })
-        
-      
+
         forced_brand_names = [
             'EPCOM PROFESSIONAL',
             'HiLook by HIKVISION',
@@ -185,9 +169,7 @@ class CategoryController(http.Controller):
 
         # Obtener marcas disponibles SOLO de productos PUBLICADOS de la categoría/subcategoría seleccionada
         brand_domain = domain.copy()
-        # Remueve cualquier filtro de marca activo para contar correctamente
         brand_domain = [d for d in brand_domain if d[0] != 'brand_type_id']
-
         brand_products = request.env['product.template'].sudo().search(brand_domain + [('qty_available', '>', 0)])
         available_brands = brand_products.mapped('brand_type_id').filtered(
             lambda b: b.name and brand_products.filtered(lambda p: p.brand_type_id.id == b.id)
@@ -205,35 +187,30 @@ class CategoryController(http.Controller):
         
         product_count = len(products)
 
-
         # Calcular contador de productos PUBLICADOS por marca, usando los mismos filtros
         brand_counts = {}
         for brand in available_brands:
             count = len(brand_products.filtered(lambda p: p.brand_type_id.id == brand.id))
             brand_counts[brand.id] = count
+
         # Obtener tags de descuento SOLO de productos PUBLICADOS de la categoría seleccionada
         if category_id or subcategory_id:
             category_products = request.env['product.template'].sudo().search(brand_domain + [('qty_available', '>', 0)])
             all_category_tags = category_products.mapped('product_tag_ids')
-            
             discount_tags = all_category_tags.filtered(lambda t: t.is_percentage and t.discount_percentage > 0)
             promotion_tags = all_category_tags.filtered(lambda t: not t.is_percentage)
         else:
             all_published_products = request.env['product.template'].sudo().search([('website_published', '=', True)])
             category_products = all_published_products
             all_published_tags = all_published_products.mapped('product_tag_ids')
-            
             discount_tags = all_published_tags.filtered(lambda t: t.is_percentage and t.discount_percentage > 0)
             promotion_tags = all_published_tags.filtered(lambda t: not t.is_percentage)
-        
-        # Calcular rangos de precios
+
+        # Calcular rangos de precios (para los contadores)
         price_range_domain = brand_domain.copy()
         if free_shipping:
             price_range_domain.append(('free_shipping', '=', True))
-        
         range_products = request.env['product.template'].sudo().search(price_range_domain + [('qty_available', '>', 0)])
-        
-        # Calcular precios con descuento para rangos
         for product in range_products:
             if product.discount_percentage > 0:
                 product.discounted_price = product.list_price * (1 - product.discount_percentage / 100)
@@ -241,21 +218,18 @@ class CategoryController(http.Controller):
                 product.discounted_price = max(0, product.list_price - product.fixed_discount)
             else:
                 product.discounted_price = product.list_price
-        
         price_ranges = {
             '0_500': len(range_products.filtered(lambda p: 0 < p.discounted_price <= 500)),
             '500_1000': len(range_products.filtered(lambda p: 500 < p.discounted_price <= 1000)),
             '1000_plus': len(range_products.filtered(lambda p: p.discounted_price > 1000)),
         }
-        
+
         # AGREGAR PRODUCT_COUNT A LOS TAGS
         discount_tag_counts = {}
         promotion_tag_counts = {}
-        
         for tag in discount_tags:
             count = len(category_products.filtered(lambda p: tag in p.product_tag_ids))
             discount_tag_counts[tag.id] = count
-        
         for tag in promotion_tags:
             count = len(category_products.filtered(lambda p: tag in p.product_tag_ids))
             promotion_tag_counts[tag.id] = count
@@ -271,6 +245,7 @@ class CategoryController(http.Controller):
         start = (current_page - 1) * per_page
         end = start + per_page
         period_products = period_products[start:end]
+
         # Obtener los valores únicos de discount_percentage de los tags activos con is_percentage=True
         discount_ranges = sorted({
             tag.discount_percentage
@@ -286,11 +261,9 @@ class CategoryController(http.Controller):
         discount_tag_counts_general = {}
 
         for percent in discount_ranges:
-            # Con filtros actuales
             domain_with_filters = domain.copy()
             domain_with_filters.append(('discount_percentage', '=', percent))
             count = request.env['product.template'].sudo().search_count(domain_with_filters)
-            # Sin filtros (solo descuento)
             count_general = request.env['product.template'].sudo().search_count([
                 ('website_published', '=', True),
                 ('discount_percentage', '=', percent),
@@ -311,11 +284,9 @@ class CategoryController(http.Controller):
         promotion_tag_counts_general = {}
 
         for tag in promotion_tag_objs:
-            # Con filtros actuales
             domain_with_filters = domain.copy()
             domain_with_filters.append(('product_tag_ids', 'in', tag.id))
             count = request.env['product.template'].sudo().search_count(domain_with_filters)
-            # Sin filtros (solo promoción)
             count_general = request.env['product.template'].sudo().search_count([
                 ('website_published', '=', True),
                 ('product_tag_ids', 'in', tag.id),
@@ -331,7 +302,7 @@ class CategoryController(http.Controller):
             'total_pages': total_pages,
             'forced_brands': forced_brands,
             'other_brands': other_brands,
-            'product_count': product_count,  # <- ahora sí está definida
+            'product_count': product_count,
             'selected_subcategory_children': selected_subcategory_children,
             'discount_tags': discount_tags,
             'discount_tag_counts': discount_tag_counts,
@@ -339,7 +310,6 @@ class CategoryController(http.Controller):
             'promotion_tags': promotion_tags,
             'promotion_tag_counts': promotion_tag_counts,
             'promotion_tag_counts_general': promotion_tag_counts_general,
-
             'subcategories': subcategories,
             'selected_category': selected_category,
             'selected_subcategory': selected_subcategory,
@@ -349,9 +319,6 @@ class CategoryController(http.Controller):
             'products': products,
             'period_products': period_products,
             'product_count': product_count,
-        
-            
-            
             'price_ranges': price_ranges,
             'current_filters': {
                 'category_id': category_id,
@@ -368,7 +335,6 @@ class CategoryController(http.Controller):
         }
         
         return request.render('theme_xtream.website_subcategory', values)
-    
     @http.route('/category/get_subcategories', type='json', auth='public', website=True)
     def get_subcategories(self, category_id):
         try:
