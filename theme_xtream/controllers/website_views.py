@@ -9,11 +9,12 @@ class OffersController(http.Controller):
     def offers(self, **kwargs):
         # Filtros de la URL
         tag_id = kwargs.get('tag_id')
-        brand_id = kwargs.get('brand_id')
+        brand_type_id = kwargs.get('brand_type_id')  # <-- usa brand_type_id
         category_id = kwargs.get('category_id')
         free_shipping = kwargs.get('free_shipping', 'false').lower() == 'true'
         min_price = kwargs.get('min_price')
         max_price = kwargs.get('max_price')
+
 
         # Dominio base
         domain = [
@@ -28,9 +29,10 @@ class OffersController(http.Controller):
                 domain.append(('product_tag_ids', 'in', int(tag_id)))
             except Exception:
                 pass
-        if brand_id:
+        if brand_type_id:
             try:
-                domain.append(('brand_id', '=', int(brand_id)))
+                brand = request.env['brand.type'].sudo().browse(int(brand_type_id))
+                domain.append(('id', 'in', brand.product_ids.ids))
             except Exception:
                 pass
         if category_id:
@@ -112,7 +114,7 @@ class OffersController(http.Controller):
             'price_ranges': price_ranges,
             'total_products': total_products,
             'selected_tag_id': tag_id,
-            'selected_brand_id': brand_id,
+            'selected_brand_id': brand_type_id,
             'selected_category_id': category_id,
             'free_shipping': free_shipping,
             'min_price': min_price,
