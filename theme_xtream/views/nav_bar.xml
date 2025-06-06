@@ -12,33 +12,35 @@
                                 </a>
                                 <!-- Search bar after logo -->
                                 <form class="d-flex flex-grow-1" action="/search_redirect" method="get" style="width: 100%;">
-                                    <div class="input-group w-100">
+                                    <div class="input-group w-100 align-items-center">
                                         <input type="search" name="search" class="form-control"
                                                placeholder="Buscar productos, marcas o categorías..." aria-label="Search"
                                                style="border-radius: 20px; font-size: 14px; height: 36px;"/>
-                                        <button class="btn btn-outline-secondary d-lg-none" type="button" data-bs-toggle="dropdown" aria-expanded="false"
-                                                style="border-radius: 20px; height: 36px;">
-                                            <i class="fa fa-filter"></i>
-                                        </button>
-                                        <select name="search_type" class="form-select d-none d-lg-block" style="max-width: 120px; border-radius: 20px; font-size: 14px; height: 36px;">
-                                            <option value="all">Todo</option>
-                                            <option value="brand">Marca</option>
-                                            <option value="category">Categoría</option>
+                                        <span id="searchTypeIcon" class="input-group-text" style="border-radius: 20px 0 0 20px; background: transparent; border: none; font-size: 18px;">
+                                            <i class="fa fa-list"></i>
+                                        </span>
+                                        <select name="search_type" id="searchTypeSelect" class="form-select" style="max-width: 120px; border-radius: 0 20px 20px 0; font-size: 14px; height: 36px;">
+                                            <option value="all" data-icon="fa-list">Todo</option>
+                                            <option value="brand" data-icon="fa-tag">Marca</option>
+                                            <option value="category" data-icon="fa-folder">Categoría</option>
                                         </select>
                                         <button class="btn btn-outline-secondary" type="submit"
                                                 style="border-radius: 20px; height: 36px;">
                                             <i class="fa fa-search"></i>
                                         </button>
                                     </div>
-                                    <!-- Dropdown for small screens -->
-                                    <div class="dropdown d-lg-none">
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="#" onclick="document.getElementsByName('search_type')[0].value='all';return false;"><i class="fa fa-list"></i> Todo</a></li>
-                                            <li><a class="dropdown-item" href="#" onclick="document.getElementsByName('search_type')[0].value='brand';return false;"><i class="fa fa-tag"></i> Marca</a></li>
-                                            <li><a class="dropdown-item" href="#" onclick="document.getElementsByName('search_type')[0].value='category';return false;"><i class="fa fa-folder"></i> Categoría</a></li>
-                                        </ul>
-                                    </div>
                                 </form>
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        var select = document.getElementById('searchTypeSelect');
+                                        var iconSpan = document.getElementById('searchTypeIcon').querySelector('i');
+                                        select.addEventListener('change', function() {
+                                            var selected = select.options[select.selectedIndex];
+                                            var icon = selected.getAttribute('data-icon');
+                                            iconSpan.className = 'fa ' + icon;
+                                        });
+                                    });
+                                </script>
                             </div>
                         </div>
                     </div>
