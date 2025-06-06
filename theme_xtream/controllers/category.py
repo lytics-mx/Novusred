@@ -381,6 +381,7 @@ class CategoryController(http.Controller):
         products = []
         category = None
         brands = []
+        
         if search:
             categories = request.env['product.category'].sudo().search([
                 '|',
