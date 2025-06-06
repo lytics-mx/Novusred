@@ -50,14 +50,32 @@ class OffersController(http.Controller):
 
         Product = request.env['product.template'].sudo()
         products = Product.search(domain)
-        discounted_products = products.filtered(lambda p: p.list_price > p.discounted_price)
+        discounted_products = products.filtered(lambda p: p.list_price > (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price))
 
+        # Filtro de precio en Python
+        if min_price:
+            try:
+                min_price_val = float(min_price)
+                discounted_products = discounted_products.filtered(
+                    lambda p: (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price) >= min_price_val
+                )
+            except Exception:
+                pass
+        if max_price:
+            try:
+                max_price_val = float(max_price)
+                discounted_products = discounted_products.filtered(
+                    lambda p: (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price) <= max_price_val
+                )
+            except Exception:
+                pass
         # 2. Price ranges (usando el mismo dominio)
         price_ranges = {
-            '0_500': len(discounted_products.filtered(lambda p: 0 < p.discounted_price <= 500)),
-            '500_1000': len(discounted_products.filtered(lambda p: 500 < p.discounted_price <= 1000)),
-            '1000_plus': len(discounted_products.filtered(lambda p: p.discounted_price > 1000)),
+            '0_500': len(discounted_products.filtered(lambda p: 0 < (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price) <= 500)),
+            '500_1000': len(discounted_products.filtered(lambda p: 500 < (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price) <= 1000)),
+            '1000_plus': len(discounted_products.filtered(lambda p: (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price) > 1000)),
         }
+
 
         # 3. Marcas con conteo (usando el mismo dominio base + filtro de marca)
         BrandType = request.env['brand.type'].sudo()
