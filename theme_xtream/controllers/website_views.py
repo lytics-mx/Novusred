@@ -6,25 +6,15 @@ from pytz import timezone
 class OffersController(http.Controller):
 
     @http.route('/offers', type='http', auth='public', website=True)
-    def offers(self, **kwargs):
-        # Parámetros de filtro
+    def offers(self, free_shipping=False, **kwargs):
         tag_id = kwargs.get('tag_id')
         brand_type_id = kwargs.get('brand_type_id')
         offer_type = kwargs.get('type')
         min_price = kwargs.get('min_price')
         max_price = kwargs.get('max_price')
         type_offer = request.params.get('type')
-        category_id = kwargs.get('category_id')
-        free_shipping = kwargs.get('free_shipping', 'false').lower() == 'true'
         offers = kwargs.get('offers', 'false').lower() == 'true'
 
-        # Guardar/recuperar free_shipping en sesión
-        if 'free_shipping' in kwargs:
-            request.session['free_shipping'] = free_shipping
-        else:
-            free_shipping = request.session.get('free_shipping', False)
-
-        # Dominio base
         domain = [
             ('website_published', '=', True),
             ('sale_ok', '=', True),
@@ -33,49 +23,63 @@ class OffersController(http.Controller):
             ('fixed_discount', '>', 0)
         ]
 
-        # Filtros dinámicos
         if tag_id:
             try:
                 domain.append(('product_tag_ids', 'in', [int(tag_id)]))
             except Exception:
                 pass
+
         if brand_type_id:
             try:
                 domain.append(('brand_type_id', '=', int(brand_type_id)))
             except Exception:
                 pass
+
+        category_id = request.params.get('category_id')
         if category_id:
-            try:
-                domain.append(('categ_id', 'child_of', int(category_id)))
-            except Exception:
-                pass
+            domain.append(('categ_id', 'child_of', int(category_id)))
         if offers:
             domain.append(('discounted_price', '>', 0))
+
         if offer_type:
             tag = request.env['product.tag'].sudo().search([('name', 'ilike', offer_type)], limit=1)
             if tag:
                 domain.append(('product_tag_ids', 'in', tag.id))
+
         if min_price:
             try:
                 domain.append(('list_price', '>=', float(min_price)))
             except Exception:
                 pass
+
         if max_price:
             try:
                 domain.append(('list_price', '<=', float(max_price)))
             except Exception:
                 pass
+
+        # Filtro de envío gratis
+        free_shipping = kwargs.get('free_shipping') == 'true'
         if free_shipping:
             domain.append(('free_shipping', '=', True))
 
-        # Buscar productos y filtrar por descuento real
+        # Buscar productos filtrados
         products = request.env['product.template'].sudo().search(domain)
+        # Calcular precios con descuento
+        for product in products:
+            if product.discount_percentage > 0:
+                product.discounted_price = product.list_price * (1 - product.discount_percentage / 100)
+            elif product.fixed_discount > 0:
+                product.discounted_price = max(0, product.list_price - product.fixed_discount)
+            else:
+                product.discounted_price = product.list_price
+
+        # Filtrar productos con descuento real
         discounted_products = products.filtered(lambda p: p.list_price > p.discounted_price)
 
-        # Filtrar por tipo de oferta (día, flash, current)
+        # Filtro de tipo de oferta (día, flash, current)
         if type_offer in ['day', 'flash', 'current']:
             filtered = []
-            remaining_times = {}
             now = Datetime.now(timezone('America/Mexico_City'))
             for p in discounted_products:
                 for tag in p.product_tag_ids:
@@ -99,14 +103,10 @@ class OffersController(http.Controller):
                             break
                         elif type_offer == 'current' and start <= now <= end:
                             filtered.append(p)
-                            remaining_time = end - now
-                            remaining_hours = int(remaining_time.total_seconds() / 3600)
-                            remaining_minutes = int((remaining_time.total_seconds() % 3600) / 60)
-                            remaining_times[p.id] = f"{remaining_hours}h {remaining_minutes}m"
                             break
             discounted_products = filtered
 
-        # Obtener categorías principales con productos publicados y con descuento real
+        # Obtener categorías principales
         all_categories = request.env['product.category'].sudo().search([])
         category_domain = [
             ('website_published', '=', True),
@@ -118,131 +118,71 @@ class OffersController(http.Controller):
             cat for cat in all_categories
             if request.env['product.template'].sudo().search_count([
                 *category_domain,
-                ('categ_id', 'child_of', cat.id),
-                '|',
-                ('discount_percentage', '>', 0),
-                ('fixed_discount', '>', 0)
+                ('categ_id', 'child_of', cat.id)
             ]) > 0
         ]
 
-        # Contador de productos por categoría (solo publicados y con descuento real)
-        categories_with_count = []
-        for cat in main_categories:
-            cat_domain = [
-                ('website_published', '=', True),
-                ('product_tag_ids', '!=', False),
-                ('categ_id', 'child_of', cat.id),
-                '|',
-                ('discount_percentage', '>', 0),
-                ('fixed_discount', '>', 0)
-            ]
-            if free_shipping:
-                cat_domain.append(('free_shipping', '=', True))
-            cat_products = request.env['product.template'].sudo().search(cat_domain)
-            cat_products_with_discount = cat_products.filtered(lambda p: p.list_price > p.discounted_price)
-            prod_count = len(cat_products_with_discount)
-            if prod_count > 0:
-                categories_with_count.append({
-                    'id': cat.id,
-                    'name': cat.name,
-                    'product_count': prod_count,
+        # Obtener marcas principales con conteo de productos con descuento
+        Brand = request.env['product.brand.type'].sudo()
+        all_brands = Brand.search([])
+        brands_with_count = []
+        for brand in all_brands:
+            brand_domain = list(domain) + [('brand_type_id', '=', brand.id)]
+            brand_products = request.env['product.template'].sudo().search(brand_domain)
+            brand_products_with_discount = brand_products.filtered(lambda p: p.list_price > p.discounted_price)
+            if brand_products_with_discount:
+                brands_with_count.append({
+                    'id': brand.id,
+                    'name': brand.name,
+                    'product_count': len(brand_products_with_discount),
                 })
 
-        # Obtener tags visibles con al menos un producto publicado y con descuento real
+        # Obtener tags principales
+        product_tags = request.env['product.tag'].sudo().search([
+            ('visible_on_ecommerce', '=', True)
+        ], limit=6)
+
+        # Rango de precios
+        price_ranges = {
+            '0_500': len([p for p in discounted_products if 0 < p.discounted_price <= 500]),
+            '500_1000': len([p for p in discounted_products if 500 < p.discounted_price <= 1000]),
+            '1000_plus': len([p for p in discounted_products if p.discounted_price > 1000]),
+        }
+
+        # Total de productos con descuento
+        total_products = len(discounted_products)
+
+        # Tags con descuento real
         ProductTag = request.env['product.tag'].sudo()
         tags_with_discount = []
         for tag in ProductTag.search([('visible_on_ecommerce', '=', True)]):
             prods = request.env['product.template'].sudo().search([
                 ('website_published', '=', True),
                 ('product_tag_ids', 'in', tag.id),
-                '|',
-                ('discount_percentage', '>', 0),
-                ('fixed_discount', '>', 0)
+                ('discount_percentage', '>', 0)
             ])
-            prods = prods.filtered(lambda p: p.list_price > p.discounted_price)
             if prods:
                 tags_with_discount.append(tag)
 
-        # Contador de productos por tag (solo publicados y con descuento real)
-        tags_with_count = []
-        for tag in tags_with_discount:
-            tag_products = request.env['product.template'].sudo().search([
-                ('website_published', '=', True),
-                ('product_tag_ids', 'in', tag.id),
-                '|',
-                ('discount_percentage', '>', 0),
-                ('fixed_discount', '>', 0)
-            ])
-            tag_products = tag_products.filtered(lambda p: p.list_price > p.discounted_price)
-            prod_count = len(tag_products)
-            if prod_count > 0:
-                tags_with_count.append({
-                    'id': tag.id,
-                    'name': tag.name,
-                    'product_count': prod_count,
-                })
-
-        # Contador de productos por marca (brand_type_id)
-        brands_with_count = []
-        Brand = request.env['product.brand.type'].sudo()
-        all_brands = Brand.search([])
-        for brand in all_brands:
-            brand_products = request.env['product.template'].sudo().search([
-                ('website_published', '=', True),
-                ('brand_type_id', '=', brand.id),
-                '|',
-                ('discount_percentage', '>', 0),
-                ('fixed_discount', '>', 0)
-            ])
-            brand_products = brand_products.filtered(lambda p: p.list_price > p.discounted_price)
-            prod_count = len(brand_products)
-            if prod_count > 0:
-                brands_with_count.append({
-                    'id': brand.id,
-                    'name': brand.name,
-                    'product_count': prod_count,
-                })
-
-        # Rango de precios
-        price_range_domain = [
-            ('website_published', '=', True),
-            ('product_tag_ids', '!=', False),
-            '|',
-            ('discount_percentage', '>', 0),
-            ('fixed_discount', '>', 0)
-        ]
-        if free_shipping:
-            price_range_domain.append(('free_shipping', '=', True))
-        all_products = request.env['product.template'].sudo().search(price_range_domain)
-        discounted_all_products = all_products.filtered(lambda p: p.list_price > p.discounted_price)
-        price_ranges = {
-            '0_500': len(discounted_all_products.filtered(lambda p: 0 < p.discounted_price <= 500)),
-            '500_1000': len(discounted_all_products.filtered(lambda p: 500 < p.discounted_price <= 1000)),
-            '1000_plus': len(discounted_all_products.filtered(lambda p: p.discounted_price > 1000)),
-        }
-
-        # Total de productos publicados y con descuento real
-        total_domain = [
-            ('website_published', '=', True),
-            ('product_tag_ids', '!=', False),
-            '|',
-            ('discount_percentage', '>', 0),
-            ('fixed_discount', '>', 0)
-        ]
-        if free_shipping:
-            total_domain.append(('free_shipping', '=', True))
-        all_total_products = request.env['product.template'].sudo().search(total_domain)
-        total_products_with_discount = all_total_products.filtered(lambda p: p.list_price > p.discounted_price)
-
-        # Tags para mostrar en el filtro
-        product_tags = ProductTag.search([('visible_on_ecommerce', '=', True)], limit=6)
-
         return request.render('theme_xtream.offers_template', {
             'discounted_products': discounted_products,
-            'categories_with_count': categories_with_count,
-            'tags_with_count': tags_with_count,
+            'categories_with_count': [
+                {
+                    'id': cat.id,
+                    'name': cat.name,
+                    'product_count': request.env['product.template'].sudo().search_count([
+                        ('website_published', '=', True),
+                        ('product_tag_ids', '!=', False),
+                        ('categ_id', 'child_of', cat.id),
+                        ('list_price', '>', 0),
+                        '|',
+                        ('discount_percentage', '>', 0),
+                        ('fixed_discount', '>', 0)
+                    ])
+                } for cat in main_categories
+            ],
             'brands_with_count': brands_with_count,
-            'total_products': len(total_products_with_discount),
+            'total_products': total_products,
             'price_ranges': price_ranges,
             'all_categories': main_categories,
             'free_shipping': free_shipping,
@@ -255,7 +195,6 @@ class OffersController(http.Controller):
             'max_price': max_price,
             'type_offer': type_offer,
         })
-        
 
 
     @http.route(['/shop/category/<model("product.public.category"):category>', '/shop/category/all'], type='http', auth="public", website=True)
