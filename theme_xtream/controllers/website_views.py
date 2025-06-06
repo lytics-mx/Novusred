@@ -82,16 +82,13 @@ class OffersController(http.Controller):
         all_brands = request.env['brand.type'].sudo().search([])
         brands_with_count = []
         for brand in all_brands:
-            brand_domain = list(domain) + [('brand_id', '=', brand.id)]
-            brand_products = request.env['product.template'].sudo().search(brand_domain)
-            brand_products_with_discount = brand_products.filtered(lambda p: p.list_price > p.discounted_price)
+            brand_products_with_discount = brand.product_ids.filtered(lambda p: p in discounted_products)
             if brand_products_with_discount:
                 brands_with_count.append({
                     'id': brand.id,
                     'name': brand.name,
                     'product_count': len(brand_products_with_discount),
                 })
-
         # Filtros de etiquetas principales
         product_tags = request.env['product.tag'].sudo().search([
             ('visible_on_ecommerce', '=', True)
