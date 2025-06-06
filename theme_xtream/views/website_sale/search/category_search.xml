@@ -207,11 +207,18 @@
                             <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px; margin-bottom: 0;">MEJORES OFERTAS</h2>
                         </div>
                         <div class="o_wsale_products_grid_table_wrapper">
-                            <t t-set="discounted_products" t-value="request.env['product.template'].sudo().search([('brand_type_id', '=', brand_type.id), ('website_published', '=', True)]) or []" />
+                            <t t-set="best_offer_products" t-value="[]"/>
+                            <t t-if="category">
+                                <t t-set="best_offer_products" t-value="request.env['product.template'].sudo().search([
+                                    ('website_published', '=', True),
+                                    ('categ_id', 'child_of', category.id),
+                                    ('product_tag_ids', '!=', False)
+                                ], order='create_date desc', limit=10)"/>
+                            </t>
                             <!-- Desktop View -->
                             <div class="d-none d-md-block">
                                 <div class="row g-3" style="display: flex; flex-wrap: wrap;">
-                                    <t t-foreach="discounted_products" t-as="product">
+                                    <t t-foreach="best_offer_products" t-as="product">
                                         <div class="col-lg-2-4 col-md-4 col-sm-6" style="flex: 0 0 20%; max-width: 20%; min-width: 220px;">
                                             <div class="card shadow-sm product-card" style="border-radius: 10px; overflow: hidden;">
                                                 <a t-att-href="'/shop/product/' + str(product.id)">
@@ -297,7 +304,7 @@
                             <!-- Mobile View -->
                             <div class="d-md-none">
                                  <div class="row g-2">
-                                    <t t-foreach="discounted_products[:4]" t-as="product">
+                                    <t t-foreach="best_offer_products[:4]" t-as="product">
                                         <div class="col-6">
                                             <div class="card h-100 shadow-sm product-card">
                                                 <a t-att-href="'/shop/product/' + str(product.id)">
