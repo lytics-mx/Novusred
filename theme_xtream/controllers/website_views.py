@@ -79,7 +79,7 @@ class OffersController(http.Controller):
                 })
 
         # Filtros de marcas principales
-        all_brands = request.env['product.brand'].sudo().search([])
+        all_brands = request.env['brand.type'].sudo().search([])
         brands_with_count = []
         for brand in all_brands:
             brand_domain = list(domain) + [('brand_id', '=', brand.id)]
