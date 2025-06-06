@@ -12,7 +12,29 @@ class OffersController(http.Controller):
         # Obtener el parámetro tag_id de la URL
         tag_id = kwargs.get('tag_id')
         brand_type_id = kwargs.get('brand_type_id')
-        
+        # Obtener todas las marcas (brand types) visibles
+        BrandType = request.env['product.brand.type'].sudo()
+        all_brand_types = BrandType.search([])
+
+        brands_with_count = []
+        for brand in all_brand_types:
+            brand_domain = [
+                ('website_published', '=', True),
+                ('product_tag_ids', '!=', False),
+                ('brand_type_id', '=', brand.id),
+            ]
+            if free_shipping:
+                brand_domain.append(('free_shipping', '=', True))
+            # Solo contar productos con descuento real
+            brand_products = request.env['product.template'].sudo().search(brand_domain)
+            brand_products_with_discount = brand_products.filtered(lambda p: p.list_price > p.discounted_price)
+            prod_count = len(brand_products_with_discount)
+            if prod_count > 0:
+                brands_with_count.append({
+                    'id': brand.id,
+                    'name': brand.name,
+                    'product_count': prod_count,
+                })        
         # Construir el dominio base para productos en oferta
         domain = [
             ('website_published', '=', True),
@@ -246,6 +268,8 @@ class OffersController(http.Controller):
             'product_tags': product_tags,
             'selected_tag_id': tag_id,  # Para mostrar cuál tag está seleccionado
             'selected_brand_type_id': brand_type_id,  # Para mostrar cuál brand_type está seleccionado
+            'brands_with_count': brands_with_count,
+
 
         })
         
@@ -262,6 +286,31 @@ class OffersController(http.Controller):
         type_offer = request.params.get('type')
 
         brand_type_id = kwargs.get('brand_type_id')
+
+        # Obtener todas las marcas (brand types) visibles
+        BrandType = request.env['product.brand.type'].sudo()
+        all_brand_types = BrandType.search([])
+
+        brands_with_count = []
+        for brand in all_brand_types:
+            brand_domain = [
+                ('website_published', '=', True),
+                ('product_tag_ids', '!=', False),
+                ('brand_type_id', '=', brand.id),
+            ]
+            if free_shipping:
+                brand_domain.append(('free_shipping', '=', True))
+            # Solo contar productos con descuento real
+            brand_products = request.env['product.template'].sudo().search(brand_domain)
+            brand_products_with_discount = brand_products.filtered(lambda p: p.list_price > p.discounted_price)
+            prod_count = len(brand_products_with_discount)
+            if prod_count > 0:
+                brands_with_count.append({
+                    'id': brand.id,
+                    'name': brand.name,
+                    'product_count': prod_count,
+                })
+
 
         # Guardar el estado de free_shipping en la sesión del usuario
         # para mantenerlo entre diferentes páginas y filtros
@@ -475,6 +524,7 @@ class OffersController(http.Controller):
             'product_tags': product_tags,
             'tags_with_discount': tags_with_discount,
             'selected_brand_type_id': brand_type_id,  # Para mostrar cuál brand_type está seleccionado
-            
+            'brands_with_count': brands_with_count,
+
 
         })
