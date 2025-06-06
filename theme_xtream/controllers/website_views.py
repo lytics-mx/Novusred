@@ -13,7 +13,7 @@ class OffersController(http.Controller):
         tag_id = kwargs.get('tag_id')
         brand_type_id = kwargs.get('brand_type_id')
         # Obtener todas las marcas (brand types) visibles
-        BrandType = request.env['product.brand.type'].sudo()
+        BrandType = request.env['brand.type'].sudo()
         all_brand_types = BrandType.search([])
 
         brands_with_count = []
@@ -296,7 +296,7 @@ class OffersController(http.Controller):
 
 
         # Obtener todas las marcas (brand types) visibles
-        BrandType = request.env['product.brand.type'].sudo()
+        BrandType = request.env['brand.type'].sudo()
         all_brand_types = BrandType.search([])
 
         brands_with_count = []
