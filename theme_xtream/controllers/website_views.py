@@ -25,16 +25,10 @@ class OffersController(http.Controller):
             ('fixed_discount', '>', 0)
         ]
         if tag_id:
-            try:
-                domain.append(('product_tag_ids', 'in', int(tag_id)))
-            except Exception:
-                pass
+            domain.append(('product_tag_ids', 'in', int(tag_id)))
         if brand_type_id:
-            try:
-                brand = request.env['brand.type'].sudo().browse(int(brand_type_id))
-                domain.append(('id', 'in', brand.product_ids.ids))
-            except Exception:
-                pass
+            brand = request.env['brand.type'].sudo().browse(int(brand_type_id))
+            domain.append(('id', 'in', brand.product_ids.ids))
         if category_id:
             try:
                 domain.append(('categ_id', 'child_of', int(category_id)))
