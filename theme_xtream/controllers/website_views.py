@@ -123,11 +123,11 @@ class OffersController(http.Controller):
         ]
 
         # Obtener marcas principales con conteo de productos con descuento
-        Brand = request.env['product.brand.type'].sudo()
+        Brand = request.env['product.brand'].sudo()
         all_brands = Brand.search([])
         brands_with_count = []
         for brand in all_brands:
-            brand_domain = list(domain) + [('brand_type_id', '=', brand.id)]
+            brand_domain = list(domain) + [('brand_id', '=', brand.id)]
             brand_products = request.env['product.template'].sudo().search(brand_domain)
             brand_products_with_discount = brand_products.filtered(lambda p: p.list_price > p.discounted_price)
             if brand_products_with_discount:
