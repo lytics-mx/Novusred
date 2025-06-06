@@ -377,7 +377,14 @@
                                 <h5>Todos</h5>
                                 <ul class="list-unstyled">
                                     <li>
-                                        <a t-att-href="'/offers%s' % ('?free_shipping=true' if free_shipping else '')">
+                                        <a t-att-href="'/offers?%s%s%s%s%s%s' % (
+                                            '&amp;brand_type_id=%s' % selected_brand_type_id if selected_brand_type_id else '',
+                                            '&amp;tag_id=%s' % selected_tag_id if selected_tag_id else '',
+                                            '&amp;category_id=%s' % selected_category_id if selected_category_id else '',
+                                            '&amp;free_shipping=true' if free_shipping else '',
+                                            '&amp;min_price=%s' % min_price if min_price else '',
+                                            '&amp;max_price=%s' % max_price if max_price else ''
+                                        )">
                                             <span style="color: #848484;"><t t-esc="total_products" /></span> <span style="color: #848484;">productos</span>
                                         </a>
                                     </li>
@@ -390,8 +397,14 @@
 
                                 <div class="form-check form-switch bg-white">
                                     <input class="form-check-input" type="checkbox" id="freeShippingToggle"
-                                           t-att-checked="'checked' if free_shipping else None"
-                                           t-att-data-url="'/offers?free_shipping=' + ('false' if free_shipping else 'true')" />
+                                        t-att-checked="'checked' if free_shipping else None"
+                                        t-att-data-url="'/offers?free_shipping=' + ('false' if free_shipping else 'true')
+                                            + ('&amp;brand_type_id=%s' % selected_brand_type_id if selected_brand_type_id else '')
+                                            + ('&amp;tag_id=%s' % selected_tag_id if selected_tag_id else '')
+                                            + ('&amp;category_id=%s' % selected_category_id if selected_category_id else '')
+                                            + ('&amp;min_price=%s' % min_price if min_price else '')
+                                            + ('&amp;max_price=%s' % max_price if max_price else '')"
+                                    />
                                     <label class="form-check-label" for="freeShippingToggle" style="background-color: white;">
                                         Solo productos con envío gratis
                                     </label>
@@ -418,7 +431,14 @@
                                 <ul class="list-unstyled">
                                     <t t-foreach="tags_with_discount" t-as="tag">
                                         <li>
-                                            <a t-att-href="'/offers?tag_id=%s%s' % (tag.id, '&amp;free_shipping=true' if free_shipping else '')" style="color: #848484;">
+                                            <a t-att-href="'/offers?tag_id=%s%s%s%s%s%s' % (
+                                                tag.id,
+                                                '&amp;brand_type_id=%s' % selected_brand_type_id if selected_brand_type_id else '',
+                                                '&amp;category_id=%s' % selected_category_id if selected_category_id else '',
+                                                '&amp;free_shipping=true' if free_shipping else '',
+                                                '&amp;min_price=%s' % min_price if min_price else '',
+                                                '&amp;max_price=%s' % max_price if max_price else ''
+                                            )" style="color: #848484;">
                                                 <t t-esc="tag.name"/>
                                             </a>
                                         </li>
@@ -432,33 +452,58 @@
                                 <ul class="list-unstyled">
                                     <t t-foreach="categories_with_count" t-as="cat">
                                         <li>
-                                            <a t-att-href="'/offers?category_id=%s%s' % (cat['id'], '&amp;free_shipping=true' if free_shipping else '')" style="color: #848484;">
+                                            <a t-att-href="'/offers?category_id=%s%s%s%s%s%s' % (
+                                                cat['id'],
+                                                '&amp;brand_type_id=%s' % selected_brand_type_id if selected_brand_type_id else '',
+                                                '&amp;tag_id=%s' % selected_tag_id if selected_tag_id else '',
+                                                '&amp;free_shipping=true' if free_shipping else '',
+                                                '&amp;min_price=%s' % min_price if min_price else '',
+                                                '&amp;max_price=%s' % max_price if max_price else ''
+                                            )" style="color: #848484;">
                                                 <span t-esc="cat['name']"/> (<span t-esc="cat['product_count']"/>)
-                                            </a>
+                                            </a> 
                                         </li>
                                     </t>
                                 </ul>
                             </div>
-                                                        
+                            
                             <!-- Filtro por precio -->
                             <div class="mb-2"></div>
                                 <h5>Precio</h5>
                                 
                                     <ul class="list-unstyled">
                                         <li>
-                                            <a t-att-href="'/offers?min_price=0&amp;max_price=500%s' % ('&amp;free_shipping=true' if free_shipping else '')" class="d-flex justify-content-between" style="color: #848484;">
+                                            <a t-att-href="'/offers?min_price=0&amp;max_price=500%s%s%s%s%s' % (
+                                                '&amp;brand_type_id=%s' % selected_brand_type_id if selected_brand_type_id else '',
+                                                '&amp;tag_id=%s' % selected_tag_id if selected_tag_id else '',
+                                                '&amp;category_id=%s' % selected_category_id if selected_category_id else '',
+                                                '&amp;free_shipping=true' if free_shipping else '',
+                                                ''
+                                            )" class="d-flex justify-content-between" style="color: #848484;">
                                                 <span>Hasta $500</span>
                                                 <span class="text-muted">(<t t-esc="price_ranges['0_500']"/>)</span>
                                             </a>
                                         </li>
                                         <li>
-                                            <a t-att-href="'/offers?min_price=500&amp;max_price=1000%s' % ('&amp;free_shipping=true' if free_shipping else '')" class="d-flex justify-content-between" style="color: #848484;">
+                                            <a t-att-href="'/offers?min_price=500&amp;max_price=1000%s%s%s%s%s' % (
+                                                '&amp;brand_type_id=%s' % selected_brand_type_id if selected_brand_type_id else '',
+                                                '&amp;tag_id=%s' % selected_tag_id if selected_tag_id else '',
+                                                '&amp;category_id=%s' % selected_category_id if selected_category_id else '',
+                                                '&amp;free_shipping=true' if free_shipping else '',
+                                                ''
+                                            )" class="d-flex justify-content-between" style="color: #848484;">
                                                 <span>De $500 a $1000</span>
                                                 <span class="text-muted">(<t t-esc="price_ranges['500_1000']"/>)</span>
                                             </a>
                                         </li>
                                         <li>
-                                            <a t-att-href="'/offers?min_price=1000%s' % ('&amp;free_shipping=true' if free_shipping else '')" class="d-flex justify-content-between" style="color: #848484;">
+                                            <a t-att-href="'/offers?min_price=1000%s%s%s%s%s' % (
+                                                '&amp;brand_type_id=%s' % selected_brand_type_id if selected_brand_type_id else '',
+                                                '&amp;tag_id=%s' % selected_tag_id if selected_tag_id else '',
+                                                '&amp;category_id=%s' % selected_category_id if selected_category_id else '',
+                                                '&amp;free_shipping=true' if free_shipping else '',
+                                                ''
+                                            )" class="d-flex justify-content-between" style="color: #848484;">
                                                 <span>Más de $1000</span>
                                                 <span class="text-muted">(<t t-esc="price_ranges['1000_plus']"/>)</span>
                                             </a>
@@ -469,6 +514,15 @@
                                             <input type="number" class="form-control me-2 bg-white" id="minPrice" name="min_price" placeholder="Desde" style="background-color: #ffffff;" />
                                             <span class="me-2">—</span>
                                             <input type="number" class="form-control me-2 bg-white" id="maxPrice" name="max_price" placeholder="Hasta" style="background-color: #ffffff;" />
+                                            <t t-if="selected_brand_type_id">
+                                                <input type="hidden" name="brand_type_id" t-att-value="selected_brand_type_id"/>
+                                            </t>
+                                            <t t-if="selected_tag_id">
+                                                <input type="hidden" name="tag_id" t-att-value="selected_tag_id"/>
+                                            </t>
+                                            <t t-if="selected_category_id">
+                                                <input type="hidden" name="category_id" t-att-value="selected_category_id"/>
+                                            </t>
                                             <t t-if="free_shipping">
                                                 <input type="hidden" name="free_shipping" value="true"/>
                                             </t>
