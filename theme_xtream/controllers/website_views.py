@@ -11,6 +11,7 @@ class OffersController(http.Controller):
     
         # Obtener el parámetro tag_id de la URL
         tag_id = kwargs.get('tag_id')
+        brand_type_id = kwargs.get('brand_type_id')
         
         # Construir el dominio base para productos en oferta
         domain = [
@@ -30,6 +31,13 @@ class OffersController(http.Controller):
                 # Si tag_id no es válido, ignorar el filtro
                 pass
         
+        if brand_type_id:
+            try:
+                domain.append(('brand_type_id', '=', int(brand_type_id)))
+            except Exception:   
+                # Si brand_type_id no es válido, ignorar el filtro
+                pass  
+
         # Filtro de envío gratis si está activo
         free_shipping = kwargs.get('free_shipping') == 'true'
         if free_shipping:
@@ -229,6 +237,7 @@ class OffersController(http.Controller):
             'tags_with_discount': tags_with_discount,
             'product_tags': product_tags,
             'selected_tag_id': tag_id,  # Para mostrar cuál tag está seleccionado
+            'selected_brand_type_id': brand_type_id,  # Para mostrar cuál brand_type está seleccionado
 
         })
         
@@ -243,7 +252,9 @@ class OffersController(http.Controller):
         min_price = kwargs.get('min_price')
         max_price = kwargs.get('max_price')
         type_offer = request.params.get('type')
-    
+
+        brand_type_id = kwargs.get('brand_type_id')
+
         # Guardar el estado de free_shipping en la sesión del usuario
         # para mantenerlo entre diferentes páginas y filtros
         if 'free_shipping' in kwargs:
@@ -309,6 +320,15 @@ class OffersController(http.Controller):
         category_id = request.params.get('category_id')
         if category_id:
             domain.append(('categ_id', 'child_of', int(category_id)))
+
+        # Si se especifica brand_type_id, agregar al dominio
+        if brand_type_id:
+            try:
+                domain.append(('brand_type_id', '=', int(brand_type_id)))
+            except Exception:   
+                # Si brand_type_id no es válido, ignorar el filtro
+                pass
+
         
         if offers:
             domain.append(('discounted_price', '>', 0))
@@ -434,5 +454,6 @@ class OffersController(http.Controller):
             'all_categories': main_categories,
             'product_tags': product_tags,
             'tags_with_discount': tags_with_discount,
+            'selected_brand_type_id': brand_type_id,  # Para mostrar cuál brand_type está seleccionado
 
         })
