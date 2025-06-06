@@ -402,7 +402,8 @@ class CategoryController(http.Controller):
                 ('categ_id', 'in', categories.ids)
             ])
         else:
-            # Si no hay búsqueda, puedes mostrar todas las marcas activas (opcional)
+            # Mostrar todas las categorías principales si no hay búsqueda
+            categories = request.env['product.category'].sudo().search([('parent_id', '=', False)])
             brands = request.env['brand.type'].sudo().search([
                 ('icon_image', '!=', False),
                 ('active', '=', True)
