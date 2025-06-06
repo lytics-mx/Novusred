@@ -12,7 +12,7 @@ class OffersController(http.Controller):
         min_price = kwargs.get('min_price')
         max_price = kwargs.get('max_price')
 
-        # 1. Dominio base con todos los filtros activos
+        # Dominio base con todos los filtros activos (excepto precio)
         domain = [
             ('website_published', '=', True),
             ('sale_ok', '=', True),
@@ -21,11 +21,20 @@ class OffersController(http.Controller):
             ('fixed_discount', '>', 0)
         ]
         if tag_id:
-            domain.append(('product_tag_ids', 'in', [int(tag_id)]))
+            try:
+                domain.append(('product_tag_ids', 'in', [int(tag_id)]))
+            except Exception:
+                pass
         if brand_type_id:
-            domain.append(('brand_type_id', '=', int(brand_type_id)))
+            try:
+                domain.append(('brand_type_id', '=', int(brand_type_id)))
+            except Exception:
+                pass
         if category_id:
-            domain.append(('categ_id', 'child_of', int(category_id)))
+            try:
+                domain.append(('categ_id', 'child_of', int(category_id)))
+            except Exception:
+                pass
         if free_shipping:
             domain.append(('free_shipping', '=', True))
 
@@ -33,7 +42,7 @@ class OffersController(http.Controller):
         products = Product.search(domain)
         discounted_products = products.filtered(lambda p: p.list_price > (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price))
 
-        # Filtro de precio en Python (no en el dominio)
+        # Filtro de precio en Python (sobre discounted_products)
         if min_price:
             try:
                 min_price_val = float(min_price)
@@ -58,7 +67,9 @@ class OffersController(http.Controller):
             '1000_plus': len(products.filtered(lambda p: (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price) > 1000 and p.list_price > (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price))),
         }
 
-        # Marcas con conteo: quita solo el filtro de marca, deja los demás
+        # Marcas con conteo (quita solo el filtro de marca, aplica los demás y el filtro de precio si está activo)
+        BrandType = request.env['brand.type'].sudo()
+        all_brand_types = BrandType.search([])
         brands_with_count = []
         for brand in all_brand_types:
             brand_domain = [d for d in domain if not (isinstance(d, tuple) and d[0] == 'brand_type_id')]
@@ -90,15 +101,68 @@ class OffersController(http.Controller):
                     'product_count': prod_count,
                 })
 
-        # 5. Tags con descuento (usando el mismo dominio base + filtro de tag)
+        # Categorías con conteo (quita solo el filtro de categoría, aplica los demás y el filtro de precio si está activo)
+        all_categories = request.env['product.category'].sudo().search([])
+        main_categories = [
+            cat for cat in all_categories
+            if Product.search_count(domain + [('categ_id', 'child_of', cat.id)]) > 0
+        ]
+        categories_with_count = []
+        for cat in main_categories:
+            cat_domain = [d for d in domain if not (isinstance(d, tuple) and d[0] == 'categ_id')]
+            cat_domain.append(('categ_id', 'child_of', cat.id))
+            cat_products = Product.search(cat_domain)
+            cat_products_with_discount = cat_products.filtered(lambda p: p.list_price > (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price))
+            # Aplica el filtro de precio si está activo
+            if min_price:
+                try:
+                    min_price_val = float(min_price)
+                    cat_products_with_discount = cat_products_with_discount.filtered(
+                        lambda p: (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price) >= min_price_val
+                    )
+                except Exception:
+                    pass
+            if max_price:
+                try:
+                    max_price_val = float(max_price)
+                    cat_products_with_discount = cat_products_with_discount.filtered(
+                        lambda p: (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price) <= max_price_val
+                    )
+                except Exception:
+                    pass
+            prod_count = len(cat_products_with_discount)
+            if prod_count > 0:
+                categories_with_count.append({
+                    'id': cat.id,
+                    'name': cat.name,
+                    'product_count': prod_count,
+                })
+
+        # Tags con descuento (quita solo el filtro de tag, aplica los demás y el filtro de precio si está activo)
         ProductTag = request.env['product.tag'].sudo()
         tags_with_discount = []
         for tag in ProductTag.search([('visible_on_ecommerce', '=', True)]):
-            tag_domain = domain.copy()
-            tag_domain = [d for d in tag_domain if not (isinstance(d, tuple) and d[0] == 'product_tag_ids')]
-            tag_domain.append(('product_tag_ids', 'in', tag.id))
+            tag_domain = [d for d in domain if not (isinstance(d, tuple) and d[0] == 'product_tag_ids')]
+            tag_domain.append(('product_tag_ids', 'in', [tag.id]))
             prods = Product.search(tag_domain)
-            prods_with_discount = prods.filtered(lambda p: p.list_price > p.discounted_price)
+            prods_with_discount = prods.filtered(lambda p: p.list_price > (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price))
+            # Aplica el filtro de precio si está activo
+            if min_price:
+                try:
+                    min_price_val = float(min_price)
+                    prods_with_discount = prods_with_discount.filtered(
+                        lambda p: (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price) >= min_price_val
+                    )
+                except Exception:
+                    pass
+            if max_price:
+                try:
+                    max_price_val = float(max_price)
+                    prods_with_discount = prods_with_discount.filtered(
+                        lambda p: (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price) <= max_price_val
+                    )
+                except Exception:
+                    pass
             if prods_with_discount:
                 tags_with_discount.append(tag)
 
