@@ -1,11 +1,50 @@
 <odoo>
     <template id="website_view_product_xtream" inherit_id="website_sale.product">
         <xpath expr="//div[@id='wrap']" position="replace">
-            <div id="wrap" class="oe_structure text-center" style="padding: 40px;">
-                <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" class="img-fluid mb-3" style="max-width:300px;"/>
-                <h2 t-esc="product.name"/>
-                <div id="product_option_block"></div>
-                <div id="o_product_terms_and_share"></div>
+            <div id="wrap" class="container py-4">
+                <div class="row">
+                    <!-- Galería de imágenes miniatura -->
+                    <div class="col-2 d-none d-md-block">
+                        <div class="d-flex flex-column gap-2">
+                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" class="img-thumbnail mb-2" style="cursor:pointer;"/>
+                            <!-- Si tienes más imágenes, repítelas aquí -->
+                        </div>
+                    </div>
+                    <!-- Imagen principal -->
+                    <div class="col-12 col-md-6 text-center">
+                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" class="img-fluid" style="max-height:350px;"/>
+                    </div>
+                    <!-- Detalles del producto -->
+                    <div class="col-12 col-md-4">
+                        <h2 t-esc="product.name" class="mb-2"/>
+                        <!-- Precio y descuento -->
+                        <div class="mb-2">
+                            <span class="h4 text-success" t-esc="product.lst_price"/>
+                            <span class="text-danger ml-2" t-if="product.list_price > product.lst_price">
+                                <s t-esc="product.list_price"/>
+                                <t t-esc="'%d%% OFF' % int(100 - (product.lst_price / product.list_price * 100))"/>
+                            </span>
+                        </div>
+                        <!-- Stock y marca -->
+                        <div class="mb-2">
+                            <span t-if="product.qty_available">En Stock: <t t-esc="product.qty_available"/> artículos</span><br/>
+                            <span t-if="product.product_brand_id">Marca: <t t-esc="product.product_brand_id.name"/></span><br/>
+                            <span t-if="product.default_code">Modelo: <t t-esc="product.default_code"/></span>
+                        </div>
+                        <!-- Botones de acción -->
+                        <div class="mb-3">
+                            <button class="btn btn-primary btn-block mb-2" disabled>Agregar al carrito</button>
+                            <button class="btn btn-outline-primary btn-block" disabled>Comprar</button>
+                        </div>
+                        <!-- Métodos de pago (puedes personalizar los íconos) -->
+                        <div>
+                            <img src="/theme_xtream/static/src/img/payment_methods.png" alt="Métodos de pago" style="max-width: 200px;"/>
+                        </div>
+                    </div>
+                </div>
+                <!-- Bloques requeridos por Odoo para compatibilidad -->
+                <div id="product_option_block" style="display:none;"></div>
+                <div id="o_product_terms_and_share" style="display:none;"></div>
             </div>
         </xpath>
     </template>
