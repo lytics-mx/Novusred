@@ -4,6 +4,7 @@ from odoo.http import request
 import logging
 _logger = logging.getLogger(__name__)
 
+
 class ShopController(http.Controller):
 
     @http.route([
@@ -14,10 +15,16 @@ class ShopController(http.Controller):
         if not product:
             return request.not_found()
         _logger.info("Producto cargado: %s", product)
-        # Añadir keep al contexto
-        website = Website()
+
+        # Obtener la jerarquía de categorías
+        categories = []
+        categ = product.categ_id
+        while categ:
+            categories.insert(0, categ)
+            categ = categ.parent_id
+
         context = {
             'product': product,
-            # 'keep': website.keep,
+            'categories': categories,  # Lista ordenada desde raíz hasta la hoja
         }
         return request.render("theme_xtream.website_view_product_xtream", context)
