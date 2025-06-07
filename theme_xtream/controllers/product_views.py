@@ -18,6 +18,6 @@ class ShopController(http.Controller):
         website = Website()
         context = {
             'product': product,
-            'keep': website.keep,
+            # 'keep': website.keep,
         }
         return request.render("theme_xtream.website_view_product_xtream", context)
