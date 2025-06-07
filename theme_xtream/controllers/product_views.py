@@ -1,7 +1,7 @@
+from odoo.addons.website.controllers.main import Website
 from odoo import http
 from odoo.http import request
 import logging
-
 _logger = logging.getLogger(__name__)
 
 class ShopController(http.Controller):
@@ -14,4 +14,10 @@ class ShopController(http.Controller):
         if not product:
             return request.not_found()
         _logger.info("Producto cargado: %s", product)
-        return request.render("theme_xtream.website_view_product_xtream", {'product': product})
+        # Añadir keep al contexto
+        website = Website()
+        context = {
+            'product': product,
+            'keep': website.keep,
+        }
+        return request.render("theme_xtream.website_view_product_xtream", context)
