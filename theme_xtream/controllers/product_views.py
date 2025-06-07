@@ -7,8 +7,8 @@ _logger = logging.getLogger(__name__)
 class ShopController(http.Controller):
 
     @http.route([
-        '/shop/<model("product.template"):product>',
-        '/shop/product/<model("product.template"):product>'
+        '/view/<model("product.template"):product>',
+        '/view/product/<model("product.template"):product>'
     ], type='http', auth="public", website=True)
     def product_page(self, product, **kwargs):
         if not product:
