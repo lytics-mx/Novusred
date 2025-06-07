@@ -23,8 +23,12 @@ class ShopController(http.Controller):
             categories.insert(0, categ)
             categ = categ.parent_id
 
+        # Obtener la URL de referencia (página anterior)
+        referer = request.httprequest.headers.get('Referer', '/')
+
         context = {
             'product': product,
-            'categories': categories,  # Lista ordenada desde raíz hasta la hoja
+            'categories': categories,
+            'referer': referer,
         }
         return request.render("theme_xtream.website_view_product_xtream", context)
