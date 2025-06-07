@@ -60,8 +60,8 @@
         'views/inventory_control/product_template_odoo.xml',
 
 # Configuiración del modulo de sitio web en odoo
-        'views/website_configuration.xml/imagenes_banner.xml',
-        'views/website_configuration.xml/free_shipping.xml',
+        'views/website_configuration/imagenes_banner.xml',
+        'views/website_configuration/free_shipping.xml',
 
 # Vistas de la pagina web
         'views/website_sale/website_history.xml',
