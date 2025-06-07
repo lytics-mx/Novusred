@@ -7,9 +7,9 @@ _logger = logging.getLogger(__name__)
 class ProductCategory(models.Model):
     _inherit = 'product.category'
 
-    icon = fields.Binary(string="Category Icon")  # Campo para subir el ícono
+    icon = fields.Binary(string="Icono de categoría")  # Campo para subir el ícono
     is_visible_in_menu = fields.Boolean(string="Visible", default=False)  # Campo booleano para habilitar visibilidad
-    banner_image = fields.Binary(string="Imagen de Banner")  # <-- Nuevo campo para banner
+    banner_image = fields.Binary(string="Portada")  # <-- Nuevo campo para banner
     slug = fields.Char('Slug', index=True)
 
     @api.onchange('name')
