@@ -14,10 +14,47 @@
                     </span>
                 </span>
             </div>
-            <!-- ...resto del contenido (imagen, nombre, etc)... -->
-                <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" class="img-fluid mb-3" style="max-width:300px;"/>
-                <h2 t-esc="product.name"/>
 
+            <!-- ...resto del contenido (imagen, nombre, etc)... -->
+                <div class="row">
+                    <!-- Galería de miniaturas a la izquierda -->
+                    <div class="col-2 d-none d-md-block">
+                        <div class="d-flex flex-column gap-2">
+                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" class="img-thumbnail mb-2" style="cursor:pointer;"/>
+                            <t t-foreach="product.product_image_ids" t-as="img">
+                                <img t-att-src="'/web/image/product.image/' + str(img.id) + '/image_1920'" class="img-thumbnail mb-2" style="cursor:pointer;"/>
+                            </t>
+                        </div>
+                    </div>
+                    <!-- Imagen principal al centro -->
+                    <div class="col-12 col-md-6 text-center">
+                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" class="img-fluid" style="max-height:350px;"/>
+                    </div>
+                    <!-- Información del producto a la derecha (solo texto, sin lógica) -->
+                    <div class="col-12 col-md-4">
+                        <h2>Nombre del producto</h2>
+                        <div>
+                            <span style="text-decoration:line-through;">$Precio anterior</span>
+                            <span style="color:#00a650; font-size:2em;">$Precio actual</span>
+                            <span style="color:#f00;">% OFF</span>
+                        </div>
+                        <div>120 de descuento</div>
+                        <div style="color:#f00;">Envío gratis</div>
+                        <div style="background:#e0eaff; display:inline-block; padding:2px 8px; border-radius:4px; margin:6px 0;">OFERTA DEL DÍA</div>
+                        <div>En Stock: 500 artículos</div>
+                        <div>Marca: HP</div>
+                        <div>Modelo: DH-KIT/XVR1804-I/4-B1A1N-0360B</div>
+                        <div>Cantidad: 1 unidad (500 disponibles)</div>
+                        <div>Puedes pagar con:</div>
+                        <div>
+                            <span>Íconos de métodos de pago</span>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary btn-block mb-2" disabled>Agregar al carrito</button>
+                            <button class="btn btn-outline-primary btn-block" disabled>Comprar</button>
+                        </div>
+                    </div>
+                </div>
 
 
                 <div id="product_option_block"></div>
