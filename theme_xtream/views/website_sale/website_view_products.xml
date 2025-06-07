@@ -21,11 +21,28 @@
                     <div class="col-2 d-none d-md-block">
                         <div class="d-flex flex-column gap-2">
                             <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                                class="img-thumbnail mb-2 product-thumb"
+                                class="img-thumbnail mb-2 product-thumb active"
                                 t-att-data-img="'/web/image/product.template/' + str(product.id) + '/image_1920'"
                                 style="cursor:pointer;" />
-                                
 
+                            <t t-if="product.product_image_ids and len(product.product_image_ids) > 0">
+                                <img t-att-src="'/web/image/product.image/' + str(product.product_image_ids[0].id) + '/image_1920'"
+                                     class="img-thumbnail mb-2 product-thumb active"
+                                     t-att-data-img="'/web/image/product.image/' + str(product.product_image_ids[0].id) + '/image_1920'"
+                                     style="cursor:pointer;" />
+                                <t t-foreach="product.product_image_ids[1:]" t-as="img">
+                                    <img t-att-src="'/web/image/product.image/' + str(img.id) + '/image_1920'"
+                                         class="img-thumbnail mb-2 product-thumb"
+                                         t-att-data-img="'/web/image/product.image/' + str(img.id) + '/image_1920'"
+                                         style="cursor:pointer;" />
+                                </t>
+                            </t>
+                            <t t-else="">
+                                <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                                     class="img-thumbnail mb-2 product-thumb active"
+                                     t-att-data-img="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                                     style="cursor:pointer;" />
+                            </t>
                         </div>
 
 

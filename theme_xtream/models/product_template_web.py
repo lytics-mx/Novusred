@@ -24,6 +24,16 @@ class ProductTemplate(models.Model):
           help="Sube documentos técnicos o fichas técnicas para este producto."
      )
      
+     product_image_ids = fields.One2many(
+          'product.image',
+          'product_tmpl_id',
+          string='Imágenes adicionales',
+          copy=True,
+          help='Imágenes adicionales del producto. Puedes arrastrar para ordenar.'
+     )
+
+
+
      brand_type_id = fields.Many2one(
           comodel_name='brand.type',
           string='Marca',
