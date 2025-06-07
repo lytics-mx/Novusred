@@ -20,15 +20,24 @@
                     <!-- Galería de miniaturas a la izquierda -->
                     <div class="col-2 d-none d-md-block">
                         <div class="d-flex flex-column gap-2">
-                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" class="img-thumbnail mb-2" style="cursor:pointer;"/>
+                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                                class="img-thumbnail mb-2 product-thumb active"
+                                t-att-data-img="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                                style="cursor:pointer;"/>
                             <t t-foreach="product.product_image_ids" t-as="img">
-                                <img t-att-src="'/web/image/product.image/' + str(img.id) + '/image_1920'" class="img-thumbnail mb-2" style="cursor:pointer;"/>
+                                <img t-att-src="'/web/image/product.image/' + str(img.id) + '/image_1920'"
+                                    class="img-thumbnail mb-2 product-thumb"
+                                    t-att-data-img="'/web/image/product.image/' + str(img.id) + '/image_1920'"
+                                    style="cursor:pointer;"/>
                             </t>
                         </div>
                     </div>
                     <!-- Imagen principal al centro -->
                     <div class="col-12 col-md-6 text-center">
-                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" class="img-fluid" style="max-height:350px;"/>
+                        <img id="main-product-img"
+                            t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                            class="img-fluid"
+                            style="max-height:350px;"/>
                     </div>
                     <!-- Información del producto a la derecha (solo texto, sin lógica) -->
                     <div class="col-12 col-md-4">
@@ -60,6 +69,30 @@
                 <div id="product_option_block"></div>
                 <div id="o_product_terms_and_share"></div>
             </div>
+            <t t-jquery="body" t-operation="append">
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var thumbs = document.querySelectorAll('.product-thumb');
+                        var mainImg = document.getElementById('main-product-img');
+                        thumbs.forEach(function(thumb) {
+                            thumb.addEventListener('click', function() {
+                                // Quitar clase activa de todos
+                                thumbs.forEach(function(t) { t.classList.remove('active'); });
+                                // Poner clase activa a la seleccionada
+                                this.classList.add('active');
+                                // Cambiar imagen principal
+                                mainImg.src = this.getAttribute('data-img');
+                            });
+                        });
+                    });
+                </script>
+                <style>
+                    .product-thumb.active {
+                        border: 2px solid #4285f4;
+                    }
+                </style>
+            </t>
+
         </xpath>
     </template>
 </odoo>
