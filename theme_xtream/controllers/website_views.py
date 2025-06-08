@@ -42,7 +42,7 @@ class OffersController(http.Controller):
         products = Product.search(domain)
         discounted_products = products.filtered(lambda p: p.list_price > (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price))
         product_tags = request.env['product.tag'].search([
-            ('active', '=', True),
+            ('is_active', '=', True),
             ('id', 'in', discounted_products.mapped('product_tag_ids').ids)
         ])
         # Filtro de precio en Python (sobre discounted_products)
