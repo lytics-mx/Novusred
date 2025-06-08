@@ -139,11 +139,9 @@ class ProductTemplate(models.Model):
 
      @api.depends('product_tag_ids.end_date')
      def _compute_offer_end_time(self):
-          """Calcula la fecha de fin de la oferta basada en las etiquetas relacionadas."""
           for product in self:
-               # Obtén todas las fechas de fin de las etiquetas relacionadas
-               end_dates = product.product_tag_ids.mapped('end_date')
-               # Selecciona la fecha más cercana (si hay varias etiquetas)
+               # Suponiendo que obtienes las fechas así:
+               end_dates = [tag.end_date for tag in product.product_tag_ids if tag.end_date]
                product.offer_end_time = min(end_dates) if end_dates else False
 
      def get_time_remaining(self):
