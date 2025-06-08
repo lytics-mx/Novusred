@@ -25,10 +25,24 @@ class ShopController(http.Controller):
 
         # Obtener la URL de referencia (página anterior)
         referer = request.httprequest.headers.get('Referer', '/')
+        # Cálculo de descuentos (ejemplo)
+        discounted_price = product.list_price
+        discount_percentage = 0
+        fixed_discount = 0
+        if hasattr(product, 'discounted_price'):
+            discounted_price = product.discounted_price
+        elif hasattr(product, 'standard_price') and product.list_price > product.standard_price:
+            discounted_price = product.standard_price
+        if product.list_price > discounted_price:
+            fixed_discount = product.list_price - discounted_price
+            discount_percentage = int(100 * fixed_discount / product.list_price)
 
         context = {
             'product': product,
             'categories': categories,
             'referer': referer,
+            'discounted_price': discounted_price,
+            'discount_percentage': discount_percentage,
+            'fixed_discount': fixed_discount,
         }
         return request.render("theme_xtream.website_view_product_xtream", context)

@@ -52,39 +52,32 @@
                             
                             <!-- Precios y descuentos -->
                             <div>
-                                <t t-if="product.product_tag_ids">
+                                <t t-if="discounted_price < product.list_price">
                                     <span style="text-decoration:line-through; color:#888; font-size:1em;">
                                         <t t-esc="product.list_price"/>
                                     </span>
-                                </t>
-                                <span style="color:#00a650; font-size:2em; font-weight:700;">
-                                    <t t-if="product.discount_price">
-                                        <t t-esc="product.discount_price"/>
-                                    </t>
-                                    <t t-else="">
-                                        <t t-esc="product.list_price"/>
-                                    </t>
-                                </span>
-                                <t t-if="product.discount_price">
+                                    <span style="color:#00a650; font-size:2em; font-weight:700;">
+                                        <t t-esc="discounted_price"/>
+                                    </span>
                                     <span style="color:#f00; font-size:1em; font-weight:600; margin-left:8px;">
-                                        <t t-if="product.discount_type == 'percentage'">
-                                            <t t-esc="str(product.discount_percentage) + '% OFF'"/>
+                                        <t t-if="discount_percentage">
+                                            <t t-esc="int(discount_percentage)"/>% OFF
                                         </t>
-                                        <t t-elif="product.discount_type == 'amount'">
-                                            <t t-esc="'MXN ' + str(product.list_price - product.discount_price)"/>
+                                        <t t-elif="fixed_discount">
+                                            -$<t t-esc="int(fixed_discount)"/> MXN
                                         </t>
+                                    </span>
+                                </t>
+                                <t t-else="">
+                                    <span style="color:#00a650; font-size:2em; font-weight:700;">
+                                        <t t-esc="product.list_price"/>
                                     </span>
                                 </t>
                             </div>
                             <!-- Muestra el ahorro solo si hay descuento -->
-                            <t t-if="product.discount_price">
+                            <t t-if="discounted_price < product.list_price">
                                 <div style="color:#00a650;">
-                                    <t t-if="product.discount_type == 'percentage'">
-                                        <t t-esc="'Ahorra ' + str(product.list_price - product.discount_price) + ' MXN'"/>
-                                    </t>
-                                    <t t-elif="product.discount_type == 'amount'">
-                                        <t t-esc="'Ahorra ' + str(product.list_price - product.discount_price) + ' MXN'"/>
-                                    </t>
+                                    Ahorra $<t t-esc="int(product.list_price - discounted_price)"/> MXN
                                 </div>
                             </t>
                             <!-- Envío gratis -->
@@ -111,8 +104,7 @@
                                 <input id="product_qty_input" name="add_qty" type="number" min="1" t-att-max="product.qty_available" value="1" style="width:60px; text-align:center;"/>
                                 (<t t-esc="product.qty_available"/> disponibles)
                             </div>
-
-
+                    
                             <div class="mt-3">
                                 <form t-att-action="'/shop/cart/update'">
                                     <input type="hidden" name="product_id" t-att-value="product.id"/>
@@ -124,6 +116,7 @@
                                 </form>
                             </div>
                         </div>
+                    <!-- ...existing code... -->
                         <script>
                             // Sincroniza el input de cantidad con los formularios
                             document.addEventListener('DOMContentLoaded', function() {
