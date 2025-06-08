@@ -46,27 +46,104 @@
                 </div>
                     <!-- Información del producto a la derecha (solo texto, sin lógica) -->
                     <div class="col-12 col-md-4">
-                        <h2>Nombre del producto</h2>
-                        <div>
-                            <span style="text-decoration:line-through;">$Precio anterior</span>
-                            <span style="color:#00a650; font-size:2em;">$Precio actual</span>
-                            <span style="color:#f00;">% OFF</span>
+                        <div class="card p-3" style="border-radius:12px;">
+                            <!-- Nombre del producto -->
+                            <h2 t-esc="product.name" style="font-size:1.2em; font-weight:600; margin-bottom:8px;"></h2>
+                            
+                            <!-- Precios y descuentos -->
+                            <div>
+                                <t t-if="product.product_tag_ids">
+                                    <span style="text-decoration:line-through; color:#888; font-size:1em;">
+                                        <t t-esc="product.list_price"/>
+                                    </span>
+                                </t>
+                                <span style="color:#00a650; font-size:2em; font-weight:700;">
+                                    <t t-if="product.discount_price">
+                                        <t t-esc="product.discount_price"/>
+                                    </t>
+                                    <t t-else="">
+                                        <t t-esc="product.list_price"/>
+                                    </t>
+                                </span>
+                                <t t-if="product.discount_price">
+                                    <span style="color:#f00; font-size:1em; font-weight:600; margin-left:8px;">
+                                        <t t-if="product.discount_type == 'percentage'">
+                                            <t t-esc="str(product.discount_percentage) + '% OFF'"/>
+                                        </t>
+                                        <t t-elif="product.discount_type == 'amount'">
+                                            <t t-esc="'MXN ' + str(product.list_price - product.discount_price)"/>
+                                        </t>
+                                    </span>
+                                </t>
+                            </div>
+                            <!-- Muestra el ahorro solo si hay descuento -->
+                            <t t-if="product.discount_price">
+                                <div style="color:#00a650;">
+                                    <t t-if="product.discount_type == 'percentage'">
+                                        <t t-esc="'Ahorra ' + str(product.list_price - product.discount_price) + ' MXN'"/>
+                                    </t>
+                                    <t t-elif="product.discount_type == 'amount'">
+                                        <t t-esc="'Ahorra ' + str(product.list_price - product.discount_price) + ' MXN'"/>
+                                    </t>
+                                </div>
+                            </t>
+                            <!-- Envío gratis -->
+                            <t t-if="product.free_shipping">
+                                <div style="color:#f00; font-weight:600;">Envío gratis</div>
+                            </t>
+                            <!-- Oferta del día -->
+                            <t t-if="product.is_offer_of_the_day">
+                                <div style="background:#e0eaff; display:inline-block; padding:2px 8px; border-radius:4px; margin:6px 0;">OFERTA DEL DÍA</div>
+                            </t>
+                            <!-- Stock -->
+                            <div>En Stock: <t t-esc="product.qty_available"/> artículos</div>
+                            <!-- Marca -->
+                            <div>
+                                Marca: <t t-esc="product.brand_type_id.name"/>
+                            </div>
+                            <!-- Modelo -->
+                            <div>
+                                Modelo: <t t-esc="product.default_code"/>
+                            </div>
+                            <!-- Cantidad -->
+                            <div class="my-2">
+                                Cantidad:
+                                <input id="product_qty_input" type="number" min="1" max="<t t-esc='product.qty_available'/>" value="1" style="width:60px; text-align:center;"/>
+                                (<t t-esc="product.qty_available"/> disponibles)
+                            </div>
+                            <!-- Métodos de pago -->
+                            <div>Puedes pagar con:</div>
+                            <div>
+                                <img src="/path/to/payment_methods.png" alt="Métodos de pago" style="height:28px;"/>
+                            </div>
+                            <!-- Botones de Odoo -->
+                            <div class="mt-3">
+                                <form t-att-action="'/shop/cart/update'">
+                                    <input type="hidden" name="product_id" t-att-value="product.id"/>
+                                    <input type="hidden" name="add_qty" id="add_qty_hidden" value="1"/>
+                                    <button type="submit" class="btn btn-primary btn-block mb-2">Agregar al carrito</button>
+                                </form>
+                                <form t-att-action="'/shop/checkout'">
+                                    <input type="hidden" name="product_id" t-att-value="product.id"/>
+                                    <input type="hidden" name="add_qty" id="buy_qty_hidden" value="1"/>
+                                    <button type="submit" class="btn btn-outline-primary btn-block">Comprar</button>
+                                </form>
+                            </div>
                         </div>
-                        <div>120 de descuento</div>
-                        <div style="color:#f00;">Envío gratis</div>
-                        <div style="background:#e0eaff; display:inline-block; padding:2px 8px; border-radius:4px; margin:6px 0;">OFERTA DEL DÍA</div>
-                        <div>En Stock: 500 artículos</div>
-                        <div>Marca: HP</div>
-                        <div>Modelo: DH-KIT/XVR1804-I/4-B1A1N-0360B</div>
-                        <div>Cantidad: 1 unidad (500 disponibles)</div>
-                        <div>Puedes pagar con:</div>
-                        <div>
-                            <span>Íconos de métodos de pago</span>
-                        </div>
-                        <div>
-                            <button class="btn btn-primary btn-block mb-2" disabled="disabled">Agregar al carrito</button>
-                            <button class="btn btn-outline-primary btn-block" disabled="disabled">Comprar</button>
-                        </div>
+                        <script>
+                            // Sincroniza el input de cantidad con los formularios
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var qtyInput = document.getElementById('product_qty_input');
+                                var addQty = document.getElementById('add_qty_hidden');
+                                var buyQty = document.getElementById('buy_qty_hidden');
+                                if(qtyInput && addQty && buyQty){
+                                    qtyInput.addEventListener('input', function() {
+                                        addQty.value = this.value;
+                                        buyQty.value = this.value;
+                                    });
+                                }
+                            });
+                        </script>
                     </div>
                 </div>
 
