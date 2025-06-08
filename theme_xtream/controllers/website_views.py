@@ -45,6 +45,10 @@ class OffersController(http.Controller):
             ('is_active', '=', True),
             ('id', 'in', discounted_products.mapped('product_tag_ids').ids)
         ])
+        all_offer_tags = request.env['product.tag'].search([
+            ('is_active', '=', True),
+            ('visible_on_ecommerce', '=', True)
+        ])        
         # Filtro de precio en Python (sobre discounted_products)
         if min_price:
             try:
@@ -186,4 +190,5 @@ class OffersController(http.Controller):
             'min_price': min_price,
             'max_price': max_price,
             'product_tags': product_tags,
+            'all_offer_tags': all_offer_tags,
         })
