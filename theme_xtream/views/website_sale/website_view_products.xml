@@ -16,36 +16,34 @@
             </div>
 
             <!-- ...resto del contenido (imagen, nombre, etc)... -->
-                <div class="row">
-                    <!-- Galería de miniaturas a la izquierda -->
-                    <div class="col-2 d-none d-md-block">
-                        <div class="d-flex flex-column gap-2">
-                            <!-- Siempre la imagen principal como primer miniatura -->
-                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                                 class="img-thumbnail mb-2 product-thumb active"
-                                 t-att-data-img="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                                 style="cursor:pointer;" />
-                        
-                            <!-- Después, solo las imágenes adicionales -->
-                            <t t-if="product.product_image_ids">
-                                <t t-foreach="product.product_image_ids" t-as="img">
-                                    <img t-att-src="'/web/image/product.image/' + str(img.id) + '/image_1920'"
-                                         class="img-thumbnail mb-2 product-thumb"
-                                         t-att-data-img="'/web/image/product.image/' + str(img.id) + '/image_1920'"
-                                         style="cursor:pointer;" />
-                                </t>
+            <div class="row">
+                <!-- Galería de miniaturas a la izquierda -->
+                <div class="col-2 d-none d-md-block">
+                    <div class="d-flex flex-column gap-2 align-items-center">
+                        <!-- Siempre la imagen principal como primer miniatura -->
+                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                            class="img-thumbnail mb-2 product-thumb active thumb-mini"
+                            t-att-data-img="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                            style="cursor:pointer;" />
+                    
+                        <!-- Después, solo las imágenes adicionales -->
+                        <t t-if="product.product_image_ids">
+                            <t t-foreach="product.product_image_ids" t-as="img">
+                                <img t-att-src="'/web/image/product.image/' + str(img.id) + '/image_1920'"
+                                    class="img-thumbnail mb-2 product-thumb thumb-mini"
+                                    t-att-data-img="'/web/image/product.image/' + str(img.id) + '/image_1920'"
+                                    style="cursor:pointer;" />
                             </t>
-                        </div>
-
-
+                        </t>
                     </div>
-                    <!-- Imagen principal al centro -->
-                    <div class="col-12 col-md-6 text-center">
-                        <img id="main-product-img"
-                            t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                            class="img-fluid"
-                            style="max-height:350px;"/>
-                    </div>
+                </div>
+                <!-- Imagen principal al centro -->
+                <div class="col-12 col-md-6 text-center d-flex align-items-center justify-content-center">
+                    <img id="main-product-img"
+                        t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                        class="img-fluid main-img-large"
+                        style="max-height:350px;"/>
+                </div>
                     <!-- Información del producto a la derecha (solo texto, sin lógica) -->
                     <div class="col-12 col-md-4">
                         <h2>Nombre del producto</h2>
@@ -76,29 +74,41 @@
                 <div id="product_option_block"></div>
                 <div id="o_product_terms_and_share"></div>
             </div>
-            <t t-jquery="body" t-operation="append">
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        var thumbs = document.querySelectorAll('.product-thumb');
-                        var mainImg = document.getElementById('main-product-img');
-                        thumbs.forEach(function(thumb) {
-                            thumb.addEventListener('click', function() {
-                                // Quitar clase activa de todos
-                                thumbs.forEach(function(t) { t.classList.remove('active'); });
-                                // Poner clase activa a la seleccionada
-                                this.classList.add('active');
-                                // Cambiar imagen principal
-                                mainImg.src = this.getAttribute('data-img');
+                <t t-jquery="body" t-operation="append">
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            var thumbs = document.querySelectorAll('.product-thumb');
+                            var mainImg = document.getElementById('main-product-img');
+                            thumbs.forEach(function(thumb) {
+                                thumb.addEventListener('click', function() {
+                                    // Quitar clase activa de todos
+                                    thumbs.forEach(function(t) { t.classList.remove('active'); });
+                                    // Poner clase activa a la seleccionada
+                                    this.classList.add('active');
+                                    // Cambiar imagen principal
+                                    mainImg.src = this.getAttribute('data-img');
+                                });
                             });
                         });
-                    });
-                </script>
-                <style>
-                    .product-thumb.active {
-                        border: 2px solid #4285f4;
-                    }
-                </style>
-            </t>
+                    </script>
+                    <style>
+                        .product-thumb.thumb-mini {
+                            width: 60px;
+                            height: 60px;
+                            object-fit: cover;
+                            border-radius: 6px;
+                        }
+                        .main-img-large {
+                            max-width: 100%;
+                            max-height: 350px;
+                            border-radius: 8px;
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                        }
+                        .product-thumb.active {
+                            border: 2px solid #4285f4;
+                        }
+                    </style>
+                </t>
 
         </xpath>
     </template>
