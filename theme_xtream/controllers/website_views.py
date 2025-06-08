@@ -41,7 +41,10 @@ class OffersController(http.Controller):
         Product = request.env['product.template'].sudo()
         products = Product.search(domain)
         discounted_products = products.filtered(lambda p: p.list_price > (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price))
-
+        product_tags = self.env['product.tag'].search([
+            ('active', '=', True),
+            ('id', 'in', discounted_products.mapped('product_tag_ids').ids)
+        ])
         # Filtro de precio en Python (sobre discounted_products)
         if min_price:
             try:
@@ -165,6 +168,8 @@ class OffersController(http.Controller):
                     pass
             if prods_with_discount:
                 tags_with_discount.append(tag)
+        
+
 
         return request.render('theme_xtream.offers_template', {
             'discounted_products': discounted_products,
@@ -180,4 +185,5 @@ class OffersController(http.Controller):
             'brands_with_count': brands_with_count,
             'min_price': min_price,
             'max_price': max_price,
+            'product_tags': product_tags,
         })
