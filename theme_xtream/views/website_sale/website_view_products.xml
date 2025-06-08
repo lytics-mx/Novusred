@@ -91,37 +91,24 @@
                                 Modelo: <t t-esc="product.default_code"/>
                             </div>
                             <!-- Cantidad -->
-                            <div class="my-2">
-                                Cantidad:
-                                <input id="product_qty_input" name="add_qty" type="number" min="1" t-att-max="product.qty_available" value="1" style="width:60px; text-align:center;"/>
-                                (<t t-esc="product.qty_available"/> disponibles)
-                            </div>
 
+
+                            <!-- ...existing code... -->
                             <div class="mt-3">
-                                <form t-att-action="'/shop/cart/update'">
+                                <form t-att-action="'/shop/cart/update'" method="post">
                                     <input type="hidden" name="product_id" t-att-value="product.id"/>
+                                    <input type="hidden" name="add_qty" value="1"/>
                                     <button type="submit" class="btn btn-primary btn-block mb-2">Agregar al carrito</button>
                                 </form>
-                                <form t-att-action="'/shop/checkout'">
+                                <form t-att-action="'/shop/checkout'" method="post">
                                     <input type="hidden" name="product_id" t-att-value="product.id"/>
+                                    <input type="hidden" name="add_qty" value="1"/>
                                     <button type="submit" class="btn btn-outline-primary btn-block">Comprar</button>
                                 </form>
                             </div>
+                            <!-- ...existing code... -->
                         </div>
-                        <script>
-                            // Sincroniza el input de cantidad con los formularios
-                            document.addEventListener('DOMContentLoaded', function() {
-                                var qtyInput = document.getElementById('product_qty_input');
-                                var addQty = document.getElementById('add_qty_hidden');
-                                var buyQty = document.getElementById('buy_qty_hidden');
-                                if(qtyInput &amp;&amp; addQty &amp;&amp; buyQty){
-                                    qtyInput.addEventListener('input', function() {
-                                        addQty.value = this.value;
-                                        buyQty.value = this.value;
-                                    });
-                                }
-                            });
-                        </script>
+
                     </div>
                 </div>
 
