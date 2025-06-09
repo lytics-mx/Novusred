@@ -314,10 +314,10 @@
         <field name="model">website.self.invoice.web</field>
         <field name="type">form</field>
         <field name="arch" type="xml">
-            <header>
-                <field name="state" readonly="1" widget="statusbar"/>
-            </header>
             <form string="Datos de la Solicitud">
+                <header>
+                    <field name="state" readonly="1" widget="statusbar"/>
+                </header>
                 <sheet>
                     <group col="4">
                         <field name="create_date" required="1"/>
@@ -348,88 +348,7 @@
         </field>
     </record>
 
-    <!-- Herencia Templates Website Sale -->
-    <!--
-      <template id="checkout_portal" inherit_id="website_sale.address">
-        <xpath expr="//form/div[1]" position="replace">
-          <div t-attf-class="form-group #{error.get('name') and 'has-error' or ''} col-md-8 div_name">
-               <label class="control-label" for="name">Nombre</label>
-               <input type="text" name="name" class="form-control" t-att-value="'name' in checkout and checkout['name']"/>
-           </div>
-           <div t-attf-class="form-group #{error.get('vat') and 'has-error' or ''} col-md-4 div_rfct">
-                <label class="control-label" for="vat">RFC</label>
-                <input type="text" name="vat" required="" class="form-control" t-att-value="'vat' in checkout and checkout['vat']"/>
-           </div>
-        </xpath>  
-        <xpath expr="//form/div" position="inside">
-           <div class="clearfix"/>
-           <div t-attf-class="form-group #{error.get('uso_cfdi') and 'has-error' or ''} col-md-6 div_uso_cfdi">
-                <label class="control-label" for="uso_cfdi">En caso de factura, indicar el uso del CFDI</label>
-			    <select id="uso_cfdi" name="uso_cfdi" class="form-control">
-                        <option value='G01' t-att-selected="request.params.get('uso_del_cfdi', '') == 'G01'">Adquisición de mercancías</option>
-						<option value='G02' t-att-selected="request.params.get('uso_del_cfdi', '') == 'G02'">Devoluciones, descuentos o bonificaciones</option>
-						<option value='G03' t-att-selected="request.params.get('uso_del_cfdi', '') == 'G03'">Gastos en general</option>
-						<option value='I01' t-att-selected="request.params.get('uso_del_cfdi', '') == 'I01'">Construcciones</option>
-						<option value='I02' t-att-selected="request.params.get('uso_del_cfdi', '') == 'I02'">Mobiliario y equipo de oficina por inversiones</option>
-						<option value='I03' t-att-selected="request.params.get('uso_del_cfdi', '') == 'I03'">Equipo de transporte</option>
-						<option value='I04' t-att-selected="request.params.get('uso_del_cfdi', '') == 'I04'">Equipo de cómputo y accesorios</option>
-						<option value='I05' t-att-selected="request.params.get('uso_del_cfdi', '') == 'I05'">Dados, troqueles, moldes, matrices y herramental</option>
-						<option value='I06' t-att-selected="request.params.get('uso_del_cfdi', '') == 'I06'">Comunicacion telefónica</option>
-						<option value='I07' t-att-selected="request.params.get('uso_del_cfdi', '') == 'I07'">Comunicación Satelital</option>
-						<option value='I08' t-att-selected="request.params.get('uso_del_cfdi', '') == 'I08'">Otra maquinaria y equipo</option>
-						<option value='D01' t-att-selected="request.params.get('uso_del_cfdi', '') == 'D01'">Honorarios médicos, dentales y gastos hospitalarios</option>
-						<option value='D02' t-att-selected="request.params.get('uso_del_cfdi', '') == 'D02'">Gastos médicos por incapacidad o discapacidad</option>
-						<option value='D03' t-att-selected="request.params.get('uso_del_cfdi', '') == 'D03'">Gastos funerales</option>
-						<option value='D04' t-att-selected="request.params.get('uso_del_cfdi', '') == 'D04'">Donativos</option>
-						<option value='D07' t-att-selected="request.params.get('uso_del_cfdi', '') == 'D07'">Primas por seguros de gastos médicos</option>
-						<option value='D08' t-att-selected="request.params.get('uso_del_cfdi', '') == 'D08'">Gastos de transportación escolar obligatoria</option>
-						<option value='D10' t-att-selected="request.params.get('uso_del_cfdi', '') == 'D10'">Pagos por servicios educativos (colegiaturas)</option>
-						<option value='S01' t-att-selected="request.params.get('uso_del_cfdi', '') == 'S01'">Sin efectos fiscales</option>
-                </select>
-            </div> 
-        </xpath>
-      </template>
-      -->
-    <!-- Herencia Templates Website Sale -->
-    <!--
-      <template id="nif_details" inherit_id="portal.portal_my_details">
-        <xpath expr="//div[@class='row']/div[3]" position="after">
-             <div t-attf-class="form-group #{error.get('vat') and 'has-error' or ''} col-lg-6">
-                 <label class="control-label" for="nif">RFC</label>
-                 <input type="text" name="vat" class="form-control" t-att-value="vat or partner.vat" />
-             </div>
-        </xpath>
-        <xpath expr="//div[@class='row']/div[8]" position="replace">
-        </xpath>
-           <xpath expr="//div[@class='row']/div[12]" position="after">
-           <div class="clearfix"/> 
-           <div t-attf-class="form-group #{error.get('uso_cfdi') and 'has-error' or ''} col-md-6 div_uso_cfdi">
-                <label class="control-label" for="uso_cfdi">En caso de factura, indicar el uso del CFDI</label>
-                <select id="uso_cfdi" name="uso_cfdi" class="form-control" >
-                        <option value='G01' t-att-selected="'G01' == partner.uso_cfdi">Adquisición de mercancías</option>
-                        <option value='G02' t-att-selected="'G02' == partner.uso_cfdi">Devoluciones, descuentos o bonificaciones</option>
-                        <option value='G03' t-att-selected="'G03' == partner.uso_cfdi">Gastos en general</option>
-                        <option value='I01' t-att-selected="'I01' == partner.uso_cfdi">Construcciones</option>
-                        <option value='I02' t-att-selected="'I02' == partner.uso_cfdi">Mobiliario y equipo de oficina por inversiones</option>
-                        <option value='I03' t-att-selected="'I03' == partner.uso_cfdi">Equipo de transporte</option>
-                        <option value='I04' t-att-selected="'I04' == partner.uso_cfdi">Equipo de cómputo y accesorios</option>
-                        <option value='I05' t-att-selected="'I05' == partner.uso_cfdi">Dados, troqueles, moldes, matrices y herramental</option>
-                        <option value='I06' t-att-selected="'I06' == partner.uso_cfdi">Comunicacion telefónica</option>
-                        <option value='I07' t-att-selected="'I07' == partner.uso_cfdi">Comunicación Satelital</option>
-                        <option value='I08' t-att-selected="'I08' == partner.uso_cfdi">Otra maquinaria y equipo</option>
-                        <option value='D01' t-att-selected="'D01' == partner.uso_cfdi">Honorarios médicos, dentales y gastos hospitalarios</option>
-                        <option value='D02' t-att-selected="'D02' == partner.uso_cfdi">Gastos médicos por incapacidad o discapacidad</option>
-                        <option value='D03' t-att-selected="'D03' == partner.uso_cfdi">Gastos funerales</option>
-                        <option value='D04' t-att-selected="'D04' == partner.uso_cfdi">Donativos</option>
-                        <option value='D07' t-att-selected="'D07' == partner.uso_cfdi">Primas por seguros de gastos médicos</option>
-                        <option value='D08' t-att-selected="'D08' == partner.uso_cfdi">Gastos de transportación escolar obligatoria</option>
-                        <option value='D10' t-att-selected="'D10' == partner.uso_cfdi">Pagos por servicios educativos (colegiaturas)</option>
-                        <option value='S01' t-att-selected="'S01' == partner.uso_cfdi">Sin efectos fiscales</option>
-                </select>
-            </div> 
-        </xpath>
-      </template>
-        -->
+   
     <record id="website_self_invoice_web_tree" model="ir.ui.view">
         <field name="name">website_self_invoice_web.tree</field>
         <field name="model">website.self.invoice.web</field>
