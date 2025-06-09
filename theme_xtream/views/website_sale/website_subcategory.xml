@@ -377,8 +377,8 @@
                         <!-- Área de Productos -->
                             <div class="products-list">
                                 <t t-foreach="period_products" t-as="product_data" t-key="product_data['product'].id">
-                                    <div class="product-list-item p-3" style="border: 1px solid #dee2e6; border-radius: 8px; background: #fff; margin-bottom: 0; min-height: 120px;">
-                                        <div class="row align-items-start">
+                                    <div class="product-list-item p-3 mb-3" style="border: 1px solid #dee2e6; border-radius: 8px; background: #fff; min-height: 120px; display: flex; align-items: stretch;">
+                                        <div class="row w-100 g-0 align-items-stretch flex-nowrap">
                                             <!-- Imagen del producto -->
                                             <div class="col-3 d-flex align-items-center justify-content-center" style="min-height: 120px;">
                                                 <a t-att-href="'/shop/product/%s' % product_data['product'].id">
@@ -387,7 +387,7 @@
                                                 </a>                                           
                                             </div>
                                             <!-- Detalles del producto -->
-                                            <div class="col-9">
+                                            <div class="col-9 d-flex flex-column justify-content-between">
                                                 <div class="card-body mobile-card-body p-0 d-flex flex-column h-100">
                                                     <t t-set="product" t-value="product_data['product']"/>
                                                     <!-- Badge solo si hay tag -->
@@ -400,55 +400,53 @@
                                                     </t>
                                                     <!-- Nombre del producto -->
                                                     <div>
-                                                        <h6 class="card-title mb-2" style="font-size: 16px; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        <h6 class="card-title mb-1" style="font-size: 16px; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                                             <t t-esc="product.name" />
                                                         </h6>
                                                     </div>
                                                     <!-- Marca debajo del nombre, solo si existe -->
                                                     <t t-if="product.brand_type_id">
-                                                        <div class="mb-2">
+                                                        <div class="mb-1">
                                                             <span class="text-muted small" style="font-size: 13px;">
                                                                 Por <t t-esc="product.brand_type_id.name"/>
                                                             </span>
                                                         </div>
                                                     </t>
                                                     <!-- Precios y descuentos -->
-                                                    <t t-if="product.discounted_price &lt; product.list_price">
-                                                        <div>
-                                                            <span class="text-muted" style="font-size: 18px;">
+                                                    <div class="mb-1">
+                                                        <t t-if="product.discounted_price &lt; product.list_price">
+                                                            <span class="text-muted" style="font-size: 16px;">
                                                                 $<t t-esc="'{:,}'.format(int(product.list_price))" />
                                                             </span>
-                                                        </div>
-                                                        <div class="d-flex align-items-center" style="gap: 8px;">
-                                                            <span class="text-dark fw-bold" style="font-size: 25px;">
-                                                                $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
-                                                            </span>
-                                                            <t t-if="product.discount_percentage">
-                                                                <span class="text-danger" style="font-size: 18px;">
-                                                                    <t t-esc="int(product.discount_percentage)" />% OFF
+                                                            <div class="d-flex align-items-center" style="gap: 8px;">
+                                                                <span class="text-dark fw-bold" style="font-size: 22px;">
+                                                                    $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
                                                                 </span>
-                                                            </t>
-                                                            <t t-elif="product.fixed_discount">
-                                                                <span class="text-danger" style="font-size: 18px;">
-                                                                    -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
-                                                                </span>
-                                                            </t>
-                                                        </div>
-                                                        <div>
-                                                            <span class="text-muted">
+                                                                <t t-if="product.discount_percentage">
+                                                                    <span class="text-danger" style="font-size: 15px;">
+                                                                        <t t-esc="int(product.discount_percentage)" />% OFF
+                                                                    </span>
+                                                                </t>
+                                                                <t t-elif="product.fixed_discount">
+                                                                    <span class="text-danger" style="font-size: 15px;">
+                                                                        -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
+                                                                    </span>
+                                                                </t>
+                                                            </div>
+                                                            <span class="text-muted" style="font-size: 13px;">
                                                                 $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" /> descuento
                                                             </span>
-                                                        </div>
-                                                    </t>
-                                                    <t t-else="">
-                                                        <span class="fw-bold d-block" style="font-size: 25px;">
-                                                            $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                                        </span>
-                                                    </t>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span class="fw-bold d-block" style="font-size: 22px;">
+                                                                $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                            </span>
+                                                        </t>
+                                                    </div>
                                                     <!-- Envío gratis solo si aplica -->
                                                     <t t-if="product.free_shipping">
                                                         <div>
-                                                            <span class="text-orange" style="color: #FF5207; font-weight: bold; font-style: italic;">
+                                                            <span class="text-orange" style="color: #FF5207; font-weight: bold; font-style: italic; font-size: 13px;">
                                                                 Envío gratis
                                                             </span>
                                                         </div>
@@ -459,6 +457,40 @@
                                     </div>
                                 </t>
                             </div>
+                            <style>
+                            .products-list .product-list-item {
+                                min-height: unset;
+                                margin-bottom: 16px;
+                                transition: box-shadow 0.2s;
+                            }
+                            .products-list .product-list-item:hover {
+                                box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+                            }
+                            .products-list .card-body > *:empty {
+                                display: none !important;
+                            }
+                            .products-list .mobile-badge-container {
+                                min-height: 0;
+                            }
+                            @media (max-width: 767.98px) {
+                                .products-list .product-list-item {
+                                    flex-direction: column !important;
+                                    padding: 10px !important;
+                                }
+                                .products-list .row {
+                                    flex-direction: column !important;
+                                }
+                                .products-list .col-3,
+                                .products-list .col-9 {
+                                    width: 100% !important;
+                                    max-width: 100% !important;
+                                    flex: unset !important;
+                                }
+                                .products-list .card-body {
+                                    padding: 0 !important;
+                                }
+                            }
+                            </style>
                             <!-- PAGINACIÓN -->
                             <!-- ...existing code... -->
                             <!-- PAGINACIÓN -->
