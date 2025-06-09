@@ -6,7 +6,7 @@ from werkzeug.utils import redirect
 import logging
 _logger = logging.getLogger(__name__)
 
-class ShopController(http.Controller):
+class ShopController(WebsiteSale):
 
     @http.route([
         '/view/<model("product.template"):product>',
@@ -50,9 +50,8 @@ class ShopController(http.Controller):
         return request.render("theme_xtream.website_view_product_xtream", context)
     
     @http.route('/shop/cart', type='http', auth="public", methods=['POST'], website=True, csrf=True)
-    def cart_update(self, product_id, add_qty=1, **kwargs):
-        # Llamar al método original para agregar producto al carrito
-        res = super().cart_update(product_id=product_id, add_qty=add_qty, **kwargs)
-        # Redirigir a la página del producto
-        product = request.env['product.template'].browse(int(product_id))
-        return redirect('/view/%s' % product.id)
+    def cart_update(self, product_id, add_qty=1, **post):
+        # Usar el método original de WebsiteSale para agregar producto al carrito
+        response = super(ShopController, self).cart_update(product_id=product_id, add_qty=add_qty, **post)
+        # Redirigir a la página del carrito después de agregar el producto
+        return redirect('/shop/cart')
