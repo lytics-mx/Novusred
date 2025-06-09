@@ -14,8 +14,7 @@ Permite al Cliente poder generar su Factura mediante la Parte Web.
 
     """,
 
-    'author': "IT Admin",
-    'website': "www.itadmin.com.mx",
+    'author': "Lytics",
     'category': 'Facturacion Electronica',
     'version': '16.02',
     'depends': [
