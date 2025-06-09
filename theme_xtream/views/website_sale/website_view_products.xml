@@ -94,16 +94,24 @@
 
                             <div class="mt-3">
                                 <form t-att-action="'/shop/cart'" method="post">
+                                    <t t-call="web.csrf_token"/> <!-- 🔐 Necesario para evitar error 400 -->
                                     <input type="hidden" name="product_id" t-att-value="product.id"/>
                                     <input type="hidden" name="add_qty" value="1"/>
-                                    <button type="submit" class="btn btn-primary btn-block mb-2" t-att-data-action="add_to_cart_action">Agregar al carrito</button>
+                                    <button type="submit" class="btn btn-primary btn-block mb-2" t-att-data-action="add_to_cart_action">
+                                        Agregar al carrito
+                                    </button>
                                 </form>
+
                                 <form t-att-action="'/shop/checkout'" method="post">
+                                    <t t-call="web.csrf_token"/> <!-- 🔐 Necesario aquí también -->
                                     <input type="hidden" name="product_id" t-att-value="product.id"/>
                                     <input type="hidden" name="add_qty" value="1"/>
-                                    <button type="submit" class="btn btn-outline-primary btn-block">Comprar</button>
+                                    <button type="submit" class="btn btn-outline-primary btn-block">
+                                        Comprar
+                                    </button>
                                 </form>
                             </div>
+
 
                     </div>
                 </div>
