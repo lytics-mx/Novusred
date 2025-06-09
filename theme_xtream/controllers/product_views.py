@@ -1,10 +1,10 @@
 from odoo.addons.website.controllers.main import Website
 from odoo import http
 from odoo.http import request
+from odoo.addons.website_sale.controllers.main import WebsiteSale
+from odoo.http import redirect
 import logging
 _logger = logging.getLogger(__name__)
-from odoo.addons.website_sale.controllers.main import WebsiteSale
-
 
 class ShopController(http.Controller):
 
@@ -53,5 +53,6 @@ class ShopController(http.Controller):
     def cart_update(self, product_id, add_qty=1, **kwargs):
         # Llamar al método original para agregar producto al carrito
         res = super().cart_update(product_id=product_id, add_qty=add_qty, **kwargs)
-        # Redirigir a la página de carrito o producto
-        return res
+        # Redirigir a la página del producto
+        product = request.env['product.template'].browse(int(product_id))
+        return redirect('/view/%s' % product.id)
