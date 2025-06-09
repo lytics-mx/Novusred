@@ -3,6 +3,7 @@ from odoo import http
 from odoo.http import request
 import logging
 _logger = logging.getLogger(__name__)
+from odoo.addons.website_sale.controllers.main import WebsiteSale
 
 
 class ShopController(http.Controller):
@@ -47,3 +48,10 @@ class ShopController(http.Controller):
             'fixed_discount': fixed_discount,
         }
         return request.render("theme_xtream.website_view_product_xtream", context)
+    
+    @http.route('/shop/cart', type='http', auth="public", methods=['POST'], website=True, csrf=True)
+    def cart_update(self, product_id, add_qty=1, **kwargs):
+        # Llamar al método original para agregar producto al carrito
+        res = super().cart_update(product_id=product_id, add_qty=add_qty, **kwargs)
+        # Redirigir a la página de carrito o producto
+        return res
