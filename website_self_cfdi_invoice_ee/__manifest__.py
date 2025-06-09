@@ -20,7 +20,7 @@ Permite al Cliente poder generar su Factura mediante la Parte Web.
     'depends': [
         'website_sale_stock',
         'website_crm',
-        'l10n_mx_edi_40',
+        'l10n_mx_edi',
         'sale_management',
         'point_of_sale',
     ],
