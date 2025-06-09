@@ -10,8 +10,9 @@ class ShopController(http.Controller):
     @http.route([
         '/view/<model("product.template"):product>',
         '/view/product/<model("product.template"):product>'
-    ], type='http', auth="public", website=True)
+    ], type='http', auth="public", website=True, csrf=False)  # <--- csrf desactivado
     def product_page(self, product, **kwargs):
+        # ...existing code...
         if not product:
             return request.not_found()
         _logger.info("Producto cargado: %s", product)
