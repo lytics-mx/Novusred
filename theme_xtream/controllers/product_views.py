@@ -2,7 +2,7 @@ from odoo.addons.website.controllers.main import Website
 from odoo import http
 from odoo.http import request
 from odoo.addons.website_sale.controllers.main import WebsiteSale
-from odoo.http import redirect
+from werkzeug.utils import redirect
 import logging
 _logger = logging.getLogger(__name__)
 
