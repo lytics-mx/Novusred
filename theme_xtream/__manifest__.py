@@ -72,6 +72,7 @@
 
 
 
+        'views/csrf_token.xml',
 
         'views/website_home.xml',
         'views/nav_bar.xml',
