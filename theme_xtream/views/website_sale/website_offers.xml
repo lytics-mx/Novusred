@@ -57,37 +57,40 @@
                     .tags-container {
                         overflow: hidden;
                     }
-                    
+
                     .tags-wrapper {
                         display: flex;
                         align-items: center;
                         justify-content: flex-end;
                         gap: 20px;
-                        transition: transform 0.3s ease;
+                        transition: none; /* Quitar animación */
                     }
-                    
+
                     .tag-item {
                         min-width: 80px;
                         cursor: pointer;
-                        transition: all 0.2s ease;
+                        transition: none; /* Quitar animación */
                         flex-shrink: 0;
                         position: relative;
                         padding-bottom: 5px;
                     }
-                    
-                    /* Estilo específico para tags clickeables */
-                    <!-- .clickable-tag:hover {
-                        transform: translateY(-2px);
+
+                    /* Eliminar efectos de hover y active */
+                    .tag-item:hover .tag-underline,
+                    .tag-item:active .tag-underline {
+                        width: 0;
+                        opacity: 0;
                     }
-                    
-                    .clickable-tag:active {
-                        transform: translateY(0);
+
+                    .tag-item:hover .tag-icon,
+                    .tag-item:active .tag-icon {
+                        transform: none;
                     }
-                    
+
                     .tag-icon-container {
                         margin-bottom: 8px;
-                    } -->
-                    
+                    }
+
                     .tag-icon {
                         height: 60px;
                         width: 60px;
@@ -95,9 +98,9 @@
                         border: none;
                         background: none;
                         box-shadow: none;
-                        transition: transform 0.2s ease;
+                        transition: none;
                     }
-                    
+
                     .tag-name {
                         font-size: 14px;
                         color: #222;
@@ -105,7 +108,7 @@
                         line-height: 1.2;
                         margin-bottom: 5px;
                     }
-                    
+
                     .tag-underline {
                         height: 2px;
                         background-color: #007bff;
@@ -114,40 +117,34 @@
                         bottom: 0;
                         left: 50%;
                         transform: translateX(-50%);
-                        transition: width 0.3s ease;
+                        transition: none;
                         opacity: 0;
                     }
-                    
-                    .tag-item:hover .tag-underline {
-                        width: 100%;
-                        opacity: 1;
-                    }
-                    
-                    .tag-item:hover .tag-icon {
-                        transform: scale(1.05);
-                    }
-                    
+
                     /* Responsive - Tablets */
                     @media (max-width: 991.98px) {
                         .tags-wrapper {
                             gap: 15px;
                             justify-content: flex-start;
+                            transition: none;
                         }
-                        
+
                         .tag-item {
                             min-width: 70px;
+                            transition: none;
                         }
-                        
+
                         .tag-icon {
                             height: 50px;
                             width: 50px;
+                            transition: none;
                         }
-                        
+
                         .tag-name {
                             font-size: 12px;
                         }
                     }
-                    
+
                     /* Responsive - Móviles */
                     @media (max-width: 767.98px) {
                         .tags-container {
@@ -156,25 +153,28 @@
                             scrollbar-width: none;
                             -ms-overflow-style: none;
                         }
-                        
+
                         .tags-container::-webkit-scrollbar {
                             display: none;
                         }
-                        
+
                         .tags-wrapper {
                             gap: 12px;
                             padding-bottom: 5px;
+                            transition: none;
                         }
-                        
+
                         .tag-item {
                             min-width: 60px;
+                            transition: none;
                         }
-                        
+
                         .tag-icon {
                             height: 40px;
                             width: 40px;
+                            transition: none;
                         }
-                        
+
                         .tag-name {
                             font-size: 11px;
                             white-space: nowrap;
@@ -182,9 +182,10 @@
                             text-overflow: ellipsis;
                             max-width: 60px;
                         }
-                    
+
                         .tag-underline {
                             height: 2px;
+                            transition: none;
                         }
                     }
                     </style>
@@ -193,37 +194,17 @@
                     <script>
                     document.addEventListener('DOMContentLoaded', function() {
                         const tagItems = document.querySelectorAll('.tag-item');
-                        
                         tagItems.forEach(function(item) {
-                            // Manejo de clicks en tags
+                            // Manejo de clicks en tags (esto sí se queda)
                             item.addEventListener('click', function() {
                                 const tagId = this.getAttribute('data-tag-id');
-                                
-                                // Construir la URL con el filtro de tag
                                 let params = new URLSearchParams();
                                 params.append('tag_id', tagId);
-                                
-                                // Mantener el filtro de envío gratis si está activo
                                 const currentUrl = new URL(window.location);
                                 if (currentUrl.searchParams.get('free_shipping') === 'true') {
                                     params.append('free_shipping', 'true');
                                 }
-                                
-                                // Redirigir a la nueva URL
                                 window.location.href = '/offers?' + params.toString();
-                            });
-                            
-                            // Manejo de eventos touch para móvil
-                            item.addEventListener('touchstart', function() {
-                                this.querySelector('.tag-underline').style.width = '100%';
-                                this.querySelector('.tag-underline').style.opacity = '1';
-                            });
-                            
-                            item.addEventListener('touchend', function() {
-                                setTimeout(() => {
-                                    this.querySelector('.tag-underline').style.width = '0';
-                                    this.querySelector('.tag-underline').style.opacity = '0';
-                                }, 300);
                             });
                         });
                     });
