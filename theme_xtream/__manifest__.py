@@ -69,8 +69,9 @@
         'views/website_sale/website_category.xml',
         'views/website_sale/website_subcategory.xml',
         'views/website_sale/website_brand.xml',
-        'views/website_sale/website_view_products.xml',
+        # 'views/website_sale/website_view_products.xml',
         'views/website_sale/website_offers.xml',
+        'views/website_sale/website_home.xml',
 
 
 # Búsqueda de productos en la web (incluye marcas y categorías)
@@ -80,9 +81,8 @@
 
 
 
-        'views/csrf_token.xml',
+        # 'views/csrf_token.xml',
 
-        'views/website_home.xml',
         # 'views/report_excel_views.xml',
 
         # 'views/marca_web.xml',
