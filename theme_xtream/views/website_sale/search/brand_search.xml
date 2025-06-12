@@ -100,7 +100,10 @@
                             <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px; margin-bottom: 0;">MEJORES OFERTAS</h2>
                         </div>
                         <div class="o_wsale_products_grid_table_wrapper">
-                            <t t-set="discounted_products" t-value="request.env['product.template'].sudo().search([('brand_type_id', '=', brand_type.id), ('website_published', '=', True)]) or []" />
+                            <t t-set="discounted_products" t-value="request.env['product.template'].sudo().search([('brand_type_id', '=', brand_type.id), ('website_published', '=', True)]) or []"/>
+                            <t t-set="products_with_tags" t-value="[p for p in discounted_products if p.product_tag_ids]"/>
+                            <t t-set="products_without_tags" t-value="[p for p in discounted_products if not p.product_tag_ids]"/>
+                            
                             <!-- Desktop View -->
                             <div class="d-none d-md-block">
                                 <div class="row g-3" style="display: flex; flex-wrap: wrap;">
