@@ -80,6 +80,7 @@
         'views/website_sale/search/nav_bar.xml',
 
 
+        'views/shop/website_cart.xml',
 
         'views/csrf_token.xml',
 
