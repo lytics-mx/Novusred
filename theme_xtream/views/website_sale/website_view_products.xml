@@ -106,13 +106,33 @@
                                     </form>
                                 </div>
 
-                                <form t-att-action="'/shop/checkout?try_skip_step=true'" method="get">
-                                    <t t-call="theme_xtream.csrf_token"/>
+                                <form id="buy-now-form" action="/shop/cart/update" method="POST">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" t-nocache="The csrf token must always be up to date."/>
                                     <input type="hidden" name="product_id" t-att-value="product.product_variant_id.id"/>
-                                    <input type="hidden" name="add_qty" value="1"/>
-                                    <button type="submit" class="btn btn-outline-primary btn-block">Comprar</button>
+                                    <input type="number" name="add_qty" value="1" min="1" class="form-control text-center" style="width: 60px; display:inline-block;"/>
+                                    <button type="submit" class="btn btn-outline-primary btn-block" id="buy-now-btn">Comprar</button>
                                 </form>
-
+                                <script type="text/javascript">
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        var form = document.getElementById('buy-now-form');
+                                        if (form) {
+                                            form.addEventListener('submit', function(e) {
+                                                e.preventDefault();
+                                                var data = new FormData(form);
+                                                fetch(form.action, {
+                                                    method: 'POST',
+                                                    body: data,
+                                                    credentials: 'same-origin'
+                                                })
+                                                .then(response => {
+                                                    if (response.ok) {
+                                                        window.location.href = '/shop/checkout?try_skip_step=true';
+                                                    }
+                                                });
+                                            });
+                                        }
+                                    });
+                                </script>
                             </div>
                     </div>
                 </div>
