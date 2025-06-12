@@ -5,6 +5,7 @@
         <div id="wrap" class="oe_website_sale">
           <div class="container">
             <div class="row">
+              <!-- Lado izquierdo: productos -->
               <div class="col-lg-8">
                 <h2 class="mb-4" style="color:#00a650;">Vista previa de la orden</h2>
                 <t t-set="order" t-value="website_sale_order"/>
@@ -40,12 +41,21 @@
                         </form>
                       </div>
                       <div class="col-2 text-end">
-                        <span class="fw-bold">$ <t t-esc="line.price_total"/></span>
+                        <span class="fw-bold">
+                          $ 
+                          <t t-if="line.product_id.discounted_price">
+                            <t t-esc="line.product_id.discounted_price * line.product_uom_qty"/>
+                          </t>
+                          <t t-else="">
+                            <t t-esc="line.product_id.list_price * line.product_uom_qty"/>
+                          </t>
+                        </span>
                       </div>
                     </div>
                   </t>
                 </t>
               </div>
+              <!-- Lado derecho: resumen -->
               <div class="col-lg-4">
                 <div class="card p-4">
                   <h4 class="mb-3">Resumen de la orden</h4>
@@ -53,26 +63,21 @@
                     <tr>
                       <td>Subtotal:</td>
                       <td class="text-end">
-                        <t t-esc="sum(line.product_id.standard_price * line.product_uom_qty for line in order.order_line)"/>
+                        <t t-set="subtotal" t-value="sum((line.product_id.discounted_price if line.product_id.discounted_price else line.product_id.list_price) * line.product_uom_qty for line in order.order_line)"/>
+                        <t t-esc="subtotal"/>
                       </td>
                     </tr>
                     <tr>
                       <td>IVA (16%):</td>
                       <td class="text-end">
-                        <t t-esc="order.amount_tax"/>
+                        <t t-set="iva" t-value="subtotal * 0.16"/>
+                        <t t-esc="iva"/>
                       </td>
                     </tr>
                     <tr>
                       <td><strong>Total:</strong></td>
                       <td class="text-end">
-                        <t t-foreach="order.order_line" t-as="line">
-                          <t t-if="line.product_id.product_tag_ids">
-                            <t t-esc="line.product_id.discounted_price * line.product_uom_qty"/>
-                          </t>
-                          <t t-else="">
-                            <t t-esc="line.product_id.list_price * line.product_uom_qty"/>
-                          </t>
-                        </t>
+                        <t t-esc="subtotal + iva"/>
                       </td>
                     </tr>
                   </table>
