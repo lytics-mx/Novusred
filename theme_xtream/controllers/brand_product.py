@@ -24,8 +24,13 @@ class WebsiteBrand(http.Controller):
 
         products = request.env['product.template'].sudo().search(domain)
 
+        # Ordenar: primero los productos con etiquetas, luego los demás
+        products_with_tags = products.filtered(lambda p: p.product_tag_ids)
+        products_without_tags = products.filtered(lambda p: not p.product_tag_ids)
+        ordered_products = products_with_tags + products_without_tags
+
         # Si no hay productos publicados, redirige a /brand
-        if not products:
+        if not ordered_products:
             return request.redirect('/brand')
 
         # Categorías principales de los productos
@@ -43,11 +48,10 @@ class WebsiteBrand(http.Controller):
                 ]) > 0
             )
             if valid_children:
-                # No modificar cat.child_id, solo pasar los hijos válidos al template
                 valid_categories.append({
                     'cat': cat,
                     'valid_children': valid_children,
-                })
+                })    
 
         # Obtener la imagen de banner del campo banner_image de la primera categoría (si existe)
         banner_image = valid_categories[0]['cat'].banner_image if valid_categories and hasattr(valid_categories[0]['cat'], 'banner_image') else False
@@ -57,6 +61,7 @@ class WebsiteBrand(http.Controller):
             'products': products,
             'categories': valid_categories,  # Ahora es una lista de dicts
             'banner_image': banner_image,
+            
         })
 
     @http.route('/brand_search_redirect', type='http', auth='public', website=True)
