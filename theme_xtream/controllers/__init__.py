@@ -20,11 +20,11 @@
 #
 #############################################################################
 from . import theme_xtream
-from . import website_views
+from . import offers_views
 from . import historial_views
 from . import product_views
 # from . import brand_type
-from . import brand_product
+from . import brand_views
 from . import img_banner
-from . import category
+from . import category_views
 from . import search
