@@ -93,14 +93,10 @@
                             <!-- Cantidad -->
 
                             <div class="mt-3">
-                                <form id="add-to-cart-form" t-att-action="'/shop/cart'" method="post">
-                                    <t t-call="theme_xtream.csrf_token"/>
+                                <form action="/shop/cart/update" method="POST">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" t-nocache="The csrf token must always be up to date."/>
                                     <input type="hidden" name="product_id" t-att-value="product.id"/>
-                                    <div class="input-group mb-3" style="max-width: 160px;">
-                                        <button class="btn btn-outline-secondary" type="button" onclick="var qty = this.parentNode.querySelector('input[name=add_qty]'); qty.value = Math.max(1, parseInt(qty.value)-1);">-</button>
-                                        <input type="number" name="add_qty" value="1" min="1" class="form-control text-center" style="width: 60px;"/>
-                                        <button class="btn btn-outline-secondary" type="button" onclick="var qty = this.parentNode.querySelector('input[name=add_qty]'); qty.value = parseInt(qty.value)+1;">+</button>
-                                    </div>
+                                    <input type="number" name="add_qty" value="1" min="1" class="form-control text-center" style="width: 60px;"/>
                                     <button type="submit" class="btn btn-primary btn-block mb-2">Agregar al carrito</button>
                                 </form>
 
