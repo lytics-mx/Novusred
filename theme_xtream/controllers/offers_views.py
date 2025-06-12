@@ -43,7 +43,7 @@ class OffersController(http.Controller):
         discounted_products = products.filtered(lambda p: p.list_price > (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price))
         product_tags = request.env['product.tag'].search([
             ('is_active', '=', True),
-            ('id', 'in', discounted_products.mapped('product_tag_ids').ids)
+            ('visible_on_ecommerce', '=', True)
         ])
         all_offer_tags = request.env['product.tag'].search([
             ('is_active', '=', True),
