@@ -59,28 +59,28 @@
               <div class="col-lg-4">
                 <div class="card p-4">
                   <h4 class="mb-3">Resumen de la orden</h4>
-                    <table class="table">
+                  <table class="table">
                     <tr>
-                        <td>Subtotal:</td>
-                        <td class="text-end">
+                      <td>Subtotal:</td>
+                      <td class="text-end">
                         <t t-set="subtotal" t-value="sum((line.product_id.discounted_price if line.product_id.discounted_price else line.product_id.list_price) * line.product_uom_qty for line in order.order_line)"/>
                         <t t-esc="subtotal"/>
-                        </td>
+                      </td>
                     </tr>
                     <tr>
-                        <td>IVA (16% incluido):</td>
-                        <td class="text-end">
-                        <t t-set="iva" t-value="subtotal * 16 / 116"/>
+                      <td>IVA (16%):</td>
+                      <td class="text-end">
+                        <t t-set="iva" t-value="subtotal * 0.16"/>
                         <t t-esc="iva"/>
-                        </td>
+                      </td>
                     </tr>
                     <tr>
-                        <td><strong>Total:</strong></td>
-                        <td class="text-end">
-                        <t t-esc="subtotal"/>
-                        </td>
+                      <td><strong>Total:</strong></td>
+                      <td class="text-end">
+                        <t t-esc="subtotal + iva"/>
+                      </td>
                     </tr>
-                    </table>
+                  </table>
                   <a href="/shop/checkout" class="btn btn-primary btn-block">Finalizar compra</a>
                   <a href="/shop" class="btn btn-link btn-block mt-2">Continuar comprando</a>
                 </div>
