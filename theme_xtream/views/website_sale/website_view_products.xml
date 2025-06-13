@@ -57,31 +57,6 @@
                             </t>
                         </t>
                     </div>
-                    <!-- Cuadro adicional debajo de la galería de miniaturas -->
-                    <div class="mt-4 w-100" style="background:#f5f5f5; border:2px solid #bdbdbd; border-radius:12px; padding:14px 10px; text-align:center;">
-                        <div style="font-size:1.1em; font-weight:600; margin-bottom:6px;">
-                            Productos que podrían interesarte
-                        </div>
-                        <!-- Aquí puedes agregar productos sugeridos, por ejemplo: -->
-                        <t t-set="suggested_products" t-value="request.env['product.template'].sudo().search([('website_published','=',True),('id','!=',product.id)], limit=3)" />
-                        <div class="d-flex flex-column gap-2">
-                            <t t-foreach="suggested_products" t-as="sugg">
-                                <a t-att-href="'/shop/product/%s' % sugg.id" style="text-decoration:none;">
-                                    <div class="d-flex align-items-center gap-2" style="background:#fff; border-radius:8px; padding:6px 8px; border:1px solid #e0e0e0;">
-                                        <img t-att-src="'/web/image/product.template/%s/image_128' % sugg.id" style="width:40px; height:40px; object-fit:contain; border-radius:4px;"/>
-                                        <div style="text-align:left;">
-                                            <div style="font-size:13px; font-weight:500; color:#222; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:110px;">
-                                                <t t-esc="sugg.name"/>
-                                            </div>
-                                            <div style="font-size:12px; color:#888;">
-                                                $<t t-esc="'{:,}'.format(int(sugg.list_price or 0))"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </t>
-                        </div>
-                    </div>
                 </div>
                 <!-- Imagen principal al centro -->
                 <div class="col-12 col-md-6 text-center d-flex align-items-start justify-content-center" style="align-items: flex-start !important;">
@@ -89,7 +64,15 @@
                         t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
                         class="img-fluid main-img-large"
                         style="max-height:580px;cursor:pointer;"/>
+
+                    
+                    <hr style="border: 2px solid #333; margin: 20px 0;">        
                 </div>
+
+
+
+
+
                 <script type="text/javascript">
                     document.addEventListener('DOMContentLoaded', function() {
                         var mainImg = document.getElementById('main-product-img');
