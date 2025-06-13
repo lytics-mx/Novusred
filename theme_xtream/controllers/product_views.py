@@ -49,19 +49,18 @@ class ShopController(WebsiteSale):
         ])    
 
         # Calcular el contador de productos publicados y disponibles por cada marca en available_brands
-        brand_counts = {}
-        available_brands = request.env['brand.type'].sudo().search([])
-        # Obtener productos filtrados por website_published y qty_available > 0
-        brand_products = request.env['product.template'].sudo().search([
+        # Obtener la marca del producto actual
+        brand = getattr(product, 'brand_type_id', False)
+        brand_type_products_count = 0
+        brand_type_name = ""
+        if brand:
+            brand_type_name = brand.name
+            # Buscar productos publicados y disponibles de esa marca (brand.type.id)
+            brand_type_products_count = request.env['product.template'].sudo().search_count([
             ('website_published', '=', True),
-            ('qty_available', '>', 0)
-        ])
-        for brand in available_brands:
-            count = len(brand_products.filtered(lambda p: p.brand_type_id.id == brand.id))
-            brand_counts[brand.id] = count
-
-        # Calcular la cantidad de productos publicados y disponibles para la marca del producto actual
-        brand_type_products_count = brand_counts.get(product.brand_type_id.id, 0) if getattr(product, 'brand_type_id', False) else 0
+            ('qty_available', '>', 0),
+            ('brand_type_id', '=', brand.id)
+            ])
 
         context = {
             'product': product,
@@ -72,7 +71,10 @@ class ShopController(WebsiteSale):
             'fixed_discount': fixed_discount,
             'list_price': product.list_price,  # <-- Agrega esto
             'general_images': general_images,
-            'brand_type_products_count': brand_type_products_count,                
+            'brand_type_products_count': brand_type_products_count,
+            'brand_type_name': brand_type_name,
+            'brand' : brand,
+                 
         }
         return request.render("theme_xtream.website_view_product_xtream", context)
     
