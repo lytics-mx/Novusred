@@ -85,12 +85,12 @@
                             <t t-if="product.product_tag_ids and discounted_price != list_price">
                                 <div style="margin-bottom:8px;">
                                     <span style="text-decoration:line-through; color:#888; font-size:16px; margin-right:10px;">
-                                        $<t t-esc="'{:,}'.format(int(list_price))"/>
+                                        $<t t-esc="'{:,}'.format(int(list_price or 0))"/>
                                     </span>
                                     <span style="color:#222; font-size:38px; font-weight:700;">
-                                        $<t t-esc="'{:,}'.format(int(discounted_price))"/>
+                                        $<t t-esc="'{:,}'.format(int(discounted_price or 0))"/>
                                         <span style="font-size:18px; vertical-align:super;">
-                                            <t t-esc="'{:02d}'.format(int((discounted_price - int(discounted_price))*100))"/>
+                                            <t t-esc="'{:02d}'.format(int(((discounted_price or 0) - int(discounted_price or 0))*100))"/>
                                         </span>
                                     </span>
                                     <span style="color:#ff6600; font-size:1.2em; font-weight:600; margin-left:10px;">
@@ -101,16 +101,16 @@
                                 </div>
                                 <t t-if="fixed_discount">
                                     <div style="color:#222; font-size:1.1em; margin-bottom:4px;">
-                                        <t t-esc="int(fixed_discount)"/> de descuento
+                                        <t t-esc="int(fixed_discount or 0)"/> de descuento
                                     </div>
                                 </t>
                             </t>
                             <t t-else="">
                                 <div style="margin-bottom:8px;">
                                     <span style="color:#222; font-size:38px; font-weight:700;">
-                                        $<t t-esc="'{:,}'.format(int(list_price))"/>
+                                        $<t t-esc="'{:,}'.format(int(list_price or 0))"/>
                                         <span style="font-size:18px; vertical-align:super;">
-                                            <t t-esc="'{:02d}'.format(int((list_price - int(list_price))*100))"/>
+                                            <t t-esc="'{:02d}'.format(int(((list_price or 0) - int(list_price or 0))*100))"/>
                                         </span>
                                     </span>
                                 </div>

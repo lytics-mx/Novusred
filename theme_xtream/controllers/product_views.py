@@ -42,6 +42,7 @@ class ShopController(WebsiteSale):
         if list_price > discounted_price:
             fixed_discount = list_price - discounted_price
             discount_percentage = int(100 * fixed_discount / list_price)
+        
         context = {
             'product': product,
             'categories': categories,
