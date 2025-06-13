@@ -34,16 +34,14 @@ class ShopController(WebsiteSale):
         if hasattr(product, 'discounted_price') and product.discounted_price is not None:
             discounted_price = product.discounted_price
         elif hasattr(product, 'standard_price') and product.standard_price is not None and product.list_price > product.standard_price:
-            discounted_price = product.standard_price        
-        discount_percentage = 0
-        fixed_discount = 0
-        if hasattr(product, 'discounted_price'):
-            discounted_price = product.discounted_price
-        elif hasattr(product, 'standard_price') and product.list_price > product.standard_price:
             discounted_price = product.standard_price
+
+        fixed_discount = 0
+        discount_percentage = 0
         if product.list_price > discounted_price:
             fixed_discount = product.list_price - discounted_price
             discount_percentage = int(100 * fixed_discount / product.list_price)
+
 
         context = {
             'product': product,
@@ -52,6 +50,8 @@ class ShopController(WebsiteSale):
             'discounted_price': discounted_price,
             'discount_percentage': discount_percentage,
             'fixed_discount': fixed_discount,
+            'list_price': product.list_price,  
+                
         }
         return request.render("theme_xtream.website_view_product_xtream", context)
     
