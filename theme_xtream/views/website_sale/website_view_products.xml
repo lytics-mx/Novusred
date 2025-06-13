@@ -197,7 +197,7 @@
                             </div>
                             <!-- Métodos de pago -->
                             <div style="margin-bottom:12px;">
-                                <div style="color:#222; font-size:0.98em; margin-bottom:4px;">Métodos de pago:</div>
+                                <div style="color:#222; font-size:0.98em; margin-bottom:4px;">Puedes pagar con:</div>
                                 <t t-set="active_banner" t-value="request.env['banner.image.line'].sudo().search([('is_active_carousel', '=', True), ('name', '=', 'metodos')], limit=1)" />
                                 <t t-if="active_banner and active_banner.general_images">
                                     <div style="position: relative;">
@@ -261,6 +261,27 @@
                                 });
                             </script>
                         </div>
+                        
+                        <t t-if="product.brand_type_id and product.brand_type_id.active">
+                            <div style="border:1px solid #e0e0e0; border-radius:10px; padding:18px 18px 14px 18px; margin-bottom:24px; text-align:center; background:#fff;">
+                                <t t-if="product.brand_type_id.icon_image">
+                                    <img t-att-src="'/web/image/brand.type/' + str(product.brand_type_id.id) + '/icon_image'"
+                                        alt="Logo de la marca"
+                                        style="max-width:180px; max-height:70px; margin-bottom:12px;"/>
+                                </t>
+                                <div style="font-size:1.3em; font-weight:600; margin-bottom:2px;">
+                                    <t t-esc="product.brand_type_id.name"/>
+                                </div>
+                                <div style="font-size:1.1em; color:#222; margin-bottom:14px;">
+                                    <t t-esc="'Más de %s productos' % (product.brand_type_id.product_count or 0)"/>
+                                </div>
+                                <a t-att-href="'/subcategory?brand_id=%s' % product.brand_type_id.id"
+                                style="display:inline-block; background:#4285f4; color:#fff; font-weight:500; border-radius:6px; padding:10px 0; width:90%; max-width:260px; font-size:1.1em; text-decoration:none;">
+                                    Ir a la marca
+                                </a>
+                            </div>
+                        </t>
+
                     </div>
                 </div>
             </div> <!-- Cierre de la fila .row -->
