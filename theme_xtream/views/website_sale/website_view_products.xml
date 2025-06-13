@@ -284,7 +284,40 @@
                                 </a>
                             </div>
                         </t>
-
+                        <!-- Productos relacionados por etiqueta -->
+                        <t t-if="product.product_tag_ids">
+                            <t t-set="related_tag_products" t-value="request.env['product.template'].sudo().search([
+                                ('product_tag_ids', 'in', [tag.id for tag in product.product_tag_ids]),
+                                ('id', '!=', product.id),
+                                ('website_published', '=', True)
+                            ], limit=6)"/>
+                            <t t-if="related_tag_products">
+                                <div style="border:2px solid #bdbdbd; border-radius:16px; box-shadow:0 2px 8px rgba(0,0,0,0.04); padding:18px 18px 14px 18px; margin-bottom:24px; text-align:center; background:#f5f5f5; width:100%; box-sizing:border-box;">
+                                    <div style="font-size:1.3em; font-weight:600; margin-bottom:2px;">
+                                        Productos con la misma etiqueta
+                                    </div>
+                                    <div>
+                                        <t t-foreach="related_tag_products" t-as="rel_prod">
+                                            <div style="display:flex; align-items:center; margin-bottom:10px;">
+                                                <img t-att-src="'/web/image/product.template/' + str(rel_prod.id) + '/image_1920'"
+                                                    alt="Imagen"
+                                                    style="width:60px; height:60px; object-fit:cover; border-radius:6px; margin-right:10px;"/>
+                                                <div style="text-align:left;">
+                                                    <div style="font-weight:600; font-size:1em;">
+                                                        <a t-att-href="'/view/product/%s' % rel_prod.id" style="color:#222; text-decoration:none;">
+                                                            <t t-esc="rel_prod.name"/>
+                                                        </a>
+                                                    </div>
+                                                    <div style="font-size:0.95em; color:#888;">
+                                                        <t t-esc="rel_prod.product_tag_ids and rel_prod.product_tag_ids[0].name or ''"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+                        </t>
                     </div>
                 </div>
             </div> <!-- Cierre de la fila .row -->
