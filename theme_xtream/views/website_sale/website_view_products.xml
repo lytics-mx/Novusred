@@ -21,8 +21,8 @@
             <!-- ...resto del contenido (imagen, nombre, etc)... -->
             <div class="row">
                 <!-- Galería de miniaturas a la izquierda -->
-                <div class="col-2 d-none d-md-block">
-                    <div class="d-flex flex-column gap-2 align-items-center" id="product-thumbs">
+                <div class="col-2 d-none d-md-block align-items-start" style="display: flex; flex-direction: column;">
+                    <div class="d-flex flex-column gap-2 align-items-center" id="product-thumbs" style="align-items: flex-start;">
                         <!-- Siempre la imagen principal como primer miniatura -->
                         <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
                             class="img-thumbnail mb-2 product-thumb active thumb-mini"
@@ -41,7 +41,7 @@
                     </div>
                 </div>
                 <!-- Imagen principal al centro -->
-                <div class="col-12 col-md-6 text-center d-flex align-items-center justify-content-center">
+                <div class="col-12 col-md-6 text-center d-flex align-items-start justify-content-center" style="align-items: flex-start !important;">
                     <img id="main-product-img"
                         t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
                         class="img-fluid main-img-large"
@@ -70,17 +70,17 @@
                         });
                     });
                 </script>
+                        <!-- Línea horizontal igual que la imagen -->
+                        <hr style="margin: 32px 0 24px 0; border-top: 2px solid #bdbdbd; width:100%;" />
+                        <div style="font-size:1.6em; font-weight:600; margin-bottom:24px; text-align:left;">
+                            Productos que podrías necesitar para este paquete:
+                        </div>
 
-                    <!-- Productos relacionados por etiqueta, debajo de la imagen principal -->
-                    <t t-if="related_tag_products">
-                        <hr style="margin: 18px 0 18px 0; border-top: 2px solid #bdbdbd; width:100%;" />
-                        <div>
-                            <div style="font-size:1.1em; font-weight:600; margin-bottom:10px; text-align:left;">
-                                Productos que podrías necesitar para este paquete:
-                            </div>
-                            <div class="d-flex flex-column gap-3">
+                        <!-- Productos relacionados por etiqueta -->
+                        <t t-if="related_tag_products">
+                            <div class="d-flex flex-wrap gap-4" style="justify-content: flex-start;">
                                 <t t-foreach="related_tag_products" t-as="product">
-                                    <div class="card shadow-sm product-card" style="border-radius: 10px; overflow: hidden;">
+                                    <div class="card shadow-sm product-card" style="border-radius: 10px; overflow: hidden; width: 270px; margin-bottom: 18px;">
                                         <a t-att-href="'/shop/product/' + str(product.id)">
                                             <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%;">
                                                 <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
@@ -88,7 +88,7 @@
                                                     style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 10px;" />
                                             </div>
                                         </a>
-                                        <div class="card-body mobile-card-body">
+                                        <div class="card-body mobile-card-body" style="padding-bottom: 12px;">
                                             <t t-if="product.product_tag_ids">
                                                 <div class="d-flex justify-content-start mb-2 mobile-badge-container">
                                                     <span class="badge bg-primary mobile-badge" style="border-radius: 0; text-transform: uppercase;">
@@ -140,14 +140,22 @@
                                             <h6 class="card-title mb-2" style="font-size: 16px; line-height: 1.2; max-height: 2.4em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-transform: uppercase;">
                                                 <t t-esc="product.name" />
                                             </h6>
+                                            <!-- Botón al lado -->
+                                            <form action="/shop/cart/update" method="POST" style="margin-top: 8px;">
+                                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" t-nocache="The csrf token must always be up to date."/>
+                                                <input type="hidden" name="product_id" t-att-value="product.product_variant_id.id"/>
+                                                <input type="hidden" name="add_qty" value="1"/>
+                                                <button type="submit"
+                                                    class="btn btn-primary w-100"
+                                                    style="border-radius:5px; background:#4285f4; color:#fff; border:none; font-weight:500; font-size:16px;">
+                                                    Agregar al carrito
+                                                </button>
+                                            </form>
                                         </div>
                                     </div>
                                 </t>
                             </div>
-                        </div>
-                    </t>
-
-
+                        </t>
 
 
                     <!-- Información del producto a la derecha (solo texto, sin lógica) -->
