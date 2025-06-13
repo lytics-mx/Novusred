@@ -100,11 +100,11 @@
                                             </span>
                                         </div>
                                         <div class="d-flex align-items-center" style="gap: 16px;">
-                                            <span class="text-dark fw-bold mobile-main-price" style="font-size: 28px; color: #000; font-weight: bold;">
+                                            <span class="text-dark fw-bold mobile-main-price" style="font-size: 40px; color: #000; font-weight: bold;">
                                                 $<t t-esc="'{:,}'.format(int(product.discounted_price or 0))" />
                                             </span>
                                             <t t-if="product.discount_percentage or product.fixed_discount">
-                                                <span class="mobile-discount" style="font-size: 16px; font-weight: normal; color: #FF5207;">
+                                                <span class="mobile-discount" style="font-size: 20px; font-weight: normal; color: #FF5207;">
                                                     <t t-if="product.discount_percentage">
                                                         <t t-esc="int(product.discount_percentage)" />% OFF
                                                     </t>
@@ -116,14 +116,14 @@
                                         </div>
                                         <t t-if="product.list_price and product.discounted_price and (product.list_price - product.discounted_price) &gt; 0">
                                             <div class="mt-0 mobile-discount-amount">
-                                                <span class="text-muted">
+                                                <span class="text-muted" style="font-size:20px;">
                                                     $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" /> de descuento
                                                 </span>
                                             </div>
                                         </t>
                                     </t>
                                     <t t-elif="product.list_price">
-                                        <span class="fw-bold d-block mobile-main-price" style="font-size: 28px;">
+                                        <span class="fw-bold d-block mobile-main-price" style="font-size: 40px;">
                                             $<t t-esc="'{:,}'.format(int(product.list_price or 0))" />
                                         </span>
                                     </t>
@@ -131,14 +131,18 @@
                             </div>
                             <!-- Envío gratis -->
                             <t t-if="product.free_shipping">
-                                <div style="color:#f00; font-weight:600; font-size:1em; margin-bottom:4px;">
-                                    Envío gratis
+                                <div class="mt-0 mobile-shipping">
+                                    <span class="text-orange mobile-shipping-text" style="font-size:20px;">
+                                        Envío gratis
+                                    </span>
                                 </div>
                             </t>
                             <!-- Oferta del día -->
                             <t t-if="product.product_tag_ids">
-                                <div style="background:#1976d2; color:#fff; display:inline-block; padding:2px 10px; border-radius:4px; font-size:0.95em; margin-bottom:8px;">
-                                    OFERTA DEL DÍA
+                                <div class="d-flex justify-content-start mb-2 mobile-badge-container">
+                                    <span class="badge bg-primary mobile-badge" style="border-radius: 0; text-transform: uppercase;">
+                                        <t t-esc="product.product_tag_ids[0].name"/>
+                                    </span>
                                 </div>
                             </t>
                             <!-- Stock -->
