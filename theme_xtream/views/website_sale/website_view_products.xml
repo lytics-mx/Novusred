@@ -1,214 +1,108 @@
 <odoo>
-<template id="product_template_page" name="Product Template Page">
-    <t t-call="web.layout">
-        <div class="container my-4">
-            <div class="row">
-                <!-- Galería de miniaturas a la izquierda -->
-                <div class="col-2 d-none d-md-flex flex-column align-items-start">
-                    <div class="d-flex flex-column gap-2 align-items-center" id="product-thumbs" style="align-items: flex-start;">
-                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                             class="img-thumbnail mb-2 product-thumb active thumb-mini"
-                             t-att-data-img="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                             style="cursor:pointer;" />
-                        <t t-if="product.product_image_ids">
-                            <t t-foreach="product.product_image_ids" t-as="img">
-                                <img t-att-src="'/web/image/product.image/' + str(img.id) + '/image_1920'"
-                                     class="img-thumbnail mb-2 product-thumb thumb-mini"
-                                     t-att-data-img="'/web/image/product.image/' + str(img.id) + '/image_1920'"
-                                     style="cursor:pointer;" />
-                            </t>
-                        </t>
-                    </div>
-                </div>
-                <!-- Imagen principal al centro -->
-                <div class="col-12 col-md-6 text-center d-flex align-items-start justify-content-center">
-                    <img id="main-product-img"
-                         t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                         class="img-fluid main-img-large"
-                         style="max-height:580px;cursor:pointer;"/>
-                </div>
-                <!-- Información del producto a la derecha -->
-                <div class="col-12 col-md-4">
-                    <div class="card p-3 mb-3">
-                        <h5 t-esc="product.name"/>
-                        <span class="text-muted" t-esc="product.default_code"/>
-                        <div class="mt-2">
-                            <span class="h4 text-primary" t-esc="formatLang(product.list_price, currency_obj=product.currency_id)"/>
-                            <span class="text-danger ml-2">21% OFF</span>
-                        </div>
-                        <div class="text-success">En stock</div>
-                        <div class="mt-2">
-                            <span class="badge badge-success">Envío gratis</span>
-                        </div>
-                        <div class="mt-2">
-                            <span class="text-muted" style="font-size:12px;">Código: <t t-esc="product.default_code"/></span>
-                        </div>
-                        <div class="mt-2">
-                            <!-- <img src="/your/payment/icons.png" style="max-width: 120px;"/> -->
-                        </div>
-                        <div class="mt-3 d-flex flex-column gap-2">
-                            <button class="btn btn-primary btn-block">Agregar al carrito</button>
-                            <button class="btn btn-outline-primary btn-block">Comprar</button>
-                        </div>
-                    </div>
-                    <!-- Imagen de la marca -->
-                    <div class="card mb-3 p-3 text-center brand-image">
-                        <!-- <img src="/your/brand/dahua-logo.png" alt="Dahua" style="max-width: 180px; margin: 0 auto;"/> -->
-                        <div class="mt-2 mb-2">
-                            <strong>Dahua</strong><br/>
-                            Más de 3000 productos
-                        </div>
-                        <a href="#" class="btn btn-primary btn-block">Ir a la marca</a>
-                    </div>
-                    <!-- Línea visible -->
-                    <hr style="border: 2px solid #1976d2; margin: 24px 0 16px 0; width: 100%;" />
-                    <!-- Productos que podrían interesarte (lado derecho) -->
-                    <div class="card mb-3 p-3">
-                        <h5>Productos que podrían interesarte</h5>
-                        <div class="d-flex flex-row justify-content-between align-items-center">
-                            <div class="text-center mx-1">
-                                <!-- <img src="/your/product1.jpg" alt="Producto 1" style="width: 70px;"> -->
-                                <div style="font-size: 12px;">Producto 1</div>
-                                <div style="font-size: 12px; color: #1976d2;">$600,000</div>
+    <template id="website_view_product_xtream" inherit_id="website_sale.product">
+        <xpath expr="//div[@id='wrap']" position="replace">
+            <t t-call-assets="website.assets_frontend" t-js="true"/>
+            <t t-call-assets="website_sale.assets_frontend" t-js="true"/>
+            <div id="wrap" class="oe_structure oe_website_sale" style="padding: 40px; background: #f5f5f5;">
+                <div class="container" style="max-width: 1200px;">
+                    <div class="row" style="display: flex;">
+                        <!-- Galería lateral izquierda -->
+                        <div class="col-2" style="padding: 10px;">
+                            <div>
+                                <img t-att-src="product.image_1920 and '/web/image/product.template/' + str(product.id) + '/image_1920'" style="width:100%; border-radius: 8px;"/>
                             </div>
-                            <div class="text-center mx-1">
-                                <!-- <img src="/your/product2.jpg" alt="Producto 2" style="width: 70px;"> -->
-                                <div style="font-size: 12px;">Producto 2</div>
-                                <div style="font-size: 12px; color: #1976d2;">$100,000</div>
-                            </div>
-                            <div class="text-center mx-1">
-                            <!-- <img src="/your/product3.jpg" alt="Producto 3" style="width: 70px;" /> -->
-                            <div style="font-size: 12px;">Producto 3</div>
-                            <div style="font-size: 12px; color: #1976d2;">$100,000</div>
+                            <div style="margin-top: 10px;">
+                                <t t-foreach="product.product_variant_ids" t-as="variant">
+                                    <img t-att-src="'/web/image/product.product/' + str(variant.id) + '/image_128'" style="width: 60px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px; display: block;"/>
+                                </t>
                             </div>
                         </div>
-                        <div class="mt-2 text-center">
-                            <strong>Precio total: $800,000</strong>
-                            <button class="btn btn-primary btn-sm ml-2">Agregar al carrito</button>
+                        <!-- Detalles del producto centro -->
+                        <div class="col-6" style="padding: 10px;">
+                            <h3 t-esc="product.name"/>
+                            <p style="color: #888;" t-esc="product.default_code"/>
+                            <div>
+                                <span style="font-size: 24px; color: #222; font-weight: bold;">
+                                    <t t-esc="product.lst_price"/> <span style="font-size: 16px;">MXN</span>
+                                </span>
+                                <span style="color: #e74c3c; font-size: 14px; margin-left: 10px;">21% OFF</span>
+                            </div>
+                            <div style="margin: 10px 0;">
+                                <span style="color: #27ae60;">En stock</span>
+                            </div>
+                            <div>
+                                <button class="btn btn-primary" style="width: 200px;">Agregar al carrito</button>
+                            </div>
+                            <!-- Descripción y ficha técnica centradas debajo -->
+                            <div style="margin-top: 20px; background: #fff; border-radius: 8px; padding: 16px;">
+                                <h5>Descripción</h5>
+                                <p t-esc="product.description_sale"/>
+                                <h5 style="margin-top:20px;">Ficha técnica</h5>
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td>Modelo</td>
+                                        <td t-esc="product.default_code"/>
+                                    </tr>
+                                    <tr>
+                                        <td>SKU</td>
+                                        <td t-esc="product.id"/>
+                                    </tr>
+                                    <!-- Más filas si es necesario -->
+                                </table>
+                            </div>
                         </div>
-                    </div>
-                    <!-- Promociones -->
-                    <div class="card p-3">
-                        <h5>Promociones</h5>
-                        <div class="mb-2">
-                            <div class="d-flex align-items-center">
-                                <!-- <img src="/your/promo1.jpg" style="width: 40px;"/> -->
-                                <div class="ml-2">
-                                    <div style="font-size: 13px;">Laptop Gamer Predator Acer</div>
-                                    <div style="font-size: 12px; color: #1976d2;">$1,000,000</div>
-                                    <span class="text-danger" style="font-size: 11px;">21% OFF</span>
+                        <!-- Promociones y marca derecha -->
+                        <div class="col-4" style="padding: 10px;">
+                            <div style="background: #fff; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                                <img src="/path/to/brand_logo.png" style="width: 100%; max-width: 180px;"/>
+                                <div style="margin-top: 10px;">
+                                    <span>Más de 3000 productos</span>
                                 </div>
                             </div>
-                        </div>
-                        <!-- Repite para más promociones -->
-                    </div>
-                </div>
-            </div>
-            <!-- Segunda fila: productos sugeridos, descripción, ficha técnica, de la misma marca -->
-            <div class="row mt-4">
-                <div class="col-12 col-md-8">
-                    <!-- Productos que podrían interesarte (lado izquierdo) -->
-                    <div>
-                        <h5>Productos que podrían interesarte</h5>
-                        <hr/>
-                        <div class="d-flex flex-row justify-content-between align-items-center">
-                            <div class="text-center mx-1">
-                                <!-- <img src="/your/product1.jpg" alt="Producto 1" style="width: 70px;"> -->
-                                <div style="font-size: 12px;">Producto 1</div>
-                                <div style="font-size: 12px; color: #1976d2;">$600,000</div>
-                            </div>
-                            <div class="text-center mx-1">
-                                <!-- <img src="/your/product2.jpg" alt="Producto 2" style="width: 70px;"> -->
-                                <div style="font-size: 12px;">Producto 2</div>
-                                <div style="font-size: 12px; color: #1976d2;">$100,000</div>
-                            </div>
-                            <div class="text-center mx-1">
-                                <!-- <img src="/your/product3.jpg" alt="Producto 3" style="width: 70px;"> -->
-                                <div style="font-size: 12px;">Producto 3</div>
-                                <div style="font-size: 12px; color: #1976d2;">$100,000</div>
+                            <div style="background: #fff; border-radius: 8px; padding: 16px;">
+                                <h5>Promociones</h5>
+                                <t t-foreach="promotions" t-as="promo">
+                                    <div style="margin-bottom: 10px;">
+                                        <img t-att-src="promo.image_url" style="width: 60px;"/>
+                                        <span t-esc="promo.name"/>
+                                        <span style="color: #e74c3c;" t-esc="promo.discount"/>
+                                    </div>
+                                </t>
                             </div>
                         </div>
-                        <div class="mt-2 text-center">
-                            <strong>Precio total: $800,000</strong>
-                            <button class="btn btn-primary btn-sm ml-2">Agregar al carrito</button>
+                    </div>
+                    <!-- Productos que podrían interesarte -->
+                    <div style="margin-top: 40px;">
+                        <h4>Productos que podrían interesarte</h4>
+                        <div class="row" style="display: flex;">
+                            <t t-foreach="related_products" t-as="rel">
+                                <div class="col-3" style="padding: 10px;">
+                                    <div style="background: #fff; border-radius: 8px; padding: 10px;">
+                                        <img t-att-src="'/web/image/product.template/' + str(rel.id) + '/image_1920'" style="width: 100%;"/>
+                                        <div t-esc="rel.name" style="font-size: 14px;"/>
+                                        <div style="color: #222; font-weight: bold;" t-esc="rel.lst_price"/>
+                                    </div>
+                                </div>
+                            </t>
                         </div>
-                    </div>
-                    <!-- Descripción -->
-                    <div class="mt-4">
-                        <h5>Descripción</h5>
-                        <ul>
-                            <li>Alto de frecuencia: 2200-2600 MHz.</li>
-                            <li>Organizador de cables.</li>
-                            <li>Teclado retroiluminado.</li>
-                            <li>Disco SSD: 1 TB.</li>
-                            <li>Memoria RAM: 16 GB.</li>
-                            <li>Peso: 2.4 kg.</li>
-                        </ul>
-                    </div>
-                    <!-- Ficha técnica -->
-                    <div class="mt-4">
-                        <h5>Ficha técnica</h5>
-                        <table class="table table-bordered">
-                            <tr>
-                                <th>Modelo</th>
-                                <td>PT315-53S72V2</td>
-                            </tr>
-                            <tr>
-                                <th>Marca</th>
-                                <td>Acer</td>
-                            </tr>
-                            <tr>
-                                <th>Actualizado</th>
-                                <td>2023-03-13 17:12:53</td>
-                            </tr>
-                        </table>
                     </div>
                     <!-- De la misma marca -->
-                    <div class="mt-4">
-                        <h5>De la misma marca</h5>
-                        <div class="d-flex flex-row justify-content-between align-items-center">
-                            <div class="text-center mx-1">
-                                <!-- <img src="/your/product1.jpg" alt="Producto 1" style="width: 70px;"> -->
-                                <div style="font-size: 12px;">Producto 1</div>
-                                <div style="font-size: 12px; color: #1976d2;">$800,000</div>
-                            </div>
-                            <div class="text-center mx-1">
-                                <!-- <img src="/your/product2.jpg" alt="Producto 2" style="width: 70px;"> -->
-                                <div style="font-size: 12px;">Producto 2</div>
-                                <div style="font-size: 12px; color: #1976d2;">$800,000</div>
-                            </div>
-                            <div class="text-center mx-1">
-                                <!-- <img src="/your/product3.jpg" alt="Producto 3" style="width: 70px;"> -->
-                                <div style="font-size: 12px;">Producto 3</div>
-                                <div style="font-size: 12px; color: #1976d2;">$800,000</div>
-                            </div>
+                    <div style="margin-top: 40px;">
+                        <h4>De la misma marca</h4>
+                        <div class="row" style="display: flex;">
+                            <t t-foreach="same_brand_products" t-as="brand_prod">
+                                <div class="col-3" style="padding: 10px;">
+                                    <div style="background: #fff; border-radius: 8px; padding: 10px;">
+                                        <img t-att-src="'/web/image/product.template/' + str(brand_prod.id) + '/image_1920'" style="width: 100%;"/>
+                                        <div t-esc="brand_prod.name" style="font-size: 14px;"/>
+                                        <div style="color: #222; font-weight: bold;" t-esc="brand_prod.lst_price"/>
+                                    </div>
+                                </div>
+                            </t>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- Script para galería -->
-        <script type="text/javascript">
-            document.addEventListener('DOMContentLoaded', function() {
-                var mainImg = document.getElementById('main-product-img');
-                var thumbs = document.querySelectorAll('#product-thumbs .product-thumb');
-                thumbs.forEach(function(thumb) {
-                    thumb.addEventListener('click', function() {
-                        mainImg.src = thumb.getAttribute('data-img');
-                        thumbs.forEach(function(t) { t.classList.remove('active'); });
-                        thumb.classList.add('active');
-                    });
-                });
-                mainImg.addEventListener('click', function() {
-                    var firstThumb = document.querySelector('#product-thumbs .product-thumb');
-                    if (firstThumb) {
-                        mainImg.src = firstThumb.getAttribute('data-img');
-                        thumbs.forEach(function(t) { t.classList.remove('active'); });
-                        firstThumb.classList.add('active');
-                    }
-                });
-            });
-        </script>
-    </t>
-</template>
+        </xpath>
+    </template>
 </odoo>
