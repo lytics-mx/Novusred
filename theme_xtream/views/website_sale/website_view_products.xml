@@ -160,9 +160,35 @@
                                 </div>
                                 <!-- Cantidad -->
                                 <div style="font-size:16px; margin-bottom:10px;">
-                                    Cantidad: 
-                                    <input id="qty-input" type="number" name="add_qty" value="1" min="1" t-att-max="product.qty_available" class="form-control d-inline-block text-center" style="width:60px; display:inline-block; margin-left:6px;"/>                                
+                                    Cantidad:
+                                    <div class="input-group" style="width:120px; display:inline-flex; vertical-align:middle; margin-left:6px;">
+                                        <button type="button" class="btn btn-outline-secondary" id="qty-minus" style="min-width:32px; font-size:20px; padding:0;">-</button>
+                                        <input id="qty-input" type="number" name="add_qty" value="1" min="1" t-att-max="product.qty_available"
+                                            class="form-control text-center" style="width:50px; padding:0 6px;"/>
+                                        <button type="button" class="btn btn-outline-secondary" id="qty-plus" style="min-width:32px; font-size:20px; padding:0;">+</button>
+                                    </div>
                                     <span style="color:#888; font-size:15.2px;">(<t t-esc="product.qty_available"/> disponibles)</span>
+                                    <script type="text/javascript">
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                            var qtyInput = document.getElementById('qty-input');
+                                            var minusBtn = document.getElementById('qty-minus');
+                                            var plusBtn = document.getElementById('qty-plus');
+                                            var max = parseInt(qtyInput.getAttribute('max')) || 9999;
+                                            minusBtn.addEventListener('click', function() {
+                                                var val = parseInt(qtyInput.value) || 1;
+                                                if (val > 1) qtyInput.value = val - 1;
+                                            });
+                                            plusBtn.addEventListener('click', function() {
+                                                var val = parseInt(qtyInput.value) || 1;
+                                                if (val < max) qtyInput.value = val + 1;
+                                            });
+                                            qtyInput.addEventListener('input', function() {
+                                                var val = parseInt(qtyInput.value) || 1;
+                                                if (val < 1) qtyInput.value = 1;
+                                                if (val > max) qtyInput.value = max;
+                                            });
+                                        });
+                                    </script>
                                 </div>
                             </div>
                             <!-- Métodos de pago -->
