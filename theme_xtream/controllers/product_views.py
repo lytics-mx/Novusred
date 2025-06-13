@@ -50,13 +50,10 @@ class ShopController(WebsiteSale):
 
         # Calcular el contador de productos publicados y disponibles por cada marca en available_brands
         # Obtener la marca del producto actual
-        brand_type_products_count = 0
-        if product.brand_type_id:
-            brand_type_products_count = request.env['product.template'].sudo().search_count([
-                ('brand_type_id', '=', product.brand_type_id.id),
-                ('id', '!=', product.id),
-                ('website_published', '=', True)
-            ])
+        brand_type_products_count = request.env['product.template'].sudo().search_count([
+            ('brand_type_id', '=', product.brand_type_id.id),
+            ('website_published', '=', True)
+        ])
 
         context = {
             'product': product,
