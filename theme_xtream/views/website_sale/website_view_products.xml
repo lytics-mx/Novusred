@@ -317,22 +317,24 @@
                                                                 </h6>
                                                                 <!-- Precio y descuento -->
                                                                 <t t-if="product.discounted_price &lt; product.list_price">
+                                                                    <div class="d-flex align-items-center" style="gap:8px;">
+                                                                        <span class="text-dark fw-bold" style="font-size:22px; display:block; padding:0; margin:0;">
+                                                                            $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
+                                                                        </span>
+                                                                        <t t-if="product.discount_percentage">
+                                                                            <span class="text-danger" style="font-size:15px; font-weight:600;">
+                                                                                <t t-esc="int(product.discount_percentage)" />% OFF
+                                                                            </span>
+                                                                        </t>
+                                                                        <t t-elif="product.fixed_discount">
+                                                                            <span class="text-danger" style="font-size:15px; font-weight:600;">
+                                                                                -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
+                                                                            </span>
+                                                                        </t>
+                                                                    </div>
                                                                     <span class="text-muted" style="font-size:15px; text-decoration:line-through; display:block; padding:0; margin:0;">
                                                                         $<t t-esc="'{:,}'.format(int(product.list_price))" />
                                                                     </span>
-                                                                    <span class="text-dark fw-bold" style="font-size:22px; display:block; padding:0; margin:0;">
-                                                                        $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
-                                                                    </span>
-                                                                    <t t-if="product.discount_percentage">
-                                                                        <span class="text-danger" style="font-size:15px; display:block; padding:0; margin:0;">
-                                                                            <t t-esc="int(product.discount_percentage)" />% OFF
-                                                                        </span>
-                                                                    </t>
-                                                                    <t t-elif="product.fixed_discount">
-                                                                        <span class="text-danger" style="font-size:15px; display:block; padding:0; margin:0;">
-                                                                            -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
-                                                                        </span>
-                                                                    </t>
                                                                     <span class="text-muted" style="font-size:14px; display:block; padding:0; margin:0;">
                                                                         $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" /> de descuento
                                                                     </span>
