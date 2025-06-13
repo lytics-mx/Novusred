@@ -263,26 +263,23 @@
                         </div>
                         
                         <!-- Productos relacionados por marca -->
-                        <t t-set="related_products" t-value="request.env['product.template'].sudo().search([('brand_type_id', '=', product.brand_type_id.id), ('id', '!=', product.id)], limit=8)" />
-                        <t t-if="related_products">
-                            <div style="margin-top:32px; margin-bottom:24px;">
-                                <h4 style="font-size:1.2em; font-weight:600; margin-bottom:16px;">Más productos de <t t-esc="product.brand_type_id.name"/></h4>
-                                <div style="display:flex; flex-wrap:wrap; gap:18px;">
-                                    <t t-foreach="related_products" t-as="rel_prod">
-                                        <div style="width:180px; background:#fff; border:1px solid #eee; border-radius:8px; padding:10px; text-align:center;">
-                                            <a t-att-href="'/view/product/%s' % rel_prod.id" style="text-decoration:none;">
-                                                <img t-att-src="'/web/image/product.template/' + str(rel_prod.id) + '/image_1920'"
-                                                     style="width:100%; max-width:140px; max-height:100px; object-fit:contain; margin-bottom:8px;"/>
-                                                <div style="font-size:1em; color:#222; font-weight:500; margin-bottom:4px;">
-                                                    <t t-esc="rel_prod.name"/>
-                                                </div>
-                                                <div style="font-size:1em; color:#4285f4; font-weight:600;">
-                                                    $<t t-esc="'{:,}'.format(int(rel_prod.list_price or 0))"/>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </t>
+                        <t t-if="product.brand_type_id and product.brand_type_id.active">
+                            <div style="border:1px solid #e0e0e0; border-radius:10px; padding:18px 18px 14px 18px; margin-bottom:24px; text-align:center; background:#fff; max-width:420px; margin-left:auto; margin-right:auto;">
+                                <t t-if="product.brand_type_id.icon_image">
+                                    <img t-att-src="'/web/image/brand.type/' + str(product.brand_type_id.id) + '/icon_image'"
+                                         alt="Logo de la marca"
+                                         style="max-width:220px; max-height:80px; margin-bottom:12px;"/>
+                                </t>
+                                <div style="font-size:1.3em; font-weight:600; margin-bottom:2px;">
+                                    <t t-esc="product.brand_type_id.name"/>
                                 </div>
+                                <div style="font-size:1.1em; color:#222; margin-bottom:14px;">
+                                    Más de <t t-esc="brand_products_count"/> productos
+                                </div>
+                                <a t-att-href="'/subcategory?brand_id=%s' % product.brand_type_id.id"
+                                   style="display:inline-block; background:#4285f4; color:#fff; font-weight:500; border-radius:6px; padding:14px 0; width:90%; max-width:260px; font-size:1.1em; text-decoration:none;">
+                                    Ir a la marca
+                                </a>
                             </div>
                         </t>
 
