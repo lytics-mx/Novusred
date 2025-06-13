@@ -48,11 +48,20 @@ class ShopController(WebsiteSale):
             ('is_active_carousel', '=', True)
         ])    
 
-        brand_type_products_count = 0
-        if hasattr(product, 'brand_type_id') and product.brand_type_id:
-            brand_type_products_count = request.env['product.template'].search_count([
-                ('brand_type_id', '=', product.brand_type_id.id)
-            ])
+        # Calcular el contador de productos publicados y disponibles por cada marca en available_brands
+        brand_counts = {}
+        available_brands = request.env['brand.type'].sudo().search([])
+        # Obtener productos filtrados por website_published y qty_available > 0
+        brand_products = request.env['product.template'].sudo().search([
+            ('website_published', '=', True),
+            ('qty_available', '>', 0)
+        ])
+        for brand in available_brands:
+            count = len(brand_products.filtered(lambda p: p.brand_type_id.id == brand.id))
+            brand_counts[brand.id] = count
+
+        # Calcular la cantidad de productos publicados y disponibles para la marca del producto actual
+        brand_type_products_count = brand_counts.get(product.brand_type_id.id, 0) if getattr(product, 'brand_type_id', False) else 0
 
         context = {
             'product': product,
