@@ -50,16 +50,12 @@ class ShopController(WebsiteSale):
 
         # Calcular el contador de productos publicados y disponibles por cada marca en available_brands
         # Obtener la marca del producto actual
-        brand = getattr(product, 'brand_type_id', False)
         brand_type_products_count = 0
-        brand_type_name = ""
-        if brand:
-            brand_type_name = brand.name
-            # Buscar productos publicados y disponibles de esa marca (brand.type.id)
+        if product.brand_type_id:
             brand_type_products_count = request.env['product.template'].sudo().search_count([
-            ('website_published', '=', True),
-            ('qty_available', '>', 0),
-            ('brand_type_id', '=', brand.id)
+                ('brand_type_id', '=', product.brand_type_id.id),
+                ('id', '!=', product.id),
+                ('website_published', '=', True)
             ])
 
         context = {
@@ -72,8 +68,6 @@ class ShopController(WebsiteSale):
             'list_price': product.list_price,  # <-- Agrega esto
             'general_images': general_images,
             'brand_type_products_count': brand_type_products_count,
-            'brand_type_name': brand_type_name,
-            'brand' : brand,
                  
         }
         return request.render("theme_xtream.website_view_product_xtream", context)
