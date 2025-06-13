@@ -198,13 +198,12 @@
                             <!-- Métodos de pago -->
                             <div style="margin-bottom:12px;">
                                 <div style="color:#222; font-size:0.98em; margin-bottom:4px;">Métodos de pago:</div>
-                                <t t-if="general_images">
-                                    <div style="display:flex; gap:6px; justify-content:flex-start; align-items:center;">
-                                        <t t-foreach="general_images" t-as="banner">
-                                            <img t-att-src="'/web/image/banner.image.line/' + str(banner.id) + '/general_images'"
-                                                 alt="Métodos de pago"
-                                                 style="width:352px; height:64px; object-fit:cover;"/>
-                                        </t>
+                                <t t-set="active_banner" t-value="request.env['banner.image.line'].sudo().search([('is_active_carousel', '=', True), ('name', '=', 'metodos_pago')], limit=1)" />
+                                <t t-if="active_banner and active_banner.general_images">
+                                    <div style="position: relative;">
+                                        <img t-att-src="'/web/image/' + str(active_banner.general_images[0].id)" 
+                                             alt="Métodos de pago" 
+                                             style="width:352px; height:64px; object-fit:cover;"/>
                                     </div>
                                 </t>
                             </div>
