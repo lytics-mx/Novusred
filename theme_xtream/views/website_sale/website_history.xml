@@ -117,31 +117,52 @@
                                                                     </div>
                                                                 </t>
                                                                 <t t-if="product.free_shipping">
-                                                                    <div class="mb-1">
+                                                                    <div class="mb-1 d-flex align-items-center">
                                                                         <span class="text-orange" style="color: #FF5207; font-size: 0.75rem; font-weight: bold; font-style: italic;">
                                                                             Envío gratis
                                                                         </span>
+                                                                        <a t-att-href="'/shop/history/remove/' + str(product.id)" 
+                                                                           t-att-data-product-id="product.id"
+                                                                           class="text-blue delete-history-item ms-2" 
+                                                                           style="font-size: 0.75rem; color: #007bff; text-decoration: none;"
+                                                                           onclick="event.preventDefault(); 
+                                                                                   if(confirm('¿Estás seguro de eliminar este producto del historial?')) {
+                                                                                       fetch('/shop/history/remove/' + this.getAttribute('data-product-id'))
+                                                                                       .then(response => {
+                                                                                           if (response.ok) {
+                                                                                               this.closest('.col').style.transition = 'opacity 0.3s';
+                                                                                               this.closest('.col').style.opacity = '0';
+                                                                                               setTimeout(() => {
+                                                                                                   this.closest('.col').remove();
+                                                                                               }, 300);
+                                                                                           }
+                                                                                       });
+                                                                                   }">
+                                                                            Eliminar
+                                                                        </a>
                                                                     </div>
                                                                 </t>
-                                                                <a t-att-href="'/shop/history/remove/' + str(product.id)" 
-                                                                    t-att-data-product-id="product.id"
-                                                                    class="text-blue delete-history-item d-inline-block ms-2 align-middle" 
-                                                                    style="font-size: 0.75rem; color: #007bff; text-decoration: none; vertical-align: middle; padding-left: 0;"
-                                                                    onclick="event.preventDefault(); 
-                                                                              if(confirm('¿Estás seguro de eliminar este producto del historial?')) {
-                                                                                    fetch('/shop/history/remove/' + this.getAttribute('data-product-id'))
-                                                                                    .then(response => {
-                                                                                         if (response.ok) {
-                                                                                              this.closest('.col').style.transition = 'opacity 0.3s';
-                                                                                              this.closest('.col').style.opacity = '0';
-                                                                                              setTimeout(() => {
-                                                                                                    this.closest('.col').remove();
-                                                                                              }, 300);
-                                                                                         }
-                                                                                    });
-                                                                              }">
-                                                                     Eliminar
-                                                                </a>
+                                                                <t t-else="">
+                                                                    <a t-att-href="'/shop/history/remove/' + str(product.id)" 
+                                                                       t-att-data-product-id="product.id"
+                                                                       class="text-blue delete-history-item" 
+                                                                       style="font-size: 0.75rem; color: #007bff; text-decoration: none;"
+                                                                       onclick="event.preventDefault(); 
+                                                                               if(confirm('¿Estás seguro de eliminar este producto del historial?')) {
+                                                                                   fetch('/shop/history/remove/' + this.getAttribute('data-product-id'))
+                                                                                   .then(response => {
+                                                                                       if (response.ok) {
+                                                                                           this.closest('.col').style.transition = 'opacity 0.3s';
+                                                                                           this.closest('.col').style.opacity = '0';
+                                                                                           setTimeout(() => {
+                                                                                               this.closest('.col').remove();
+                                                                                           }, 300);
+                                                                                       }
+                                                                                   });
+                                                                               }">
+                                                                        Eliminar
+                                                                    </a>
+                                                                </t>
                                                             </div>
                                                         </div>
                                                     </div>
