@@ -43,6 +43,10 @@ class ShopController(WebsiteSale):
             fixed_discount = list_price - discounted_price
             discount_percentage = int(100 * fixed_discount / list_price)
         
+        general_images = request.env['banner.image.line'].search([
+            ('name', '=', 'metodos de pago'),
+            ('is_active_carousel', '=', True)
+        ])        
         context = {
             'product': product,
             'categories': categories,
@@ -51,6 +55,7 @@ class ShopController(WebsiteSale):
             'discount_percentage': discount_percentage,
             'fixed_discount': fixed_discount,
             'list_price': product.list_price,  # <-- Agrega esto
+            'general_images': general_images,
                 
         }
         return request.render("theme_xtream.website_view_product_xtream", context)
