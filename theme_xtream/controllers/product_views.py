@@ -26,7 +26,9 @@ class ShopController(WebsiteSale):
             categ = categ.parent_id
 
         # Obtener la URL de referencia (página anterior)
-        referer = request.httprequest.headers.get('Referer', '/')
+        referer = request.httprequest.headers.get('Referer')
+        if not referer or referer == request.httprequest.url:
+            referer = '/subcategory'
         # Cálculo de descuentos (ejemplo)
         discounted_price = product.list_price
         discount_percentage = 0
