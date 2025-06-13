@@ -31,6 +31,10 @@ class ShopController(WebsiteSale):
             referer = '/subcategory'
         # Cálculo de descuentos (ejemplo)
         discounted_price = product.list_price
+        if hasattr(product, 'discounted_price') and product.discounted_price is not None:
+            discounted_price = product.discounted_price
+        elif hasattr(product, 'standard_price') and product.standard_price is not None and product.list_price > product.standard_price:
+            discounted_price = product.standard_price        
         discount_percentage = 0
         fixed_discount = 0
         if hasattr(product, 'discounted_price'):
