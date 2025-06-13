@@ -25,7 +25,7 @@
             <div class="row">
                 <!-- Galería de miniaturas a la izquierda -->
                 <div class="col-2 d-none d-md-block">
-                    <div class="d-flex flex-column gap-2 align-items-center">
+                    <div class="d-flex flex-column gap-2 align-items-center" id="product-thumbs">
                         <!-- Siempre la imagen principal como primer miniatura -->
                         <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
                             class="img-thumbnail mb-2 product-thumb active thumb-mini"
@@ -48,8 +48,31 @@
                     <img id="main-product-img"
                         t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
                         class="img-fluid main-img-large"
-                        style="max-height:580px;"/>
+                        style="max-height:580px;cursor:pointer;"/>
                 </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var mainImg = document.getElementById('main-product-img');
+                        var thumbs = document.querySelectorAll('#product-thumbs .product-thumb');
+                        // Cambiar imagen principal al hacer click en miniatura
+                        thumbs.forEach(function(thumb) {
+                            thumb.addEventListener('click', function() {
+                                mainImg.src = thumb.getAttribute('data-img');
+                                thumbs.forEach(function(t) { t.classList.remove('active'); });
+                                thumb.classList.add('active');
+                            });
+                        });
+                        // Al hacer click en la imagen principal, vuelve a la primera miniatura
+                        mainImg.addEventListener('click', function() {
+                            var firstThumb = document.querySelector('#product-thumbs .product-thumb');
+                            if (firstThumb) {
+                                mainImg.src = firstThumb.getAttribute('data-img');
+                                thumbs.forEach(function(t) { t.classList.remove('active'); });
+                                firstThumb.classList.add('active');
+                            }
+                        });
+                    });
+                </script>
                     <!-- Información del producto a la derecha (solo texto, sin lógica) -->
                     <div class="col-12 col-md-4">
                         <div class="card p-3" style="border-radius:12px;">
