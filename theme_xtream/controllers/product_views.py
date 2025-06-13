@@ -30,19 +30,18 @@ class ShopController(WebsiteSale):
         if not referer or referer == request.httprequest.url:
             referer = '/subcategory'
         # Cálculo de descuentos (ejemplo)
-        discounted_price = product.list_price
+        list_price = product.list_price if product.list_price is not None else 0
+        discounted_price = list_price
         if hasattr(product, 'discounted_price') and product.discounted_price is not None:
             discounted_price = product.discounted_price
-        elif hasattr(product, 'standard_price') and product.standard_price is not None and product.list_price > product.standard_price:
+        elif hasattr(product, 'standard_price') and product.standard_price is not None and list_price > product.standard_price:
             discounted_price = product.standard_price
 
         fixed_discount = 0
         discount_percentage = 0
-        if product.list_price > discounted_price:
-            fixed_discount = product.list_price - discounted_price
-            discount_percentage = int(100 * fixed_discount / product.list_price)
-
-
+        if list_price > discounted_price:
+            fixed_discount = list_price - discounted_price
+            discount_percentage = int(100 * fixed_discount / list_price)
         context = {
             'product': product,
             'categories': categories,
@@ -50,7 +49,7 @@ class ShopController(WebsiteSale):
             'discounted_price': discounted_price,
             'discount_percentage': discount_percentage,
             'fixed_discount': fixed_discount,
-            'list_price': product.list_price,  
+            'list_price': product.list_price,  # <-- Agrega esto
                 
         }
         return request.render("theme_xtream.website_view_product_xtream", context)
