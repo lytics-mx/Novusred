@@ -421,40 +421,47 @@
                         <h2 class="text-center" style="font-family: 'Questrial', sans-serif; font-size: 25px;">MÁS CATEGORÍAS</h2>
                     </div>
                     <div class="container">
-                        <t t-if="categories">
+                        <t t-set="all_categories" t-value="request.env['product.category'].sudo().search([('banner_image', '!=', False)])"/>
+                        <t t-if="all_categories">
+                            <!-- Mobile view: Carousel, 1 per slide -->
                             <div class="d-block d-md-none">
                                 <div id="categoryMobileCarousel" class="carousel slide" data-bs-ride="carousel">
                                     <div class="carousel-inner">
                                         <t t-set="first" t-value="True"/>
-                                        <t t-foreach="categories" t-as="cat_dict">
-                                            <t t-foreach="cat_dict['valid_children']" t-as="child">
-                                                <t t-if="child.banner_image">
-                                                    <div t-att-class="'carousel-item' + (' active' if first else '')">
-                                                        <t t-set="first" t-value="False"/>
-                                                        <div class="card shadow h-100 mx-2" style="border-radius: 10px; overflow: hidden; border: none;">
-                                                            <div style="position: relative;">
-                                                                <img t-att-src="'/web/image/product.category/' + str(child.id) + '/banner_image'"
-                                                                     alt="Category Banner"
-                                                                     class="img-fluid"
-                                                                     style="width: 100%; height: 180px; object-fit: cover;" />
-                                                                <div class="card-img-overlay d-flex flex-column justify-content-end p-0"
-                                                                     style="background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 100%);">
-                                                                    <a t-att-href="'/subcategory?subcategory_id=' + str(child.id)" style="text-decoration: none;">
-                                                                        <div style="background: #fff; border-radius: 0 0 10px 10px; padding: 12px 12px 10px 12px; width: 100%; box-shadow: 0 -2px 8px rgba(0,0,0,0.10);">
-                                                                            <h5 class="mb-2" style="font-size: 14px; font-weight: bold; color: #222;">
-                                                                                <t t-esc="child.name"/>
-                                                                            </h5>
-                                                                        </div>
-                                                                    </a>
+                                        <t t-foreach="all_categories" t-as="cat">
+                                            <div t-att-class="'carousel-item' + (' active' if first else '')">
+                                                <t t-set="first" t-value="False"/>
+                                                <div class="card shadow h-100 mx-2" style="border-radius: 10px; overflow: hidden; border: none;">
+                                                    <div style="position: relative;">
+                                                        <img t-att-src="'/web/image/product.category/' + str(cat.id) + '/banner_image'"
+                                                             alt="Category Banner"
+                                                             class="img-fluid"
+                                                             style="width: 100%; height: 180px; object-fit: cover;" />
+                                                        <div class="card-img-overlay d-flex flex-column justify-content-end p-0"
+                                                             style="background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 100%);">
+                                                            <a t-att-href="'/subcategory?category_id=' + str(cat.id)" style="text-decoration: none;">
+                                                                <div style="background: #fff; border-radius: 0 0 10px 10px; padding: 12px 12px 10px 12px; width: 100%; box-shadow: 0 -2px 8px rgba(0,0,0,0.10);">
+                                                                    <h5 class="mb-2" style="font-size: 14px; font-weight: bold; color: #222;">
+                                                                        <t t-esc="cat.name"/>
+                                                                    </h5>
+                                                                    <div class="subcategories">
+                                                                        <t t-foreach="cat.child_id[:2]" t-as="child">
+                                                                            <p class="text-dark mb-1" style="font-size: 11px; opacity: 0.9;">
+                                                                                <a t-att-href="'/subcategory?category_id=' + str(cat.id) + '&amp;subcategory_id=' + str(child.id)" class="text-decoration-none text-dark">
+                                                                                    <t t-esc="child.name"/>
+                                                                                </a>
+                                                                            </p>
+                                                                        </t>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
+                                                            </a>
                                                         </div>
                                                     </div>
-                                                </t>
-                                            </t>
+                                                </div>
+                                            </div>
                                         </t>
                                     </div>
-                                    <t t-if="sum([len([c for c in cat_dict['valid_children'] if c.banner_image]) for cat_dict in categories]) > 1">
+                                    <t t-if="len(all_categories) > 1">
                                         <button class="carousel-control-prev" type="button" data-bs-target="#categoryMobileCarousel" data-bs-slide="prev">
                                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                             <span class="visually-hidden">Anterior</span>
@@ -466,6 +473,99 @@
                                     </t>
                                 </div>
                             </div>
+                            <!-- Desktop view: Grid, 3 per row -->
+                            <t t-if="len(all_categories) > 3">
+                                <!-- Desktop carousel if more than 3 categories -->
+                                <div id="categoryDesktopCarousel" class="carousel slide d-none d-md-block" data-bs-ride="carousel">
+                                    <h2 class="text-center" style="font-family: 'Questrial', sans-serif; font-size: 25px;">MÁS CATEGORÍAS</h2>
+                                    <div class="carousel-inner">
+                                        <t t-foreach="range(0, len(all_categories), 3)" t-as="i">
+                                            <div t-att-class="'carousel-item' + (' active' if i == 0 else '')">
+                                                <div class="row justify-content-center g-4">
+                                                    <t t-foreach="all_categories[i:min(i+3, len(all_categories))]" t-as="cat">
+                                                        <div class="col-md-4">
+                                                            <div class="card shadow h-100" style="border-radius: 10px; overflow: hidden; border: none;">
+                                                                <div style="position: relative;">
+                                                                    <img t-att-src="'/web/image/product.category/' + str(cat.id) + '/banner_image'"
+                                                                         alt="Category Banner"
+                                                                         class="img-fluid"
+                                                                         style="width: 100%; height: 250px; object-fit: cover;" />
+                                                                    <div class="card-img-overlay d-flex flex-column justify-content-end p-0"
+                                                                         style="background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 100%);">
+                                                                        <a t-att-href="'/subcategory?category_id=' + str(cat.id)" style="text-decoration: none;">
+                                                                            <div style="background: #fff; border-radius: 0 0 10px 10px; padding: 18px 18px 14px 18px; width: 100%; box-shadow: 0 -2px 8px rgba(0,0,0,0.10);">
+                                                                                <!-- <h5 class="mb-2" style="font-size: 18px; font-weight: bold; color: #222;">
+                                                                                    <t t-esc="cat.name"/>
+                                                                                </h5> -->
+                                                                                <div class="subcategories">
+                                                                                    <t t-foreach="cat.child_id[:3]" t-as="child">
+                                                                                        <p class="text-dark mb-1" style="font-size: 14px; opacity: 0.9;">
+                                                                                            <a t-att-href="'/subcategory?category_id=' + str(cat.id) + '&amp;subcategory_id=' + str(child.id)" class="text-decoration-none text-dark">
+                                                                                                <t t-esc="child.name"/>
+                                                                                            </a>
+                                                                                        </p>
+                                                                                    </t>
+                                                                                </div>
+                                                                            </div>
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#categoryDesktopCarousel" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Anterior</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#categoryDesktopCarousel" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Siguiente</span>
+                                    </button>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <!-- Desktop grid if 3 or less categories -->
+                                <div class="d-none d-md-block">
+                                    <h2 class="text-center" style="font-family: 'Questrial', sans-serif; font-size: 25px;">MÁS CATEGORÍAS</h2>
+                                    <div class="row justify-content-center g-4">
+                                        <t t-foreach="all_categories" t-as="cat">
+                                            <div class="col-md-4">
+                                                <div class="card shadow h-100" style="border-radius: 10px; overflow: hidden; border: none;">
+                                                    <div style="position: relative;">
+                                                        <img t-att-src="'/web/image/product.category/' + str(cat.id) + '/banner_image'"
+                                                             alt="Category Banner"
+                                                             class="img-fluid"
+                                                             style="width: 100%; height: 250px; object-fit: cover;" />
+                                                        <div class="card-img-overlay d-flex flex-column justify-content-end p-0"
+                                                             style="background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 100%);">
+                                                            <a t-att-href="'/subcategory?category_id=' + str(cat.id)" style="text-decoration: none;">
+                                                                <div style="background: #fff; border-radius: 0 0 10px 10px; padding: 18px 18px 14px 18px; width: 100%; box-shadow: 0 -2px 8px rgba(0,0,0,0.10);">
+                                                                    <!-- <h5 class="mb-2" style="font-size: 18px; font-weight: bold; color: #222;">
+                                                                        <t t-esc="cat.name"/>
+                                                                    </h5> -->
+                                                                    <div class="subcategories">
+                                                                        <t t-foreach="cat.child_id[:3]" t-as="child">
+                                                                            <p class="text-dark mb-1" style="font-size: 14px; opacity: 0.9;">
+                                                                                <a t-att-href="'/subcategory?category_id=' + str(cat.id) + '&amp;subcategory_id=' + str(child.id)" class="text-decoration-none text-dark">
+                                                                                    <t t-esc="child.name"/>
+                                                                                </a>
+                                                                            </p>
+                                                                        </t>
+                                                                    </div>
+                                                                </div>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
                         </t>
                     </div>
                 </section>
