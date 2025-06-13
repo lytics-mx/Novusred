@@ -14,7 +14,25 @@
                 <a t-att-href="referer" style="color:#333;">Volver</a>
                 <span style="margin: 0 8px;">|</span>
                 <span t-if="product.categ_id">
-                    <a t-att-href="'/subcategory?category_id=%s' % product.categ_id.id" t-esc="product.categ_id.name" style="color:#337ab7;"/>
+                    <t t-set="parent_cat" t-value="product.categ_id.parent_id"/>
+                    <t t-if="parent_cat and parent_cat.parent_id">
+                        <!-- Grandparent > Parent > Child -->
+                        <a t-att-href="'/subcategory?category_id=%s' % parent_cat.parent_id.id" t-esc="parent_cat.parent_id.name" style="color:#337ab7;"/>
+                        <span style="margin: 0 4px;">&gt;</span>
+                        <a t-att-href="'/subcategory?category_id=%s' % parent_cat.id" t-esc="parent_cat.name" style="color:#337ab7;"/>
+                        <span style="margin: 0 4px;">&gt;</span>
+                        <a t-att-href="'/subcategory?category_id=%s' % product.categ_id.id" t-esc="product.categ_id.name" style="color:#337ab7;"/>
+                    </t>
+                    <t t-elif="parent_cat">
+                        <!-- Parent > Child -->
+                        <a t-att-href="'/subcategory?category_id=%s' % parent_cat.id" t-esc="parent_cat.name" style="color:#337ab7;"/>
+                        <span style="margin: 0 4px;">&gt;</span>
+                        <a t-att-href="'/subcategory?category_id=%s' % product.categ_id.id" t-esc="product.categ_id.name" style="color:#337ab7;"/>
+                    </t>
+                    <t t-else="">
+                        <!-- Only Child -->
+                        <a t-att-href="'/subcategory?category_id=%s' % product.categ_id.id" t-esc="product.categ_id.name" style="color:#337ab7;"/>
+                    </t>
                 </span>
             </div>
 
