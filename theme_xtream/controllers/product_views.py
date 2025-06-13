@@ -49,13 +49,13 @@ class ShopController(WebsiteSale):
         ])    
 
         # El contador de productos por marca debe considerar solo productos publicados y con stock
-        brand_products_count = 0
-        if product.brand_type_id:
-            brand_products_count = request.env['product.template'].sudo().search_count([
+        # Obtener todos los productos publicados y con stock de la misma marca
+        brand_products = request.env['product.template'].sudo().search([
             ('brand_type_id', '=', product.brand_type_id.id),
             ('website_published', '=', True),
             ('qty_available', '>', 0)
-            ])
+        ])
+        brand_products_count = len(brand_products)
 
         context = {
             'product': product,
