@@ -53,7 +53,7 @@ class ShopController(WebsiteSale):
             brand_type_products_count = request.env['product.template'].search_count([
                 ('brand_type_id', '=', product.brand_type_id.id)
             ])
-            
+
         context = {
             'product': product,
             'categories': categories,
