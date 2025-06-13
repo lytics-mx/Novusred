@@ -51,7 +51,9 @@ class ShopController(WebsiteSale):
         brand_products_count = 0
         if product.brand_type_id:
             brand_products_count = request.env['product.template'].sudo().search_count([
-                ('brand_type_id', '=', product.brand_type_id.id)
+                ('brand_type_id', '=', product.brand_type_id.id),
+                ('active', '=', True),
+                ('website_published', '=', True)
             ])
 
         context = {
