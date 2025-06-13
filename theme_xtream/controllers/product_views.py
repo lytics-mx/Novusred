@@ -48,16 +48,12 @@ class ShopController(WebsiteSale):
             ('is_active_carousel', '=', True)
         ])    
 
-        # El contador de productos por marca debe considerar solo productos publicados y con stock
-        # Obtener todos los productos publicados y con stock de la misma marca
-        brand_products_count = 0
-        if product.brand_type_id:
-            brand_products_count = request.env['product.template'].sudo().search_count([
-                ('brand_type_id', '=', product.brand_type_id.id),
-                ('website_published', '=', True),
-                ('qty_available', '>', 0)
+        brand_type_products_count = 0
+        if hasattr(product, 'brand_type_id') and product.brand_type_id:
+            brand_type_products_count = request.env['product.template'].search_count([
+                ('brand_type_id', '=', product.brand_type_id.id)
             ])
-
+            
         context = {
             'product': product,
             'categories': categories,
@@ -67,8 +63,7 @@ class ShopController(WebsiteSale):
             'fixed_discount': fixed_discount,
             'list_price': product.list_price,  # <-- Agrega esto
             'general_images': general_images,
-            'brand_products_count': brand_products_count,
-                
+            'brand_type_products_count': brand_type_products_count,                
         }
         return request.render("theme_xtream.website_view_product_xtream", context)
     
