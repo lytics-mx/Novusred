@@ -56,18 +56,19 @@
                             </t>
                         </t>
                     </div>
-                    <!-- Cuadro izquierdo DEBAJO de las miniaturas, ocupa todo el ancho de la columna -->
-                    <div style="background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-top: 24px; width: 100%; min-height: 120px; padding: 16px; display: flex; align-items: center; justify-content: center; flex: 1;">
-                        <!-- Contenido del cuadro izquierdo -->
-                        <span style="color:#888;">Cuadro izquierdo</span>
-                    </div>
                 </div>
                 <!-- Imagen principal al centro -->
-                <div class="col-12 col-md-6 d-flex flex-column align-items-center justify-content-start" style="min-height: 100%; padding-top: 0;">
+                <div class="col-12 col-md-6 d-flex flex-column align-items-center justify-content-start" style="min-height: 100%; padding-top: 0; position:relative;">
                     <img id="main-product-img"
                         t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
                         class="img-fluid main-img-large"
                         style="max-height:580px;cursor:pointer; margin-top: 0;"/>
+                    <!-- Cuadro izquierdo DEBAJO de la imagen central, con el mismo largo que la galería de miniaturas -->
+                    <div id="cuadro-izquierdo-central"
+                        style="background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-top: 24px; width: 100%; min-height: 120px; padding: 16px; display: flex; align-items: center; justify-content: center;">
+                        <!-- Contenido del cuadro izquierdo -->
+                        <span style="color:#888;">Cuadro izquierdo</span>
+                    </div>
                 </div>
                 <!-- Cuadro derecho al lado derecho de la imagen principal -->
                 <div class="col-12 col-md-4 d-flex flex-column align-items-center justify-content-start" style="padding-left: 0;">
@@ -97,6 +98,18 @@
                                 firstThumb.classList.add('active');
                             }
                         });
+                        // Ajustar el ancho del cuadro izquierdo debajo de la imagen central para que coincida con la galería de miniaturas
+                        function ajustarCuadroIzquierdo() {
+                            var thumbsDiv = document.getElementById('product-thumbs');
+                            var cuadro = document.getElementById('cuadro-izquierdo-central');
+                            if (thumbsDiv && cuadro) {
+                                var thumbsWidth = thumbsDiv.offsetWidth;
+                                cuadro.style.maxWidth = thumbsWidth + 'px';
+                                cuadro.style.width = '100%';
+                            }
+                        }
+                        window.addEventListener('resize', ajustarCuadroIzquierdo);
+                        ajustarCuadroIzquierdo();
                     });
                 </script>
             </div>
