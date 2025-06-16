@@ -37,73 +37,69 @@
             </div>
 
             <!-- ...resto del contenido (imagen, nombre, etc)... -->
-                <div class="row">
-                    <!-- Galería de miniaturas a la izquierda (ahora arriba de la imagen principal en mobile, a la izquierda en desktop) -->
-                    <div class="col-12 col-md-2 d-flex flex-md-column align-items-center align-items-md-start mb-3 mb-md-0" style="padding-right: 0;">
-                        <div class="d-flex flex-row flex-md-column gap-2 align-items-center" id="product-thumbs" style="align-items: flex-start;">
-                            <!-- Siempre la imagen principal como primer miniatura -->
-                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                                class="img-thumbnail mb-2 product-thumb active thumb-mini"
-                                t-att-data-img="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                                style="cursor:pointer;" />
-                            <!-- Después, solo las imágenes adicionales -->
-                            <t t-if="product.product_image_ids">
-                                <t t-foreach="product.product_image_ids" t-as="img">
-                                    <img t-att-src="'/web/image/product.image/' + str(img.id) + '/image_1920'"
-                                        class="img-thumbnail mb-2 product-thumb thumb-mini"
-                                        t-att-data-img="'/web/image/product.image/' + str(img.id) + '/image_1920'"
-                                        style="cursor:pointer;" />
-                                </t>
+            <div class="row">
+                <!-- Galería de miniaturas a la izquierda (ahora arriba de la imagen principal en mobile, a la izquierda en desktop) -->
+                <div class="col-12 col-md-2 d-flex flex-md-column align-items-center align-items-md-start mb-3 mb-md-0" style="padding-right: 0;">
+                    <div class="d-flex flex-row flex-md-column gap-2 align-items-center" id="product-thumbs" style="align-items: flex-start;">
+                        <!-- Siempre la imagen principal como primer miniatura -->
+                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                            class="img-thumbnail mb-2 product-thumb active thumb-mini"
+                            t-att-data-img="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                            style="cursor:pointer;" />
+                        <!-- Después, solo las imágenes adicionales -->
+                        <t t-if="product.product_image_ids">
+                            <t t-foreach="product.product_image_ids" t-as="img">
+                                <img t-att-src="'/web/image/product.image/' + str(img.id) + '/image_1920'"
+                                    class="img-thumbnail mb-2 product-thumb thumb-mini"
+                                    t-att-data-img="'/web/image/product.image/' + str(img.id) + '/image_1920'"
+                                    style="cursor:pointer;" />
                             </t>
-                        </div>
-                        <!-- Cuadro izquierdo ocupa toda la altura de la columna de miniaturas + imagen principal -->
-                        <div class="d-none d-md-block" style="background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-top: 24px; width: 100%; min-height: 120px; padding: 16px; display: flex; align-items: center; justify-content: center; flex: 1;">
-                            <!-- Contenido del cuadro izquierdo -->
-                            <span style="color:#888;">Cuadro izquierdo</span>
-                        </div>
+                        </t>
                     </div>
-                    <!-- Imagen principal al centro -->
-                    <div class="col-12 col-md-6 d-flex flex-column align-items-center justify-content-start" style="min-height: 100%; padding-top: 0;">
-                        <img id="main-product-img"
-                            t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                            class="img-fluid main-img-large"
-                            style="max-height:580px;cursor:pointer; margin-top: 0;"/>
-                        <!-- Cuadro izquierdo debajo de la imagen principal SOLO en mobile -->
-                        <div class="d-block d-md-none" style="background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-top: 24px; width: 100%; min-height: 120px; padding: 16px; display: flex; align-items: center; justify-content: center;">
-                            <span style="color:#888;">Cuadro izquierdo</span>
-                        </div>
+                    <!-- Cuadro izquierdo DEBAJO de las miniaturas, ocupa todo el ancho de la columna -->
+                    <div style="background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-top: 24px; width: 100%; min-height: 120px; padding: 16px; display: flex; align-items: center; justify-content: center; flex: 1;">
+                        <!-- Contenido del cuadro izquierdo -->
+                        <span style="color:#888;">Cuadro izquierdo</span>
                     </div>
-                    <!-- Cuadro derecho al lado derecho de la imagen principal -->
-                    <div class="col-12 col-md-4 d-flex flex-column align-items-center justify-content-start" style="padding-left: 0;">
-                        <div style="background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); width: 100%; min-height: 160px; padding: 20px; display: flex; align-items: center; justify-content: center;">
-                            <!-- Contenido del cuadro derecho -->
-                            <span style="color:#888;">Cuadro derecho</span>
-                        </div>
+                </div>
+                <!-- Imagen principal al centro -->
+                <div class="col-12 col-md-6 d-flex flex-column align-items-center justify-content-start" style="min-height: 100%; padding-top: 0;">
+                    <img id="main-product-img"
+                        t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                        class="img-fluid main-img-large"
+                        style="max-height:580px;cursor:pointer; margin-top: 0;"/>
+                </div>
+                <!-- Cuadro derecho al lado derecho de la imagen principal -->
+                <div class="col-12 col-md-4 d-flex flex-column align-items-center justify-content-start" style="padding-left: 0;">
+                    <div style="background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); width: 100%; min-height: 160px; padding: 20px; display: flex; align-items: center; justify-content: center;">
+                        <!-- Contenido del cuadro derecho -->
+                        <span style="color:#888;">Cuadro derecho</span>
                     </div>
-                    <script type="text/javascript">
-                        document.addEventListener('DOMContentLoaded', function() {
-                            var mainImg = document.getElementById('main-product-img');
-                            var thumbs = document.querySelectorAll('#product-thumbs .product-thumb');
-                            // Cambiar imagen principal al hacer click en miniatura
-                            thumbs.forEach(function(thumb) {
-                                thumb.addEventListener('click', function() {
-                                    mainImg.src = thumb.getAttribute('data-img');
-                                    thumbs.forEach(function(t) { t.classList.remove('active'); });
-                                    thumb.classList.add('active');
-                                });
-                            });
-                            // Al hacer click en la imagen principal, vuelve a la primera miniatura
-                            mainImg.addEventListener('click', function() {
-                                var firstThumb = document.querySelector('#product-thumbs .product-thumb');
-                                if (firstThumb) {
-                                    mainImg.src = firstThumb.getAttribute('data-img');
-                                    thumbs.forEach(function(t) { t.classList.remove('active'); });
-                                    firstThumb.classList.add('active');
-                                }
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var mainImg = document.getElementById('main-product-img');
+                        var thumbs = document.querySelectorAll('#product-thumbs .product-thumb');
+                        // Cambiar imagen principal al hacer click en miniatura
+                        thumbs.forEach(function(thumb) {
+                            thumb.addEventListener('click', function() {
+                                mainImg.src = thumb.getAttribute('data-img');
+                                thumbs.forEach(function(t) { t.classList.remove('active'); });
+                                thumb.classList.add('active');
                             });
                         });
-                    </script>
-                </div>
+                        // Al hacer click en la imagen principal, vuelve a la primera miniatura
+                        mainImg.addEventListener('click', function() {
+                            var firstThumb = document.querySelector('#product-thumbs .product-thumb');
+                            if (firstThumb) {
+                                mainImg.src = firstThumb.getAttribute('data-img');
+                                thumbs.forEach(function(t) { t.classList.remove('active'); });
+                                firstThumb.classList.add('active');
+                            }
+                        });
+                    });
+                </script>
+            </div>
             </div> <!-- Cierre de la fila .row -->
 
             <div id="product_option_block"></div>
