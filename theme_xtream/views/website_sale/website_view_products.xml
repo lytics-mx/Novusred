@@ -6,69 +6,68 @@
             <t t-call-assets="website_sale.assets_frontend" t-js="true"/>
             <div id="wrap" class="oe_structure oe_website_sale text-center" style="padding: 40px;">
                            <!-- ...existing code... -->
-                <div style="background:#D2D2D2; padding:10px 20px; border-radius:6px; margin-bottom:20px; display:flex; align-items:center; gap:10px; justify-content:flex-start;">
-                    <t t-set="referer" t-value="request.httprequest.headers.get('Referer')"/>
-                    <t t-if="not referer or referer == request.httprequest.url">
-                        <t t-set="referer" t-value="'/subcategory'"/>
+            <div style="background:#D2D2D2; padding:10px 20px; border-radius:6px; margin-bottom:20px; display:flex; align-items:center; gap:10px; justify-content:flex-start;">
+                <t t-set="referer" t-value="request.httprequest.headers.get('Referer')"/>
+                <t t-if="not referer or referer == request.httprequest.url">
+                    <t t-set="referer" t-value="'/subcategory'"/>
+                </t>
+                <a t-att-href="referer" style="color:#333;">Volver</a>
+                <span style="margin: 0 8px;">|</span>
+                <span t-if="product.categ_id">
+                    <t t-set="parent_cat" t-value="product.categ_id.parent_id"/>
+                    <t t-if="parent_cat and parent_cat.parent_id">
+                        <!-- Grandparent > Parent > Child -->
+                        <a t-att-href="'/subcategory?category_id=%s' % parent_cat.parent_id.id" t-esc="parent_cat.parent_id.name" style="color:#337ab7;"/>
+                        <span style="margin: 0 4px;">&gt;</span>
+                        <a t-att-href="'/subcategory?category_id=%s' % parent_cat.id" t-esc="parent_cat.name" style="color:#337ab7;"/>
+                        <span style="margin: 0 4px;">&gt;</span>
+                        <a t-att-href="'/subcategory?category_id=%s' % product.categ_id.id" t-esc="product.categ_id.name" style="color:#337ab7;"/>
                     </t>
-                    <a t-att-href="referer" style="color:#333;">Volver</a>
-                    <span style="margin: 0 8px;">|</span>
-                    <span t-if="product.categ_id">
-                        <t t-set="parent_cat" t-value="product.categ_id.parent_id"/>
-                        <t t-if="parent_cat and parent_cat.parent_id">
-                            <!-- Grandparent > Parent > Child -->
-                            <a t-att-href="'/subcategory?category_id=%s' % parent_cat.parent_id.id" t-esc="parent_cat.parent_id.name" style="color:#337ab7;"/>
-                            <span style="margin: 0 4px;">&gt;</span>
-                            <a t-att-href="'/subcategory?category_id=%s' % parent_cat.id" t-esc="parent_cat.name" style="color:#337ab7;"/>
-                            <span style="margin: 0 4px;">&gt;</span>
-                            <a t-att-href="'/subcategory?category_id=%s' % product.categ_id.id" t-esc="product.categ_id.name" style="color:#337ab7;"/>
-                        </t>
-                        <t t-elif="parent_cat">
-                            <!-- Parent > Child -->
-                            <a t-att-href="'/subcategory?category_id=%s' % parent_cat.id" t-esc="parent_cat.name" style="color:#337ab7;"/>
-                            <span style="margin: 0 4px;">&gt;</span>
-                            <a t-att-href="'/subcategory?category_id=%s' % product.categ_id.id" t-esc="product.categ_id.name" style="color:#337ab7;"/>
-                        </t>
-                        <t t-else="">
-                            <!-- Only Child -->
-                            <a t-att-href="'/subcategory?category_id=%s' % product.categ_id.id" t-esc="product.categ_id.name" style="color:#337ab7;"/>
-                        </t>
-                    </span>
-                </div>
-
-                <!-- ...resto del contenido (imagen, nombre, etc)... -->
-                <div class="product-view-container">
-                  <div class="left-column">
-                    <div class="thumbnails">
-                      <!-- Imágenes adicionales chicas -->
-                      <img src="img1.jpg" class="thumb" />
-                      <img src="img2.jpg" class="thumb" />
-                      <img src="img3.jpg" class="thumb" />
-                      <img src="img4.jpg" class="thumb" />
-                    </div>
-                    <div class="suggested-products">
-                      <!-- Cuadro a la izquierda (productos sugeridos) -->
-                      <h4>Productos que podrían interesarte</h4>
-                      <!-- Aquí van los productos sugeridos -->
-                    </div>
-                  </div>
-                  <div class="center-image">
-                    <!-- Imagen central grande -->
-                    <img src="main.jpg" class="main-img" />
-                  </div>
-                  <div class="right-info">
-                    <!-- Cuadro derecho (información del producto) -->
-                    <h2>Laptop Gamer Predator Acer PT315-53-72VZ</h2>
-                    <p class="price">$1,000.39</p>
-                    <button>Agregar al carrito</button>
-                    <button>Comprar</button>
-                    <!-- Más información aquí -->
-                  </div>
-                </div>
-
-                <div id="product_option_block"></div>
-                <div id="o_product_terms_and_share"></div>
+                    <t t-elif="parent_cat">
+                        <!-- Parent > Child -->
+                        <a t-att-href="'/subcategory?category_id=%s' % parent_cat.id" t-esc="parent_cat.name" style="color:#337ab7;"/>
+                        <span style="margin: 0 4px;">&gt;</span>
+                        <a t-att-href="'/subcategory?category_id=%s' % product.categ_id.id" t-esc="product.categ_id.name" style="color:#337ab7;"/>
+                    </t>
+                    <t t-else="">
+                        <!-- Only Child -->
+                        <a t-att-href="'/subcategory?category_id=%s' % product.categ_id.id" t-esc="product.categ_id.name" style="color:#337ab7;"/>
+                    </t>
+                </span>
             </div>
+
+            <!-- ...resto del contenido (imagen, nombre, etc)... -->
+            <div class="product-view-container">
+              <div class="left-column">
+                <div class="thumbnails">
+                  <!-- Imágenes adicionales chicas -->
+                  <img src="img1.jpg" class="thumb" />
+                  <img src="img2.jpg" class="thumb" />
+                  <img src="img3.jpg" class="thumb" />
+                  <img src="img4.jpg" class="thumb" />
+                </div>
+                <div class="suggested-products">
+                  <!-- Cuadro a la izquierda (productos sugeridos) -->
+                  <h4>Productos que podrían interesarte</h4>
+                  <!-- Aquí van los productos sugeridos -->
+                </div>
+              </div>
+              <div class="center-image">
+                <!-- Imagen central grande -->
+                <img src="main.jpg" class="main-img" />
+              </div>
+              <div class="right-info">
+                <!-- Cuadro derecho (información del producto) -->
+                <h2>Laptop Gamer Predator Acer PT315-53-72VZ</h2>
+                <p class="price">$1,000.39</p>
+                <button>Agregar al carrito</button>
+                <button>Comprar</button>
+                <!-- Más información aquí -->
+              </div>
+            </div>
+
+            <div id="product_option_block"></div>
+            <div id="o_product_terms_and_share"></div>
             
             <t t-jquery="body" t-operation="append">
                 <!-- <script>
