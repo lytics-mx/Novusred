@@ -252,7 +252,37 @@
                                     </button>
                                 </form>
                             </div>
-                            <!-- Card de sugerencias de productos, independiente de los botones -->
+                            <script type="text/javascript">
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    var qtyInput = document.getElementById('qty-input');
+                                    var cartQty = document.getElementById('cart-qty');
+                                    var buyQty = document.getElementById('buy-qty');
+                                    var cartForm = document.getElementById('add-to-cart-form');
+                                    var buyForm = document.getElementById('buy-now-form');
+
+                                    cartForm.addEventListener('submit', function(e) {
+                                        cartQty.value = qtyInput.value;
+                                    });
+
+                                    buyForm.addEventListener('submit', function(e) {
+                                        e.preventDefault();
+                                        buyQty.value = qtyInput.value;
+                                        var data = new FormData(buyForm);
+                                        fetch(buyForm.action, {
+                                            method: 'POST',
+                                            body: data,
+                                            credentials: 'same-origin'
+                                        })
+                                        .then(response => {
+                                            if (response.ok) {
+                                                window.location.href = '/shop/checkout?try_skip_step=true';
+                                            }
+                                        });
+                                    });
+                                });
+                            </script>
+                        </div>
+                        <div class="col-12 col-md-4">
                             <div class="mt-4 w-100">
                                 <div style="background: #f5f5f5; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 2px solid #bdbdbd; width: 100%;">
                                     <h5 style="font-weight: 600; margin-bottom: 18px;">Productos que podrían interesarte</h5>
@@ -327,37 +357,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <script type="text/javascript">
-                                document.addEventListener('DOMContentLoaded', function() {
-                                    var qtyInput = document.getElementById('qty-input');
-                                    var cartQty = document.getElementById('cart-qty');
-                                    var buyQty = document.getElementById('buy-qty');
-                                    var cartForm = document.getElementById('add-to-cart-form');
-                                    var buyForm = document.getElementById('buy-now-form');
-
-                                    cartForm.addEventListener('submit', function(e) {
-                                        cartQty.value = qtyInput.value;
-                                    });
-
-                                    buyForm.addEventListener('submit', function(e) {
-                                        e.preventDefault();
-                                        buyQty.value = qtyInput.value;
-                                        var data = new FormData(buyForm);
-                                        fetch(buyForm.action, {
-                                            method: 'POST',
-                                            body: data,
-                                            credentials: 'same-origin'
-                                        })
-                                        .then(response => {
-                                            if (response.ok) {
-                                                window.location.href = '/shop/checkout?try_skip_step=true';
-                                            }
-                                        });
-                                    });
-                                });
-                            </script>
                         </div>
-                       
                         <div style="height:15px;"></div>
     
                         <!-- Productos relacionados por marca -->
