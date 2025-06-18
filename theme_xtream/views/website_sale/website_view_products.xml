@@ -83,6 +83,24 @@
                         </div>
                     </div>
                 </div>
+                <!-- Productos que deben de interesarte, completamente aparte -->
+                <div class="col-12 col-md-8" style="margin-top: 24px;">
+                    <div style="background: #e3f2fd; border-radius: 12px; padding: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 2px solid #90caf9; width: 100%;">
+                        <h5 style="font-weight: 600; margin-bottom: 12px; font-size: 1em; color: #1976d2;">Productos que deben de interesarte</h5>
+                        <div class="d-flex flex-row flex-wrap justify-content-start" style="gap: 18px;">
+                            <t t-set="must_products" t-value="request.env['product.template'].sudo().search([('id', '!=', product.id), ('website_published', '=', True)], limit=3, offset=3)" />
+                            <t t-foreach="must_products" t-as="product">
+                                <div style="width: 120px;">
+                                    <a t-att-href="'/shop/product/' + str(product.id)" style="display:block; width:100%;">
+                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                                             class="img-fluid"
+                                             style="width: 100px; height: 100px; object-fit: contain; border-radius: 8px; margin-bottom: 4px;" />
+                                    </a>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
                     <script type="text/javascript">
                         document.addEventListener('DOMContentLoaded', function() {
                             var mainImg = document.getElementById('main-product-img');
