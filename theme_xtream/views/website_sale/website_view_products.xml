@@ -39,76 +39,75 @@
             <!-- ...resto del contenido (imagen, nombre, etc)... -->
             <div class="row" style="align-items: flex-start;">
                 <!-- Columna izquierda -->
-                <div class="col-12 col-md-8" style="background:#f8f9fa; min-height:200px; display: block;">
-                    <div class="card" style="width: 100%; min-height: 300px; margin-bottom: 20px;">
-<div class="col-12 col-md-8 d-flex flex-row align-items-start justify-content-start" style="min-height: 100%; padding-top: 0;">
-                    <!-- Galería de miniaturas a la izquierda -->
-                    <div class="d-flex flex-column align-items-center justify-content-start" id="product-thumbs" style="gap: 8px; margin-right: 24px;">
-                        <!-- Siempre la imagen principal como primer miniatura -->
-                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                            class="img-thumbnail product-thumb active thumb-mini"
-                            t-att-data-img="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                            style="cursor:pointer;" />
-                        <!-- Después, solo las imágenes adicionales -->
-                        <t t-if="product.product_image_ids">
-                            <t t-foreach="product.product_image_ids" t-as="img">
-                                <img t-att-src="'/web/image/product.image/' + str(img.id) + '/image_1920'"
-                                    class="img-thumbnail product-thumb thumb-mini"
-                                    t-att-data-img="'/web/image/product.image/' + str(img.id) + '/image_1920'"
+                <div class="col-12 col-md-8" style="background:#f8f9fa; min-height:200px; display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; padding:0;">
+                    <div class="card" style="width: 100%; min-height: 300px; margin-bottom: 20px; box-shadow:none; border:none; background:transparent;">
+                        <div class="d-flex flex-row align-items-start justify-content-start" style="width:100%; gap:24px; padding:0;">
+                            <!-- Galería de miniaturas a la izquierda -->
+                            <div class="d-flex flex-column align-items-center justify-content-start" id="product-thumbs" style="gap: 8px; margin-right: 18px;">
+                                <!-- Siempre la imagen principal como primer miniatura -->
+                                <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                                    class="img-thumbnail product-thumb active thumb-mini"
+                                    t-att-data-img="'/web/image/product.template/' + str(product.id) + '/image_1920'"
                                     style="cursor:pointer;" />
-                            </t>
-                        </t>
-                    </div>
-                    <!-- Imagen principal al centro -->
-                    <div class="flex-grow-1 d-flex flex-column align-items-center justify-content-start">
-                        <img id="main-product-img"
-                            t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                            class="img-fluid main-img-large"
-                            style="max-height:350px;cursor:pointer; margin-bottom: 18px;"/>
-                    </div>
-                </div>
-                <!-- Productos que podrían interesarte debajo de toda la galería e imagen principal, ocupando el mismo ancho -->
-                <div class="col-12 col-md-8">
-                    <div style="background: #f5f5f5; border-radius: 12px; padding: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 2px solid #bdbdbd; width: 100%;">
-                        <h5 style="font-weight: 600; margin-bottom: 12px; font-size: 1em;">Productos que podrían interesarte</h5>
-                        <div class="d-flex flex-row flex-wrap justify-content-start" style="gap: 18px;">
-                            <t t-set="suggested_products" t-value="request.env['product.template'].sudo().search([('id', '!=', product.id), ('website_published', '=', True)], limit=3)" />
-                            <t t-foreach="suggested_products" t-as="product">
-                                <div style="width: 120px;">
-                                    <a t-att-href="'/shop/product/' + str(product.id)" style="display:block; width:100%;">
-                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                                             class="img-fluid"
-                                             style="width: 100px; height: 100px; object-fit: contain; border-radius: 8px; margin-bottom: 4px;" />
-                                    </a>
-                                </div>
-                            </t>
+                                <!-- Después, solo las imágenes adicionales -->
+                                <t t-if="product.product_image_ids">
+                                    <t t-foreach="product.product_image_ids" t-as="img">
+                                        <img t-att-src="'/web/image/product.image/' + str(img.id) + '/image_1920'"
+                                            class="img-thumbnail product-thumb thumb-mini"
+                                            t-att-data-img="'/web/image/product.image/' + str(img.id) + '/image_1920'"
+                                            style="cursor:pointer;" />
+                                    </t>
+                                </t>
+                            </div>
+                            <!-- Imagen principal al centro, ocupa todo el espacio disponible -->
+                            <div class="flex-grow-1 d-flex flex-column align-items-center justify-content-start" style="min-width:0;">
+                                <img id="main-product-img"
+                                    t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                                    class="img-fluid main-img-large"
+                                    style="max-height:350px;cursor:pointer; margin-bottom: 18px; width:100%; object-fit:contain;"/>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                    <script type="text/javascript">
-                        document.addEventListener('DOMContentLoaded', function() {
-                            var mainImg = document.getElementById('main-product-img');
-                            var thumbs = document.querySelectorAll('#product-thumbs .product-thumb');
-                            // Cambiar imagen principal al hacer click en miniatura
-                            thumbs.forEach(function(thumb) {
-                                thumb.addEventListener('click', function() {
-                                    mainImg.src = thumb.getAttribute('data-img');
-                                    thumbs.forEach(function(t) { t.classList.remove('active'); });
-                                    thumb.classList.add('active');
+                        <!-- Productos que podrían interesarte debajo de toda la galería e imagen principal, ocupando el mismo ancho -->
+                        <div class="w-100 mt-3">
+                            <div style="background: #f5f5f5; border-radius: 12px; padding: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 2px solid #bdbdbd; width: 100%;">
+                                <h5 style="font-weight: 600; margin-bottom: 12px; font-size: 1em;">Productos que podrían interesarte</h5>
+                                <div class="d-flex flex-row flex-wrap justify-content-start" style="gap: 18px;">
+                                    <t t-set="suggested_products" t-value="request.env['product.template'].sudo().search([('id', '!=', product.id), ('website_published', '=', True)], limit=3)" />
+                                    <t t-foreach="suggested_products" t-as="product">
+                                        <div style="width: 120px;">
+                                            <a t-att-href="'/shop/product/' + str(product.id)" style="display:block; width:100%;">
+                                                <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                                                     class="img-fluid"
+                                                     style="width: 100px; height: 100px; object-fit: contain; border-radius: 8px; margin-bottom: 4px;" />
+                                            </a>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                        <script type="text/javascript">
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var mainImg = document.getElementById('main-product-img');
+                                var thumbs = document.querySelectorAll('#product-thumbs .product-thumb');
+                                // Cambiar imagen principal al hacer click en miniatura
+                                thumbs.forEach(function(thumb) {
+                                    thumb.addEventListener('click', function() {
+                                        mainImg.src = thumb.getAttribute('data-img');
+                                        thumbs.forEach(function(t) { t.classList.remove('active'); });
+                                        thumb.classList.add('active');
+                                    });
+                                });
+                                // Al hacer click en la imagen principal, vuelve a la primera miniatura
+                                mainImg.addEventListener('click', function() {
+                                    var firstThumb = document.querySelector('#product-thumbs .product-thumb');
+                                    if (firstThumb) {
+                                        mainImg.src = firstThumb.getAttribute('data-img');
+                                        thumbs.forEach(function(t) { t.classList.remove('active'); });
+                                        firstThumb.classList.add('active');
+                                    }
                                 });
                             });
-                            // Al hacer click en la imagen principal, vuelve a la primera miniatura
-                            mainImg.addEventListener('click', function() {
-                                var firstThumb = document.querySelector('#product-thumbs .product-thumb');
-                                if (firstThumb) {
-                                    mainImg.src = firstThumb.getAttribute('data-img');
-                                    thumbs.forEach(function(t) { t.classList.remove('active'); });
-                                    firstThumb.classList.add('active');
-                                }
-                            });
-                        });
-                    </script>
-                        
+                        </script>
                     </div>
                 </div>
 
