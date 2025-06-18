@@ -57,23 +57,14 @@
                             </t>
                         </t>
                     </div>
-                </div>
-                <!-- Imagen principal al centro -->
-                <div class="col-12 col-md-6 d-flex flex-column align-items-center justify-content-start" style="min-height: 100%; padding-top: 0;">
-                    <img id="main-product-img"
-                        t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                        class="img-fluid main-img-large"
-                        style="max-height:580px;cursor:pointer; margin-top: 0;"/>
-                    <!-- Contenido adicional debajo de la imagen principal, lado derecho -->
-                    
-                    <!-- Productos que podrían interesarte debajo de la imagen central y de las miniaturas -->
+                    <!-- Productos que podrían interesarte debajo de las miniaturas, ocupando todo el ancho de la columna de miniaturas -->
                     <div class="mt-4 w-100">
                         <div style="background: #f5f5f5; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 2px solid #bdbdbd; width: 100%;">
                             <h5 style="font-weight: 600; margin-bottom: 18px;">Productos que podrían interesarte</h5>
                             <div class="row justify-content-center align-items-stretch" style="gap: 0;">
                                 <t t-set="suggested_products" t-value="request.env['product.template'].sudo().search([('id', '!=', product.id), ('website_published', '=', True)], limit=3)" />
                                 <t t-foreach="suggested_products" t-as="product">
-                                    <div class="col-12 col-md-4 mb-2 d-flex">
+                                    <div class="col-12 col-md-12 mb-2 d-flex">
                                         <div class="card shadow-sm product-card w-100" style="border-radius: 10px; overflow: hidden;">
                                             <a t-att-href="'/shop/product/' + str(product.id)">
                                                 <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%;">
@@ -141,7 +132,15 @@
                             </div>
                         </div>
                     </div>
-                    </div>
+                </div>
+                <!-- Imagen principal al centro -->
+                <div class="col-12 col-md-6 d-flex flex-column align-items-center justify-content-start" style="min-height: 100%; padding-top: 0;">
+                    <img id="main-product-img"
+                        t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                        class="img-fluid main-img-large"
+                        style="max-height:580px;cursor:pointer; margin-top: 0;"/>
+                    <!-- Contenido adicional debajo de la imagen principal, lado derecho -->
+                </div>
                     <script type="text/javascript">
                         document.addEventListener('DOMContentLoaded', function() {
                             var mainImg = document.getElementById('main-product-img');
