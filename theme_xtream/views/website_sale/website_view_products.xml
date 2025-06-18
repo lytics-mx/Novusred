@@ -38,12 +38,19 @@
 
             <!-- ...resto del contenido (imagen, nombre, etc)... -->
             <div class="row">
-                <!-- Galería de miniaturas a la izquierda -->
-                <div class="col-2 d-none d-md-block align-items-start" style="display: flex; flex-direction: column;">
-                    <div class="d-flex flex-column gap-2 align-items-center" id="product-thumbs" style="align-items: flex-start;">
+                <!-- Galería de miniaturas e imagen principal en columna (vertical en desktop, horizontal en mobile) -->
+                <div class="col-12 col-md-6 d-flex flex-column align-items-center justify-content-start" style="min-height: 100%; padding-top: 0;">
+                    <!-- Imagen principal al centro -->
+                    <img id="main-product-img"
+                        t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                        class="img-fluid main-img-large"
+                        style="max-height:350px;cursor:pointer; margin-bottom: 18px;"/>
+                    
+                    <!-- Galería de miniaturas debajo de la imagen principal -->
+                    <div class="d-flex flex-row flex-wrap justify-content-center gap-2 mt-2" id="product-thumbs" style="align-items: center;">
                         <!-- Siempre la imagen principal como primer miniatura -->
                         <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                            class="img-thumbnail mb-2 product-thumb active thumb-mini"
+                            class="img-thumbnail product-thumb active thumb-mini"
                             t-att-data-img="'/web/image/product.template/' + str(product.id) + '/image_1920'"
                             style="cursor:pointer;" />
                     
@@ -51,13 +58,14 @@
                         <t t-if="product.product_image_ids">
                             <t t-foreach="product.product_image_ids" t-as="img">
                                 <img t-att-src="'/web/image/product.image/' + str(img.id) + '/image_1920'"
-                                    class="img-thumbnail mb-2 product-thumb thumb-mini"
+                                    class="img-thumbnail product-thumb thumb-mini"
                                     t-att-data-img="'/web/image/product.image/' + str(img.id) + '/image_1920'"
                                     style="cursor:pointer;" />
                             </t>
                         </t>
                     </div>
-                    <!-- Productos que podrían interesarte debajo de las miniaturas, ocupando todo el ancho de la columna de miniaturas -->
+                    
+                    <!-- Productos que podrían interesarte debajo de las miniaturas -->
                     <div class="mt-4 w-100">
                         <div style="background: #f5f5f5; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 2px solid #bdbdbd; width: 100%;">
                             <h5 style="font-weight: 600; margin-bottom: 18px;">Productos que podrían interesarte</h5>
@@ -132,14 +140,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- Imagen principal al centro -->
-                <div class="col-12 col-md-6 d-flex flex-column align-items-center justify-content-start" style="min-height: 100%; padding-top: 0;">
-                    <img id="main-product-img"
-                        t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                        class="img-fluid main-img-large"
-                        style="max-height:580px;cursor:pointer; margin-top: 0;"/>
-                    <!-- Contenido adicional debajo de la imagen principal, lado derecho -->
                 </div>
                     <script type="text/javascript">
                         document.addEventListener('DOMContentLoaded', function() {
