@@ -151,105 +151,26 @@
                                                 </t>
                                             </div>
                                         </div>
-                                        <!-- Selección y precio a la derecha -->
-                                        <div class="col-12 col-md-4">
-                                            <!-- Card invisible pero con lógica de precio igual al diseño mostrado -->
-                                            <div class="card shadow-sm product-card" style="border-radius: 10px; overflow: hidden; display:none !important;">
-                                                <a t-att-href="'/shop/product/' + str(product.id)">
-                                                    <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%;">
-                                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                                                             class="card-img-top"
-                                                             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 10px;" />
-                                                    </div>
-                                                </a>
-                                                <div class="card-body mobile-card-body">
-                                                    <t t-if="product.product_tag_ids">
-                                                        <div class="d-flex justify-content-start mb-2 mobile-badge-container">
-                                                            <span class="badge bg-primary mobile-badge" style="border-radius: 0; text-transform: uppercase;">
-                                                                <t t-esc="product.product_tag_ids[0].name"/>
-                                                            </span>
-                                                        </div>
-                                                    </t>
-                                                    <t t-if="product.discounted_price &lt; product.list_price">
-                                                        <div class="mt-0 mobile-discount-amount">
-                                                            <span class="text-muted" style="font-size: 16px;">
-                                                                $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                                            </span>
-                                                        </div>
-                                                        <div class="d-flex align-items-center justify-content-between mobile-price-container">
-                                                            <span class="text-dark fw-bold mobile-main-price" style="font-size: 28px; color: #000; font-weight: bold;">
-                                                                $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
-                                                            </span>
-                                                            <t t-if="product.discount_percentage or product.fixed_discount">
-                                                                <span class="mobile-discount" style="font-size: 16px; font-weight: normal; color: #FF5207;">
-                                                                    <t t-if="product.discount_percentage">
-                                                                        <t t-esc="int(product.discount_percentage)" />% OFF
-                                                                    </t>
-                                                                    <t t-elif="product.fixed_discount">
-                                                                        -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
-                                                                    </t>
-                                                                </span>
-                                                            </t>
-                                                        </div>
-                                                        <t t-if="product.list_price and product.discounted_price and (product.list_price - product.discounted_price) &gt; 0">
-                                                            <div class="mt-0 mobile-discount-amount">
-                                                                <span class="text-muted">
-                                                                    $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" /> descuento
-                                                                </span>
-                                                            </div>
-                                                        </t>
-                                                    </t>
-                                                    <t t-elif="product.list_price">
-                                                        <span class="fw-bold d-block mobile-main-price">
-                                                            $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                                        </span>
-                                                    </t>
-                                                    <t t-if="product.free_shipping">
-                                                        <div class="mt-0 mobile-shipping">
-                                                            <span class="text-orange mobile-shipping-text">
-                                                                Envío gratis
-                                                            </span>
-                                                        </div>
-                                                    </t>
-                                                    <h6 class="card-title mb-2" style="font-size: 16px; line-height: 1.2; max-height: 2.4em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-transform: uppercase;">
-                                                        <t t-esc="product.name" />
-                                                    </h6>
-                                                </div>
-                                            </div>
-                                            <!-- Card visible para el bundle principal -->
+                                        <!-- Selección y precio a la derecha (sin mostrar el card del producto principal, solo lógica de precio) -->
+                                        <div class="col-12 col-md-4 d-flex flex-column align-items-center justify-content-center">
                                             <form id="bundle-form" action="/shop/cart/update" method="POST">
                                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" t-nocache="The csrf token must always be up to date."/>
-                                                <div style="width:200px; margin:auto;">
-                                                    <div class="card shadow-sm product-card" style="border-radius: 10px; overflow: hidden;">
-                                                        <div style="position: absolute; z-index: 2; left: 8px; top: 8px;">
-                                                            <input type="checkbox" name="bundle_product_ids" t-att-value="product.product_variant_id.id" checked="checked" disabled="disabled" style="margin-bottom:6px;"/>
-                                                        </div>
-                                                        <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%;">
-                                                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                                                                 class="card-img-top"
-                                                                 style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 10px;" />
-                                                        </div>
-                                                        <div class="card-body mobile-card-body">
-                                                            <h6 class="card-title mb-2" style="font-size: 16px; line-height: 1.2; max-height: 2.4em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-transform: uppercase;">
-                                                                <t t-esc="product.name" />
-                                                            </h6>
-                                                            <div id="main-bundle-price" class="bundle-price" style="font-size:15px; font-weight:600;">
-                                                                <t t-if="product.discounted_price &lt; product.list_price">
-                                                                    $<t t-esc="'{:,}'.format(int(product.discounted_price or 0))"/>
-                                                                </t>
-                                                                <t t-else="">
-                                                                    $<t t-esc="'{:,}'.format(int(product.list_price or 0))"/>
-                                                                </t>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                <input type="checkbox" name="bundle_product_ids" t-att-value="product.product_variant_id.id" checked="checked" disabled="disabled" style="display:none;"/>
                                                 <div style="margin-top:18px; text-align:center;">
                                                     <span style="font-size:1.2em; font-weight:600;">Precio total: $<span id="bundle-total"></span></span>
                                                 </div>
                                                 <div class="d-flex" style="gap:10px; margin-top:10px; justify-content:center;">
                                                     <button type="submit" class="btn btn-primary" style="width:180px; height:48px; border-radius:5px; background:#4285f4; color:#fff; border:none; font-weight:400; font-family:inherit; letter-spacing:0.5px;">Agregar al carrito</button>
                                                     <button type="button" class="btn btn-info" id="bundle-buy-now" style="width:180px; height:48px; border-radius:5px; background:#a8ccff; color:#1757e6; border:none; font-weight:500; font-family:inherit; letter-spacing:0.5px;">Comprar</button>
+                                                </div>
+                                                <!-- Lógica de precio del producto principal (oculta, solo para JS) -->
+                                                <div id="main-bundle-price" class="bundle-price" style="display:none;">
+                                                    <t t-if="product.discounted_price &lt; product.list_price">
+                                                        <t t-esc="product.discounted_price"/>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <t t-esc="product.list_price"/>
+                                                    </t>
                                                 </div>
                                             </form>
                                         </div>
@@ -260,7 +181,9 @@
                                                 return parseFloat((text || '').replace(/[^0-9.]/g, '')) || 0;
                                             }
                                             function updateTotal() {
-                                                var total = getPriceFromText(document.getElementById('main-bundle-price').textContent);
+                                                var mainPriceDiv = document.getElementById('main-bundle-price');
+                                                var mainPrice = getPriceFromText(mainPriceDiv ? mainPriceDiv.textContent : '');
+                                                var total = mainPrice;
                                                 document.querySelectorAll('.bundle-checkbox').forEach(function(cb) {
                                                     if (cb.checked) {
                                                         var priceDiv = cb.closest('.product-card').querySelector('.mobile-main-price, .bundle-price');
