@@ -75,24 +75,43 @@
                                 <h5 style="font-weight: 600; margin-bottom: 12px; font-size: 1em;">Productos que podrían interesarte</h5>
                                 <!-- ...existing code... -->
                                 <t t-if="product.accessory_product_ids">
-                                    <div style="border:2px solid #bdbdbd; border-radius:16px; box-shadow:0 2px 8px rgba(0,0,0,0.04); padding:18px; margin-bottom:24px; background:#f5f5f5;">
-                                        <h5 style="font-weight:600; margin-bottom:12px; font-size:1em;">Productos que puedes necesitar junto con este</h5>
-                                        <form id="bundle-form" action="/shop/cart/update" method="POST">
-                                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" t-nocache="The csrf token must always be up to date."/>
-                                            <div class="d-flex flex-wrap" style="gap:18px;">
-                                                <!-- Producto principal -->
-                                                <div style="width:180px; text-align:center; border:1px solid #ccc; border-radius:8px; padding:8px;">
-                                                    <input type="checkbox" name="bundle_product_ids" t-att-value="product.product_variant_id.id" checked="checked" disabled="disabled" style="margin-bottom:6px;"/>
-                                                    <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                                                         class="img-fluid"
-                                                         style="width:100px; height:100px; object-fit:contain; border-radius:8px; margin-bottom:4px;"/>
-                                                    <div style="font-size:13px; font-weight:500; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                                                        <t t-esc="product.name"/>
-                                                    </div>
-                                                    <div style="font-size:15px; font-weight:600;">
-                                                        $<t t-esc="'{:,}'.format(int(product.list_price or 0))"/>
-                                                    </div>
+                                    <div class="row" style="border:2px solid #bdbdbd; border-radius:16px; box-shadow:0 2px 8px rgba(0,0,0,0.04); padding:18px; margin-bottom:24px; background:#f5f5f5;">
+                                        <!-- Carrusel de accesorios a la izquierda -->
+                                        <div class="col-12 col-md-8">
+                                            <h5 style="font-weight:600; margin-bottom:12px; font-size:1em;">Productos que puedes necesitar junto con este</h5>
+                                            <div id="bundle-carousel" class="carousel slide" data-bs-ride="carousel" t-if="len(product.accessory_product_ids) > 3">
+                                                <div class="carousel-inner">
+                                                    <t t-set="acc_chunks" t-value="[product.accessory_product_ids[i:i+3] for i in range(0, len(product.accessory_product_ids), 3)]"/>
+                                                    <t t-foreach="acc_chunks" t-as="chunk" t-key="loop.index">
+                                                        <div t-attf-class="carousel-item #{'active' if loop.index0 == 0 else ''}">
+                                                            <div class="d-flex flex-row" style="gap:18px; justify-content:center;">
+                                                                <t t-foreach="chunk" t-as="acc">
+                                                                    <div style="width:180px; text-align:center; border:1px solid #ccc; border-radius:8px; padding:8px;">
+                                                                        <input type="checkbox" name="bundle_product_ids" t-att-value="acc.product_variant_id.id" class="bundle-checkbox" style="margin-bottom:6px;"/>
+                                                                        <img t-att-src="'/web/image/product.template/' + str(acc.id) + '/image_1920'"
+                                                                             class="img-fluid"
+                                                                             style="width:100px; height:100px; object-fit:contain; border-radius:8px; margin-bottom:4px;"/>
+                                                                        <div style="font-size:13px; font-weight:500; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                                                            <t t-esc="acc.name"/>
+                                                                        </div>
+                                                                        <div class="bundle-price" style="font-size:15px; font-weight:600;">
+                                                                            $<t t-esc="'{:,}'.format(int(acc.list_price or 0))"/>
+                                                                        </div>
+                                                                    </div>
+                                                                </t>
+                                                            </div>
+                                                        </div>
+                                                    </t>
                                                 </div>
+                                                <button class="carousel-control-prev" type="button" data-bs-target="#bundle-carousel" data-bs-slide="prev">
+                                                    <span class="carousel-control-prev-icon"></span>
+                                                </button>
+                                                <button class="carousel-control-next" type="button" data-bs-target="#bundle-carousel" data-bs-slide="next">
+                                                    <span class="carousel-control-next-icon"></span>
+                                                </button>
+                                            </div>
+                                            <!-- Si hay 3 o menos, mostrar en fila normal -->
+                                            <div class="d-flex flex-wrap" style="gap:18px;" t-if="len(product.accessory_product_ids) <= 3">
                                                 <t t-foreach="product.accessory_product_ids" t-as="acc">
                                                     <div style="width:180px; text-align:center; border:1px solid #ccc; border-radius:8px; padding:8px;">
                                                         <input type="checkbox" name="bundle_product_ids" t-att-value="acc.product_variant_id.id" class="bundle-checkbox" style="margin-bottom:6px;"/>
@@ -102,53 +121,77 @@
                                                         <div style="font-size:13px; font-weight:500; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                                                             <t t-esc="acc.name"/>
                                                         </div>
-                                                        <div style="font-size:15px; font-weight:600;">
+                                                        <div class="bundle-price" style="font-size:15px; font-weight:600;">
                                                             $<t t-esc="'{:,}'.format(int(acc.list_price or 0))"/>
                                                         </div>
                                                     </div>
                                                 </t>
                                             </div>
-                                            <div style="margin-top:18px; text-align:right;">
-                                                <span style="font-size:1.2em; font-weight:600;">Precio total: $<span id="bundle-total"></span></span>
-                                            </div>
-                                            <div class="d-flex" style="gap:10px; margin-top:10px; justify-content:flex-end;">
-                                                <button type="submit" class="btn btn-primary" style="width:180px; height:48px; border-radius:5px; background:#4285f4; color:#fff; border:none; font-weight:400; font-family:inherit; letter-spacing:0.5px;">Agregar al carrito</button>
-                                                <button type="button" class="btn btn-info" id="bundle-buy-now" style="width:180px; height:48px; border-radius:5px; background:#a8ccff; color:#1757e6; border:none; font-weight:500; font-family:inherit; letter-spacing:0.5px;">Comprar</button>
-                                            </div>
-                                        </form>
-                                        <script type="text/javascript">
-                                            document.addEventListener('DOMContentLoaded', function() {
-                                                function updateTotal() {
-                                                    var total = parseFloat({{ product.list_price or 0 }});
-                                                    document.querySelectorAll('.bundle-checkbox').forEach(function(cb) {
-                                                        if (cb.checked) {
-                                                            total += parseFloat(cb.closest('div').querySelector('div[style*="font-size:15px"]').textContent.replace(/[^0-9.]/g, '')) || 0;
-                                                        }
-                                                    });
-                                                    document.getElementById('bundle-total').textContent = total.toLocaleString();
-                                                }
+                                        </div>
+                                        <!-- Selección y precio a la derecha -->
+                                        <div class="col-12 col-md-4">
+                                            <form id="bundle-form" action="/shop/cart/update" method="POST">
+                                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" t-nocache="The csrf token must always be up to date."/>
+                                                <div style="width:180px; text-align:center; border:1px solid #ccc; border-radius:8px; padding:8px; margin:auto;">
+                                                    <input type="checkbox" name="bundle_product_ids" t-att-value="product.product_variant_id.id" checked="checked" disabled="disabled" style="margin-bottom:6px;"/>
+                                                    <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                                                         class="img-fluid"
+                                                         style="width:100px; height:100px; object-fit:contain; border-radius:8px; margin-bottom:4px;"/>
+                                                    <div style="font-size:13px; font-weight:500; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                                        <t t-esc="product.name"/>
+                                                    </div>
+                                                    <div id="main-bundle-price" class="bundle-price" style="font-size:15px; font-weight:600;">
+                                                        $<t t-esc="'{:,}'.format(int(product.list_price or 0))"/>
+                                                    </div>
+                                                </div>
+                                                <div style="margin-top:18px; text-align:center;">
+                                                    <span style="font-size:1.2em; font-weight:600;">Precio total: $<span id="bundle-total"></span></span>
+                                                </div>
+                                                <div class="d-flex" style="gap:10px; margin-top:10px; justify-content:center;">
+                                                    <button type="submit" class="btn btn-primary" style="width:180px; height:48px; border-radius:5px; background:#4285f4; color:#fff; border:none; font-weight:400; font-family:inherit; letter-spacing:0.5px;">Agregar al carrito</button>
+                                                    <button type="button" class="btn btn-info" id="bundle-buy-now" style="width:180px; height:48px; border-radius:5px; background:#a8ccff; color:#1757e6; border:none; font-weight:500; font-family:inherit; letter-spacing:0.5px;">Comprar</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <script type="text/javascript">
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                            function getPriceFromText(text) {
+                                                return parseFloat((text || '').replace(/[^0-9.]/g, '')) || 0;
+                                            }
+                                            function updateTotal() {
+                                                var total = getPriceFromText(document.getElementById('main-bundle-price').textContent);
                                                 document.querySelectorAll('.bundle-checkbox').forEach(function(cb) {
-                                                    cb.addEventListener('change', updateTotal);
-                                                });
-                                                updateTotal();
-
-                                                // Comprar directo
-                                                document.getElementById('bundle-buy-now').addEventListener('click', function() {
-                                                    var form = document.getElementById('bundle-form');
-                                                    var data = new FormData(form);
-                                                    fetch(form.action, {
-                                                        method: 'POST',
-                                                        body: data,
-                                                        credentials: 'same-origin'
-                                                    }).then(function(response) {
-                                                        if (response.ok) {
-                                                            window.location.href = '/shop/checkout?try_skip_step=true';
+                                                    if (cb.checked) {
+                                                        var priceDiv = cb.closest('div').querySelector('.bundle-price');
+                                                        if (priceDiv) {
+                                                            total += getPriceFromText(priceDiv.textContent);
                                                         }
-                                                    });
+                                                    }
+                                                });
+                                                document.getElementById('bundle-total').textContent = total.toLocaleString();
+                                            }
+                                            document.querySelectorAll('.bundle-checkbox').forEach(function(cb) {
+                                                cb.addEventListener('change', updateTotal);
+                                            });
+                                            updateTotal();
+
+                                            // Comprar directo
+                                            document.getElementById('bundle-buy-now').addEventListener('click', function() {
+                                                var form = document.getElementById('bundle-form');
+                                                var data = new FormData(form);
+                                                fetch(form.action, {
+                                                    method: 'POST',
+                                                    body: data,
+                                                    credentials: 'same-origin'
+                                                }).then(function(response) {
+                                                    if (response.ok) {
+                                                        window.location.href = '/shop/checkout?try_skip_step=true';
+                                                    }
                                                 });
                                             });
-                                        </script>
-                                    </div>
+                                        });
+                                    </script>
                                 </t>
                                 <!-- ...existing code... -->
                             </div>
