@@ -149,6 +149,15 @@
                                             }
                                             function updateTotal() {
                                                 var total = 0;
+                                                var mainPrice = 0;
+                                                if (typeof product !== 'undefined') {
+                                                    if (product.product_tag_ids && product.product_tag_ids.length > 0 && product.discounted_price) {
+                                                        mainPrice = parseFloat(product.discounted_price) || 0;
+                                                    } else if (product.list_price) {
+                                                        mainPrice = parseFloat(product.list_price) || 0;
+                                                    }
+                                                }
+                                                total += mainPrice;
                                                 document.querySelectorAll('.bundle-checkbox').forEach(function(cb) {
                                                     if (cb.checked) {
                                                         var priceDiv = cb.closest('div').querySelector('.bundle-price');
