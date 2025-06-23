@@ -52,8 +52,12 @@ class ShopController(WebsiteSale):
         # Obtener la marca del producto actual
         brand_type_products_count = 0
         if product.brand_type_id:
+            # IDs de marcas relacionadas (incluye la marca actual)
+            related_brand_ids = [product.brand_type_id.id]
+            if hasattr(product.brand_type_id, 'related_brand_ids'):
+                related_brand_ids += product.brand_type_id.related_brand_ids.ids
             brand_type_products_count = request.env['product.template'].sudo().search_count([
-                ('brand_type_id', '=', product.brand_type_id.id),
+                ('brand_type_id', 'in', related_brand_ids),
                 ('id', '!=', product.id),
                 ('website_published', '=', True)
             ])
