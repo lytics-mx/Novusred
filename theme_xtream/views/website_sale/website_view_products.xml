@@ -86,13 +86,24 @@
                                                             <div style="position: absolute; z-index: 2; left: 8px; top: 8px;">
                                                                 <input type="checkbox" name="bundle_product_ids" t-att-value="acc.product_variant_id.id" class="bundle-checkbox" style="margin-bottom:6px;"/>
                                                             </div>
-                                                            <a t-att-href="'/shop/product/' + str(acc.id)">
-                                                                <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%;">
-                                                                    <img t-att-src="'/web/image/product.template/' + str(acc.id) + '/image_1920'"
-                                                                         class="card-img-top"
-                                                                         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 10px;" />
-                                                                </div>
-                                                            </a>
+                                                            <t t-if="acc.product_tmpl_id">
+                                                                <a t-att-href="'/shop/product/' + str(acc.product_tmpl_id.id)">
+                                                                    <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%;">
+                                                                        <img t-att-src="'/web/image/product.template/' + str(acc.product_tmpl_id.id) + '/image_1920'"
+                                                                             class="card-img-top"
+                                                                             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 10px;" />
+                                                                    </div>
+                                                                </a>
+                                                            </t>
+                                                            <t t-else="">
+                                                                <a t-att-href="'/shop/product/' + str(acc.id)">
+                                                                    <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%;">
+                                                                        <img t-att-src="'/web/image/product.template/' + str(acc.id) + '/image_1920'"
+                                                                             class="card-img-top"
+                                                                             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 10px;" />
+                                                                    </div>
+                                                                </a>
+                                                            </t>
                                                             <div class="card-body mobile-card-body">
                                                                 <t t-if="acc.product_tag_ids">
                                                                     <div class="d-flex justify-content-start mb-2 mobile-badge-container">
