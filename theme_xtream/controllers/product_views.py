@@ -50,18 +50,20 @@ class ShopController(WebsiteSale):
 
         # Calcular el contador de productos publicados y disponibles por cada marca en available_brands
         # Obtener la marca del producto actual
-        brand_type_products_count = 0
+        brand_type_products_count = request.env['product.template'].sudo().search_count([
+            ('brand_type_id', '=', product.brand_type_id.id),
+            ('id', '!=', product.id),
+            ('website_published', '=', True)
+        ])
+
+        same_brand_products = []
         if product.brand_type_id:
-            # IDs de marcas relacionadas (incluye la marca actual)
-            related_brand_ids = [product.brand_type_id.id]
-            if hasattr(product.brand_type_id, 'related_brand_ids'):
-                related_brand_ids += product.brand_type_id.related_brand_ids.ids
-            brand_type_products_count = request.env['product.template'].sudo().search_count([
-                ('brand_type_id', 'in', related_brand_ids),
+            same_brand_products = request.env['product.template'].sudo().search([
+                ('brand_type_id', '=', product.brand_type_id.id),
                 ('id', '!=', product.id),
                 ('website_published', '=', True)
-            ])
-        
+            ], limit=12)  
+
         related_tag_products = []
         if product.product_tag_ids:
             related_tag_products = request.env['product.template'].sudo().search([
@@ -81,6 +83,8 @@ class ShopController(WebsiteSale):
             'general_images': general_images,
             'brand_type_products_count': brand_type_products_count,
             'related_tag_products': related_tag_products,
+            'same_brand_products': same_brand_products,
+            
                  
         }
         return request.render("theme_xtream.website_view_product_xtream", context)
