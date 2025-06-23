@@ -302,17 +302,18 @@
                                 <!-- ...resto del código... -->
                                 <!-- ...coloca esto donde quieras mostrar los productos de la misma marca, por ejemplo debajo de la ficha técnica... -->
                                 <t t-if="product.brand_type_id">
-                                    <t t-set="brand_ids" t-value="[product.brand_type_id.id]"/>
                                     <t t-set="same_brand_products" t-value="request.env['product.template'].sudo().search([
-                                        ('brand_type_id', 'in', brand_ids),
+                                        ('brand_type_id', '=', product.brand_type_id.id),
                                         ('id', '!=', product.id),
                                         ('website_published', '=', True)
                                     ], limit=12)"/>
                                     <t t-if="same_brand_products">
                                         <div style="margin-top:40px;">
-                                            <h3 style="font-weight:600; margin-bottom:18px; text-align:left; font-size:22px;">De la misma marca</h3>
-                                            <t t-if="same_brand_products|length > 3">
-                                                <div class="owl-carousel owl-theme" id="brand-carousel">
+                                            <t t-if="same_brand_products">
+                                                <h3 style="font-weight:600; margin-bottom:18px; text-align:left; font-size:22px;">De la misma marca</h3>
+                                            </t>
+                                            <t t-if="same_brand_products">
+                                                <div t-if="same_brand_products|length > 3" class="owl-carousel owl-theme" id="brand-carousel">
                                                     <t t-foreach="same_brand_products" t-as="prod">
                                                         <div class="item">
                                                             <div class="card shadow-sm product-card" style="border-radius: 10px; overflow: hidden;">
@@ -380,24 +381,7 @@
                                                         </div>
                                                     </t>
                                                 </div>
-                                                <script type="text/javascript">
-                                                    $(document).ready(function(){
-                                                        $('#brand-carousel').owlCarousel({
-                                                            loop:true,
-                                                            margin:16,
-                                                            nav:true,
-                                                            dots:true,
-                                                            responsive:{
-                                                                0:{items:1},
-                                                                600:{items:2},
-                                                                1000:{items:3}
-                                                            }
-                                                        });
-                                                    });
-                                                </script>
-                                            </t>
-                                            <t t-else="">
-                                                <div class="row" style="gap:0;">
+                                                <div t-if="same_brand_products|length &lt;= 3" class="row" style="gap:0;">
                                                     <t t-foreach="same_brand_products" t-as="prod">
                                                         <div class="col-12 col-md-4 mb-3">
                                                             <div class="card shadow-sm product-card" style="border-radius: 10px; overflow: hidden;">
@@ -467,7 +451,24 @@
                                                 </div>
                                             </t>
                                         </div>
-                                    </t-if>
+                                        <t t-if="len(same_brand_products) &gt; 3">
+                                            <script type="text/javascript">
+                                                $(document).ready(function(){
+                                                    $('#brand-carousel').owlCarousel({
+                                                        loop:true,
+                                                        margin:16,
+                                                        nav:true,
+                                                        dots:true,
+                                                        responsive:{
+                                                            0:{items:1},
+                                                            600:{items:2},
+                                                            1000:{items:3}
+                                                        }
+                                                    });
+                                                });
+                                            </script>
+                                        </t>
+                                    </t>
                                 </t>
 
                             </div>
