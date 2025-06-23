@@ -59,10 +59,10 @@ class ShopController(WebsiteSale):
         same_brand_products = []
         if product.brand_type_id:
             same_brand_products = request.env['product.template'].sudo().search([
-                ('brand_type_id', '=', product.brand_type_id.id),
-                ('id', '!=', product.id),
-                ('website_published', '=', True)
-            ], limit=12)  
+            ('brand_type_id', '=', product.brand_type_id.id),
+            ('id', '!=', product.id),
+            ('website_published', '=', True)
+            ], limit=12)
 
         related_tag_products = []
         if product.product_tag_ids:
@@ -70,7 +70,7 @@ class ShopController(WebsiteSale):
                 ('product_tag_ids', 'in', product.product_tag_ids.ids),
                 ('id', '!=', product.id),
                 ('website_published', '=', True)
-            ], limit=6)
+            ], limit=12)
 
         context = {
             'product': product,
@@ -84,7 +84,7 @@ class ShopController(WebsiteSale):
             'brand_type_products_count': brand_type_products_count,
             'related_tag_products': related_tag_products,
             'same_brand_products': same_brand_products,
-            
+
                  
         }
         return request.render("theme_xtream.website_view_product_xtream", context)
