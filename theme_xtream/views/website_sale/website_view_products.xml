@@ -329,13 +329,14 @@
                                         ('website_published', '=', True),
                                         ('product_tag_ids', 'in', [tag.id for tag in product.product_tag_ids])
                                     ])"/>
-                                    <!-- Productos de la misma marca que NO tienen ninguna etiqueta (solo relacionados por la marca) y que no están ya en la lista anterior -->
+                                    <!-- Productos de la misma marca que NO comparten ninguna etiqueta con el producto actual -->
                                     <t t-set="same_brand_products_without_tags" t-value="request.env['product.template'].sudo().search([
                                         ('brand_type_id', '=', product.brand_type_id.id),
                                         ('id', '!=', product.id),
                                         ('website_published', '=', True),
+                                        '|',
                                         ('product_tag_ids', '=', False),
-                                        ('id', 'not in', [prod.id for prod in same_brand_products_with_tags])
+                                        ('product_tag_ids', 'not in', [tag.id for tag in product.product_tag_ids])
                                     ])"/>
                                     <!-- Mostrar primero los productos con tags en común -->
                                     <t t-set="same_brand_products" t-value="list(same_brand_products_with_tags) + [prod for prod in same_brand_products_without_tags if prod not in same_brand_products_with_tags]"/>
@@ -796,7 +797,7 @@
                                 ('product_tag_ids', 'in', [tag.id for tag in product.product_tag_ids]),
                                 ('id', '!=', product.id),
                                 ('website_published', '=', True)
-                            ])"/>
+                            ], limit=20)"/>
                             <t t-if="related_tag_products">
                                     <div style="margin-top:8px; font-size:22px; color:#222; font-weight:bold; text-align:left;">Promociones</div>
                                     <div class="products-list">
