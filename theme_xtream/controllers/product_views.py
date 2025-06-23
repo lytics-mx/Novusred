@@ -58,13 +58,13 @@ class ShopController(WebsiteSale):
                 ('website_published', '=', True)
             ])
         
-        related_tag_products = []
-        if product.product_tag_ids:
-            related_tag_products = request.env['product.template'].sudo().search([
-                ('product_tag_ids', 'in', product.product_tag_ids.ids),
-                ('id', '!=', product.id),
-                ('website_published', '=', True)
-            ], limit=20)
+        # related_tag_products = []
+        # if product.product_tag_ids:
+        #     related_tag_products = request.env['product.template'].sudo().search([
+        #         ('product_tag_ids', 'in', product.product_tag_ids.ids),
+        #         ('id', '!=', product.id),
+        #         ('website_published', '=', True)
+        #     ], limit=20)
 
         context = {
             'product': product,
@@ -76,7 +76,7 @@ class ShopController(WebsiteSale):
             'list_price': product.list_price,  # <-- Agrega esto
             'general_images': general_images,
             'brand_type_products_count': brand_type_products_count,
-            'related_tag_products': related_tag_products,
+            # 'related_tag_products': related_tag_products,
                  
         }
         return request.render("theme_xtream.website_view_product_xtream", context)
