@@ -64,7 +64,7 @@ class ShopController(WebsiteSale):
                 ('product_tag_ids', 'in', product.product_tag_ids.ids),
                 ('id', '!=', product.id),
                 ('website_published', '=', True)
-            ], limit=12)
+            ], limit=20)
 
         context = {
             'product': product,
