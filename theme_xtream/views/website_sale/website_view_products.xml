@@ -209,24 +209,19 @@
                                                 return parseFloat((text || '').replace(/[^0-9.]/g, '')) || 0;
                                             }
                                             function updateTotal() {
-                                                var mainPriceDiv = document.getElementById('main-bundle-price');
-                                                var mainPrice = getPriceFromText(mainPriceDiv ? mainPriceDiv.textContent : '');
                                                 var total = 0;
-                                                var checkedCount = 0;
-                                                // Siempre suma el producto principal (el hidden)
-                                                var mainCheckbox = document.querySelector('input[name="bundle_product_ids[]"][checked]');
-                                                if (mainCheckbox) {
-                                                    total += mainPrice;
-                                                    checkedCount += 1;
-                                                }
-                                                // Suma los accesorios seleccionados
-                                                document.querySelectorAll('.bundle-checkbox').forEach(function(cb) {
-                                                    if (cb.checked) {
-                                                        var priceDiv = cb.closest('.product-card').querySelector('.mobile-main-price, .bundle-price');
-                                                        if (priceDiv) {
-                                                            total += getPriceFromText(priceDiv.textContent);
-                                                            checkedCount += 1;
-                                                        }
+                                                // Suma todos los productos seleccionados (incluyendo el principal y accesorios)
+                                                document.querySelectorAll('input[name="bundle_product_ids[]"]:checked').forEach(function(cb) {
+                                                    // Busca el precio en la card correspondiente
+                                                    var priceDiv = null;
+                                                    if (cb.closest('.product-card')) {
+                                                        priceDiv = cb.closest('.product-card').querySelector('.mobile-main-price, .bundle-price');
+                                                    } else {
+                                                        // Es el producto principal (hidden)
+                                                        priceDiv = document.getElementById('main-bundle-price');
+                                                    }
+                                                    if (priceDiv) {
+                                                        total += getPriceFromText(priceDiv.textContent);
                                                     }
                                                 });
                                                 document.getElementById('bundle-total').textContent = total.toLocaleString();
@@ -235,20 +230,17 @@
                                                 cb.addEventListener('change', updateTotal);
                                             });
                                             updateTotal();
-
+                                    
                                             // Al enviar el formulario, solo se envían los productos seleccionados (checks marcados + el principal)
                                             document.getElementById('bundle-form').addEventListener('submit', function(e) {
-                                                // El formulario ya envía el producto principal (hidden, checked)
-                                                // Solo se enviarán los checks marcados
                                                 // No se necesita JS extra aquí, el backend debe manejar bundle_product_ids[]
                                             });
-
+                                    
                                             // Comprar directo: envía los seleccionados y redirige a checkout
                                             document.getElementById('bundle-buy-now').addEventListener('click', function() {
                                                 var form = document.getElementById('bundle-form');
-                                                // Elimina todos los inputs bundle_product_ids[] del FormData
                                                 var data = new FormData();
-                                                // Agrega solo los checkboxes marcados
+                                                // Agrega todos los checkboxes marcados (incluyendo el hidden principal)
                                                 form.querySelectorAll('input[name="bundle_product_ids[]"]:checked').forEach(function(cb) {
                                                     data.append('bundle_product_ids[]', cb.value);
                                                 });
