@@ -59,7 +59,7 @@ class ShopController(WebsiteSale):
         same_brand_products = []
         if product.brand_type_id:
             same_brand_products = request.env['product.template'].sudo().search([
-            ('brand_type_id', '=', product.brand_type_id.id),
+            ('brand_type_id.name', 'ilike', product.brand_type_id.name),
             ('id', '!=', product.id),
             ('website_published', '=', True)
             ], limit=12)
