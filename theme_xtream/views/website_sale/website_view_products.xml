@@ -329,12 +329,13 @@
                                         ('website_published', '=', True),
                                         ('product_tag_ids', 'in', [tag.id for tag in product.product_tag_ids])
                                     ])"/>
-                                    <!-- Productos de la misma marca que NO tienen ninguna etiqueta (solo relacionados por la marca) -->
+                                    <!-- Productos de la misma marca que NO tienen ninguna etiqueta (solo relacionados por la marca) y que no están ya en la lista anterior -->
                                     <t t-set="same_brand_products_without_tags" t-value="request.env['product.template'].sudo().search([
                                         ('brand_type_id', '=', product.brand_type_id.id),
                                         ('id', '!=', product.id),
                                         ('website_published', '=', True),
-                                        ('product_tag_ids', '=', False)
+                                        ('product_tag_ids', '=', False),
+                                        ('id', 'not in', [prod.id for prod in same_brand_products_with_tags])
                                     ])"/>
                                     <!-- Mostrar primero los productos con tags en común -->
                                     <t t-set="same_brand_products" t-value="list(same_brand_products_with_tags) + [prod for prod in same_brand_products_without_tags if prod not in same_brand_products_with_tags]"/>
