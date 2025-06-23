@@ -302,11 +302,24 @@
                                 <!-- ...resto del código... -->
                                 <!-- ...coloca esto donde quieras mostrar los productos de la misma marca, por ejemplo debajo de la ficha técnica... -->
                                 <t t-if="product.brand_type_id">
-                                    <t t-set="same_brand_products" t-value="request.env['product.template'].sudo().search([
+                                    <!-- Productos de la misma marca que comparten al menos una etiqueta con el producto actual -->
+                                    <t t-set="same_brand_products_with_tags" t-value="request.env['product.template'].sudo().search([
                                         ('brand_type_id', '=', product.brand_type_id.id),
                                         ('id', '!=', product.id),
-                                        ('website_published', '=', True)
+                                        ('website_published', '=', True),
+                                        ('product_tag_ids', 'in', [tag.id for tag in product.product_tag_ids])
                                     ])"/>
+                                    <!-- Productos de la misma marca que NO comparten ninguna etiqueta con el producto actual -->
+                                    <t t-set="same_brand_products_without_tags" t-value="request.env['product.template'].sudo().search([
+                                        ('brand_type_id', '=', product.brand_type_id.id),
+                                        ('id', '!=', product.id),
+                                        ('website_published', '=', True),
+                                        '|',
+                                        ('product_tag_ids', '=', False),
+                                        ('product_tag_ids', 'not in', [tag.id for tag in product.product_tag_ids])
+                                    ])"/>
+                                    <!-- Mostrar primero los productos con tags en común -->
+                                    <t t-set="same_brand_products" t-value="list(same_brand_products_with_tags) + [prod for prod in same_brand_products_without_tags if prod not in same_brand_products_with_tags]"/>
                                     <t t-if="same_brand_products">
                                         <div style="margin-top:40px;">
                                             <h3 style="font-weight:600; margin-bottom:18px; text-align:left; font-size:22px;">De la misma marca</h3>
@@ -456,49 +469,14 @@
                                                             </div>
                                                         </t>
                                                     </div>
-                                                    <button class="carousel-control-prev" type="button" data-bs-target="#same-brand-carousel" data-bs-slide="prev" style="width:auto; height:auto; background:none; border:none; top:50%; transform:translateY(-50%); left:-32px;">
-                                                        <span style="display:inline-block; padding:8px 18px; background:#4285f4; color:#fff; border-radius:6px; font-size:20px; font-weight:600; border:2px solid #4285f4; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
-                                                            &#8592; Anterior
-                                                        </span>
+                                                    <button class="carousel-control-prev" type="button" data-bs-target="#same-brand-carousel" data-bs-slide="prev">
+                                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                                         <span class="visually-hidden">Anterior</span>
                                                     </button>
-                                                    <button class="carousel-control-next" type="button" data-bs-target="#same-brand-carousel" data-bs-slide="next" style="width:auto; height:auto; background:none; border:none; top:50%; transform:translateY(-50%); right:-32px;">
-                                                        <span style="display:inline-block; padding:8px 18px; background:#4285f4; color:#fff; border-radius:6px; font-size:20px; font-weight:600; border:2px solid #4285f4; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
-                                                            Siguiente &#8594;
-                                                        </span>
+                                                    <button class="carousel-control-next" type="button" data-bs-target="#same-brand-carousel" data-bs-slide="next">
+                                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                                         <span class="visually-hidden">Siguiente</span>
                                                     </button>
-                                                    <style>
-                                                        #same-brand-carousel .carousel-control-prev,
-                                                        #same-brand-carousel .carousel-control-next {
-                                                            opacity: 1 !important;
-                                                            filter: none !important;
-                                                            z-index: 2;
-                                                        }
-                                                        #same-brand-carousel .carousel-control-prev {
-                                                            left: -32px !important;
-                                                        }
-                                                        #same-brand-carousel .carousel-control-next {
-                                                            right: -32px !important;
-                                                        }
-                                                        @media (max-width: 991.98px) {
-                                                            #same-brand-carousel .carousel-control-prev,
-                                                            #same-brand-carousel .carousel-control-next {
-                                                                left: 0 !important;
-                                                                right: 0 !important;
-                                                                top: 100%;
-                                                                transform: none;
-                                                                margin-top: 10px;
-                                                                position: static;
-                                                                display: inline-block;
-                                                            }
-                                                            #same-brand-carousel .carousel-control-prev span,
-                                                            #same-brand-carousel .carousel-control-next span {
-                                                                font-size: 16px;
-                                                                padding: 6px 12px;
-                                                            }
-                                                        }
-                                                    </style>
                                                 </div>
                                                 <t t-jquery="body" t-operation="append">
                                                     <style>
