@@ -302,12 +302,14 @@
                                 <!-- ...resto del código... -->
                                 <!-- ...coloca esto donde quieras mostrar los productos de la misma marca, por ejemplo debajo de la ficha técnica... -->
                                 <t t-if="product.brand_type_id">
-                                    <t t-set="same_brand_products" t-value="request.env['product.template'].sudo().search([
-                                        ('brand_type_id', 'in', [bt.id for bt in (product.brand_type_id and (product.brand_type_id if hasattr(product.brand_type_id, '__iter__') else [product.brand_type_id]) or [])]),
+                                    <t t-set="brand_ids" t-value="[product.brand_type_id.id] if product.brand_type_id else []"/>
+                                    <t t-set="same_brand_products" t-value="brand_ids and request.env['product.template'].sudo().search([
+                                        ('brand_type_id', 'in', brand_ids),
                                         ('id', '!=', product.id),
                                         ('website_published', '=', True)
-                                    ], limit=12)"/>
+                                    ], limit=12) or []"/>
                                     <t t-if="same_brand_products">
+                                        
                                         <div style="margin-top:40px;">
                                             <t t-if="same_brand_products">
                                                 <h3 style="font-weight:600; margin-bottom:18px; text-align:left; font-size:22px;">De la misma marca</h3>
