@@ -246,7 +246,16 @@
                                             // Comprar directo: envía los seleccionados y redirige a checkout
                                             document.getElementById('bundle-buy-now').addEventListener('click', function() {
                                                 var form = document.getElementById('bundle-form');
-                                                var data = new FormData(form);
+                                                // Elimina todos los inputs bundle_product_ids[] del FormData
+                                                var data = new FormData();
+                                                // Agrega solo los checkboxes marcados
+                                                form.querySelectorAll('input[name="bundle_product_ids[]"]:checked').forEach(function(cb) {
+                                                    data.append('bundle_product_ids[]', cb.value);
+                                                });
+                                                // Agrega los otros campos ocultos (csrf_token, product_id)
+                                                form.querySelectorAll('input[type="hidden"]').forEach(function(input) {
+                                                    data.append(input.name, input.value);
+                                                });
                                                 fetch(form.action, {
                                                     method: 'POST',
                                                     body: data,
