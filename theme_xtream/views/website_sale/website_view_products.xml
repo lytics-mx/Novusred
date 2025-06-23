@@ -754,8 +754,15 @@
                                 <div style="font-size:1.3em; font-weight:600; margin-bottom:2px;">
                                     <t t-esc="product.brand_type_id.name"/>
                                 </div>
+                                <t t-set="brand_type_products_count" t-value="request.env['product.template'].sudo().search_count([
+                                    ('brand_type_id', '=', product.brand_type_id.id),
+                                    ('website_published', '=', True),
+                                    ('id', '!=', product.id)
+                                ])"/>
                                 <div>
-                                    TEST <t t-esc="brand_type_products_count or 'NO-VALUE'"/>
+                                    <span style="font-size:15px; color:#222;">
+                                        <t t-esc="brand_type_products_count"/> producto<t t-if="brand_type_products_count != 1">s</t> de esta marca
+                                    </span>
                                 </div>
                                 <a t-att-href="'/subcategory?brand_id=%s' % product.brand_type_id.id"
                                    style="display:block; background:#4285f4; color:#fff; font-weight:500; border-radius:6px; padding:14px 0; width:100%; font-size:1.1em; text-decoration:none;">
