@@ -301,18 +301,17 @@
                                 </div>
                                 <!-- ...resto del código... -->
                                 <!-- ...coloca esto donde quieras mostrar los productos de la misma marca, por ejemplo debajo de la ficha técnica... -->
-                                <!-- Productos de la misma marca o con los mismos tags -->
-                                <t t-if="product.brand_type_id or product.product_tag_ids">
+                                <t t-if="product.brand_type_id">
                                     <t t-set="same_brand_products" t-value="request.env['product.template'].sudo().search([
-                                        '|',
-                                        ('brand_type_id', '=', product.brand_type_id and product.brand_type_id.id or False),
-                                        ('product_tag_ids', 'in', [tag.id for tag in product.product_tag_ids] if product.product_tag_ids else []),
+                                        ('brand_type_id', '=', product.brand_type_id.id),
                                         ('id', '!=', product.id),
                                         ('website_published', '=', True)
                                     ], limit=12)"/>
                                     <t t-if="same_brand_products">
                                         <div style="margin-top:40px;">
-                                            <h3 style="font-weight:600; margin-bottom:18px; text-align:left; font-size:22px;">De la misma marca o con etiquetas similares</h3>
+                                            <t t-if="same_brand_products">
+                                                <h3 style="font-weight:600; margin-bottom:18px; text-align:left; font-size:22px;">De la misma marca</h3>
+                                            </t>
                                             <div t-if="len(same_brand_products) &gt; 3" class="owl-carousel owl-theme" id="brand-carousel">
                                                 <t t-foreach="same_brand_products" t-as="prod">
                                                     <div class="item">
@@ -469,6 +468,7 @@
                                         </t>
                                     </t>
                                 </t>
+
                             </div>
                         </div>
                         <script type="text/javascript">
