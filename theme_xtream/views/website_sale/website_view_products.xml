@@ -322,24 +322,30 @@
                                 <!-- ...resto del código... -->
                                 <!-- ...coloca esto donde quieras mostrar los productos de la misma marca, por ejemplo debajo de la ficha técnica... -->
                                 <t t-if="product.brand_type_id">
-                                    <!-- Productos de la misma marca que comparten al menos una etiqueta con el producto actual -->
+                                    <!-- Productos de la misma marca que comparten al menos una etiqueta con el producto actual (SIEMPRE primero) -->
                                     <t t-set="same_brand_products_with_tags" t-value="request.env['product.template'].sudo().search([
                                         ('brand_type_id', '=', product.brand_type_id.id),
                                         ('id', '!=', product.id),
                                         ('website_published', '=', True),
                                         ('product_tag_ids', 'in', [tag.id for tag in product.product_tag_ids])
                                     ])"/>
-                                    <!-- Productos de la misma marca que NO comparten ninguna etiqueta con el producto actual -->
+                                    <!-- Productos de la misma marca que NO tienen ninguna etiqueta (product_tag_ids vacío) -->
                                     <t t-set="same_brand_products_without_tags" t-value="request.env['product.template'].sudo().search([
                                         ('brand_type_id', '=', product.brand_type_id.id),
                                         ('id', '!=', product.id),
                                         ('website_published', '=', True),
-                                        '|',
-                                        ('product_tag_ids', '=', False),
+                                        ('product_tag_ids', '=', False)
+                                    ])"/>
+                                    <!-- Productos de la misma marca que tienen etiquetas pero ninguna coincide con el producto actual -->
+                                    <t t-set="same_brand_products_with_other_tags" t-value="request.env['product.template'].sudo().search([
+                                        ('brand_type_id', '=', product.brand_type_id.id),
+                                        ('id', '!=', product.id),
+                                        ('website_published', '=', True),
+                                        ('product_tag_ids', '!=', False),
                                         ('product_tag_ids', 'not in', [tag.id for tag in product.product_tag_ids])
                                     ])"/>
-                                    <!-- Mostrar primero los productos con tags en común -->
-                                    <t t-set="same_brand_products" t-value="list(same_brand_products_with_tags) + [prod for prod in same_brand_products_without_tags if prod not in same_brand_products_with_tags]"/>
+                                    <!-- Orden: primero los que comparten tags, luego los que tienen tags distintos, luego los que no tienen tags -->
+                                    <t t-set="same_brand_products" t-value="list(same_brand_products_with_tags) + [prod for prod in same_brand_products_with_other_tags if prod not in same_brand_products_with_tags] + [prod for prod in same_brand_products_without_tags if prod not in same_brand_products_with_tags and prod not in same_brand_products_with_other_tags]"/>
                                     <t t-if="same_brand_products">
                                         <div style="margin-top:8px;">
                                             <h3 style="font-weight:600; margin-bottom:18px; text-align:left; font-size:22px;">De la misma marca</h3>
