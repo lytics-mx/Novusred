@@ -88,7 +88,7 @@
                                                         <div style="width:200px;">
                                                             <div class="card shadow-sm product-card" style="border-radius: 10px; overflow: hidden;">
                                                                 <div style="position: absolute; z-index: 2; left: 8px; top: 8px;">
-                                                                    <input type="checkbox" name="bundle_product_ids" t-att-value="acc.product_variant_id.id" class="bundle-checkbox" style="margin-bottom:6px;"/>
+                                                                    <input type="checkbox" name="bundle_product_ids[]" t-att-value="acc.product_variant_id.id" class="bundle-checkbox" style="margin-bottom:6px;"/>
                                                                 </div>
                                                                 <t t-if="acc.product_tmpl_id">
                                                                     <a t-att-href="'/shop/product/' + str(acc.product_tmpl_id.id)">
@@ -172,7 +172,7 @@
                                             <form id="bundle-form" action="/shop/cart/update" method="POST" style="width:100%; max-width:320px;">
                                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" t-nocache="The csrf token must always be up to date."/>
                                                 <input type="hidden" name="product_id" t-att-value="product.product_variant_id.id"/>
-                                                <input type="checkbox" name="bundle_product_ids" t-att-value="product.product_variant_id.id" checked="checked" disabled="disabled" style="display:none;"/>
+                                                <input type="checkbox" name="bundle_product_ids[]" t-att-value="product.product_variant_id.id" checked="checked" style="display:none;" hidden="hidden"/>
                                                 <div style="margin-bottom: 18px; text-align:left;">
                                                     <span style="font-size: 28px; font-weight: 600; color: #222; display:block;">Precio total:</span>
                                                     <div style="display: flex; justify-content: center; align-items: center;">
@@ -211,12 +211,21 @@
                                             function updateTotal() {
                                                 var mainPriceDiv = document.getElementById('main-bundle-price');
                                                 var mainPrice = getPriceFromText(mainPriceDiv ? mainPriceDiv.textContent : '');
-                                                var total = mainPrice;
+                                                var total = 0;
+                                                var checkedCount = 0;
+                                                // Siempre suma el producto principal (el hidden)
+                                                var mainCheckbox = document.querySelector('input[name="bundle_product_ids[]"][checked]');
+                                                if (mainCheckbox) {
+                                                    total += mainPrice;
+                                                    checkedCount += 1;
+                                                }
+                                                // Suma los accesorios seleccionados
                                                 document.querySelectorAll('.bundle-checkbox').forEach(function(cb) {
                                                     if (cb.checked) {
                                                         var priceDiv = cb.closest('.product-card').querySelector('.mobile-main-price, .bundle-price');
                                                         if (priceDiv) {
                                                             total += getPriceFromText(priceDiv.textContent);
+                                                            checkedCount += 1;
                                                         }
                                                     }
                                                 });
@@ -229,7 +238,7 @@
 
                                             // Al enviar el formulario, solo se envían los productos seleccionados (checks marcados + el principal)
                                             document.getElementById('bundle-form').addEventListener('submit', function(e) {
-                                                // El formulario ya envía el producto principal (hidden, checked, disabled)
+                                                // El formulario ya envía el producto principal (hidden, checked)
                                                 // Solo se enviarán los checks marcados
                                                 // No se necesita JS extra aquí, el backend debe manejar bundle_product_ids[]
                                             });
