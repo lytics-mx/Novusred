@@ -287,13 +287,17 @@
                                                         <div style="flex:1; background: #ecf0f1; border-radius: 0 8px 8px 0; padding: 14px 18px;">
                                                             <t t-esc="product.default_code"/>
                                                         </div>
-                                                    </div>
-                                                    <div style="display: flex; gap: 24px; margin-bottom:10px;">
+                                                    </div>                                                    <div style="display: flex; gap: 24px; margin-bottom:10px;">
                                                         <div style="flex:1; background: #ecf0f1; border-radius: 8px 0 0 8px; padding: 14px 18px; font-weight:500;">
                                                             Stock
                                                         </div>
                                                         <div style="flex:1; background: #ecf0f1; border-radius: 0 8px 8px 0; padding: 14px 18px;">
-                                                            <t t-esc="product.qty_available"/>
+                                                            <t t-try="">
+                                                                <t t-esc="product.qty_available"/>
+                                                            </t>
+                                                            <t t-except="">
+                                                                Disponible
+                                                            </t>
                                                         </div>
                                                     </div>
                                                     <div style="display: flex; gap: 24px; margin-bottom:10px;">
@@ -650,11 +654,15 @@
                                         <t t-esc="product.product_tag_ids[0].name"/>
                                     </span>
                                 </div>
-                            </t>
-                            <!-- Stock -->
+                            </t>                            <!-- Stock -->
                             <div class="mb-3" style="text-align:left;">
                                 <div style="color:#222; font-size:16px; margin-bottom:2px;">
-                                    En Stock: <span><t t-esc="product.qty_available"/></span> artículos
+                                    <t t-try="">
+                                        En Stock: <span><t t-esc="product.qty_available"/></span> artículos
+                                    </t>
+                                    <t t-except="">
+                                        En Stock: Disponible
+                                    </t>
                                 </div>
                                 <!-- Marca -->
                                 <div style="color:#222; font-size:16px;">
@@ -663,26 +671,37 @@
                                 <!-- Modelo -->
                                 <div style="color:#222; font-size:16px; margin-bottom:10px;">
                                     Modelo: <span><t t-esc="product.default_code"/></span>
-                                </div>
-                                <!-- Cantidad -->
+                                </div>                                <!-- Cantidad -->
                                 <div style="font-size:16px; margin-bottom:10px;">
                                     Cantidad:
                                     <div class="input-group" style="width:120px; display:inline-flex; vertical-align:middle; margin-left:6px;">
                                         <button type="button" class="btn btn-outline-secondary" id="qty-minus" style="min-width:32px; font-size:20px; padding:0;">-</button>
-                                        <input id="qty-input" type="number" name="add_qty" value="1" min="1" t-att-max="product.qty_available"
-                                            class="form-control text-center" style="width:50px; padding:0 6px;"/>
+                                        <t t-try="">
+                                            <input id="qty-input" type="number" name="add_qty" value="1" min="1" t-att-max="product.qty_available"
+                                                class="form-control text-center" style="width:50px; padding:0 6px;"/>
+                                        </t>
+                                        <t t-except="">
+                                            <input id="qty-input" type="number" name="add_qty" value="1" min="1" max="999"
+                                                class="form-control text-center" style="width:50px; padding:0 6px;"/>
+                                        </t>
                                         <button type="button" class="btn btn-outline-secondary" id="qty-plus" style="min-width:32px; font-size:20px; padding:0;">+</button>
                                     </div>
-                                    <span style="color:#888; font-size:15.2px;">(<t t-esc="product.qty_available"/> disponibles)</span>
+                                    <span style="color:#888; font-size:15.2px;">
+                                        <t t-try="">
+                                            (<t t-esc="product.qty_available"/> disponibles)
+                                        </t>
+                                        <t t-except="">
+                                            (Disponible)
+                                        </t>
+                                    </span>
                                 </div>
                                 <t t-jquery="body" t-operation="append">
                                     <script type="text/javascript"><![CDATA[
                                         document.addEventListener('DOMContentLoaded', function() {
                                             var qtyInput = document.getElementById('qty-input');
                                             var minusBtn = document.getElementById('qty-minus');
-                                            var plusBtn = document.getElementById('qty-plus');
-                                            if (qtyInput && minusBtn && plusBtn) {
-                                                var max = parseInt(qtyInput.getAttribute('max')) || 9999;
+                                            var plusBtn = document.getElementById('qty-plus');                                            if (qtyInput && minusBtn && plusBtn) {
+                                                var max = parseInt(qtyInput.getAttribute('max')) || 999;
                                                 minusBtn.addEventListener('click', function() {
                                                     var val = parseInt(qtyInput.value) || 1;
                                                     if (val > 1) qtyInput.value = val - 1;
