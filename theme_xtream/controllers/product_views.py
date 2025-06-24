@@ -1,12 +1,16 @@
-from odoo.addons.website.controllers.main import Website
 from odoo import http
 from odoo.http import request
 from odoo.addons.website_sale.controllers.main import WebsiteSale
-from werkzeug.utils import redirect
 import logging
 _logger = logging.getLogger(__name__)
 
 class ShopController(WebsiteSale):
+
+    @http.route([
+        '/shop/product/<model("product.template"):product>'
+    ], type='http', auth="public", website=True, csrf=False)
+    def product(self, product, category='', search='', **kwargs):
+        return self.product_page(product, **kwargs)
 
     @http.route([
         '/view/<model("product.template"):product>',
@@ -46,9 +50,7 @@ class ShopController(WebsiteSale):
         general_images = request.env['banner.image.line'].search([
             ('name', '=', 'metodos de pago'),
             ('is_active_carousel', '=', True)
-        ])    
-
-        # Calcular el contador de productos publicados y disponibles por cada marca en available_brands
+        ])        # Calcular el contador de productos publicados y disponibles por cada marca en available_brands
         # Obtener la marca del producto actual
         brand_type_products_count = 0
         if product.brand_type_id:
@@ -58,26 +60,38 @@ class ShopController(WebsiteSale):
                 ('website_published', '=', True)
             ])
         
-        # related_tag_products = []
-        # if product.product_tag_ids:
+        # Obtener qty_available de forma segura
+        try:
+            qty_available = product.sudo().qty_available
+        except:
+            qty_available = None
+        
+        # related_tag_products = []        # if product.product_tag_ids:
         #     related_tag_products = request.env['product.template'].sudo().search([
         #         ('product_tag_ids', 'in', product.product_tag_ids.ids),
         #         ('id', '!=', product.id),
         #         ('website_published', '=', True)
         #     ], limit=20)
 
+       
+        safe_product = product.sudo()
         context = {
-            'product': product,
+            'product': safe_product,
             'categories': categories,
             'referer': referer,
             'discounted_price': discounted_price,
             'discount_percentage': discount_percentage,
             'fixed_discount': fixed_discount,
-            'list_price': product.list_price,  # <-- Agrega esto
+            'list_price': safe_product.list_price,
             'general_images': general_images,
             'brand_type_products_count': brand_type_products_count,
+            'qty_available': qty_available,
             # 'related_tag_products': related_tag_products,
                  
         }
-        return request.render("theme_xtream.website_view_product_xtream", context)
-    
+        
+        # Agregar qty_available al product para evitar errores
+        safe_product = safe_product.with_context(qty_available=qty_available)
+        context['product'] = safe_product
+        
+        return request.render("website_sale.product", context)
