@@ -799,11 +799,7 @@
                         </t>
                         <!-- Productos relacionados por etiqueta -->
                         <t t-if="product.product_tag_ids">
-                            <t t-set="related_tag_products" t-value="request.env['product.template'].sudo().search([
-                                ('product_tag_ids', '!=', False),
-                                ('id', '!=', product.id),
-                                ('website_published', '=', True)
-                            ], limit=4)"/>
+                            <t t-set="related_tag_products" t-value="product.product_tag_ids and product.product_tag_ids[0].product_tmpl_ids.filtered(lambda p: p.id != product.id and p.website_published)[:4] or []"/>
                             <t t-if="related_tag_products">
                                     <div style="margin-top:8px; font-size:22px; color:#222; font-weight:bold; text-align:left;">Promociones</div>
                                     <div class="products-list">
