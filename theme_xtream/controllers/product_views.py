@@ -1,6 +1,8 @@
+from odoo.addons.website.controllers.main import Website
 from odoo import http
 from odoo.http import request
 from odoo.addons.website_sale.controllers.main import WebsiteSale
+from werkzeug.utils import redirect
 import logging
 _logger = logging.getLogger(__name__)
 
@@ -10,12 +12,12 @@ class ShopController(WebsiteSale):
         '/view/<model("product.template"):product>',
         '/view/product/<model("product.template"):product>'
     ], type='http', auth="public", website=True, csrf=False)  # <--- csrf desactivado
-
     def product_page(self, product, **kwargs):
         # ...existing code...
-        # kwargs no se usa, pero se deja para compatibilidad
         if not product:
             return request.not_found()
+        _logger.info("Producto cargado: %s", product)
+
         # Obtener la jerarquía de categorías
         categories = []
         categ = product.categ_id
@@ -75,6 +77,7 @@ class ShopController(WebsiteSale):
             'general_images': general_images,
             'brand_type_products_count': brand_type_products_count,
             # 'related_tag_products': related_tag_products,
+                 
         }
-        # Renderiza SIEMPRE tu propia plantilla personalizada, que NO use product.qty_available ni campos de inventario
         return request.render("theme_xtream.website_view_product_xtream", context)
+    
