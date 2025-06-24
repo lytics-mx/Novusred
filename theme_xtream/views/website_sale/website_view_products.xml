@@ -1,141 +1,24 @@
 <odoo>
-    <!-- ❌ REMOVER LA HERENCIA PROBLEMÁTICA -->
-    <!-- <template id="website_view_product_xtream" inherit_id="website_sale.product"> -->
-    
-    <!-- ✅ CREAR PLANTILLA INDEPENDIENTE -->
-    <template id="website_view_product_xtream" name="Custom Product Page">
-        <t t-call="website.layout">
-            <div id="wrap" class="oe_structure oe_website_sale">
-                <div class="container-fluid">
-                    <div class="row" style="align-items: flex-start; background: #fff; margin-left: 0; margin-right: 0; margin-top: 0; padding-top: 0;">
-                        
-                        <!-- Columna principal (producto) -->
-                        <div class="col-12 col-md-8" style="background:#fff; min-height:200px; display: block; border-radius: 0; margin-left: 24px;">
-                            <div class="card" style="width: 100%; min-height: 300px; margin-bottom: 20px; background:#fff; border:none;">
-                                
-                                <!-- Título del producto -->
-                                <h1 t-esc="product.name" class="mb-3"/>
-                                
-                                <!-- Precio -->
-                                <div class="mb-3">
-                                    <span class="h3 text-primary" t-esc="product.list_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
-                                </div>
-                                
-                                <!-- Descripción -->
-                                <div class="w-100 mt-3">
-                                    <div style="width: 100%;">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <hr/>
-                                                <h3 style="font-weight:600; margin-bottom:12px; margin-top:18px; text-align:left; font-size:23px;">Descripción</h3>
-                                                <div class="product-description" style="text-align:left; font-size:17px;">
-                                                    <t t-if="product.website_description">
-                                                        <t t-raw="product.website_description"/>
-                                                    </t>
-                                                    <t t-else="">
-                                                        <t t-esc="product.description_sale"/>
-                                                    </t>
-                                                </div>
-                                                
-                                                <hr/>
-                                                
-                                                <!-- Ficha técnica -->
-                                                <div class="product-specifications" style="text-align:left; font-size:17px;">
-                                                    <h4 style="font-weight:600; margin-bottom:18px; font-size:22px;">Ficha técnica</h4>
-                                                    <div style="display: flex; flex-wrap: wrap; gap: 16px 0;">
-                                                        <div style="width:100%;">
-                                                            <div style="display: flex; gap: 24px; margin-bottom:10px;">
-                                                                <div style="flex:1; background: #ecf0f1; border-radius: 8px 0 0 8px; padding: 14px 18px; font-weight:500;">
-                                                                    Modelo
-                                                                </div>
-                                                                <div style="flex:1; background: #ecf0f1; border-radius: 0 8px 8px 0; padding: 14px 18px;">
-                                                                    <t t-esc="product.default_code or 'N/A'"/>
-                                                                </div>
-                                                            </div>
-                                                            <div style="display: flex; gap: 24px; margin-bottom:10px;">
-                                                                <div style="flex:1; background: #ecf0f1; border-radius: 8px 0 0 8px; padding: 14px 18px; font-weight:500;">
-                                                                    Stock
-                                                                </div>
-                                                                <div style="flex:1; background: #ecf0f1; border-radius: 0 8px 8px 0; padding: 14px 18px;">
-                                                                    <!-- ✅ USAR LA VARIABLE SEGURA DEL CONTEXTO -->
-                                                                    <t t-esc="stock_message"/>
-                                                                </div>
-                                                            </div>
-                                                            <div style="display: flex; gap: 24px; margin-bottom:10px;">
-                                                                <div style="flex:1; background: #ecf0f1; border-radius: 8px 0 0 8px; padding: 14px 18px; font-weight:500;">
-                                                                    Referencia
-                                                                </div>
-                                                                <div style="flex:1; background: #ecf0f1; border-radius: 0 8px 8px 0; padding: 14px 18px;">
-                                                                    <t t-esc="product.id"/>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <hr/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Columna lateral -->
-                        <div class="col-12 col-md-4" style="background:#fff; min-height:200px; display: block; margin-left:-24px;">
-                            <div class="card" style="width: 100%; min-height: 120px; border: none; background: #fff;">
-                                <div style="height:20px;"></div>
-
-                                <div class="card p-4" style="border-radius:16px; box-shadow:0 2px 8px rgba(0,0,0,0.04); border:2px solid #bdbdbd; background:#fff;">
-                                    
-                                    <!-- Stock info -->
-                                    <div class="mb-3" style="text-align:left;">
-                                        <strong t-esc="stock_message"/>
-                                    </div>
-                                    
-                                    <!-- Formulario de agregar al carrito -->
-                                    <div class="d-grid" style="gap: 10px;">
-                                        <form action="/shop/cart/update" method="POST" class="js_add_cart_json d-flex flex-column">
-                                            <input type="hidden" name="product_id" t-att-value="product.id"/>
-                                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                                            
-                                            <div class="input-group mb-3">
-                                                <input type="number" 
-                                                       name="add_qty" 
-                                                       class="form-control text-center" 
-                                                       value="1" 
-                                                       min="1" 
-                                                       t-att-max="qty_available if qty_available else 999"
-                                                       style="border-radius:8px 0 0 8px; border:1.5px solid #bdbdbd; font-size:16px; height:52px;"/>
-                                                <button type="submit" 
-                                                        class="btn btn-primary" 
-                                                        style="background:#4285f4; border:none; border-radius:0 8px 8px 0; font-weight:500; font-size:16px; height:52px; min-width:140px;">
-                                                    Agregar al carrito
-                                                </button>
-                                            </div>
-                                            
-                                            <small class="text-muted">
-                                                <t t-if="qty_available" t-esc="'(%s disponibles)' % qty_available"/>
-                                                <t t-else="">(Disponible)</t>
-                                            </small>
-                                        </form>
-                                    </div>
-                                    
-                                    <!-- Imágenes de métodos de pago -->
-                                    <div style="margin-top:20px;">
-                                        <t t-if="general_images">
-                                            <t t-foreach="general_images" t-as="banner_image">
-                                                <img t-att-src="'/web/image/banner.image.line/%s/image' % banner_image.id" 
-                                                     style="width:100%; height:auto; border-radius:8px; margin-bottom:8px;" 
-                                                     alt="Banner"/>
-                                            </t>
-                                        </t>
-                                    </div>
-                                </div>
-                            </div>
+    <data>
+        <template id="website_view_product_xtream" name="Custom Product Page">
+            <t t-call="website.layout">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <h1 t-esc="product.name"/>
+                            <p>Precio: <span t-esc="product.list_price"/></p>
+                            <p>Stock: <span t-esc="stock_message"/></p>
+                            
+                            <form action="/shop/cart/update" method="POST">
+                                <input type="hidden" name="product_id" t-att-value="product.id"/>
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <input type="number" name="add_qty" value="1" min="1"/>
+                                <button type="submit" class="btn btn-primary">Agregar al carrito</button>
+                            </form>
                         </div>
                     </div>
                 </div>
-            </div>
-        </t>
-    </template>
+            </t>
+        </template>
+    </data>
 </odoo>
