@@ -84,7 +84,7 @@
                                             <h5 style="font-weight:600; margin-bottom:12px; font-size:18px; text-align:left;">Productos que podrían interesarte</h5>
                                             <div class="d-flex flex-row flex-nowrap justify-content-start align-items-stretch" style="gap:16px;">
                                                 <t t-set="accs" t-value="[acc for acc in product.accessory_product_ids if acc.product_variant_id.id != product.product_variant_id.id]"/>
-                                                <t t-foreach="accs" t-as="acc">
+                                                <t t-foreach="accs" t-as="acc" t-foreach-index="acc_idx">
                                                     <div class="card product-card" style="border-radius: 10px; overflow: hidden; width: 220px; min-width:220px; max-width:220px; min-height:340px; background:#fff; border:1.5px solid #bdbdbd; box-shadow: 0 2px 8px rgba(0,0,0,0.04); position:relative; display:flex; flex-direction:column; justify-content:space-between;">
                                                         <div style="position: absolute; z-index: 2; left: 10px; top: 10px;">
                                                             <input type="checkbox" name="bundle_product_ids[]" t-att-value="acc.product_variant_id.id" class="bundle-checkbox custom-bundle-checkbox" style="width:22px; height:22px; border-radius:7px; border:1px solid #888; background:#f8f8f8;"/>
@@ -184,7 +184,7 @@
                                                         </div>
                                                     </div>
                                                     <!-- Agrega el "+" solo si no es el último producto -->
-                                                    <t t-if="not loop.last">
+                                                    <t t-if="acc_idx != len(accs) - 1">
                                                         <div style="display:flex; align-items:center; justify-content:center; height:340px; width:36px;">
                                                             <span style="font-size: 32px; font-weight: bold; color: #222; line-height: 1;">+</span>
                                                         </div>
