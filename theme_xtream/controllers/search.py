@@ -4,7 +4,7 @@ from odoo.http import request
 class WebsiteSearch(http.Controller):
 
     @http.route('/search_redirect', auth='public', website=True)
-    def search_redirect(self, search='', search_type='all', **kw):
+    def search_redirect(self, search='', search_type='all'):
         # Limpiar el texto de búsqueda
         search = search.strip()
         
@@ -36,7 +36,7 @@ class WebsiteSearch(http.Controller):
             # 3. BÚSQUEDA INTELIGENTE AUTOMÁTICA (search_type='all')
             
             # Buscar por marca primero
-            Brand = request.env['product.brand'].sudo()
+            Brand = request.env['brand.type.id'].sudo()
             brand = Brand.search([('name', '=ilike', search)], limit=1)
             
             if brand:
@@ -50,7 +50,7 @@ class WebsiteSearch(http.Controller):
                 return request.redirect('/subcategory?brand_id=%s' % brands_partial[0].id)
             
             # Buscar por categoría
-            Category = request.env['product.public.category'].sudo()
+            Category = request.env['product.category'].sudo()
             category = Category.search([('name', '=ilike', search)], limit=1)
             
             if category:
