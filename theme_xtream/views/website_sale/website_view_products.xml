@@ -798,18 +798,10 @@
                             </div>
                         </t>
                         <!-- Productos relacionados por etiqueta -->
-                        <t t-if="product.product_tag_ids">
                             <t t-set="related_tag_products" t-value="request.env['product.template'].sudo().search([
                                 ('website_published', '=', True),
                                 ('product_tag_ids', '!=', False)
                             ], limit=4)"/>
-                            <t t-if="not related_tag_products">
-                                <!-- Si no hay productos con tags, muestra promociones generales (por ejemplo, los primeros 4 publicados distintos al actual) -->
-                                <t t-set="related_tag_products" t-value="request.env['product.template'].sudo().search([
-                                    ('website_published', '=', True),
-                                    ('id', '!=', product.id)
-                                ], limit=4)"/>
-                            </t>
                             <t t-if="related_tag_products">
                                     <div style="margin-top:8px; font-size:22px; color:#222; font-weight:bold; text-align:left;">Promociones</div>
                                     <div class="products-list">
@@ -884,7 +876,6 @@
                                         </t>
                                     </div>
                             </t>
-                        </t>
                     </div>
                     <div style="height:30px;"></div>                            
 
