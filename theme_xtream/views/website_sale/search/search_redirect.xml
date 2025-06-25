@@ -67,29 +67,29 @@
             </div>
             
             <!-- Script para countdown y redirect automático -->
-            <script>
+            <script type="text/javascript">
                 document.addEventListener('DOMContentLoaded', function() {
                     var countdown = 1;
                     var countdownElement = document.getElementById('countdown');
-                    var redirectUrl = '<t t-esc="redirect_url"/>';
-                    
+                    var redirectUrl = document.getElementById('redirect_url_data') ? document.getElementById('redirect_url_data').getAttribute('data-url') : '';
+
                     // Si no hay URL de redirect específica, usar subcategory
                     if (!redirectUrl) {
-                        redirectUrl = '/subcategory?search=<t t-esc="search"/>';
+                        redirectUrl = document.getElementById('subcategory_url_data').getAttribute('data-url');
                     }
-                    
+
                     var timer = setInterval(function() {
                         countdown--;
                         if (countdownElement) {
                             countdownElement.textContent = countdown;
                         }
-                        
+
                         if (countdown <= 0) {
                             clearInterval(timer);
                             window.location.href = redirectUrl;
                         }
                     }, 1000);
-                    
+
                     // También permitir redirect inmediato si se hace clic en cualquier parte
                     document.body.addEventListener('click', function() {
                         clearInterval(timer);
@@ -97,6 +97,10 @@
                     });
                 });
             </script>
+            <t t-if="redirect_url">
+                <span id="redirect_url_data" t-att-data-url="redirect_url" style="display:none;"></span>
+            </t>
+            <span id="subcategory_url_data" t-att-data-url="'/subcategory?search=' + search" style="display:none;"></span>
         </t>
     </template>
 </odoo>
