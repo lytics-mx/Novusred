@@ -424,7 +424,7 @@
                                                             Stock
                                                         </div>
                                                         <div style="flex:1; background: #ecf0f1; border-radius: 0 8px 8px 0; padding: 14px 18px;">
-                                                            <t t-esc="int(product.qty_available)"/>
+                                                            <t t-esc="product.qty_available"/>
                                                         </div>
                                                     </div>
                                                     <div style="display: flex; gap: 24px; margin-bottom:10px;">
@@ -481,15 +481,15 @@
                                         <div style="margin-top:8px;">
                                             <h3 style="font-weight:600; margin-bottom:18px; text-align:left; font-size:22px;">De la misma marca</h3>
                                             <t t-if="len(same_brand_products) &lt;= 3">
-                                                <div class="row same-brand-row" style="gap:0;">
+                                                <div class="row" style="gap:4px;">
                                                     <t t-foreach="same_brand_products[:3]" t-as="prod">
-                                                        <div class="col-12 col-md-4 mb-2 same-brand-col" style="padding-left:2px; padding-right:2px;">
-                                                            <div class="card product-card same-brand-card" style="border-radius: 10px; overflow: hidden; box-shadow: none; min-width: 160px; max-width: 180px; width: 100%; margin: 0 auto;">
+                                                        <div class="col-12 col-md-4 mb-3">
+                                                            <div class="card product-card no-hover-expand" style="border-radius: 10px; overflow: hidden; box-shadow: none; transition: none;">
                                                                 <a t-att-href="'/shop/product/' + str(prod.id)">
                                                                     <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%;">
                                                                         <img t-att-src="'/web/image/product.template/' + str(prod.id) + '/image_1920'"
                                                                             class="card-img-top"
-                                                                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 8px;"/>
+                                                                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 10px; transition: none;"/>
                                                                     </div>
                                                                 </a>
                                                                 <div class="card-body mobile-card-body" style="text-align: left;">
@@ -502,16 +502,16 @@
                                                                     </t>
                                                                     <t t-if="prod.discounted_price &lt; prod.list_price">
                                                                         <div class="mt-0 mobile-discount-amount">
-                                                                            <span class="text-muted" style="font-size: 14px;">
+                                                                            <span class="text-muted" style="font-size: 16px;">
                                                                                 $<t t-esc="'{:,}'.format(int(prod.list_price or 0))" />
                                                                             </span>
                                                                         </div>
                                                                         <div class="d-flex align-items-center justify-content-between mobile-price-container">
-                                                                            <span class="text-dark fw-bold mobile-main-price" style="font-size: 20px; color: #000; font-weight: bold;">
+                                                                            <span class="text-dark fw-bold mobile-main-price" style="font-size: 28px; color: #000; font-weight: bold;">
                                                                                 $<t t-esc="'{:,}'.format(int(prod.discounted_price or 0))" />
                                                                             </span>
                                                                             <t t-if="prod.discount_percentage or prod.fixed_discount">
-                                                                                <span class="mobile-discount" style="font-size: 13px; font-weight: normal; color: #FF5207;">
+                                                                                <span class="mobile-discount" style="font-size: 16px; font-weight: normal; color: #FF5207;">
                                                                                     <t t-if="prod.discount_percentage">
                                                                                         <t t-esc="int(prod.discount_percentage)" />% OFF
                                                                                     </t>
@@ -530,7 +530,7 @@
                                                                         </t>
                                                                     </t>
                                                                     <t t-elif="prod.list_price">
-                                                                        <span class="fw-bold d-block mobile-main-price" style="font-size: 20px;">
+                                                                        <span class="fw-bold d-block mobile-main-price">
                                                                             $<t t-esc="'{:,}'.format(int(prod.list_price or 0))" />
                                                                         </span>
                                                                     </t>
@@ -541,7 +541,7 @@
                                                                             </span>
                                                                         </div>
                                                                     </t>
-                                                                    <h6 class="card-title mb-2" style="font-size: 13px; line-height: 1.2; max-height: 2.4em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-transform: uppercase;">
+                                                                    <h6 class="card-title mb-2" style="font-size: 16px; line-height: 1.2; max-height: 2.4em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-transform: uppercase;">
                                                                         <t t-esc="prod.name" />
                                                                     </h6>
                                                                 </div>
@@ -555,15 +555,15 @@
                                                     <div class="carousel-inner">
                                                         <t t-foreach="range(0, len(same_brand_products), 3)" t-as="idx">
                                                             <div t-attf-class="carousel-item #{'active' if idx == 0 else ''}">
-                                                                <div class="row same-brand-row" style="gap:0;">
+                                                                <div class="row" style="gap:4px;">
                                                                     <t t-foreach="same_brand_products[idx:idx+3]" t-as="prod">
-                                                                        <div class="col-12 col-md-4 mb-2 same-brand-col" style="padding-left:2px; padding-right:2px;">
-                                                                            <div class="card product-card same-brand-card" style="border-radius: 10px; overflow: hidden; box-shadow: none; min-width: 160px; max-width: 180px; width: 100%; margin: 0 auto;">
+                                                                        <div class="col-12 col-md-4 mb-3">
+                                                                            <div class="card product-card no-hover-expand" style="border-radius: 10px; overflow: hidden; box-shadow: none; transition: none;">
                                                                                 <a t-att-href="'/shop/product/' + str(prod.id)">
                                                                                     <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%;">
                                                                                         <img t-att-src="'/web/image/product.template/' + str(prod.id) + '/image_1920'"
                                                                                             class="card-img-top"
-                                                                                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 8px;"/>
+                                                                                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 10px; transition: none;"/>
                                                                                     </div>
                                                                                 </a>
                                                                                 <div class="card-body mobile-card-body" style="text-align: left;">
@@ -576,16 +576,16 @@
                                                                                     </t>
                                                                                     <t t-if="prod.discounted_price &lt; prod.list_price">
                                                                                         <div class="mt-0 mobile-discount-amount">
-                                                                                            <span class="text-muted" style="font-size: 14px;">
+                                                                                            <span class="text-muted" style="font-size: 16px;">
                                                                                                 $<t t-esc="'{:,}'.format(int(prod.list_price or 0))" />
                                                                                             </span>
                                                                                         </div>
                                                                                         <div class="d-flex align-items-center justify-content-between mobile-price-container">
-                                                                                            <span class="text-dark fw-bold mobile-main-price" style="font-size: 20px; color: #000; font-weight: bold;">
+                                                                                            <span class="text-dark fw-bold mobile-main-price" style="font-size: 28px; color: #000; font-weight: bold;">
                                                                                                 $<t t-esc="'{:,}'.format(int(prod.discounted_price or 0))" />
                                                                                             </span>
                                                                                             <t t-if="prod.discount_percentage or prod.fixed_discount">
-                                                                                                <span class="mobile-discount" style="font-size: 13px; font-weight: normal; color: #FF5207;">
+                                                                                                <span class="mobile-discount" style="font-size: 16px; font-weight: normal; color: #FF5207;">
                                                                                                     <t t-if="prod.discount_percentage">
                                                                                                         <t t-esc="int(prod.discount_percentage)" />% OFF
                                                                                                     </t>
@@ -604,7 +604,7 @@
                                                                                         </t>
                                                                                     </t>
                                                                                     <t t-elif="prod.list_price">
-                                                                                        <span class="fw-bold d-block mobile-main-price" style="font-size: 20px;">
+                                                                                        <span class="fw-bold d-block mobile-main-price">
                                                                                             $<t t-esc="'{:,}'.format(int(prod.list_price or 0))" />
                                                                                         </span>
                                                                                     </t>
@@ -615,7 +615,7 @@
                                                                                             </span>
                                                                                         </div>
                                                                                     </t>
-                                                                                    <h6 class="card-title mb-2" style="font-size: 13px; line-height: 1.2; max-height: 2.4em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-transform: uppercase;">
+                                                                                    <h6 class="card-title mb-2" style="font-size: 16px; line-height: 1.2; max-height: 2.4em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-transform: uppercase;">
                                                                                         <t t-esc="prod.name" />
                                                                                     </h6>
                                                                                 </div>
@@ -637,44 +637,32 @@
                                                 </div>
                                                 <t t-jquery="body" t-operation="append">
                                                     <style>
-                                                        .same-brand-row {
-                                                            margin-left: -2px !important;
-                                                            margin-right: -2px !important;
-                                                        }
-                                                        .same-brand-col {
-                                                            padding-left: 2px !important;
-                                                            padding-right: 2px !important;
-                                                            margin-bottom: 0 !important;
-                                                        }
-                                                        .same-brand-card {
-                                                            min-width: 160px !important;
-                                                            max-width: 180px !important;
-                                                            width: 100% !important;
-                                                            margin-bottom: 0 !important;
-                                                            margin-left: 0 !important;
-                                                            margin-right: 0 !important;
+                                                        /* Evita cualquier efecto de hover/expansión en cards e imágenes */
+                                                        .product-card,
+                                                        .product-card:hover,
+                                                        .product-card:focus,
+                                                        .product-card:active,
+                                                        .no-hover-expand,
+                                                        .no-hover-expand:hover,
+                                                        .no-hover-expand:focus,
+                                                        .no-hover-expand:active {
+                                                            box-shadow: none !important;
+                                                            transform: none !important;
                                                             transition: none !important;
                                                         }
-                                                        @media (max-width: 767.98px) {
-                                                            .same-brand-card {
-                                                                min-width: 90vw !important;
-                                                                max-width: 95vw !important;
-                                                            }
-                                                        }
-                                                        .same-brand-row > .same-brand-col:not(:last-child) {
-                                                            margin-right: 4px !important;
-                                                        }
-                                                        .same-brand-row > .same-brand-col {
-                                                            margin-bottom: 0 !important;
-                                                        }
-                                                        .same-brand-card .card-img-top {
-                                                            padding: 8px !important;
-                                                        }
-                                                        .same-brand-card:hover,
-                                                        .same-brand-card:focus,
-                                                        .same-brand-card:active {
+                                                        .product-card .card-img-top,
+                                                        .product-card .card-img-top:hover,
+                                                        .product-card .card-img-top:focus,
+                                                        .product-card .card-img-top:active {
                                                             transform: none !important;
-                                                            box-shadow: none !important;
+                                                            transition: none !important;
+                                                        }
+                                                        /* Espacio entre cards reducido a 4px */
+                                                        .row[style*="gap:4px;"] > [class*="col-"] {
+                                                            margin-right: 0 !important;
+                                                            margin-left: 0 !important;
+                                                            padding-left: 2px !important;
+                                                            padding-right: 2px !important;
                                                         }
                                                     </style>
                                                     <script type="text/javascript"><![CDATA[
@@ -808,7 +796,7 @@
                             <!-- Stock -->
                             <div class="mb-3" style="text-align:left;">
                                 <div style="color:#222; font-size:16px; margin-bottom:2px;">
-                                    En Stock: <span><t t-esc="int(product.qty_available)"/></span> artículos
+                                    En Stock: <span><t t-esc="product.qty_available"/></span> artículos
                                 </div>
                                 <!-- Marca -->
                                 <div style="color:#222; font-size:16px;">
@@ -852,7 +840,7 @@
                                             }
                                         </style>
                                     </t>
-                                    <span style="color:#888; font-size:14px;">(<t t-esc="int(product.qty_available)"/> disponibles)</span>
+                                    <span style="color:#888; font-size:15.2px;">(<t t-esc="product.qty_available"/> disponibles)</span>
                                 </div>
                                 <t t-jquery="body" t-operation="append">
                                     <script type="text/javascript"><![CDATA[
