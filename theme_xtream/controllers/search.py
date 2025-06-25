@@ -3,7 +3,7 @@ from odoo.http import request
 
 class WebsiteSearch(http.Controller):
     @http.route('/search_redirect', auth='public', website=True)
-    def search_redirect(self, search='', search_type='all', **kw):
+    def search_redirect(self, search='', search_type='all'):
         Product = request.env['product.template'].sudo()
         # Buscar por default_code exacto
         product = Product.search([('default_code', '=', search)], limit=1)
@@ -11,7 +11,9 @@ class WebsiteSearch(http.Controller):
             # Buscar por nombre exacto (case-insensitive)
             product = Product.search([('name', 'ilike', search)], limit=1)
         if product:
-            return request.redirect('/shop/%s?product=product.template(%s,)' % (product.slug(), product.id))
+            # Use the website URL or fallback to product.id if slug is not available
+            product_url = '/shop/product/%s' % product.id
+            return request.redirect('%s?product=product.template(%s,)' % (product_url, product.id))
 
         if search_type == 'brand':
             return request.redirect('/brand_search_redirect?search=%s' % search)
