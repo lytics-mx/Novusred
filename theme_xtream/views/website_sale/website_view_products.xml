@@ -82,126 +82,155 @@
                                         <!-- Accesorios a la izquierda -->
                                         <div class="col-12 col-md-8">
                                             <h5 style="font-weight:600; margin-bottom:12px; font-size:18px; text-align:left;">Productos que podrían interesarte</h5>
-                                            <div class="d-flex flex-wrap" style="gap:12px;">
-                                                <t t-foreach="product.accessory_product_ids" t-as="acc" t-foreach-index="idx">
-                                                    <t t-if="acc.product_variant_id.id != product.product_variant_id.id">
-                                                        <div style="width:100px;">
-                                                            <div class="card product-card" style="border-radius: 8px; overflow: hidden; width:100px; min-width:100px; max-width:100px; min-height:210px; background:#fff; border:1px solid #e0e0e0; box-shadow: 0 1px 4px rgba(0,0,0,0.04); position:relative;">
-                                                                <div style="position: absolute; z-index: 2; left: 6px; top: 6px;">
-                                                                    <input type="checkbox" name="bundle_product_ids[]" t-att-value="acc.product_variant_id.id" class="bundle-checkbox custom-bundle-checkbox" style="width:22px; height:22px; border-radius:7px; border:1px solid #888; background:#f8f8f8;"/>
-                                                                </div>
-                                                                <style>
-                                                                    .custom-bundle-checkbox {
-                                                                        width: 22px !important;
-                                                                        height: 22px !important;
-                                                                        border-radius: 7px !important;
-                                                                        border-width: 1px !important;
-                                                                        border-style: solid !important;
-                                                                        border-color: #888 !important;
-                                                                        background: #f8f8f8 !important;
-                                                                        appearance: none;
-                                                                        -webkit-appearance: none;
-                                                                        outline: none;
-                                                                        cursor: pointer;
-                                                                        position: relative;
-                                                                    }
-                                                                    .custom-bundle-checkbox:checked {
-                                                                        background: #4285f4 !important;
-                                                                        border-color: #4285f4 !important;
-                                                                    }
-                                                                    .custom-bundle-checkbox:checked::after {
-                                                                        content: '';
-                                                                        display: block;
-                                                                        position: absolute;
-                                                                        left: 5px;
-                                                                        top: 2px;
-                                                                        width: 6px;
-                                                                        height: 12px;
-                                                                        border: solid #fff;
-                                                                        border-width: 0 3px 3px 0;
-                                                                        transform: rotate(45deg);
-                                                                    }
-                                                                </style>
-                                                                <t t-if="acc.product_tmpl_id">
-                                                                    <a t-att-href="'/shop/product/' + str(acc.product_tmpl_id.id)">
-                                                                        <div style="position: relative; overflow: hidden; width:100px; height:100px; margin:auto;">
-                                                                            <img t-att-src="'/web/image/product.template/' + str(acc.product_tmpl_id.id) + '/image_1920'"
-                                                                                 style="width:100px; height:100px; object-fit:contain; padding: 4px; background:#fff;" />
-                                                                        </div>
-                                                                    </a>
-                                                                </t>
-                                                                <t t-else="">
-                                                                    <a t-att-href="'/shop/product/' + str(acc.id)">
-                                                                        <div style="position: relative; overflow: hidden; width:100px; height:100px; margin:auto;">
-                                                                            <img t-att-src="'/web/image/product.template/' + str(acc.id) + '/image_1920'"
-                                                                                 style="width:100px; height:100px; object-fit:contain; padding: 4px; background:#fff;" />
-                                                                        </div>
-                                                                    </a>
-                                                                </t>
-                                                                <div style="padding:6px 4px 4px 4px; text-align: left;">
-                                                                    <t t-if="acc.product_tag_ids">
-                                                                        <div style="margin-bottom:2px;">
-                                                                            <span style="border-radius: 0; text-transform: uppercase; font-size:10px; padding:2px 4px; background:#4285f4; color:#fff;">
-                                                                                <t t-esc="acc.product_tag_ids[0].name"/>
-                                                                            </span>
-                                                                        </div>
-                                                                    </t>
-                                                                    <t t-if="acc.discounted_price &lt; acc.list_price">
-                                                                        <div style="margin-bottom:2px;">
-                                                                            <span style="font-size: 10px; text-decoration:line-through; color:#888;">
-                                                                                $<t t-esc="'{:,}'.format(int(acc.list_price or 0))" />
-                                                                            </span>
-                                                                        </div>
-                                                                        <div style="display:flex; align-items:center; gap:4px;">
-                                                                            <span style="font-size: 14px; color: #000; font-weight: bold;">
-                                                                                $<t t-esc="'{:,}'.format(int(acc.discounted_price or 0))" />
-                                                                            </span>
-                                                                            <t t-if="acc.discount_percentage or acc.fixed_discount">
-                                                                                <span style="font-size: 10px; font-weight: normal; color: #FF5207;">
-                                                                                    <t t-if="acc.discount_percentage">
-                                                                                        <t t-esc="int(acc.discount_percentage)" />% OFF
-                                                                                    </t>
-                                                                                    <t t-elif="acc.fixed_discount">
-                                                                                        -$<t t-esc="'{:,}'.format(int(acc.fixed_discount))" /> MXN
-                                                                                    </t>
-                                                                                </span>
+                                            <div id="accessory-carousel" class="carousel slide" data-bs-ride="carousel" style="width:100%;">
+                                                <div class="carousel-inner">
+                                                    <t t-set="accs" t-value="[acc for acc in product.accessory_product_ids if acc.product_variant_id.id != product.product_variant_id.id]"/>
+                                                    <t t-foreach="range(0, len(accs), 3)" t-as="idx">
+                                                        <div t-attf-class="carousel-item #{'active' if idx == 0 else ''}">
+                                                            <div class="d-flex flex-row flex-nowrap justify-content-center" style="gap:12px;">
+                                                                <t t-foreach="accs[idx:idx+3]" t-as="acc" t-foreach-index="j">
+                                                                    <div style="width:100px;">
+                                                                        <div class="card product-card" style="border-radius: 8px; overflow: hidden; width:100px; min-width:100px; max-width:100px; min-height:210px; background:#fff; border:1px solid #e0e0e0; box-shadow: 0 1px 4px rgba(0,0,0,0.04); position:relative;">
+                                                                            <div style="position: absolute; z-index: 2; left: 6px; top: 6px;">
+                                                                                <input type="checkbox" name="bundle_product_ids[]" t-att-value="acc.product_variant_id.id" class="bundle-checkbox custom-bundle-checkbox" style="width:22px; height:22px; border-radius:7px; border:1px solid #888; background:#f8f8f8;"/>
+                                                                            </div>
+                                                                            <style>
+                                                                                .custom-bundle-checkbox {
+                                                                                    width: 22px !important;
+                                                                                    height: 22px !important;
+                                                                                    border-radius: 7px !important;
+                                                                                    border-width: 1px !important;
+                                                                                    border-style: solid !important;
+                                                                                    border-color: #888 !important;
+                                                                                    background: #f8f8f8 !important;
+                                                                                    appearance: none;
+                                                                                    -webkit-appearance: none;
+                                                                                    outline: none;
+                                                                                    cursor: pointer;
+                                                                                    position: relative;
+                                                                                }
+                                                                                .custom-bundle-checkbox:checked {
+                                                                                    background: #4285f4 !important;
+                                                                                    border-color: #4285f4 !important;
+                                                                                }
+                                                                                .custom-bundle-checkbox:checked::after {
+                                                                                    content: '';
+                                                                                    display: block;
+                                                                                    position: absolute;
+                                                                                    left: 5px;
+                                                                                    top: 2px;
+                                                                                    width: 6px;
+                                                                                    height: 12px;
+                                                                                    border: solid #fff;
+                                                                                    border-width: 0 3px 3px 0;
+                                                                                    transform: rotate(45deg);
+                                                                                }
+                                                                            </style>
+                                                                            <t t-if="acc.product_tmpl_id">
+                                                                                <a t-att-href="'/shop/product/' + str(acc.product_tmpl_id.id)">
+                                                                                    <div style="position: relative; overflow: hidden; width:100px; height:100px; margin:auto;">
+                                                                                        <img t-att-src="'/web/image/product.template/' + str(acc.product_tmpl_id.id) + '/image_1920'"
+                                                                                             style="width:100px; height:100px; object-fit:contain; padding: 4px; background:#fff;" />
+                                                                                    </div>
+                                                                                </a>
                                                                             </t>
+                                                                            <t t-else="">
+                                                                                <a t-att-href="'/shop/product/' + str(acc.id)">
+                                                                                    <div style="position: relative; overflow: hidden; width:100px; height:100px; margin:auto;">
+                                                                                        <img t-att-src="'/web/image/product.template/' + str(acc.id) + '/image_1920'"
+                                                                                             style="width:100px; height:100px; object-fit:contain; padding: 4px; background:#fff;" />
+                                                                                    </div>
+                                                                                </a>
+                                                                            </t>
+                                                                            <div style="padding:6px 4px 4px 4px; text-align: left;">
+                                                                                <t t-if="acc.product_tag_ids">
+                                                                                    <div style="margin-bottom:2px;">
+                                                                                        <span style="border-radius: 0; text-transform: uppercase; font-size:10px; padding:2px 4px; background:#4285f4; color:#fff;">
+                                                                                            <t t-esc="acc.product_tag_ids[0].name"/>
+                                                                                        </span>
+                                                                                    </div>
+                                                                                </t>
+                                                                                <t t-if="acc.discounted_price &lt; acc.list_price">
+                                                                                    <div style="margin-bottom:2px;">
+                                                                                        <span style="font-size: 10px; text-decoration:line-through; color:#888;">
+                                                                                            $<t t-esc="'{:,}'.format(int(acc.list_price or 0))" />
+                                                                                        </span>
+                                                                                    </div>
+                                                                                    <div style="display:flex; align-items:center; gap:4px;">
+                                                                                        <span style="font-size: 14px; color: #000; font-weight: bold;">
+                                                                                            $<t t-esc="'{:,}'.format(int(acc.discounted_price or 0))" />
+                                                                                        </span>
+                                                                                        <t t-if="acc.discount_percentage or acc.fixed_discount">
+                                                                                            <span style="font-size: 10px; font-weight: normal; color: #FF5207;">
+                                                                                                <t t-if="acc.discount_percentage">
+                                                                                                    <t t-esc="int(acc.discount_percentage)" />% OFF
+                                                                                                </t>
+                                                                                                <t t-elif="acc.fixed_discount">
+                                                                                                    -$<t t-esc="'{:,}'.format(int(acc.fixed_discount))" /> MXN
+                                                                                                </t>
+                                                                                            </span>
+                                                                                        </t>
+                                                                                    </div>
+                                                                                    <t t-if="acc.list_price and acc.discounted_price and (acc.list_price - acc.discounted_price) &gt; 0">
+                                                                                        <div style="font-size:9px;">
+                                                                                            <span style="color:#888;">
+                                                                                                $<t t-esc="'{:,}'.format(int(acc.list_price - acc.discounted_price))" /> desc.
+                                                                                            </span>
+                                                                                        </div>
+                                                                                    </t>
+                                                                                </t>
+                                                                                <t t-elif="acc.list_price">
+                                                                                    <span style="font-size: 14px; font-weight:bold; color:#000;">
+                                                                                        $<t t-esc="'{:,}'.format(int(acc.list_price or 0))" />
+                                                                                    </span>
+                                                                                </t>
+                                                                                <t t-if="acc.free_shipping">
+                                                                                    <div style="margin-top:2px;">
+                                                                                        <span style="font-size:10px; color:#FF5207; font-weight:bold; font-style:italic;">
+                                                                                            Envío gratis
+                                                                                        </span>
+                                                                                    </div>
+                                                                                </t>
+                                                                                <h6 style="font-size: 11px; line-height: 1.1; max-height: 2.2em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-transform: uppercase; margin-bottom:0;">
+                                                                                    <t t-esc="acc.name" />
+                                                                                </h6>
+                                                                            </div>
                                                                         </div>
-                                                                        <t t-if="acc.list_price and acc.discounted_price and (acc.list_price - acc.discounted_price) &gt; 0">
-                                                                            <div style="font-size:9px;">
-                                                                                <span style="color:#888;">
-                                                                                    $<t t-esc="'{:,}'.format(int(acc.list_price - acc.discounted_price))" /> desc.
-                                                                                </span>
+                                                                        <!-- Agrega el "+" solo si no es el último producto del slide -->
+                                                                        <t t-if="j is not None and (j + 1) &lt; min(3, len(accs) - idx)">
+                                                                            <div style="display:flex; align-items:center; justify-content:center; height:20px;">
+                                                                                <span style="font-size: 20px; font-weight: bold; color: #222; line-height: 1;">+</span>
                                                                             </div>
                                                                         </t>
-                                                                    </t>
-                                                                    <t t-elif="acc.list_price">
-                                                                        <span style="font-size: 14px; font-weight:bold; color:#000;">
-                                                                            $<t t-esc="'{:,}'.format(int(acc.list_price or 0))" />
-                                                                        </span>
-                                                                    </t>
-                                                                    <t t-if="acc.free_shipping">
-                                                                        <div style="margin-top:2px;">
-                                                                            <span style="font-size:10px; color:#FF5207; font-weight:bold; font-style:italic;">
-                                                                                Envío gratis
-                                                                            </span>
-                                                                        </div>
-                                                                    </t>
-                                                                    <h6 style="font-size: 11px; line-height: 1.1; max-height: 2.2em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-transform: uppercase; margin-bottom:0;">
-                                                                        <t t-esc="acc.name" />
-                                                                    </h6>
-                                                                </div>
+                                                                    </div>
+                                                                </t>
                                                             </div>
-                                                            <!-- Agrega el "+" solo si no es el último producto -->
-                                                            <t t-if="idx is not None and (idx + 1) &lt; len(product.accessory_product_ids)">
-                                                                <div style="display:flex; align-items:center; justify-content:center; height:20px;">
-                                                                    <span style="font-size: 20px; font-weight: bold; color: #222; line-height: 1;">+</span>
-                                                                </div>
-                                                            </t>
                                                         </div>
                                                     </t>
+                                                </div>
+                                                <t t-if="len(accs) &gt; 3">
+                                                    <button class="carousel-control-prev" type="button" data-bs-target="#accessory-carousel" data-bs-slide="prev" style="background:none; border:none;">
+                                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                        <span class="visually-hidden">Anterior</span>
+                                                    </button>
+                                                    <button class="carousel-control-next" type="button" data-bs-target="#accessory-carousel" data-bs-slide="next" style="background:none; border:none;">
+                                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                        <span class="visually-hidden">Siguiente</span>
+                                                    </button>
                                                 </t>
                                             </div>
+                                            <t t-jquery="body" t-operation="append">
+                                                <script type="text/javascript"><![CDATA[
+                                                    document.addEventListener('DOMContentLoaded', function() {
+                                                        if (window.bootstrap && window.bootstrap.Carousel) {
+                                                            var el = document.getElementById('accessory-carousel');
+                                                            if (el) {
+                                                                new window.bootstrap.Carousel(el, {interval: 0, wrap: true});
+                                                            }
+                                                        }
+                                                    });
+                                                ]]></script>
+                                            </t>
                                         </div>
                                         <!-- Selección y precio a la derecha (sin mostrar el card del producto principal, solo lógica de precio) -->
                                         <div class="col-12 col-md-4 d-flex flex-column align-items-center justify-content-center" style="padding-top: 30px;">
