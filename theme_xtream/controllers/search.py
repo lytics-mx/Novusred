@@ -2,20 +2,24 @@ from odoo import http
 from odoo.http import request
 
 class WebsiteSearch(http.Controller):
-
     @http.route('/search_redirect', auth='public', website=True)
     def search_redirect(self, search='', search_type='all', **kw):
+        Product = request.env['product.template'].sudo()
+        # Buscar por default_code exacto
+        product = Product.search([('default_code', '=', search)], limit=1)
+        if not product:
+            # Buscar por nombre exacto (case-insensitive)
+            product = Product.search([('name', 'ilike', search)], limit=1)
+        if product:
+            return request.redirect('/shop/%s?product=product.template(%s,)' % (product.slug(), product.id))
+
         if search_type == 'brand':
             return request.redirect('/brand_search_redirect?search=%s' % search)
         elif search_type == 'category':
             return request.redirect('/category_search?search=%s' % search)
         elif search_type == 'model':
-            Product = request.env['product.template'].sudo()
-            product = Product.search([('default_code', '=', search)], limit=1)
-            if product:
-                return request.redirect('/shop/%s?product=product.template(%s,)' % (product.slug(), product.id))
-            else:
-                return request.redirect('/subcategory?search=%s' % search)
+            # Ya se intentó buscar por default_code y nombre arriba
+            return request.redirect('/subcategory?search=%s' % search)
         else:
             # Buscar si el texto coincide con una marca activa
             Brand = request.env['brand.type'].sudo()
