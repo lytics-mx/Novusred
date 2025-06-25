@@ -481,15 +481,15 @@
                                         <div style="margin-top:8px;">
                                             <h3 style="font-weight:600; margin-bottom:18px; text-align:left; font-size:22px;">De la misma marca</h3>
                                             <t t-if="len(same_brand_products) &lt;= 3">
-                                                <div class="row" style="gap:0;">
+                                                <div class="row same-brand-row" style="gap:0;">
                                                     <t t-foreach="same_brand_products[:3]" t-as="prod">
-                                                        <div class="col-12 col-md-4 mb-3">
-                                                            <div class="card product-card" style="border-radius: 10px; overflow: hidden; transition: none; box-shadow: none;">
+                                                        <div class="col-12 col-md-4 mb-2 same-brand-col" style="padding-left:2px; padding-right:2px;">
+                                                            <div class="card product-card same-brand-card" style="border-radius: 12px; overflow: hidden; box-shadow: none; min-width: 210px; max-width: 260px; width: 100%; margin: 0 auto;">
                                                                 <a t-att-href="'/shop/product/' + str(prod.id)">
                                                                     <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%;">
                                                                         <img t-att-src="'/web/image/product.template/' + str(prod.id) + '/image_1920'"
                                                                             class="card-img-top"
-                                                                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 10px; transition: none;"/>
+                                                                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 10px;"/>
                                                                     </div>
                                                                 </a>
                                                                 <div class="card-body mobile-card-body" style="text-align: left;">
@@ -541,7 +541,7 @@
                                                                             </span>
                                                                         </div>
                                                                     </t>
-                                                                    <h6 class="card-title mb-2" style="font-size: 16px; line-height: 1.2; max-height: 2.4em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-transform: uppercase;">
+                                                                    <h6 class="card-title mb-2" style="font-size: 17px; line-height: 1.2; max-height: 2.4em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-transform: uppercase;">
                                                                         <t t-esc="prod.name" />
                                                                     </h6>
                                                                 </div>
@@ -555,15 +555,15 @@
                                                     <div class="carousel-inner">
                                                         <t t-foreach="range(0, len(same_brand_products), 3)" t-as="idx">
                                                             <div t-attf-class="carousel-item #{'active' if idx == 0 else ''}">
-                                                                <div class="row" style="gap:0;">
+                                                                <div class="row same-brand-row" style="gap:0;">
                                                                     <t t-foreach="same_brand_products[idx:idx+3]" t-as="prod">
-                                                                        <div class="col-12 col-md-4 mb-3">
-                                                                            <div class="card product-card" style="border-radius: 10px; overflow: hidden; transition: none; box-shadow: none;">
+                                                                        <div class="col-12 col-md-4 mb-2 same-brand-col" style="padding-left:2px; padding-right:2px;">
+                                                                            <div class="card product-card same-brand-card" style="border-radius: 12px; overflow: hidden; box-shadow: none; min-width: 210px; max-width: 260px; width: 100%; margin: 0 auto;">
                                                                                 <a t-att-href="'/shop/product/' + str(prod.id)">
                                                                                     <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%;">
                                                                                         <img t-att-src="'/web/image/product.template/' + str(prod.id) + '/image_1920'"
                                                                                             class="card-img-top"
-                                                                                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 10px; transition: none;"/>
+                                                                                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 10px;"/>
                                                                                     </div>
                                                                                 </a>
                                                                                 <div class="card-body mobile-card-body" style="text-align: left;">
@@ -615,7 +615,7 @@
                                                                                             </span>
                                                                                         </div>
                                                                                     </t>
-                                                                                    <h6 class="card-title mb-2" style="font-size: 16px; line-height: 1.2; max-height: 2.4em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-transform: uppercase;">
+                                                                                    <h6 class="card-title mb-2" style="font-size: 17px; line-height: 1.2; max-height: 2.4em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-transform: uppercase;">
                                                                                         <t t-esc="prod.name" />
                                                                                     </h6>
                                                                                 </div>
@@ -637,21 +637,37 @@
                                                 </div>
                                                 <t t-jquery="body" t-operation="append">
                                                     <style>
-                                                        /* Evita cualquier efecto de hover/expansión en cards e imágenes */
-                                                        .product-card,
-                                                        .product-card:hover,
-                                                        .product-card:focus,
-                                                        .product-card:active {
-                                                            box-shadow: none !important;
-                                                            transform: none !important;
-                                                            transition: none !important;
+                                                        .same-brand-row {
+                                                            margin-left: -2px !important;
+                                                            margin-right: -2px !important;
                                                         }
-                                                        .product-card .card-img-top,
-                                                        .product-card .card-img-top:hover,
-                                                        .product-card .card-img-top:focus,
-                                                        .product-card .card-img-top:active {
-                                                            transform: none !important;
-                                                            transition: none !important;
+                                                        .same-brand-col {
+                                                            padding-left: 2px !important;
+                                                            padding-right: 2px !important;
+                                                            margin-bottom: 0 !important;
+                                                        }
+                                                        .same-brand-card {
+                                                            min-width: 210px !important;
+                                                            max-width: 260px !important;
+                                                            width: 100% !important;
+                                                            margin-bottom: 0 !important;
+                                                            margin-left: 0 !important;
+                                                            margin-right: 0 !important;
+                                                        }
+                                                        @media (max-width: 767.98px) {
+                                                            .same-brand-card {
+                                                                min-width: 98vw !important;
+                                                                max-width: 100vw !important;
+                                                            }
+                                                        }
+                                                        .same-brand-row > .same-brand-col:not(:last-child) {
+                                                            margin-right: 4px !important;
+                                                        }
+                                                        .same-brand-row > .same-brand-col {
+                                                            margin-bottom: 0 !important;
+                                                        }
+                                                        .same-brand-card .card-img-top {
+                                                            padding: 10px !important;
                                                         }
                                                     </style>
                                                     <script type="text/javascript"><![CDATA[
