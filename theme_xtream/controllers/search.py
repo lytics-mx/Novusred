@@ -10,22 +10,8 @@ class WebsiteSearch(http.Controller):
         if not product:
             # Buscar por nombre exacto (case-insensitive)
             product = Product.search([('name', 'ilike', search)], limit=1)
-
-        # Si es modelo o nombre de producto, mostrar primero subcategory si hay similares
-        if search_type == 'model' or (not product and search):
-            # Buscar productos similares por nombre
-            similar_products = Product.search([('name', 'ilike', search)], limit=5)
-            if similar_products:
-                # Redirigir primero a subcategory mostrando similares, luego al producto real si existe
-                # Usar un template que haga el redirect automático después de 1 segundo
-                return request.render('theme_xtream.subcategory_redirect', {
-                    'search': search,
-                    'product': product,
-                    'similar_products': similar_products,
-                    'redirect_url': '/shop/product/%s?product=product.template(%s,)' % (product.id, product.id) if product else '',
-                })
-
         if product:
+            # Use the website URL or fallback to product.id if slug is not available
             product_url = '/shop/product/%s' % product.id
             return request.redirect('%s?product=product.template(%s,)' % (product_url, product.id))
 
@@ -34,14 +20,18 @@ class WebsiteSearch(http.Controller):
         elif search_type == 'category':
             return request.redirect('/category_search?search=%s' % search)
         elif search_type == 'model':
+            # Ya se intentó buscar por default_code y nombre arriba
             return request.redirect('/subcategory?search=%s' % search)
         else:
+            # Buscar si el texto coincide con una marca activa
             Brand = request.env['brand.type'].sudo()
             brand = Brand.search([('name', 'ilike', search), ('active', '=', True)], limit=1)
             if brand:
                 return request.redirect('/subcategory?brand_id=%s' % brand.id)
+            # Si no es marca, buscar si coincide con una categoría
             Category = request.env['product.category'].sudo()
             category = Category.search([('name', 'ilike', search)], limit=1)
             if category:
                 return request.redirect('/subcategory?category_id=%s' % category.id)
+            # Si no es marca ni categoría, redirigir a subcategory con search
             return request.redirect('/subcategory?search=%s' % search)
