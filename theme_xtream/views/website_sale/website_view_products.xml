@@ -83,11 +83,11 @@
                                         <t t-if="len(product.accessory_product_ids) &lt;= 3">
                                             <div class="col-12 col-md-9">
                                                 <h5 style="font-weight:600; margin-bottom:12px; font-size:22px; text-align:left;">Productos que podrían interesarte</h5>
-                                                <div class="d-flex flex-wrap" style="gap:36px;">
+                                                <div class="d-flex flex-wrap" style="gap:18px;">
                                                     <t t-foreach="product.accessory_product_ids" t-as="acc" t-index="acc_idx" t-key="acc.id">
                                                         <t t-if="acc.product_variant_id.id != product.product_variant_id.id">
-                                                            <div style="width:150px; position:relative;">
-                                                                <div class="card shadow-sm accessory-card accessory-card-100" style="border-radius: 10px; overflow: hidden; width:150px; min-width:150px; max-width:150px;">
+                                                            <div style="width:100px;">
+                                                                <div class="card shadow-sm accessory-card accessory-card-100" style="border-radius: 10px; overflow: hidden; width:100px;">
                                                                     <div style="position: absolute; z-index: 2; left: 8px; top: 8px;">
                                                                         <input type="checkbox" name="bundle_product_ids[]" t-att-value="acc.product_variant_id.id" class="bundle-checkbox custom-bundle-checkbox" style="width:30px; height:30px; border-radius:9px; border:1px solid #888; background:#f8f8f8;"/>
                                                                     </div>
@@ -163,9 +163,9 @@
                                                                         </h6>
                                                                     </div>
                                                                 </div>
-                                                                <!-- "+" entre cards, excepto después de la última -->
-                                                                <t t-if="acc_idx + 1 != len(product.accessory_product_ids)">
-                                                                    <div style="width:36px; display:flex; align-items:center; justify-content:center;">
+                                                                <!-- Agrega el "+" solo si no es el último producto -->
+                                                                <t t-if="acc_idx is not None and acc_idx + 1 != len(product.accessory_product_ids)">
+                                                                    <div class="d-flex align-items-center justify-content-center" style="height:100%; min-height:40px;">
                                                                         <span style="font-size: 48px; font-weight: bold; color: #222; line-height: 1;">+</span>
                                                                     </div>
                                                                 </t>
@@ -182,11 +182,11 @@
                                                     <div class="carousel-inner">
                                                         <t t-foreach="range(0, len(product.accessory_product_ids), 3)" t-as="idx">
                                                             <div t-attf-class="carousel-item #{'active' if idx == 0 else ''}">
-                                                                <div class="d-flex flex-wrap" style="gap:36px;">
+                                                                <div class="d-flex flex-wrap" style="gap:18px;">
                                                                     <t t-foreach="product.accessory_product_ids[idx:idx+3]" t-as="acc" t-index="acc_idx" t-key="acc.id">
                                                                         <t t-if="acc.product_variant_id.id != product.product_variant_id.id">
-                                                                            <div style="width:150px; position:relative;">
-                                                                                <div class="card shadow-sm accessory-card accessory-card-100" style="border-radius: 10px; overflow: hidden; width:150px; min-width:150px; max-width:150px;">
+                                                                            <div style="width:100px;">
+                                                                                <div class="card shadow-sm accessory-card accessory-card-100" style="border-radius: 10px; overflow: hidden; width:100px;">
                                                                                     <div style="position: absolute; z-index: 2; left: 8px; top: 8px;">
                                                                                         <input type="checkbox" name="bundle_product_ids[]" t-att-value="acc.product_variant_id.id" class="bundle-checkbox custom-bundle-checkbox" style="width:30px; height:30px; border-radius:9px; border:1px solid #888; background:#f8f8f8;"/>
                                                                                     </div>
@@ -262,9 +262,9 @@
                                                                                         </h6>
                                                                                     </div>
                                                                                 </div>
-                                                                                <!-- "+" entre cards, excepto después de la última del slide -->
-                                                                                <t t-if="acc_idx + 1 != min(3, len(product.accessory_product_ids) - idx)">
-                                                                                    <div style="width:36px; display:flex; align-items:center; justify-content:center;">
+                                                                                <!-- Agrega el "+" solo si no es el último producto del slide -->
+                                                                                <t t-if="acc_idx is not None and acc_idx + 1 != min(3, len(product.accessory_product_ids) - idx)">
+                                                                                    <div class="d-flex align-items-center justify-content-center" style="height:100%; min-height:40px;">
                                                                                         <span style="font-size: 48px; font-weight: bold; color: #222; line-height: 1;">+</span>
                                                                                     </div>
                                                                                 </t>
@@ -483,7 +483,7 @@
                                             <t t-if="len(same_brand_products) &lt;= 3">
                                                 <div class="row" style="gap:0;">
                                                     <t t-foreach="same_brand_products[:3]" t-as="prod">
-                                                        <div class="col-12 col-md-4 mb-3">
+                                                        <div class="col-12 col-md-4 mb-2" style="padding-right:6px; padding-left:6px;">
                                                             <div class="card product-card" style="border-radius: 10px; overflow: hidden; transition: none; box-shadow: none;">
                                                                 <a t-att-href="'/shop/product/' + str(prod.id)">
                                                                     <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%;">
@@ -557,7 +557,7 @@
                                                             <div t-attf-class="carousel-item #{'active' if idx == 0 else ''}">
                                                                 <div class="row" style="gap:0;">
                                                                     <t t-foreach="same_brand_products[idx:idx+3]" t-as="prod">
-                                                                        <div class="col-12 col-md-4 mb-3">
+                                                                        <div class="col-12 col-md-4 mb-2" style="padding-right:6px; padding-left:6px;">
                                                                             <div class="card product-card" style="border-radius: 10px; overflow: hidden; transition: none; box-shadow: none;">
                                                                                 <a t-att-href="'/shop/product/' + str(prod.id)">
                                                                                     <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%;">
@@ -652,6 +652,17 @@
                                                         .product-card .card-img-top:active {
                                                             transform: none !important;
                                                             transition: none !important;
+                                                        }
+                                                        /* Reduce el espacio entre cards de la misma marca */
+                                                        .product-card {
+                                                            margin-right: 4px !important;
+                                                            margin-left: 4px !important;
+                                                        }
+                                                        .row>[class*='col-']:last-child .product-card {
+                                                            margin-right: 0 !important;
+                                                        }
+                                                        .row>[class*='col-']:first-child .product-card {
+                                                            margin-left: 0 !important;
                                                         }
                                                     </style>
                                                     <script type="text/javascript"><![CDATA[
