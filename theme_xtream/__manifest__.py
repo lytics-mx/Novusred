@@ -78,6 +78,7 @@
         'views/website_sale/search/brand_search.xml',
         'views/website_sale/search/category_search.xml',
         'views/website_sale/search/nav_bar.xml',
+        'views/website_sale/search/search_redirect.xml',
 
 
         'views/shop/website_cart.xml',
