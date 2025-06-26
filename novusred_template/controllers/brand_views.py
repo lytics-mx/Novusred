@@ -52,7 +52,7 @@ class WebsiteBrand(http.Controller):
         # Obtener la imagen de banner del campo banner_image de la primera categoría (si existe)
         banner_image = valid_categories[0]['cat'].banner_image if valid_categories and hasattr(valid_categories[0]['cat'], 'banner_image') else False
 
-        return request.render('theme_xtream.brand_search', {
+        return request.render('novusred_template.brand_search', {
             'brand_type': brand_type_rec,
             'products': products,
             'categories': valid_categories,  # Ahora es una lista de dicts
@@ -76,7 +76,7 @@ class WebsiteBrand(http.Controller):
     @http.route('/brand', auth='public', website=True)
     def home(self):
         products = request.env['product.template'].sudo().search([('website_published', '=', True)], order='create_date desc', limit=10)
-        return http.request.render('theme_xtream.website_brand', {
+        return http.request.render('novusred_template.website_brand', {
             'products': products,
         })
     

@@ -82,4 +82,4 @@ class ShopController(WebsiteSale):
             # 'related_tag_products': related_tag_products,
                  
         }
-        return request.render("theme_xtream.website_view_product_xtream", context)
+        return request.render("novusred_template.website_view_product_xtream", context)
