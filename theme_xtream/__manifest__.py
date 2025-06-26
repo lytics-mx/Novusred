@@ -84,8 +84,6 @@
 
         # 'views/report_excel_views.xml',
 
-        # 'views/marca_web.xml',
-        'views/category/category.xml',
 
 
 # OFERTAS        
