@@ -29,8 +29,9 @@ class BrandType(models.Model):
         'product.template',
         'brand_type_product_rel',
         'brand_type_id',
-        'product_tmpl_id',  # CAMBIAR: de 'product_id' a 'product_tmpl_id'
+        'product_id',
         string="Productos Relacionados",
+        domain="[('brand_type_id', '=', id)]",
         help="Selecciona hasta 3 productos relacionados a esta marca."
     )
     slug = fields.Char(string='Slug', required=True, index=True)
