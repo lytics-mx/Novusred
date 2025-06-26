@@ -11,41 +11,42 @@
                 </header>
             </xpath>
             
-            <!-- Agregar los campos de descuento después de visible_on_ecommerce -->
-            <xpath expr="//field[@name='visible_on_ecommerce']" position="after">
+            <!-- Agregar los campos de descuento después del nombre -->
+            <xpath expr="//field[@name='name']" position="after">
                 <field name="discount_percentage" />
                 <field name="is_percentage" />
                 <field name="is_active" />
             </xpath>
             
             <!-- Crear una nueva pestaña para la configuración de expiración -->
-            <xpath expr="//notebook" position="inside">
-                <page string="Configuración de expiración" name="expiration_config">
-                    <group>
+            <xpath expr="//sheet" position="inside">
+                <notebook>
+                    <page string="Configuración de expiración" name="expiration_config">
                         <group>
-                            <field name="start_date"/>
-                            <field name="end_date"/>
-                            <field name="offer_time_type"/>
-                            <field name="flash_hours"
-                                   invisible="offer_time_type != 'flash'"
-                                   readonly="offer_time_type != 'flash'"/>
-                        </group>
-                        <group>
-                            <field name="recurrence_type" />
-                            <field name="recurrence_day" invisible="recurrence_type != 'weekly'"/>
-                            <field name="recurrence_day_month" invisible="recurrence_type not in ('monthly','biweekly')"/>
-                            <field name="recurrence_duration" invisible="recurrence_type == 'none'"/>
-                            <field name="stored_discount" />
-                            <field name="preserve_products"/>
-                        </group>                      
-                    </group>                    
-                    <!-- Mensajes de recurrencia eliminados porque dependen de enable_recurrence, que no existe en el modelo -->
-                </page>
-                 <page string="Vista previa de calendario" name="calendar_preview_page">
+                            <group>
+                                <field name="start_date"/>
+                                <field name="end_date"/>
+                                <field name="offer_time_type"/>
+                                <field name="flash_hours"
+                                       invisible="offer_time_type != 'flash'"
+                                       readonly="offer_time_type != 'flash'"/>
+                            </group>
+                            <group>
+                                <field name="recurrence_type" />
+                                <field name="recurrence_day" invisible="recurrence_type != 'weekly'"/>
+                                <field name="recurrence_day_month" invisible="recurrence_type not in ('monthly','biweekly')"/>
+                                <field name="recurrence_duration" invisible="recurrence_type == 'none'"/>
+                                <field name="stored_discount" />
+                                <field name="preserve_products"/>
+                            </group>                      
+                        </group>                    
+                    </page>
+                    <page string="Vista previa de calendario" name="calendar_preview_page">
                         <group>
                             <field name="calendar_preview" readonly="1" nolabel="1"/>
                         </group>
-                </page>
+                    </page>
+                </notebook>
             </xpath>
         </field>
     </record>
