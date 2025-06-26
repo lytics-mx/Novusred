@@ -55,10 +55,7 @@
         'views/policies/refund_policies.xml',
         'views/policies/payment_policies.xml',
 
-# Odoo parte del modulo de inventario
-        'views/inventory_control/brand_type.xml',
-        'views/inventory_control/product_template_odoo.xml',
-        'views/inventory_control/product_tag.xml',
+
 
 # Configuiración del modulo de sitio web en odoo
         'views/website_configuration/imagenes_banner.xml',

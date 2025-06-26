@@ -20,11 +20,6 @@
 #
 #############################################################################
 from . import xtream_testimonials
-from . import product_template_web
-from . import product_brand
-from . import product_category
-from . import historial
-from . import product_tag
 from . import banner_website
 from . import banner_img
 from . import free_shipping
