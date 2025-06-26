@@ -471,19 +471,18 @@
                                         ])
                                     )"/>
                                     <t t-if="related_products">
-                                        <div class="compact-products-grid" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: flex-start;">
-                                            <t t-foreach="related_products" t-as="rel_product">
-                                                <div class="compact-product-card card h-100 shadow-sm product-card"
-                                                     style="min-width:220px; max-width:220px; flex:0 0 220px; margin:0; background:#fff; border:1px solid #e0e0e0; border-radius:8px; overflow:hidden; display:flex; flex-direction:column;">
+                                        <div class="compact-products-grid" style="display: flex; gap: 18px; flex-wrap: wrap; justify-content: flex-start;">
+                                            <t t-foreach="related_products[:3]" t-as="rel_product">
+                                                <div class="compact-product-card card shadow-sm product-card" style="width: 100%; min-width:220px; max-width:320px; flex:1 1 0; border-radius:16px; border:1.5px solid #bdbdbd; overflow:hidden; display:flex; flex-direction:column; margin-bottom:0; background:#fff;">
                                                     <a t-att-href="'/shop/product/' + str(rel_product.id)">
-                                                        <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%;">
-                                                            <img t-att-src="'/web/image/product.template/' + str(rel_product.id) + '/image_1920'" 
-                                                                 class="card-img-top" 
-                                                                 style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 8px;" />
+                                                        <div class="image-container" style="position: relative; width:100%; aspect-ratio:1/1; background:#fff;">
+                                                            <img t-att-src="'/web/image/product.template/' + str(rel_product.id) + '/image_1920'"
+                                                                 class="card-img-top"
+                                                                 style="width:100%; height:100%; object-fit:contain; padding:18px; background:#fff;"/>
                                                         </div>
                                                     </a>
-                                                    <div class="card-body mobile-card-body" style="text-align: left; flex:1 1 auto; display:flex; flex-direction:column; justify-content:space-between;">
-                                                        <div class="mt-auto">
+                                                    <div class="card-body mobile-card-body" style="text-align: left; padding:16px 18px 10px 18px; flex:1 1 auto; display:flex; flex-direction:column; justify-content:space-between;">
+                                                        <div>
                                                             <t t-if="rel_product.discounted_price &lt; rel_product.list_price">
                                                                 <t t-if="rel_product.product_tag_ids">
                                                                     <div class="d-flex justify-content-start mb-2 mobile-badge-container">
@@ -497,7 +496,7 @@
                                                                         $<t t-esc="'{:,}'.format(int(rel_product.list_price))" />
                                                                     </span>
                                                                 </div>
-                                                                <div class="d-flex align-items-center justify-content-between mobile-price-container">
+                                                                <div class="d-flex align-items-center mobile-price-container" style="gap: 12px;">
                                                                     <span class="text-dark fw-bold mobile-main-price" style="font-size: 28px; color: #000; font-weight: bold;">
                                                                         $<t t-esc="'{:,}'.format(int(rel_product.discounted_price))" />
                                                                     </span>
@@ -517,7 +516,7 @@
                                                                 </div>
                                                             </t>
                                                             <t t-else="">
-                                                                <span class="fw-bold d-block mobile-main-price">
+                                                                <span class="fw-bold d-block mobile-main-price" style="font-size: 28px;">
                                                                     $<t t-esc="'{:,}'.format(int(rel_product.list_price))" />
                                                                 </span>
                                                             </t>
@@ -541,6 +540,78 @@
                                         </div>
                                     </t>
                                 </div>
+                                <t t-jquery="body" t-operation="append">
+                                    <style>
+                                        .compact-products-grid {
+                                            display: flex;
+                                            gap: 18px;
+                                            flex-wrap: wrap;
+                                            justify-content: flex-start;
+                                        }
+                                        .compact-product-card {
+                                            min-width: 220px;
+                                            max-width: 320px;
+                                            width: 100%;
+                                            border-radius: 16px !important;
+                                            border: 1.5px solid #bdbdbd !important;
+                                            background: #fff !important;
+                                            overflow: hidden;
+                                            display: flex;
+                                            flex-direction: column;
+                                            margin-bottom: 0;
+                                            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+                                        }
+                                        .compact-product-card .image-container {
+                                            width: 100%;
+                                            aspect-ratio: 1/1;
+                                            background: #fff;
+                                        }
+                                        .compact-product-card .card-img-top {
+                                            width: 100%;
+                                            height: 100%;
+                                            object-fit: contain;
+                                            padding: 18px;
+                                            background: #fff;
+                                        }
+                                        .compact-product-card .card-body {
+                                            padding: 16px 18px 10px 18px;
+                                            flex: 1 1 auto;
+                                            display: flex;
+                                            flex-direction: column;
+                                            justify-content: space-between;
+                                            background: #fff !important;
+                                        }
+                                        .compact-product-card .card-title {
+                                            font-size: 16px;
+                                            line-height: 1.2;
+                                            max-height: 2.4em;
+                                            overflow: hidden;
+                                            display: -webkit-box;
+                                            -webkit-line-clamp: 2;
+                                            -webkit-box-orient: vertical;
+                                            text-transform: uppercase;
+                                        }
+                                        @media (max-width: 991.98px) {
+                                            .compact-products-grid {
+                                                gap: 10px;
+                                            }
+                                            .compact-product-card {
+                                                min-width: 48vw;
+                                                max-width: 100vw;
+                                            }
+                                        }
+                                        @media (max-width: 600px) {
+                                            .compact-products-grid {
+                                                flex-direction: column;
+                                                gap: 10px;
+                                            }
+                                            .compact-product-card {
+                                                min-width: 100%;
+                                                max-width: 100%;
+                                            }
+                                        }
+                                    </style>
+                                </t>
                                 <!-- ...resto del código... -->
 
 
