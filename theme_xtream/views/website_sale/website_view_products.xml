@@ -470,31 +470,64 @@
                                                                     <t t-foreach="related_products[idx:idx+3]" t-as="rel_prod">
                                                                         <div class="compact-product-card p-2">
                                                                             <a t-att-href="'/shop/product/' + str(rel_prod.id)" style="text-decoration: none; color: inherit;">
-                                                                                <img t-att-src="'/web/image/product.template/' + str(rel_prod.id) + '/image_1920'"
-                                                                                     class="img-fluid" style="height:120px; object-fit:contain; width:100%;"/>
-                                                                                <div class="mt-2" style="font-size:15px; font-weight:600; text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                                                                                    <t t-esc="rel_prod.name"/>
+                                                                                <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%; background: #fff;">
+                                                                                    <img t-att-src="'/web/image/product.template/' + str(rel_prod.id) + '/image_1920'"
+                                                                                        class="card-img-top"
+                                                                                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 10px;" />
                                                                                 </div>
-                                                                                <div>
+                                                                                <div class="card-body mobile-card-body" style="background: #fff; text-align: left;">
+                                                                                    <t t-if="rel_prod.product_tag_ids">
+                                                                                        <div class="d-flex justify-content-start mb-2 mobile-badge-container">
+                                                                                            <span class="badge bg-primary mobile-badge" style="border-radius: 0; text-transform: uppercase;">
+                                                                                                <t t-esc="rel_prod.product_tag_ids[0].name"/>
+                                                                                            </span>
+                                                                                        </div>
+                                                                                    </t>
                                                                                     <t t-if="rel_prod.discounted_price &lt; rel_prod.list_price">
-                                                                                        <span style="text-decoration:line-through; color:#888; font-size:13px;">
-                                                                                            $<t t-esc="'{:,}'.format(int(rel_prod.list_price))"/>
-                                                                                        </span>
-                                                                                        <span style="font-weight:bold; color:#000; font-size:17px;">
-                                                                                            $<t t-esc="'{:,}'.format(int(rel_prod.discounted_price))"/>
+                                                                                        <div class="mt-0 mobile-discount-amount" style="text-align: left;">
+                                                                                            <span class="text-muted" style="font-size: 16px;">
+                                                                                                $<t t-esc="'{:,}'.format(int(rel_prod.list_price))" />
+                                                                                            </span>
+                                                                                        </div>
+                                                                                        <div class="d-flex align-items-start mobile-price-container" style="text-align: left;">
+                                                                                            <span class="text-dark fw-bold mobile-main-price" style="font-size: 28px; color: #000; font-weight: bold;">
+                                                                                                $<t t-esc="'{:,}'.format(int(rel_prod.discounted_price))" />
+                                                                                            </span>
+                                                                                            <t t-if="rel_prod.discount_percentage or rel_prod.fixed_discount">
+                                                                                                <span class="mobile-discount" style="font-size: 16px; font-weight: normal; color: #FF5207; margin-left: 8px;">
+                                                                                                    <t t-if="rel_prod.discount_percentage">
+                                                                                                        <t t-esc="int(rel_prod.discount_percentage)" />% OFF
+                                                                                                    </t>
+                                                                                                    <t t-elif="rel_prod.fixed_discount">
+                                                                                                        -$<t t-esc="'{:,}'.format(int(rel_prod.fixed_discount))" /> MXN
+                                                                                                    </t>
+                                                                                                </span>
+                                                                                            </t>
+                                                                                        </div>
+                                                                                        <t t-if="rel_prod.list_price and rel_prod.discounted_price and (rel_prod.list_price - rel_prod.discounted_price) &gt; 0">
+                                                                                            <div class="mt-0 mobile-discount-amount" style="text-align: left;">
+                                                                                                <span class="text-muted">
+                                                                                                    $<t t-esc="'{:,}'.format(int(rel_prod.list_price - rel_prod.discounted_price))" /> descuento
+                                                                                                </span>
+                                                                                            </div>
+                                                                                        </t>
+                                                                                    </t>
+                                                                                    <t t-elif="rel_prod.list_price">
+                                                                                        <span class="fw-bold d-block mobile-main-price" style="text-align: left;">
+                                                                                            $<t t-esc="'{:,}'.format(int(rel_prod.list_price))" />
                                                                                         </span>
                                                                                     </t>
-                                                                                    <t t-else="">
-                                                                                        <span style="font-weight:bold; color:#000; font-size:17px;">
-                                                                                            $<t t-esc="'{:,}'.format(int(rel_prod.list_price))"/>
-                                                                                        </span>
+                                                                                    <t t-if="rel_prod.free_shipping">
+                                                                                        <div class="mt-0 mobile-shipping" style="text-align: left;">
+                                                                                            <span class="text-orange mobile-shipping-text">
+                                                                                                Envío gratis
+                                                                                            </span>
+                                                                                        </div>
                                                                                     </t>
+                                                                                    <h6 class="card-title mb-2" style="font-size: 16px; line-height: 1.2; max-height: 2.4em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-transform: uppercase; text-align: left; background: #fff;">
+                                                                                        <t t-esc="rel_prod.name" />
+                                                                                    </h6>
                                                                                 </div>
-                                                                                <t t-if="rel_prod.free_shipping">
-                                                                                    <div style="color:#FF5207; font-size:13px; font-weight:bold; font-style:italic;">
-                                                                                        Envío gratis
-                                                                                    </div>
-                                                                                </t>
                                                                             </a>
                                                                         </div>
                                                                     </t>
