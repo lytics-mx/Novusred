@@ -470,11 +470,166 @@
                                             ('product_tag_ids', '=', False)
                                         ])
                                     )"/>
-                                    <div class="compact-products-grid" style="display: flex; gap: 2px; flex-wrap: wrap;">
-                                        <t t-set="max_cards" t-value="3"/>
-                                        <t t-foreach="range(0, max_cards)" t-as="idx">
-                                            <t t-if="idx &lt; len(related_products)">
-                                                <t t-set="rel_product" t-value="related_products[idx]"/>
+                                    <t t-if="len(related_products) &gt; 3">
+                                        <div id="related-carousel" class="carousel slide" data-bs-ride="carousel" style="position:relative;">
+                                            <div class="carousel-inner">
+                                                <t t-foreach="range(0, len(related_products), 3)" t-as="idx">
+                                                    <div t-attf-class="carousel-item #{'active' if idx == 0 else ''}">
+                                                        <div class="compact-products-grid" style="display: flex; gap: 2px; flex-wrap: wrap;">
+                                                            <t t-foreach="related_products[idx:idx+3]" t-as="rel_product">
+                                                                <div class="compact-product-card card h-100 shadow-sm product-card" style="margin-right: 8px;">
+                                                                    <a t-att-href="'/shop/product/' + str(rel_product.id)">
+                                                                        <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%;">
+                                                                            <img t-att-src="'/web/image/product.template/' + str(rel_product.id) + '/image_1920'" 
+                                                                                 class="card-img-top" 
+                                                                                 style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 8px;" />
+                                                                        </div>
+                                                                    </a>
+                                                                    <div class="card-body mobile-card-body" style="text-align: left;">
+                                                                        <div class="mt-auto">
+                                                                            <t t-if="rel_product.discounted_price &lt; rel_product.list_price">
+                                                                                <t t-if="rel_product.product_tag_ids">
+                                                                                    <div class="d-flex justify-content-start mb-2 mobile-badge-container">
+                                                                                        <span class="badge bg-primary mobile-badge" style="border-radius: 0; text-transform: uppercase;">
+                                                                                            <t t-esc="rel_product.product_tag_ids[0].name if rel_product.product_tag_ids else ''"/>
+                                                                                        </span>
+                                                                                    </div>
+                                                                                </t>
+                                                                                <div class="mt-0 mobile-discount-amount">
+                                                                                    <span class="text-muted" style="font-size: 16px;">
+                                                                                        $<t t-esc="'{:,}'.format(int(rel_product.list_price))" />
+                                                                                    </span>
+                                                                                </div>
+                                                                                <div class="d-flex align-items-center justify-content-between mobile-price-container">
+                                                                                    <span class="text-dark fw-bold mobile-main-price" style="font-size: 28px; color: #000; font-weight: bold;">
+                                                                                        $<t t-esc="'{:,}'.format(int(rel_product.discounted_price))" />
+                                                                                    </span>
+                                                                                    <span class="mobile-discount" style="font-size: 16px; font-weight: normal; color: #FF5207;">
+                                                                                        <t t-if="rel_product.discount_percentage">
+                                                                                            <t t-esc="int(rel_product.discount_percentage)" />% OFF
+                                                                                        </t>
+                                                                                        <t t-elif="rel_product.fixed_discount">
+                                                                                            -$<t t-esc="'{:,}'.format(int(rel_product.fixed_discount))" /> MXN
+                                                                                        </t>
+                                                                                    </span>
+                                                                                </div>
+                                                                                <div class="mt-0 mobile-discount-amount">
+                                                                                    <span class="text-muted">
+                                                                                        $<t t-esc="'{:,}'.format(int(rel_product.list_price - rel_product.discounted_price))" /> descuento
+                                                                                    </span>
+                                                                                </div>
+                                                                            </t>
+                                                                            <t t-else="">
+                                                                                <span class="fw-bold d-block mobile-main-price">
+                                                                                    $<t t-esc="'{:,}'.format(int(rel_product.list_price))" />
+                                                                                </span>
+                                                                            </t>
+                                                                            <t t-if="not rel_product.product_tag_ids">
+                                                                                <div class="mobile-spacer"></div>
+                                                                            </t>
+                                                                            <t t-if="rel_product.free_shipping">
+                                                                                <div class="mt-0 mobile-shipping">
+                                                                                    <span class="text-orange mobile-shipping-text">
+                                                                                        Envío gratis
+                                                                                    </span>
+                                                                                </div>
+                                                                            </t>
+                                                                        </div>
+                                                                        <h6 class="card-title mb-2" style="font-size: 16px; line-height: 1.2; max-height: 2.4em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-transform: uppercase;">
+                                                                            <t t-esc="rel_product.name" />
+                                                                        </h6>
+                                                                    </div>
+                                                                </div>
+                                                            </t>
+                                                        </div>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                            <button class="carousel-control-prev" type="button" data-bs-target="#related-carousel" data-bs-slide="prev" style="width:48px; height:48px; top:50%; left:-24px; transform:translateY(-50%); z-index:10; background:rgba(255,255,255,0.8); border-radius:50%; border:none; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                <span class="visually-hidden">Anterior</span>
+                                            </button>
+                                            <button class="carousel-control-next" type="button" data-bs-target="#related-carousel" data-bs-slide="next" style="width:48px; height:48px; top:50%; right:-24px; transform:translateY(-50%); z-index:10; background:rgba(255,255,255,0.8); border-radius:50%; border:none; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                <span class="visually-hidden">Siguiente</span>
+                                            </button>
+                                        </div>
+                                        <t t-jquery="body" t-operation="append">
+                                            <script type="text/javascript"><![CDATA[
+                                                document.addEventListener('DOMContentLoaded', function() {
+                                                    if (window.bootstrap && window.bootstrap.Carousel) {
+                                                        var el = document.getElementById('related-carousel');
+                                                        if (el) {
+                                                            new window.bootstrap.Carousel(el, {interval: 0, wrap: true});
+                                                        }
+                                                    }
+                                                });
+                                            ]]></script>
+                                            <style>
+                                                #related-carousel .carousel-control-prev,
+                                                #related-carousel .carousel-control-next {
+                                                    width: 48px !important;
+                                                    height: 48px !important;
+                                                    top: 50% !important;
+                                                    transform: translateY(-50%);
+                                                    z-index: 10;
+                                                    background: transparent !important;
+                                                    border: none !important;
+                                                    box-shadow: none !important;
+                                                    border-radius: 0 !important;
+                                                    display: flex;
+                                                    align-items: center;
+                                                    justify-content: center;
+                                                    opacity: 1 !important;
+                                                }
+                                                #related-carousel .carousel-control-prev-icon,
+                                                #related-carousel .carousel-control-next-icon {
+                                                    background: none !important;
+                                                    width: 36px;
+                                                    height: 36px;
+                                                    display: flex;
+                                                    align-items: center;
+                                                    justify-content: center;
+                                                }
+                                                #related-carousel .carousel-control-prev-icon::before {
+                                                    content: '&lt;';
+                                                    font-size: 2.5rem;
+                                                    color: #4285f4;
+                                                    font-weight: bold;
+                                                    line-height: 1;
+                                                }
+                                                #related-carousel .carousel-control-next-icon::before {
+                                                    content: '&gt;';
+                                                    font-size: 2.5rem;
+                                                    color: #4285f4;
+                                                    font-weight: bold;
+                                                    line-height: 1;
+                                                }
+                                                #related-carousel .carousel-control-prev {
+                                                    left: -24px !important;
+                                                }
+                                                #related-carousel .carousel-control-next {
+                                                    right: -24px !important;
+                                                }
+                                                @media (max-width: 600px) {
+                                                    #related-carousel .carousel-control-prev,
+                                                    #related-carousel .carousel-control-next {
+                                                        width: 36px !important;
+                                                        height: 36px !important;
+                                                        left: 0 !important;
+                                                        right: 0 !important;
+                                                    }
+                                                    #related-carousel .carousel-control-prev-icon::before,
+                                                    #related-carousel .carousel-control-next-icon::before {
+                                                        font-size: 2rem;
+                                                    }
+                                                }
+                                            </style>
+                                        </t>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="compact-products-grid" style="display: flex; gap: 2px; flex-wrap: wrap;">
+                                            <t t-foreach="related_products" t-as="rel_product">
                                                 <div class="compact-product-card card h-100 shadow-sm product-card" style="margin-right: 8px;">
                                                     <a t-att-href="'/shop/product/' + str(rel_product.id)">
                                                         <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%;">
@@ -539,12 +694,8 @@
                                                     </div>
                                                 </div>
                                             </t>
-                                            <t t-else="">
-                                                <!-- Espacio vacío para mantener 3 columnas -->
-                                                <div class="compact-product-card card h-100 shadow-sm product-card" style="margin-right: 8px; background: transparent; border: none; box-shadow: none;"></div>
-                                            </t>
-                                        </t>
-                                    </div>
+                                        </div>
+                                    </t>
                                 </div>
                                 <!-- ...resto del código... -->
 
