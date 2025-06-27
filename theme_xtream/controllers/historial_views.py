@@ -1,9 +1,9 @@
 from odoo import http
 from odoo.http import request
-from collections import defaultdict
+# Removed unused import
 from datetime import datetime, timedelta
 import pytz
-import locale
+# Removed unused import
 
 class ProductHistoryController(http.Controller):
 
