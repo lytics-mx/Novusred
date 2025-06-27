@@ -20,15 +20,15 @@
 #
 #############################################################################
 {
-    'name': 'Novusred - Tienda Online de Productos',
+    'name': 'Theme Xtream Fashion',
     'version': '18.0.1.0.0',
     'category': 'Theme/eCommerce',
-    'description': 'Design eCommerce Website with Lytics',
-    'summary': 'Theme Lytics',
-    'author': 'LyticsMx',
-    'company': 'LyticsMx',
+    'description': 'Design eCommerce Website with Theme Xtream Fashion',
+    'summary': 'Theme Xtream Fashion',
+    'author': 'Cybrosys Techno Solutions',
+    'company': 'Cybrosys Techno Solutions',
     'maintainer': 'Cybrosys Techno Solutions',
-    'website': "www.lytics.mx",
+    'website': "https://www.cybrosys.com",
     'depends': ['product', 'stock', 'base', 'website','website_sale', 'website_sale_wishlist', 'website_mass_mailing'],
     'data': [
         'security/ir.model.access.csv',
@@ -100,16 +100,16 @@
     ],
     'assets': {
       'web.assets_frontend': [
-          '/xtream_theme/static/src/css/animate.min.css',
-          '/xtream_theme/static/src/css/owl.carousel.min.css',
-          '/xtream_theme/static/src/css/owl.theme.default.min.css',
-          '/xtream_theme/static/src/css/style.css',
-          '/xtream_theme/static/src/js/owl.carousel.js',
-          '/xtream_theme/static/src/js/owl.carousel.min.js',
-          '/xtream_theme/static/src/js/new_arrivals.js',
-          '/xtream_theme/static/src/js/testimonials.js',
-          '/xtream_theme/static/src/js/custom.js',
-          '/xtream_theme/static/src/css/custom.css',
+          '/theme_xtream/static/src/css/animate.min.css',
+          '/theme_xtream/static/src/css/owl.carousel.min.css',
+          '/theme_xtream/static/src/css/owl.theme.default.min.css',
+          '/theme_xtream/static/src/css/style.css',
+          '/theme_xtream/static/src/js/owl.carousel.js',
+          '/theme_xtream/static/src/js/owl.carousel.min.js',
+          '/theme_xtream/static/src/js/new_arrivals.js',
+          '/theme_xtream/static/src/js/testimonials.js',
+          '/theme_xtream/static/src/js/custom.js',
+          '/theme_xtream/static/src/css/custom.css',
         
 
 

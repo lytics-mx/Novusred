@@ -9,7 +9,7 @@ class ShopController(WebsiteSale):
         buy_now = post.get('buy_now') or request.httprequest.args.get('buy_now')
         if buy_now:
             # Renderiza tu nueva plantilla personalizada
-            return request.render('xtream_theme.website_cart_buy_now', self._prepare_cart_values())
+            return request.render('theme_xtream.website_cart_buy_now', self._prepare_cart_values())
         # Si no es compra directa, usa el comportamiento normal
         return super().cart(**post)
     

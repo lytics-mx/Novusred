@@ -5,7 +5,7 @@ class CategoryController(http.Controller):
 
     @http.route('/category', auth='public', website=True)
     def home(self):
-        return http.request.render('xtream_theme.website_category')  
+        return http.request.render('theme_xtream.website_category')  
 
     @http.route('/subcategory', auth='public', website=True)
     def category(self, category_id=None, subcategory_id=None, brand_id=None, 
@@ -335,7 +335,7 @@ class CategoryController(http.Controller):
             }
         }
         
-        return request.render('xtream_theme.website_subcategory', values)
+        return request.render('theme_xtream.website_subcategory', values)
     
     @http.route('/category/get_subcategories', type='json', auth='public', website=True)
     def get_subcategories(self, category_id):
@@ -416,7 +416,7 @@ class CategoryController(http.Controller):
             'products': products,
             'brands': brands,
         }
-        return request.render('xtream_theme.category_search', values)
+        return request.render('theme_xtream.category_search', values)
         
     @http.route('/category/<string:slug>', auth='public', website=True)
     def category_by_slug(self, slug, **kwargs):
@@ -437,4 +437,4 @@ class CategoryController(http.Controller):
             'category': category,
             'products': products,
         }
-        return request.render('xtream_theme.category_search', values)
+        return request.render('theme_xtream.category_search', values)

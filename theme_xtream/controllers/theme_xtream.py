@@ -33,7 +33,7 @@ class WebsiteProduct(http.Controller):
         """
         This return products based on last created and limits to 6
         """
-        return http.Response(template='xtream_theme.new_arrivals_dynamic',
+        return http.Response(template='theme_xtream.new_arrivals_dynamic',
                              qcontext={'product_ids': request.env[
                                  'product.template'].sudo().search(
                                  [('website_published', '=', True)],
@@ -44,7 +44,7 @@ class WebsiteProduct(http.Controller):
         """
         This will return testimonials from backend.
         """
-        return http.Response(template='xtream_theme.testimonial',
+        return http.Response(template='theme_xtream.testimonial',
                              qcontext={'testimonials': request.env[
                                  'xtream.testimonials'].sudo(
                              ).search([])}).render()
@@ -84,35 +84,35 @@ class WebsiteProduct(http.Controller):
 
     @http.route('/about', auth='public', website=True)
     def about(self, **kw):
-        return http.request.render('xtream_theme.xtream_about')
+        return http.request.render('theme_xtream.xtream_about')
         
     @http.route('/terms', auth='public', website=True)
     def policies(self, **kw):
-        return http.request.render('xtream_theme.terms_and_conditions')
+        return http.request.render('theme_xtream.terms_and_conditions')
 
     @http.route('/purchasing_policies', auth='public', website=True)
     def purchasing_policies(self, **kw):
-        return http.request.render('xtream_theme.purchasing_policies')
+        return http.request.render('theme_xtream.purchasing_policies')
     
     @http.route('/warranty_policies', auth='public', website=True)
     def warranty_policies(self, **kw):
-        return http.request.render('xtream_theme.warranty_policies')    
+        return http.request.render('theme_xtream.warranty_policies')    
     
     @http.route('/delivery_policies', auth='public', website=True)
     def delivery_policies(self, **kw):
-        return http.request.render('xtream_theme.delivery_policies')
+        return http.request.render('theme_xtream.delivery_policies')
     
     @http.route('/privacy_policy', auth='public', website=True)
     def privacy_policy(self, **kw):
-        return http.request.render('xtream_theme.privacy_policy')
+        return http.request.render('theme_xtream.privacy_policy')
     
     @http.route('/refund_policies', auth='public', website=True)
     def refund_policies(self, **kw):
-        return http.request.render('xtream_theme.refund_policies')
+        return http.request.render('theme_xtream.refund_policies')
     
     @http.route('/payment_policies', auth='public', website=True)
     def payment_policies(self, **kw):
-        return http.request.render('xtream_theme.payment_policies')
+        return http.request.render('theme_xtream.payment_policies')
     
     
     @http.route('/descubre', auth='public', website=True)
@@ -120,7 +120,7 @@ class WebsiteProduct(http.Controller):
         """
         Renderiza la página Descubre con categorías destacadas.
         """
-        return http.request.render('xtream_theme.descubre')
+        return http.request.render('theme_xtream.descubre')
 
     @http.route('/', auth='public', website=True)
     def home(self, **kw):
@@ -131,9 +131,9 @@ class WebsiteProduct(http.Controller):
         is_mobile = 'mobile' in user_agent or 'android' in user_agent or 'iphone' in user_agent
         
         if is_mobile:
-            return http.request.render('xtream_theme.xtream_inicio_mobile')
+            return http.request.render('theme_xtream.xtream_inicio_mobile')
         else:
-            return http.request.render('xtream_theme.xtream_inicio')
+            return http.request.render('theme_xtream.xtream_inicio')
         
 
 
