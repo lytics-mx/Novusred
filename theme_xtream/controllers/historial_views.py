@@ -114,7 +114,7 @@ class ProductHistoryController(http.Controller):
         # Contar total de productos
         total_products = sum(len(products) for products in filtered_history.values())
         
-        return request.render('novusred_template.history_template', {
+        return request.render('theme_xtream.history_template', {
             'grouped_history': filtered_history,
             'available_periods': [period for period in available_periods if period in grouped_history and grouped_history[period]],
             'current_filter': current_filter,
