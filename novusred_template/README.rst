@@ -2,9 +2,9 @@
     :target: https://www.gnu.org/licenses/lgpl-3.0-standalone.html
     :alt: License: LGPL-3
 
-Theme Xtream Fashion
+Lytics
 ===================
-* Design eCommerce Website with Theme Xtream Fashion
+* Design eCommerce Website with Lytics
 
 Installation
 ============

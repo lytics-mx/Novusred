@@ -4,4 +4,4 @@
 #### Version 17.0.1.0.0
 #### ADD
 
-- Initial commit for Theme Xtream Fashion
+- Initial commit for Lytics-Theme Xtream Fashion
