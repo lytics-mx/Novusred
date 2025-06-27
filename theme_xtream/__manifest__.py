@@ -100,16 +100,16 @@
     ],
     'assets': {
       'web.assets_frontend': [
-          '/novusred_template/static/src/css/animate.min.css',
-          '/novusred_template/static/src/css/owl.carousel.min.css',
-          '/novusred_template/static/src/css/owl.theme.default.min.css',
-          '/novusred_template/static/src/css/style.css',
-          '/novusred_template/static/src/js/owl.carousel.js',
-          '/novusred_template/static/src/js/owl.carousel.min.js',
-          '/novusred_template/static/src/js/new_arrivals.js',
-          '/novusred_template/static/src/js/testimonials.js',
-          '/novusred_template/static/src/js/custom.js',
-          '/novusred_template/static/src/css/custom.css',
+          '/xtream_theme/static/src/css/animate.min.css',
+          '/xtream_theme/static/src/css/owl.carousel.min.css',
+          '/xtream_theme/static/src/css/owl.theme.default.min.css',
+          '/xtream_theme/static/src/css/style.css',
+          '/xtream_theme/static/src/js/owl.carousel.js',
+          '/xtream_theme/static/src/js/owl.carousel.min.js',
+          '/xtream_theme/static/src/js/new_arrivals.js',
+          '/xtream_theme/static/src/js/testimonials.js',
+          '/xtream_theme/static/src/js/custom.js',
+          '/xtream_theme/static/src/css/custom.css',
         
 
 
