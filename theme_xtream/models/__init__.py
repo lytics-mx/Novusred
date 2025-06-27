@@ -27,5 +27,4 @@ from . import historial
 
 
 # from . import product_image
-def some_function():
-    from . import websitesk_track
+# from . import websitesk_track
