@@ -5,13 +5,13 @@
         <field name="model">product.template</field>
         <field name="inherit_id" ref="product.product_template_only_form_view"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='public_categ_ids']" position="after">
+            <!-- Agregar campos después de categ_id -->
+            <xpath expr="//field[@name='categ_id']" position="after">
+                <field name="brand_type_id"/>
                 <field name="discount_percentage" readonly="1"/>
                 <field name="fixed_discount" readonly="1"/>
                 <field name="discounted_price" readonly="1"/>
-                <field name="offer_end_time" readonly="1" />
                 <field name="free_shipping" readonly="1" />
-
             </xpath>
             
             <!-- Campo de documentos técnicos -->
@@ -21,33 +21,33 @@
                         <field name="technical_document_ids" widget="many2many_binary" options="{'mimetype': 'application/*'}"/>
                     </group>
                 </page>
-            </xpath>
-            <xpath expr="//sheet/notebook" position="inside">
                 <page string="Imágenes adicionales">
-                    <group>
-                        <field name="product_image_ids"/>
-                    </group>
+                    <field name="product_image_ids" mode="kanban">
+                        <kanban>
+                            <field name="image_1920"/>
+                            <templates>
+                                <t t-name="kanban-box">
+                                    <div class="oe_kanban_global_click">
+                                        <field name="image_1920" widget="image"/>
+                                    </div>
+                                </t>
+                            </templates>
+                        </kanban>
+                    </field>
                 </page>
-            </xpath>
-          
-            <!-- Mover campo de marca al formulario principal -->
-            <xpath expr="//field[@name='invoice_policy']" position="after">
-                <field name="brand_type_id"/>
             </xpath>
         </field>
     </record>
+    
     <record id="view_product_template_search_inherit" model="ir.ui.view">
         <field name="name">product.template.search.inherit</field>
         <field name="model">product.template</field>
         <field name="inherit_id" ref="product.product_template_search_view"/>
         <field name="arch" type="xml">
             <xpath expr="//filter[@name='categ_id']" position="after">
-                <!-- Filtro por tipo de marca -->
-                <filter string="Tipo de Marca" name="filter_by_brand_type" domain="['|', ('active', '=', True), ('active', '=', False)]" context="{'group_by': 'brand_type_id'}"/> 
+                <filter string="Tipo de Marca" name="filter_by_brand_type" context="{'group_by': 'brand_type_id'}"/> 
                 <filter string="Sin imagen" name="filter_by_image_1920" domain="[('image_1920', '=', False)]"/>
-           
-           </xpath>
+            </xpath>
         </field>
     </record>
-    
 </odoo>

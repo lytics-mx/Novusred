@@ -23,7 +23,8 @@
         # Views
         'views/brand_type.xml',
         'views/product_template_odoo.xml',
-        'views/product_tag.xml',
+        'views/product_category.xml',
+        # 'views/product_tag.xml',
         
      
     ],

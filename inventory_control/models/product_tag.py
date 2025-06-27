@@ -1,6 +1,7 @@
 from odoo import models, fields, api
 from datetime import datetime, timedelta
 import pytz
+from odoo.exceptions import UserError, ValidationError
 
 class ProductTag(models.Model):
     _inherit = 'product.tag'
