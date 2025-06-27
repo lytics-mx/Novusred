@@ -175,7 +175,7 @@ class OffersController(http.Controller):
         
 
 
-        return request.render('theme_xtream.offers_template', {
+        return request.render('novusred_template.offers_template', {
             'discounted_products': discounted_products,
             'categories_with_count': categories_with_count,
             'total_products': len(discounted_products),

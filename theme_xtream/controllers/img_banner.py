@@ -7,4 +7,4 @@ class BannerController(http.Controller):
     def get_banner_images(self):
         banners = request.env['banner.image.line'].sudo().search([('is_active_carousel', '=', True), ('name', '=', 'home')], limit=1)
         images = banners.mapped('general_images')
-        return request.render('theme_xtream.banner_images_template', {'images': images})
+        return request.render('novusred_template.banner_images_template', {'images': images})
