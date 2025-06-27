@@ -23,7 +23,7 @@ from . import xtream_testimonials
 from . import banner_website
 from . import banner_img
 from . import free_shipping
-from . import historial
+# from . import historial
 
 
 # from . import product_image
