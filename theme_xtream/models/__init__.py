@@ -27,4 +27,5 @@ from . import free_shipping
 
 
 # from . import product_image
-from . import websitesk_track
+def some_function():
+    from . import websitesk_track
