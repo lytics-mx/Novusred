@@ -19,7 +19,7 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 #############################################################################
-from . import novusred_template
+from . import theme_xtream
 from . import offers_views
 from . import historial_views
 from . import category_views
