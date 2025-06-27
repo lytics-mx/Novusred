@@ -1,4 +1,4 @@
-from odoo import models, fields, apiAdd
+from odoo import models, fields, api
 from datetime import datetime, timezone
 
 class ProductViewHistory(models.Model):
