@@ -20,15 +20,15 @@
 #
 #############################################################################
 {
-    'name': 'Theme Xtream Fashion',
+    'name': 'Novusred - Tienda Online de Productos',
     'version': '18.0.1.0.0',
     'category': 'Theme/eCommerce',
-    'description': 'Design eCommerce Website with Theme Xtream Fashion',
-    'summary': 'Theme Xtream Fashion',
-    'author': 'Cybrosys Techno Solutions',
-    'company': 'Cybrosys Techno Solutions',
+    'description': 'Design eCommerce Website with Lytics',
+    'summary': 'Theme Lytics',
+    'author': 'LyticsMx',
+    'company': 'LyticsMx',
     'maintainer': 'Cybrosys Techno Solutions',
-    'website': "https://www.cybrosys.com",
+    'website': "www.lytics.mx",
     'depends': ['product', 'stock', 'base', 'website','website_sale', 'website_sale_wishlist', 'website_mass_mailing'],
     'data': [
         'security/ir.model.access.csv',
