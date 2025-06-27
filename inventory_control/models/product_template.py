@@ -61,7 +61,9 @@ class ProductTemplate(models.Model):
           default=True,
           help="Controla si la etiqueta de descuento es visible en el sitio web"
      )
-        
+     last_viewed_date = fields.Datetime(string="Última fecha vista")
+
+
      @api.model
      def update_free_shipping_from_model(self):
           """Actualiza el campo free_shipping basado en el modelo free.shipping"""
