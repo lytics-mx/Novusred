@@ -59,7 +59,7 @@
 
 # Configuiración del modulo de sitio web en odoo
         'views/website_configuration/imagenes_banner.xml',
-        'views/website_configuration/free_shipping.xml',
+        # 'views/website_configuration/free_shipping.xml',
 
 # Vistas de la pagina web
         'views/website_sale/website_history.xml',
@@ -82,19 +82,9 @@
 
         'views/csrf_token.xml',
 
-        # 'views/report_excel_views.xml',
 
 
 
-# OFERTAS        
-        # 'views/shop/ofertas/action_offers.xml',
-        # 'views/shop/ofertas/catg_offers.xml', 
-        # 'views/shop/ofertas/product_template_tree_view.xml',
-        
-        # 'views/view_product.xml',
-        
-
-        # 'views/website_sale/shop_filters.xml',
 
 
     ],
