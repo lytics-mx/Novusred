@@ -1,5 +1,4 @@
 from odoo import models, fields, api
-from datetime import datetime, timezone
 
 class ProductViewHistory(models.Model):
     _name = 'product.view.history'
