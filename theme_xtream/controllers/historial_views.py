@@ -3,7 +3,6 @@ from odoo.http import request
 from collections import defaultdict
 from datetime import datetime, timedelta
 import pytz
-import locale
 
 class ProductHistoryController(http.Controller):
 
@@ -19,13 +18,12 @@ class ProductHistoryController(http.Controller):
     @http.route(['/shop/history', '/shop/history/<string:period_filter>'], type='http', auth='user', website=True)
     def view_history(self, period_filter=None):
         """Obtiene el historial de productos vistos por el usuario actual agrupado por períodos."""
-        user_partner_id = request.env.user.partner_id.id
+        user_id = request.env.user.id
         
-        # Obtener todas las visitas del usuario
-        tracks = request.env['website.track'].sudo().search([
-            ('visitor_id.partner_id', '=', user_partner_id),
-            ('product_id', '!=', False)
-        ], order='visit_datetime desc')
+        # Obtener todas las visitas del usuario desde el nuevo modelo
+        history_records = request.env['product.view.history'].sudo().search([
+            ('user_id', '=', user_id)
+        ], order='viewed_at desc')
         
         # Configurar zona horaria
         user_tz = pytz.timezone('America/Mexico_City')
@@ -50,11 +48,11 @@ class ProductHistoryController(http.Controller):
         
         seen_products = set()  # Para evitar duplicados
         
-        for track in tracks:
+        for record in history_records:
             # Convertir fecha a zona horaria del usuario
-            if track.visit_datetime:
-                visit_date = track.visit_datetime.astimezone(user_tz).date()
-                product = track.product_id.product_tmpl_id
+            if record.viewed_at:
+                viewed_date = record.viewed_at.astimezone(user_tz).date()
+                product = record.product_id
                 
                 # Evitar productos duplicados
                 if product.id in seen_products or not product.website_published:
@@ -63,40 +61,40 @@ class ProductHistoryController(http.Controller):
                 seen_products.add(product.id)
                 
                 # Clasificar por período
-                if visit_date == today:
+                if viewed_date == today:
                     grouped_history['Hoy'].append({
                         'product': product,
-                        'visit_datetime': track.visit_datetime,
-                        'track_id': track.id
+                        'viewed_at': record.viewed_at,
+                        'record_id': record.id
                     })
-                elif visit_date == yesterday:
+                elif viewed_date == yesterday:
                     grouped_history['Ayer'].append({
                         'product': product,
-                        'visit_datetime': track.visit_datetime,
-                        'track_id': track.id
+                        'viewed_at': record.viewed_at,
+                        'record_id': record.id
                     })
-                elif visit_date >= week_start and visit_date < yesterday:
+                elif viewed_date >= week_start and viewed_date < yesterday:
                     grouped_history['Esta semana'].append({
                         'product': product,
-                        'visit_datetime': track.visit_datetime,
-                        'track_id': track.id
+                        'viewed_at': record.viewed_at,
+                        'record_id': record.id
                     })
-                elif visit_date >= month_start and visit_date < week_start:
+                elif viewed_date >= month_start and viewed_date < week_start:
                     grouped_history['Este mes'].append({
                         'product': product,
-                        'visit_datetime': track.visit_datetime,
-                        'track_id': track.id
+                        'viewed_at': record.viewed_at,
+                        'record_id': record.id
                     })
                 else:
                     # Más de un mes - usar nombres en español
-                    month_name = self._get_month_name_spanish(visit_date)
+                    month_name = self._get_month_name_spanish(viewed_date)
                     month_periods.add(month_name)
                     if month_name not in grouped_history:
                         grouped_history[month_name] = []
                     grouped_history[month_name].append({
                         'product': product,
-                        'visit_datetime': track.visit_datetime,
-                        'track_id': track.id
+                        'viewed_at': record.viewed_at,
+                        'record_id': record.id
                     })
         
         # Agregar meses disponibles a la lista de períodos
@@ -124,18 +122,17 @@ class ProductHistoryController(http.Controller):
     @http.route('/shop/history/remove/<int:product_id>', type='http', auth='user', website=True)
     def remove_from_history(self, product_id):
         """Elimina un producto del historial del usuario actual."""
-        user_partner_id = request.env.user.partner_id.id
+        user_id = request.env.user.id
         
         # Buscar todos los registros de este producto para este usuario
-        track_entries = request.env['website.track'].sudo().search([
-            ('visitor_id.partner_id', '=', user_partner_id),
-            ('product_id.product_tmpl_id', '=', product_id)
+        history_records = request.env['product.view.history'].sudo().search([
+            ('user_id', '=', user_id),
+            ('product_id', '=', product_id)
         ])
 
         # Eliminar todos los registros
-        if track_entries:
-            track_entries.unlink()
+        if history_records:
+            history_records.unlink()
 
         # Redirigir de vuelta al historial
         return request.redirect('/shop/history')
-    
