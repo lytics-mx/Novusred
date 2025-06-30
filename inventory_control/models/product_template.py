@@ -63,7 +63,12 @@ class ProductTemplate(models.Model):
      )
      # last_viewed_date = fields.Datetime(string="Última fecha vista")
 
-     type = fields.Selection(default='product')  # 'product' = Almacenable
+     type = fields.Selection(
+          selection=[('product', 'Almacenable'), ('service', 'Servicio')],
+          default='product',
+          string='Tipo de Producto',
+          help="Define si el producto es almacenable o un servicio."
+     )  # 'product' = Almacenable
 
 
      @api.model
