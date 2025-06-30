@@ -4,7 +4,7 @@ from datetime import datetime, timezone  # Importar datetime
 
 class ProductTemplate(models.Model):
      _inherit = 'product.template'
-#Elimninar el campo de la marca el de brand_id     
+
      brand_ids = fields.Many2many(
           'product.brand',
           'product_template_brand_rel',  # Relación con las marcas
@@ -63,12 +63,12 @@ class ProductTemplate(models.Model):
      )
      # last_viewed_date = fields.Datetime(string="Última fecha vista")
 
-     type = fields.Selection(
-     selection_add=[
-          ('product', 'Almacenable')
-     ],
-     ondelete={'product': 'set default'},
-)
+     # type = fields.Selection(
+     # selection_add=[
+     #      ('product', 'Almacenable')
+     # ],
+     # ondelete={'product': 'set default'},
+     # )
      @api.model
      def update_free_shipping_from_model(self):
           """Actualiza el campo free_shipping basado en el modelo free.shipping"""
