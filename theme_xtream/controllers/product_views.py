@@ -8,10 +8,11 @@ _logger = logging.getLogger(__name__)
 
 class ShopController(WebsiteSale):
 
-    @http.route([
+    @http.route(
         '/view/<model("product.template"):product>',
         '/view/product/<model("product.template"):product>',
         '/shop/product/<int:product_id>'
+    )
     def product_page(self, product=None, product_id=None, **kwargs):
         if product_id:
             product = request.env['product.template'].sudo().browse(product_id)
