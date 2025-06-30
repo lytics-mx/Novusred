@@ -5,6 +5,18 @@ import pytz
 
 class ProductHistoryController(http.Controller):
 
+    @http.route('/shop/product/<int:product_id>', type='http', auth='public', website=True)
+    def product_page(self, product_id, **kwargs):
+        product = request.env['product.product'].sudo().browse(product_id)
+        if product.exists():
+            # Registrar el producto en el historial
+            if request.env.user.id:
+                request.env['product.view.history'].sudo().add_product_to_history(product_id)
+
+            return request.render('theme_xtream.product_template', {'product': product})
+        return request.not_found()
+
+
     def _get_month_name_spanish(self, date):
         """Convierte una fecha a nombre de mes en español."""
         months_spanish = {
