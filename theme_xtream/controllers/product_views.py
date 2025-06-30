@@ -10,12 +10,13 @@ class ShopController(WebsiteSale):
 
     @http.route([
         '/view/<model("product.template"):product>',
-        '/view/product/<model("product.template"):product>'
-    ], type='http', auth="public", website=True, csrf=False)  # <--- csrf desactivado
-    def product_page(self, product, **kwargs):
-        # ...existing code...
-        if not product:
-            return request.not_found()
+        '/view/product/<model("product.template"):product>',
+        '/shop/product/<int:product_id>'
+    def product_page(self, product=None, product_id=None, **kwargs):
+        if product_id:
+            product = request.env['product.template'].sudo().browse(product_id)
+            if not product.exists():
+                return request.not_found()
         
         # Obtener el producto con sudo para evitar problemas de permisos
         product_sudo = product.sudo()
