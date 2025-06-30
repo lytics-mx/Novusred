@@ -125,16 +125,9 @@ class WebsiteProduct(http.Controller):
     @http.route('/', auth='public', website=True)
     def home(self, **kw):
         """
-        Renderiza la página de inicio detectando el tipo de dispositivo.
+        Renderiza la página de inicio con el nuevo template.
         """
-        user_agent = request.httprequest.user_agent.string.lower()
-        is_mobile = 'mobile' in user_agent or 'android' in user_agent or 'iphone' in user_agent
-        
-        if is_mobile:
-            return http.request.render('theme_xtream.xtream_inicio_mobile')
-        else:
-            return http.request.render('theme_xtream.xtream_inicio')
-        
+        return http.request.render('theme_xtream.xtream_inicio')        
 
 
 
