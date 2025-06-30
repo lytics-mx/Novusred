@@ -61,7 +61,9 @@ class ProductTemplate(models.Model):
           default=True,
           help="Controla si la etiqueta de descuento es visible en el sitio web"
      )
-     last_viewed_date = fields.Datetime(string="Última fecha vista")
+     # last_viewed_date = fields.Datetime(string="Última fecha vista")
+
+     type = fields.Selection(default='product')  # 'product' = Almacenable
 
 
      @api.model
