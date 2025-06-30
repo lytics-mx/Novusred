@@ -385,6 +385,7 @@ class CategoryController(http.Controller):
         products = []
         category = None
         brands = []
+        product_tags = []
     
         if search:
             searched_categories = request.env['product.category'].sudo().search([
@@ -400,6 +401,7 @@ class CategoryController(http.Controller):
                     ('categ_id', 'child_of', category.id)
                 ])
                 brands = products_in_cat.mapped('brand_type_id').filtered(lambda b: b.icon_image and b.active)
+                product_tags = products_in_cat.mapped('product_tag_ids').filtered(lambda t: t.is_active)
             products = request.env['product.template'].sudo().search([
                 ('website_published', '=', True),
                 ('categ_id', 'in', searched_categories.ids)
@@ -409,15 +411,20 @@ class CategoryController(http.Controller):
                 ('icon_image', '!=', False),
                 ('active', '=', True)
             ])
+            product_tags = request.env['product.tag'].sudo().search([
+                ('is_active', '=', True)
+            ])
+    
         values = {
             'search': search,
             'categories': categories,
             'category': category,
             'products': products,
             'brands': brands,
+            'product_tags': product_tags,
         }
         return request.render('theme_xtream.category_search', values)
-        
+    
     @http.route('/category/<string:slug>', auth='public', website=True)
     def category_by_slug(self, slug, **kwargs):
         # Buscar la categoría por slug
