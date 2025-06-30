@@ -12,23 +12,33 @@ class ShopController(WebsiteSale):
         '/shop/product/<int:product_id>'
     ], type='http', auth="public", website=True, sitemap=False)
     def product_page(self, product_id, **kwargs):
-        # Obtener el producto
-        product = request.env['product.template'].sudo().browse(product_id)
-        if not product.exists():
+        # Obtener el producto template
+        product_template = request.env['product.template'].sudo().browse(product_id)
+        if not product_template.exists():
+            _logger.warning(f"El producto template con ID {product_id} no existe.")
+            return request.not_found()
+
+        # Obtener la variante principal del producto (product.product)
+        product_variant = product_template.product_variant_id
+        if not product_variant.exists():
+            _logger.warning(f"No se encontró una variante para el producto template con ID {product_id}.")
             return request.not_found()
 
         # Registrar el producto en el historial
         if request.env.user.id:
             visitor = request.env['website.visitor']._get_visitor_from_request()
             if visitor:
-                request.env['website.track'].sudo().create({
-                    'visitor_id': visitor.id,
-                    'product_id': product.id,  # Registra el ID del producto visto
-                    'visit_datetime': datetime.now()
-                })
+                try:
+                    request.env['website.track'].sudo().create({
+                        'visitor_id': visitor.id,
+                        'product_id': product_variant.id,  # Usar el ID de la variante
+                        'visit_datetime': datetime.now()
+                    })
+                except Exception as e:
+                    _logger.error(f"Error al registrar el producto visto: {e}")
 
         # Obtener el producto con sudo para evitar problemas de permisos
-        product_sudo = product.sudo()
+        product_sudo = product_template.sudo()
         _logger.info("Producto cargado: %s", product_sudo)
 
         # Obtener la jerarquía de categorías
