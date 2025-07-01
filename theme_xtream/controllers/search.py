@@ -29,8 +29,3 @@ class WebsiteSearch(http.Controller):
                 return request.redirect('/subcategory?category_id=%s' % category.id)
             # Si no es marca ni categoría, redirigir a subcategory con search
             return request.redirect('/subcategory?search=%s' % search)
-        
-    @http.route('/search_suggestions', type='json', auth='public', methods=['GET'])
-    def search_suggestions(self, query):
-        products = http.request.env['product.template'].search([('name', 'ilike', query)], limit=5)
-        return [{'name': p.name, 'price': p.list_price, 'image': f'/web/image/product.template/{p.id}/image_1920'} for p in products]        
