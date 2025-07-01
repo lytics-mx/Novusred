@@ -12,13 +12,12 @@
                                 </a>
                                 <!-- Search bar after logo -->
                                 <!-- ...existing code... -->
-                                <form class="d-flex flex-grow-1" action="/search_redirect" method="get" style="width: 100%;">
+                                <form class="d-flex flex-grow-1" action="/search_redirect" method="get" style="width: 100%; position: relative;">
                                     <div class="input-group w-100">
                                         <input type="search" name="search" class="form-control"
                                                placeholder="Buscar productos, marcas o categorías..." aria-label="Search"
-                                               style="border-radius: 20px; font-size: 14px; height: 36px;"/>
+                                               style="border-radius: 20px; font-size: 14px; height: 36px;" oninput="fetchSuggestions(this.value)"/>
                                         <input type="hidden" name="search_type" value="all"/>
-                                        <!-- Filtro visible en todas las pantallas -->
                                         <div class="dropdown">
                                             <button class="btn btn-outline-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false"
                                                     style="border-radius: 20px; height: 36px;">
@@ -42,17 +41,14 @@
                                                 </li>
                                             </ul>
                                         </div>
-                                        <!-- Select solo en pantallas grandes/medianas -->
-                                        <!-- <select name="search_type" class="form-select d-none d-lg-block"
-                                                style="max-width: 120px; border-radius: 20px; font-size: 14px; height: 36px;">
-                                            <option value="all">Todo</option>
-                                            <option value="brand">Marca</option>
-                                            <option value="category">Categoría</option>
-                                        </select> -->
                                         <button class="btn btn-outline-secondary" type="submit"
                                                 style="border-radius: 20px; height: 36px;">
                                             <i class="fa fa-search"></i>
                                         </button>
+                                    </div>
+                                    <!-- Contenedor para las sugerencias -->
+                                    <div id="suggestions" class="suggestions-box" style="position: absolute; top: 40px; left: 0; width: 100%; background: white; border: 1px solid #ccc; border-radius: 5px; z-index: 1000; display: none;">
+                                        <!-- Las sugerencias se insertarán aquí dinámicamente -->
                                     </div>
                                 </form>
                                 <!-- ...existing code... -->
