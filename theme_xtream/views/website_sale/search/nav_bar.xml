@@ -27,52 +27,54 @@
                                         <!-- Las sugerencias se insertarán aquí dinámicamente -->
                                     </div>
                                 </form>
-                                <t t-name="custom_navbar_js" t-javascript="true">
-                                    function fetchSuggestions(query) {
-                                        const suggestionsBox = document.getElementById('suggestions');
-                                        if (query.length < 2) {
-                                            suggestionsBox.style.display = 'none';
-                                            return;
-                                        }
+                                <t t-raw="1">
+                                    <script type="text/javascript">
+                                        function fetchSuggestions(query) {
+                                            const suggestionsBox = document.getElementById('suggestions');
+                                            if (query.length < 2) {
+                                                suggestionsBox.style.display = 'none';
+                                                return;
+                                            }
 
-                                        fetch(`/search_suggestions?query=${encodeURIComponent(query)}`)
-                                            .then(response => response.json())
-                                            .then(data => {
-                                                suggestionsBox.innerHTML = '';
-                                                if (data.length > 0) {
-                                                    data.forEach(item => {
-                                                        const suggestionItem = document.createElement('div');
-                                                        suggestionItem.className = 'suggestion-item';
-                                                        suggestionItem.style.padding = '10px';
-                                                        suggestionItem.style.cursor = 'pointer';
-                                                        suggestionItem.style.borderBottom = '1px solid #eee';
-                                                        suggestionItem.innerHTML = `
-                                                            <div style="display: flex; align-items: center;">
-                                                                <img src="${item.image}" alt="${item.name}" style="width: 50px; height: 50px; margin-right: 10px;">
-                                                                <div>
-                                                                    <p style="margin: 0; font-size: 14px;">${item.name}</p>
-                                                                    <p style="margin: 0; font-size: 12px; color: gray;">$${item.price.toFixed(2)}</p>
+                                            fetch(`/search_suggestions?query=${encodeURIComponent(query)}`)
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    suggestionsBox.innerHTML = '';
+                                                    if (data.length > 0) {
+                                                        data.forEach(item => {
+                                                            const suggestionItem = document.createElement('div');
+                                                            suggestionItem.className = 'suggestion-item';
+                                                            suggestionItem.style.padding = '10px';
+                                                            suggestionItem.style.cursor = 'pointer';
+                                                            suggestionItem.style.borderBottom = '1px solid #eee';
+                                                            suggestionItem.innerHTML = `
+                                                                <div style="display: flex; align-items: center;">
+                                                                    <img src="${item.image}" alt="${item.name}" style="width: 50px; height: 50px; margin-right: 10px;">
+                                                                    <div>
+                                                                        <p style="margin: 0; font-size: 14px;">${item.name}</p>
+                                                                        <p style="margin: 0; font-size: 12px; color: gray;">$${item.price.toFixed(2)}</p>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                        `;
-                                                        suggestionItem.onclick = () => {
-                                                            document.querySelector('input[name="search"]').value = item.name;
-                                                            suggestionsBox.style.display = 'none';
-                                                        };
-                                                        suggestionsBox.appendChild(suggestionItem);
-                                                    });
-                                                    suggestionsBox.style.display = 'block';
-                                                } else {
-                                                    suggestionsBox.style.display = 'none';
-                                                }
-                                            })
-                                            .catch(error => console.error('Error fetching suggestions:', error));
-                                    }
-                                </t>
-                                <t t-name="custom_navbar_css" t-css="true">
-                                    .suggestion-item:hover {
-                                        background-color: #f0f0f0;
-                                    }
+                                                            `;
+                                                            suggestionItem.onclick = () => {
+                                                                document.querySelector('input[name="search"]').value = item.name;
+                                                                suggestionsBox.style.display = 'none';
+                                                            };
+                                                            suggestionsBox.appendChild(suggestionItem);
+                                                        });
+                                                        suggestionsBox.style.display = 'block';
+                                                    } else {
+                                                        suggestionsBox.style.display = 'none';
+                                                    }
+                                                })
+                                                .catch(error => console.error('Error fetching suggestions:', error));
+                                        }
+                                    </script>
+                                    <style type="text/css">
+                                        .suggestion-item:hover {
+                                            background-color: #f0f0f0;
+                                        }
+                                    </style>
                                 </t>
                             </div>
                         </div>
