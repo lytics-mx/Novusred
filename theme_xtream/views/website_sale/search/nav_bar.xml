@@ -11,36 +11,12 @@
                                     <img src="/theme_xtream/static/src/img/logos/logo.png" alt="Logo" class="img-fluid" style="max-height: 68px; min-height: 50px;"/>
                                 </a>
                                 <!-- Search bar after logo -->
-                                <!-- ...existing code... -->
                                 <form class="d-flex flex-grow-1" action="/search_redirect" method="get" style="width: 100%; position: relative;">
                                     <div class="input-group w-100">
                                         <input type="search" name="search" class="form-control"
                                                placeholder="Buscar productos, marcas o categorías..." aria-label="Search"
                                                style="border-radius: 20px; font-size: 14px; height: 36px;" oninput="fetchSuggestions(this.value)"/>
                                         <input type="hidden" name="search_type" value="all"/>
-                                        <div class="dropdown">
-                                            <button class="btn btn-outline-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false"
-                                                    style="border-radius: 20px; height: 36px;">
-                                                <i class="fa fa-filter"></i>
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <li>
-                                                    <a class="dropdown-item" href="#" onclick="document.getElementsByName('search_type')[0].value='all';return false;">
-                                                        <i class="fa fa-list"></i> Todo
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item" href="#" onclick="document.getElementsByName('search_type')[0].value='brand';return false;">
-                                                        <i class="fa fa-tag"></i> Marca
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item" href="#" onclick="document.getElementsByName('search_type')[0].value='category';return false;">
-                                                        <i class="fa fa-folder"></i> Categoría
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
                                         <button class="btn btn-outline-secondary" type="submit"
                                                 style="border-radius: 20px; height: 36px;">
                                             <i class="fa fa-search"></i>
@@ -51,33 +27,53 @@
                                         <!-- Las sugerencias se insertarán aquí dinámicamente -->
                                     </div>
                                 </form>
-                                <!-- ...existing code... -->
                                 <script>
-                                    document.addEventListener('DOMContentLoaded', function() {
-                                        var dropdownItems = document.querySelectorAll('.dropdown-menu .dropdown-item');
-                                        var searchInput = document.querySelector('input[name="search"]');
-                                        var searchTypeInput = document.querySelector('input[name="search_type"]');
-                                        dropdownItems.forEach(function(item) {
-                                            item.addEventListener('click', function() {
-                                                var value = '';
-                                                var placeholder = '';
-                                                if (this.textContent.includes('Todo')) {
-                                                    value = 'all';
-                                                    placeholder = 'Buscar productos...';
-                                                } else if (this.textContent.includes('Marca')) {
-                                                    value = 'brand';
-                                                    placeholder = 'Buscar marca...';
-                                                } else if (this.textContent.includes('Categoría')) {
-                                                    value = 'category';
-                                                    placeholder = 'Buscar categoría...';
+                                    function fetchSuggestions(query) {
+                                        const suggestionsBox = document.getElementById('suggestions');
+                                        if (query.length < 2) {
+                                            suggestionsBox.style.display = 'none';
+                                            return;
+                                        }
+
+                                        fetch(`/search_suggestions?query=${encodeURIComponent(query)}`)
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                suggestionsBox.innerHTML = '';
+                                                if (data.length > 0) {
+                                                    data.forEach(item => {
+                                                        const suggestionItem = document.createElement('div');
+                                                        suggestionItem.className = 'suggestion-item';
+                                                        suggestionItem.style.padding = '10px';
+                                                        suggestionItem.style.cursor = 'pointer';
+                                                        suggestionItem.style.borderBottom = '1px solid #eee';
+                                                        suggestionItem.innerHTML = `
+                                                            <div style="display: flex; align-items: center;">
+                                                                <img src="${item.image}" alt="${item.name}" style="width: 50px; height: 50px; margin-right: 10px;">
+                                                                <div>
+                                                                    <p style="margin: 0; font-size: 14px;">${item.name}</p>
+                                                                    <p style="margin: 0; font-size: 12px; color: gray;">$${item.price.toFixed(2)}</p>
+                                                                </div>
+                                                            </div>
+                                                        `;
+                                                        suggestionItem.onclick = () => {
+                                                            document.querySelector('input[name="search"]').value = item.name;
+                                                            suggestionsBox.style.display = 'none';
+                                                        };
+                                                        suggestionsBox.appendChild(suggestionItem);
+                                                    });
+                                                    suggestionsBox.style.display = 'block';
+                                                } else {
+                                                    suggestionsBox.style.display = 'none';
                                                 }
-                                                searchTypeInput.value = value;
-                                                searchInput.placeholder = placeholder;
-                                            });
-                                        });
-                                    });
+                                            })
+                                            .catch(error => console.error('Error fetching suggestions:', error));
+                                    }
                                 </script>
-                                <!-- ...existing code... -->
+                                <style>
+                                    .suggestion-item:hover {
+                                        background-color: #f0f0f0;
+                                    }
+                                </style>
                             </div>
                         </div>
                     </div>
