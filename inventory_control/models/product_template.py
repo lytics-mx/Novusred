@@ -32,6 +32,12 @@ class ProductTemplate(models.Model):
           help='Imágenes adicionales del producto. Puedes arrastrar para ordenar.'
      )
 
+     product_name_id = fields.Many2one(
+          comodel_name='product.name',
+          string='Nombre del Producto',
+          help='Selecciona o registra un nombre de producto previamente usado.'
+     )
+
 
 
      brand_type_id = fields.Many2one(
@@ -205,3 +211,20 @@ class ProductTemplate(models.Model):
                                    remaining_minutes = int((remaining_time.total_seconds() % 3600) / 60)
                                    product.remaining_time_text = f"{remaining_hours}h {remaining_minutes}m"
                                    break  # Solo usar la primera etiqueta con fecha de fin válida     
+
+
+     @api.model
+     def create(self, vals):
+          """Asegura que el nombre del producto se registre en el modelo product.name."""
+          if 'product_name_id' in vals:
+               product_name = self.env['product.name'].browse(vals['product_name_id'])
+               if not product_name.exists():
+                    self.env['product.name'].create({'name': product_name.name})
+          return super(ProductTemplate, self).create(vals)
+
+
+class ProductName(models.Model):
+    _name = 'product.name'
+    _description = 'Nombre de Producto'
+
+    name = fields.Char(string='Nombre', required=True, unique=True)                              
