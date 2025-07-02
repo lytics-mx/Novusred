@@ -34,7 +34,7 @@ class ProductTemplate(models.Model):
 
      product_model_id = fields.Many2one(
          comodel_name='product.model',
-         string='Modelo del Producto',
+         string='Modelo',
          help='Selecciona o registra un modelo previamente usado.'
      )
 
