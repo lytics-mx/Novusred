@@ -26,7 +26,7 @@
                                             
                                             <!-- Imagen del tag -->
                                             <div class="tag-icon-container">
-                                                <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image?unique=' + str(tag.write_date or '')"
+                                                <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
                                                      t-att-alt="tag.name"
                                                      class="tag-icon" />
                                             </div>
@@ -195,6 +195,13 @@
                         const tagItems = document.querySelectorAll('.tag-item');
                         
                         tagItems.forEach(function(item) {
+                            // Sincronizar el nombre del tag por si cambió en backend
+                            const tagName = item.getAttribute('data-tag-name');
+                            const tagNameDiv = item.querySelector('.tag-name');
+                            if (tagNameDiv && tagNameDiv.textContent !== tagName) {
+                                tagNameDiv.textContent = tagName;
+                            }
+
                             // Manejo de clicks en tags
                             item.addEventListener('click', function() {
                                 const tagId = this.getAttribute('data-tag-id');
