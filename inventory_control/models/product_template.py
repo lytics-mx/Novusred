@@ -34,8 +34,8 @@ class ProductTemplate(models.Model):
 
      product_model_id = fields.Many2one(
          comodel_name='product.model',
-         string='Modelo',
-         help='Selecciona o registra un modelo usado.'
+         string='Modelo del Producto',
+         help='Selecciona o registra un modelo previamente usado.'
      )
 
 
@@ -215,14 +215,9 @@ class ProductTemplate(models.Model):
 
      @api.model
      def create(self, vals):
-          """Asegura que el nombre del producto se registre en el modelo product.model."""
-          if 'product_model_id' in vals:
-               product_model = self.env['product.model'].browse(vals['product_model_id'])
-               if not product_model.exists():
-                    # Si el modelo no existe, crea uno nuevo con el nombre proporcionado en vals
-                    name = vals.get('name') or ''
-                    product_model = self.env['product.model'].create({'name_model': name})
-                    vals['product_model_id'] = product_model.id
-          return super(ProductTemplate, self).create(vals)
-
-
+         """Asegura que el nombre del modelo se registre en el modelo product.model."""
+         if 'product_model_id' in vals:
+             product_model = self.env['product.model'].browse(vals['product_model_id'])
+             if not product_model.exists():
+                 self.env['product.model'].create({'name': product_model.name})
+         return super(ProductTemplate, self).create(vals)

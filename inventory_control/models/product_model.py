@@ -1,10 +1,9 @@
 
 from odoo import models, fields
-from odoo.exceptions import ValidationError
 
 
-class ProductName(models.Model):
+class ProductModel(models.Model):
     _name = 'product.model'
-    _description = 'Nombre del modelo'
+    _description = 'Nombre del Modelo de Producto'
 
-    name_model = fields.Char(string='Nombre', required=True, unique=True)                              
+    name = fields.Char(string='Nombre del Modelo', required=True, unique=True)
