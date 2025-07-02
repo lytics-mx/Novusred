@@ -38,6 +38,8 @@ class ProductTemplate(models.Model):
          help='Selecciona o registra un modelo previamente usado.'
      )
 
+     product_model = fields.Char('Name')
+
 
 
      brand_type_id = fields.Many2one(
