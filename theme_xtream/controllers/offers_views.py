@@ -41,7 +41,7 @@ class OffersController(http.Controller):
         Product = request.env['product.template'].sudo()
         products = Product.search(domain)
         discounted_products = products.filtered(lambda p: p.list_price > (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price))
-        product_tags = request.env['product.tag'].search([
+        product_tags = request.env['product.tag'].sudo().search([
             ('is_active', '=', True),
             ('visible_on_ecommerce', '=', True)
         ])
