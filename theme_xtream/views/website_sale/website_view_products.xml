@@ -84,137 +84,8 @@
                                             <h5 style="font-weight:600; margin-bottom:12px; font-size:22px; text-align:left;">Productos que podrían interesarte</h5>
                                             <t t-set="acc_list" t-value="[acc for acc in product.accessory_product_ids if acc.product_variant_id.id != product.product_variant_id.id]"/>
                                             <t t-set="acc_count" t-value="len(acc_list)"/>
-                                            <t t-if="acc_count > 3">
-                                                <div id="accessory-carousel" class="carousel slide" data-bs-ride="carousel">
-                                                    <div class="carousel-inner">
-                                                        <t t-foreach="range(0, acc_count, 3)" t-as="idx">
-                                                            <div t-attf-class="carousel-item #{'active' if idx == 0 else ''}">
-                                                                <div class="d-flex flex-nowrap align-items-stretch" style="gap:48px;">
-                                                                    <t t-foreach="acc_list[idx:idx+3]" t-as="acc" t-index="acc_idx" t-key="acc.id">
-                                                                        <div class="d-flex flex-column align-items-center" style="position:relative;">
-                                                                            <div class="card shadow-sm accessory-card accessory-card-100" style="border-radius: 10px; overflow: hidden; width:150px; min-width:150px; max-width:150px;">
-                                                                                <div style="position: absolute; z-index: 2; left: 8px; top: 8px;">
-                                                                                    <input type="checkbox" name="bundle_product_ids[]" t-att-value="acc.product_variant_id.id" class="bundle-checkbox custom-bundle-checkbox" style="width:30px; height:30px; border-radius:9px; border:1px solid #888; background:#f8f8f8;"/>
-                                                                                </div>
-                                                                                <t t-if="acc.product_tmpl_id">
-                                                                                    <a t-att-href="'/shop/product/' + str(acc.product_tmpl_id.id)">
-                                                                                        <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%;">
-                                                                                            <img t-att-src="'/web/image/product.template/' + str(acc.product_tmpl_id.id) + '/image_1920'"
-                                                                                                 class="card-img-top accessory-img"
-                                                                                                 style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 10px;" />
-                                                                                        </div>
-                                                                                    </a>
-                                                                                </t>
-                                                                                <t t-else="">
-                                                                                    <a t-att-href="'/shop/product/' + str(acc.id)">
-                                                                                        <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%;">
-                                                                                            <img t-att-src="'/web/image/product.template/' + str(acc.id) + '/image_1920'"
-                                                                                                 class="card-img-top accessory-img"
-                                                                                                 style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 10px;" />
-                                                                                        </div>
-                                                                                    </a>
-                                                                                </t>
-                                                                                <div class="card-body accessory-card-body accessory-card-100" style="text-align: left; padding: 4px 2px 2px 2px;">
-                                                                                    <t t-if="acc.product_tag_ids">
-                                                                                        <div class="d-flex justify-content-start mb-2 accessory-badge-container">
-                                                                                            <span class="badge bg-primary accessory-badge" style="border-radius: 0; text-transform: uppercase; font-size:10px; padding:2px 4px; max-width:90px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                                                                                                <t t-esc="acc.product_tag_ids[0].name"/>
-                                                                                            </span>
-                                                                                        </div>
-                                                                                    </t>
-                                                                                    <t t-if="acc.discounted_price &lt; acc.list_price">
-                                                                                        <div class="mt-0 accessory-discount-amount">
-                                                                                            <span class="text-muted" style="font-size: 9px;">
-                                                                                                $<t t-esc="'{:,}'.format(int(acc.list_price or 0))" />
-                                                                                            </span>
-                                                                                        </div>
-                                                                                        <div class="d-flex align-items-center justify-content-between accessory-price-container">
-                                                                                            <span class="text-dark fw-bold accessory-main-price" style="font-size: 10px; color: #000; font-weight: bold;">
-                                                                                                $<t t-esc="'{:,}'.format(int(acc.discounted_price or 0))" />
-                                                                                            </span>
-                                                                                            <t t-if="acc.discount_percentage or acc.fixed_discount">
-                                                                                                <span class="accessory-discount" style="font-size: 9px; font-weight: normal; color: #FF5207;">
-                                                                                                    <t t-if="acc.discount_percentage">
-                                                                                                        <t t-esc="int(acc.discount_percentage)" />% OFF
-                                                                                                    </t>
-                                                                                                    <t t-elif="acc.fixed_discount">
-                                                                                                        -$<t t-esc="'{:,}'.format(int(acc.fixed_discount))" /> MXN
-                                                                                                    </t>
-                                                                                                </span>
-                                                                                            </t>
-                                                                                        </div>
-                                                                                        <t t-if="acc.list_price and acc.discounted_price and (acc.list_price - acc.discounted_price) &gt; 0">
-                                                                                            <div class="mt-0 accessory-discount-amount">
-                                                                                                <span class="text-muted" style="font-size: 12px;">
-                                                                                                    $<t t-esc="'{:,}'.format(int(acc.list_price - acc.discounted_price))" /> descuento
-                                                                                                </span>
-                                                                                            </div>
-                                                                                        </t>
-                                                                                    </t>
-                                                                                    <t t-elif="acc.list_price">
-                                                                                        <span class="fw-bold d-block accessory-main-price" style="font-size: 16px;">
-                                                                                            $<t t-esc="'{:,}'.format(int(acc.list_price or 0))" />
-                                                                                        </span>
-                                                                                    </t>
-                                                                                    <t t-if="acc.free_shipping">
-                                                                                        <div class="mt-0 accessory-shipping">
-                                                                                            <span class="text-orange accessory-shipping-text" style="font-size: 12px;">
-                                                                                                Envío gratis
-                                                                                            </span>
-                                                                                        </div>
-                                                                                    </t>
-                                                                                    <h6 class="card-title mb-2" style="font-size: 13px; line-height: 1.1; max-height: 3.3em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; width:100px;">
-                                                                                        <t t-esc="acc.name" />
-                                                                                    </h6>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <t t-if="acc_idx is not None and acc_idx + 1 != min(3, acc_count - idx)">
-                                                                            <div class="d-flex align-items-center justify-content-center" style="height:100%; min-height:40px;">
-                                                                                <span style="font-size: 48px; font-weight: bold; color: #222; line-height: 1;">+</span>
-                                                                            </div>
-                                                                        </t>
-                                                                    </t>
-                                                                </div>
-                                                            </div>
-                                                        </t>
-                                                    </div>
-                                                    <button class="carousel-control-prev" type="button" data-bs-target="#accessory-carousel" data-bs-slide="prev"
-                                                        style="z-index: 10; width: 48px; height: 48px; top: 50%; left: 0; transform: translateY(-50%); position: absolute; background: rgba(255,255,255,0.7); border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center;">
-                                                        <span aria-hidden="true" style="font-size: 38px; color: #222; display: flex; align-items: center;">
-                                                            <svg width="32" height="32" viewBox="0 0 48 48" fill="none" style="display:block;" xmlns="http://www.w3.org/2000/svg">
-                                                                <polyline points="32,8 16,24 32,40" stroke="#222" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                                                                <polyline points="40,8 24,24 40,40" stroke="#222" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                                                            </svg>
-                                                        </span>
-                                                        <span class="visually-hidden">Anterior</span>
-                                                    </button>
-                                                    <button class="carousel-control-next" type="button" data-bs-target="#accessory-carousel" data-bs-slide="next"
-                                                        style="z-index: 10; width: 48px; height: 48px; top: 50%; right: 0; transform: translateY(-50%); position: absolute; background: rgba(255,255,255,0.7); border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center;">
-                                                        <span aria-hidden="true" style="font-size: 38px; color: #222; display: flex; align-items: center;">
-                                                            <svg width="32" height="32" viewBox="0 0 48 48" fill="none" style="display:block;" xmlns="http://www.w3.org/2000/svg">
-                                                                <polyline points="16,8 32,24 16,40" stroke="#222" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                                                                <polyline points="8,8 24,24 8,40" stroke="#222" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                                                            </svg>
-                                                        </span>
-                                                        <span class="visually-hidden">Siguiente</span>
-                                                    </button>
-                                                </div>
-                                                <t t-jquery="body" t-operation="append">
-                                                    <script type="text/javascript"><![CDATA[
-                                                        document.addEventListener('DOMContentLoaded', function() {
-                                                            if (window.bootstrap && window.bootstrap.Carousel) {
-                                                                var el = document.getElementById('accessory-carousel');
-                                                                if (el) {
-                                                                    new window.bootstrap.Carousel(el, {interval: 0, wrap: true});
-                                                                }
-                                                            }
-                                                        });
-                                                    ]]></script>
-                                                </t>
-                                            </t>
-                                            <t t-else="">
-                                                <div class="d-flex flex-nowrap align-items-stretch" style="gap:48px;">
+                                            <t t-if="acc_count > 0">
+                                                <div class="d-flex flex-nowrap align-items-stretch" style="gap:24px;">
                                                     <t t-foreach="acc_list" t-as="acc" t-index="acc_idx" t-key="acc.id">
                                                         <div class="d-flex flex-column align-items-center" style="position:relative;">
                                                             <div class="card shadow-sm accessory-card accessory-card-100" style="border-radius: 10px; overflow: hidden; width:150px; min-width:150px; max-width:150px;">
@@ -288,22 +159,18 @@
                                                                             </span>
                                                                         </div>
                                                                     </t>
-                                                                    <h6 class="card-title mb-2" style="font-size: 13px; line-height: 1.1; max-height: 3.3em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; text-transform: uppercase; width:100px;">
+                                                                    <h6 class="card-title mb-2" style="font-size: 13px; line-height: 1.1; max-height: 3.3em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; width:100px;">
                                                                         <t t-esc="acc.name" />
                                                                     </h6>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <t t-if="acc_idx is not None and acc_idx + 1 != acc_count">
-                                                            <div class="d-flex align-items-center justify-content-center" style="height:100%; min-height:40px;">
-                                                                <span style="font-size: 48px; font-weight: bold; color: #222; line-height: 1;">+</span>
-                                                            </div>
-                                                        </t>
+                                                        <!-- El "+" ya se agrega por CSS con ::after en .accessory-card-100:not(:last-child) -->
                                                     </t>
                                                 </div>
                                             </t>
                                         </div>
-
+                                    </div>
 
                                         <!-- Selección y precio a la derecha (sin mostrar el card del producto principal, solo lógica de precio) -->
                                         <div class="col-12 col-md-3 d-flex flex-column align-items-center justify-content-center" style="padding-top: 30px;">
