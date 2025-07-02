@@ -38,7 +38,7 @@ class ProductTemplate(models.Model):
          help='Selecciona o registra un modelo previamente usado.'
      )
 
-     product_model = fields.Char('Name')
+     product_model = fields.Char('Modelo de producto')
 
 
 
