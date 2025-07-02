@@ -32,8 +32,8 @@ class ProductTemplate(models.Model):
           help='Imágenes adicionales del producto. Puedes arrastrar para ordenar.'
      )
 
-     product_name_id = fields.Many2one(
-         comodel_name='product.name',
+     product_model_id = fields.Many2one(
+         comodel_name='product.model',
          string='Modelo',
          help='Selecciona o registra un modelo usado.'
      )
@@ -215,16 +215,11 @@ class ProductTemplate(models.Model):
 
      @api.model
      def create(self, vals):
-          """Asegura que el nombre del producto se registre en el modelo product.name."""
+          """Asegura que el nombre del producto se registre en el modelo product.model."""
           if 'product_name_id' in vals:
-               product_name = self.env['product.name'].browse(vals['product_name_id'])
+               product_name = self.env['product.model'].browse(vals['product_name_id'])
                if not product_name.exists():
-                    self.env['product.name'].create({'name': product_name.name})
+                    self.env['product.model'].create({'name': product_name.name})
           return super(ProductTemplate, self).create(vals)
 
 
-class ProductName(models.Model):
-    _name = 'product.name'
-    _description = 'Nombre de Producto'
-
-    name = fields.Char(string='Nombre', required=True, unique=True)                              
