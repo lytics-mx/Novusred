@@ -46,7 +46,7 @@
                       </div>
                       <div class="col-3 text-end">
                         <span class="fw-bold" style="font-size:18px;">
-                          $<t t-esc="(line.product_id.discounted_price or line.product_id.list_price) * line.product_uom_qty"/>
+                          $<t t-esc="'%.2f' % ((line.product_id.discounted_price or line.product_id.list_price) * line.product_uom_qty)"/>
                         </span>
                       </div>
                     </div>
@@ -64,8 +64,8 @@
                   <div class="col-md-3 col-6 text-end">
                     <div class="fw-semibold" style="font-size:16px;">
                       Total: $
-                      <t t-set="subtotal" t-value="sum((line.product_id.discounted_price if line.product_id.discounted_price else line.product_id.list_price) * line.product_uom_qty for line in order.order_line)"/>
-                      <t t-esc="subtotal"/>
+                        <t t-set="subtotal" t-value="sum((line.product_id.discounted_price if line.product_id.discounted_price else line.product_id.list_price) * line.product_uom_qty for line in order.order_line)"/>
+                        <t t-esc="'%.2f' % subtotal"/>
                     </div>
                   </div>
                   <div class="col-md-3 col-6 text-end">
