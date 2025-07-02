@@ -21,7 +21,10 @@
                           <t t-esc="line.product_id.display_name"/>
                         </div>
                         <div class="text-muted small mb-1">
-                            por <t t-esc="line.product_id.product_tmpl_id.product_brand_id.brand_type_id.name or ''"/>
+                            <!-- Solo mostrar si existe brand_type_id en product_tmpl_id -->
+                            <t t-if="hasattr(line.product_id.product_tmpl_id, 'brand_type_id') and line.product_id.product_tmpl_id.brand_type_id">
+                                por <t t-esc="line.product_id.product_tmpl_id.brand_type_id.name"/>
+                            </t>
                         </div>
                         <div>
                           <a t-att-href="'/shop/cart/update?line_id=%d&amp;remove=1' % line.id"
