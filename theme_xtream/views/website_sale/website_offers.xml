@@ -217,7 +217,10 @@
                                 }
                                 
                                 // Redirigir a la nueva URL
-                                window.location.href = '/offers?' + params.toString();
+                                // Escapar & como &amp; para evitar errores XML si se usa en atributos XML
+                                let url = '/offers?' + params.toString();
+                                url = url.replace(/&/g, '&amp;');
+                                window.location.href = url;
                             });
                             
                             // Manejo de eventos touch para móvil
