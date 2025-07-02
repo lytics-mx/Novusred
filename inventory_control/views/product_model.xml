@@ -1,0 +1,71 @@
+<odoo>
+    <!-- List View -->
+    <record id="view_product_model_list" model="ir.ui.view">
+        <field name="name">product.model.list</field>
+        <field name="model">product.model</field>
+        <field name="arch" type="xml">
+            <list create="true" delete="true">
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_product_model_search" model="ir.ui.view">
+        <field name="name">product.model.search</field>
+        <field name="model">product.model</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_product_model_form" model="ir.ui.view">
+        <field name="name">product.model.form</field>
+        <field name="model">product.model</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Nombre del Modelo"/>
+                        <h1><field name="name" placeholder="Nombre del Modelo"/></h1>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="view_product_model_kanban" model="ir.ui.view">
+        <field name="name">product.model.kanban</field>
+        <field name="model">product.model</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="name"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card">
+                            <strong><field name="name"/></strong>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_product_model" model="ir.actions.act_window">
+        <field name="name">Modelos de Producto</field>
+        <field name="res_model">product.model</field>
+        <field name="view_mode">list,form,kanban</field>
+    </record>
+
+    <!-- Menú "Modelos de Producto" bajo "Almacenes" -->
+    <menuitem id="menu_product_model"
+              name="Modelos de Producto"
+              action="action_product_model"
+              parent="stock.menu_stock_inventory_control"
+              sequence="4"/>
+</odoo>
