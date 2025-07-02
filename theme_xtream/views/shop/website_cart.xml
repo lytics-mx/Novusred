@@ -2,87 +2,74 @@
   <template id="website_cart_buy_now" inherit_id="website_sale.cart">
     <xpath expr="." position="replace">
       <t t-call="website.layout">
-        <div id="wrap" class="oe_website_sale">
-          <div class="container">
-            <div class="row">
-              <!-- Lado izquierdo: productos -->
-              <div class="col-lg-8">
-                <h2 class="mb-4" style="color:#00a650;">Vista previa de la orden</h2>
+        <div id="wrap" class="oe_website_sale" style="background:#ededed;min-height:100vh;">
+          <div class="container py-5">
+            <div class="card shadow-sm rounded" style="max-width:900px;margin:auto;">
+              <div class="card-body p-0">
+                <h5 class="px-4 pt-4 pb-2 mb-0" style="font-weight:500;">Carrito (<t t-esc="len(website_sale_order.order_line)"/>)</h5>
+                <hr class="my-0"/>
                 <t t-set="order" t-value="website_sale_order"/>
                 <t t-if="order and order.order_line">
                   <t t-foreach="order.order_line" t-as="line">
-                    <div class="row align-items-center py-3 border-bottom">
+                    <div class="row align-items-center px-4 py-3 border-bottom">
                       <div class="col-2">
                         <img t-att-src="'/web/image/product.product/%d/image_128' % line.product_id.id"
                              class="img-fluid rounded" style="max-width:64px;"/>
                       </div>
-                      <div class="col-6">
-                        <a t-att-href="'/shop/product/%d' % line.product_id.product_tmpl_id.id"
-                           class="fw-bold text-primary">
+                      <div class="col-5">
+                        <div class="fw-semibold" style="font-size:15px;">
                           <t t-esc="line.product_id.display_name"/>
-                        </a>
+                        </div>
+                        <div class="text-muted small mb-1">
+                          por <t t-esc="line.product_id.product_tmpl_id.product_brand_id.name or ''"/>
+                        </div>
                         <div>
                           <a t-att-href="'/shop/cart/update?line_id=%d&amp;remove=1' % line.id"
-                             class="text-muted small">Eliminar</a>
-                          <span style="margin:0 8px;">|</span>
-                          <a href="#" class="text-muted small">Guardar para después</a>
+                             class="text-primary small">Eliminar</a>
+                          <span class="mx-1 text-muted">|</span>
+                          <a href="#" class="text-primary small">Guardar para después</a>
                         </div>
                       </div>
                       <div class="col-2 text-center">
-                        <form t-att-action="'/shop/cart/update'" method="post" class="d-inline-flex">
+                        <form t-att-action="'/shop/cart/update'" method="post" class="d-inline-flex align-items-center">
                           <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                           <input type="hidden" name="line_id" t-att-value="line.id"/>
                           <button name="set_qty" t-att-value="line.product_uom_qty - 1"
-                                  class="btn btn-link p-0" t-att-disabled="line.product_uom_qty &lt;= 1">-</button>
+                                  class="btn btn-outline-secondary btn-sm px-2" t-att-disabled="line.product_uom_qty &lt;= 1">-</button>
                           <input type="number" name="set_qty" t-att-value="line.product_uom_qty" min="1"
                                  class="form-control text-center mx-1" style="width:40px;"/>
                           <button name="set_qty" t-att-value="line.product_uom_qty + 1"
-                                  class="btn btn-link p-0">+</button>
+                                  class="btn btn-outline-secondary btn-sm px-2">+</button>
                         </form>
+                        <div class="small text-muted mt-1"><t t-esc="line.product_id.qty_available"/> disponibles</div>
                       </div>
-                      <div class="col-2 text-end">
-                        <span class="fw-bold">
-                          $ 
-                          <t t-if="line.product_id.discounted_price">
-                            <t t-esc="line.product_id.discounted_price * line.product_uom_qty"/>
-                          </t>
-                          <t t-else="">
-                            <t t-esc="line.product_id.list_price * line.product_uom_qty"/>
-                          </t>
+                      <div class="col-3 text-end">
+                        <span class="fw-bold" style="font-size:18px;">
+                          $<t t-esc="(line.product_id.discounted_price or line.product_id.list_price) * line.product_uom_qty"/>
                         </span>
                       </div>
                     </div>
                   </t>
                 </t>
               </div>
-              <!-- Lado derecho: resumen -->
-              <div class="col-lg-4">
-                <div class="card p-4">
-                  <h4 class="mb-3">Resumen de la orden</h4>
-                    <table class="table">
-                    <tr>
-                        <td>Subtotal:</td>
-                        <td class="text-end">
-                        <t t-set="subtotal" t-value="sum((line.product_id.discounted_price if line.product_id.discounted_price else line.product_id.list_price) * line.product_uom_qty for line in order.order_line)"/>
-                        <t t-esc="subtotal"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>IVA (16% incluido):</td>
-                        <td class="text-end">
-                        <t t-set="iva" t-value="subtotal * 16 / 116"/>
-                        <t t-esc="iva"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>Total:</strong></td>
-                        <td class="text-end">
-                        <t t-esc="subtotal"/>
-                        </td>
-                    </tr>
-                    </table>
-                  <a href="/shop/checkout" class="btn btn-primary btn-block">Finalizar compra</a>
-                  <a href="/shop" class="btn btn-link btn-block mt-2">Continuar comprando</a>
+              <!-- Pie: envío, total y botón -->
+              <div class="card-footer bg-white border-0 pt-4 pb-4">
+                <div class="row align-items-center">
+                  <div class="col-md-6 col-12 mb-2 mb-md-0">
+                    <div class="text-primary" style="font-size:15px;">
+                      Envío a: <span t-esc="request.session.get('delivery_address', 'Rg 102, calle 20 ...')"/>
+                    </div>
+                  </div>
+                  <div class="col-md-3 col-6 text-end">
+                    <div class="fw-semibold" style="font-size:16px;">
+                      Total: $
+                      <t t-set="subtotal" t-value="sum((line.product_id.discounted_price if line.product_id.discounted_price else line.product_id.list_price) * line.product_uom_qty for line in order.order_line)"/>
+                      <t t-esc="subtotal"/>
+                    </div>
+                  </div>
+                  <div class="col-md-3 col-6 text-end">
+                    <a href="/shop/checkout" class="btn btn-primary px-4">Continuar compra</a>
+                  </div>
                 </div>
               </div>
             </div>
