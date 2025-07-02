@@ -32,7 +32,7 @@ class ProductTemplate(models.Model):
           help='Imágenes adicionales del producto. Puedes arrastrar para ordenar.'
      )
 
-
+     product_model = fields.Char('Modelo de producto')
 
      brand_type_id = fields.Many2one(
           comodel_name='brand.type',
