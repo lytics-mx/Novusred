@@ -216,10 +216,13 @@ class ProductTemplate(models.Model):
      @api.model
      def create(self, vals):
           """Asegura que el nombre del producto se registre en el modelo product.model."""
-          if 'product_name_id' in vals:
-               product_name = self.env['product.model'].browse(vals['product_name_id'])
-               if not product_name.exists():
-                    self.env['product.model'].create({'name': product_name.name})
+          if 'product_model_id' in vals:
+               product_model = self.env['product.model'].browse(vals['product_model_id'])
+               if not product_model.exists():
+                    # Si el modelo no existe, crea uno nuevo con el nombre proporcionado en vals
+                    name = vals.get('name') or ''
+                    product_model = self.env['product.model'].create({'name_model': name})
+                    vals['product_model_id'] = product_model.id
           return super(ProductTemplate, self).create(vals)
 
 
