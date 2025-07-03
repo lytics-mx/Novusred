@@ -58,7 +58,12 @@
                 <div class="row align-items-center">
                   <div class="col-md-6 col-12 mb-2 mb-md-0">
                     <div class="text-primary" style="font-size:15px;">
-                      Envío a: <span t-esc="request.session.get('delivery_address', 'Rg 102, calle 20 ...')"/>
+                      Envío a: <t t-if="order.partner_shipping_id">
+                        <span t-field="order.partner_shipping_id.contact_address_complete" t-options="{}" />
+                      </t>
+                      <t t-else="">
+                        <span>Añade tu dirección de envío</span>
+                      </t>
                     </div>
                   </div>
                   <div class="col-md-3 col-6 text-end">
