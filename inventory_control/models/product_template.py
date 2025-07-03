@@ -236,3 +236,24 @@ class ProductTemplate(models.Model):
      def _onchange_default_code(self):
          if self.default_code and self.product_variant_ids:
              self.product_variant_ids.write({'default_code': self.default_code})
+
+     @api.multi
+     def write(self, vals):
+          res = super(ProductTemplate, self).write(vals)
+          if 'default_code' in vals:
+               for template in self:
+                    template.product_variant_ids.write({'default_code': template.default_code})
+          return res
+     
+     @api.model
+     def sync_existing_default_codes(self):
+          """Sincroniza los códigos de referencia para productos existentes"""
+          products = self.search([])
+          for product in products:
+               if product.product_variant_ids:
+                    # Sincroniza de variante a plantilla
+                    if product.product_variant_ids[0].default_code and not product.default_code:
+                         product.default_code = product.product_variant_ids[0].default_code
+                    # Sincroniza de plantilla a variantes
+                    elif product.default_code:
+                         product.product_variant_ids.write({'default_code': product.default_code})             
