@@ -136,7 +136,6 @@
 
         </div>
 <!-- ...existing code... -->
-        <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function() {
           // Función para actualizar el precio por línea y el total
           function updateCartTotals() {
@@ -168,69 +167,86 @@
               subtotalElement.textContent = subtotal.toFixed(2);
             }
             
+            // Guardar total de items en localStorage para todas las páginas
+            localStorage.setItem('total_cart_items', totalItems.toString());
+            
+            updateCartCounters(totalItems);
+          }
+          
+          // Función para actualizar los contadores del carrito en cualquier página
+          function updateCartCounters(count) {
             // Actualiza el contador del carrito en el icono - usar selectores más específicos
             const cartCounterElements = document.querySelectorAll('.my_cart_quantity, .fa-shopping-cart ~ .badge, #top_menu .badge');
             cartCounterElements.forEach(function(element) {
               if (element) {
-                element.textContent = totalItems;
+                element.textContent = count;
               }
             });
             
-            // Actualiza también el texto del tab de carrito
+            // Actualiza también el texto del tab de carrito si estamos en la página del carrito
             const cartTabText = document.querySelector('.nav-link.active[data-tab="cart-tab"]');
             if (cartTabText) {
-              cartTabText.innerHTML = `Carrito (${totalItems})`;
+              cartTabText.innerHTML = `Carrito (${count})`;
             }
           }
 
-          // Cargar cantidades guardadas en localStorage
-          document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
-            const lineId = input.form.querySelector('input[name="line_id"]').value;
-            const savedQty = localStorage.getItem('cart_qty_' + lineId);
-            if (savedQty) {
-              // Solo actualizar visualmente, sin enviar al servidor automáticamente
-              input.value = parseInt(savedQty);
-              input.setAttribute('value', parseInt(savedQty));
-            }
-          });
-          
-          // Calcular totales al cargar la página
-          updateCartTotals();
-          
-          // Escuchar cambios en los inputs de cantidad
-          document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
-            input.addEventListener('input', function() {
-              updateCartTotals();
-            });
-            
-            // También actualizar cuando se hacen clics en los botones + y -
-            const minusBtn = input.form.querySelector('button:first-of-type');
-            const plusBtn = input.form.querySelector('button:last-of-type');
-            
-            if (minusBtn) {
-              minusBtn.addEventListener('click', function() {
-                setTimeout(updateCartTotals, 10);
-              });
-            }
-            
-            if (plusBtn) {
-              plusBtn.addEventListener('click', function() {
-                setTimeout(updateCartTotals, 10);
-              });
-            }
-            
-            // Evitar enviar el formulario si la cantidad no cambió
-            input.form.addEventListener('submit', function(e) {
-              const currentQty = parseInt(input.getAttribute('value'));
-              const newQty = parseInt(input.value);
-              if (currentQty === newQty) {
-                e.preventDefault();
-              } else {
-                // Actualizar el contador inmediatamente al enviar el formulario
-                updateCartTotals();
+          // Cargar cantidades guardadas y actualizar contadores en cualquier página
+          const totalCartItems = localStorage.getItem('total_cart_items');
+          if (totalCartItems) {
+            updateCartCounters(parseInt(totalCartItems));
+          }
+
+          // En la página del carrito, manejar las cantidades específicas
+          if (document.querySelector('.cart-quantity-input')) {
+            // Cargar cantidades guardadas en localStorage
+            document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
+              const lineId = input.form.querySelector('input[name="line_id"]').value;
+              const savedQty = localStorage.getItem('cart_qty_' + lineId);
+              if (savedQty) {
+                // Solo actualizar visualmente, sin enviar al servidor automáticamente
+                input.value = parseInt(savedQty);
+                input.setAttribute('value', parseInt(savedQty));
               }
             });
-          });
+            
+            // Calcular totales al cargar la página
+            updateCartTotals();
+            
+            // Escuchar cambios en los inputs de cantidad
+            document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
+              input.addEventListener('input', function() {
+                updateCartTotals();
+              });
+              
+              // También actualizar cuando se hacen clics en los botones + y -
+              const minusBtn = input.form.querySelector('button:first-of-type');
+              const plusBtn = input.form.querySelector('button:last-of-type');
+              
+              if (minusBtn) {
+                minusBtn.addEventListener('click', function() {
+                  setTimeout(updateCartTotals, 10);
+                });
+              }
+              
+              if (plusBtn) {
+                plusBtn.addEventListener('click', function() {
+                  setTimeout(updateCartTotals, 10);
+                });
+              }
+              
+              // Evitar enviar el formulario si la cantidad no cambió
+              input.form.addEventListener('submit', function(e) {
+                const currentQty = parseInt(input.getAttribute('value'));
+                const newQty = parseInt(input.value);
+                if (currentQty === newQty) {
+                  e.preventDefault();
+                } else {
+                  // Actualizar el contador inmediatamente al enviar el formulario
+                  updateCartTotals();
+                }
+              });
+            });
+          }
         });
         </script>
 <!-- ...existing code... -->
