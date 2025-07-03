@@ -321,6 +321,7 @@
                                                 </div>
                                                 <div style="width:100%; display:flex; flex-direction:column; gap:14px;">
                                                     <button type="submit" class="btn"
+                                                        id="bundle-add-to-cart"
                                                         style="width:100%; height:48px; border-radius:6px; background:#4285f4; color:#fff; border:none; font-weight:500; font-size:18px; letter-spacing:0.5px; font-family:'Questrial', sans-serif;">
                                                         Agregar al carrito
                                                     </button>
@@ -328,6 +329,52 @@
                                                         style="width:100%; height:48px; border-radius:6px; background:#a8ccff; color:#1757e6; border:none; font-weight:500; font-size:18px; letter-spacing:0.5px; font-family:'Questrial', sans-serif;">
                                                         Comprar
                                                     </button>
+                                                    <script type="text/javascript">
+                                                        document.addEventListener('DOMContentLoaded', function() {
+                                                            // Enviar solo productos seleccionados al carrito
+                                                            document.getElementById('bundle-form').addEventListener('submit', function(e) {
+                                                                e.preventDefault();
+                                                                var form = document.getElementById('bundle-form');
+                                                                var data = new FormData();
+                                                                form.querySelectorAll('input[name="bundle_product_ids[]"]:checked').forEach(function(cb) {
+                                                                    data.append('bundle_product_ids[]', cb.value);
+                                                                });
+                                                                form.querySelectorAll('input[type="hidden"]').forEach(function(input) {
+                                                                    data.append(input.name, input.value);
+                                                                });
+                                                                fetch(form.action, {
+                                                                    method: 'POST',
+                                                                    body: data,
+                                                                    credentials: 'same-origin'
+                                                                }).then(function(response) {
+                                                                    if (response.ok) {
+                                                                        window.location.href = '/shop/cart';
+                                                                    }
+                                                                });
+                                                            });
+
+                                                            // Comprar directo: envía los seleccionados y redirige a checkout
+                                                            document.getElementById('bundle-buy-now').addEventListener('click', function() {
+                                                                var form = document.getElementById('bundle-form');
+                                                                var data = new FormData();
+                                                                form.querySelectorAll('input[name="bundle_product_ids[]"]:checked').forEach(function(cb) {
+                                                                    data.append('bundle_product_ids[]', cb.value);
+                                                                });
+                                                                form.querySelectorAll('input[type="hidden"]').forEach(function(input) {
+                                                                    data.append(input.name, input.value);
+                                                                });
+                                                                fetch(form.action, {
+                                                                    method: 'POST',
+                                                                    body: data,
+                                                                    credentials: 'same-origin'
+                                                                }).then(function(response) {
+                                                                    if (response.ok) {
+                                                                        window.location.href = '/shop/checkout?try_skip_step=true';
+                                                                    }
+                                                                });
+                                                            });
+                                                        });
+                                                    </script>
                                                 </div>
                                                 <!-- Lógica de precio del producto principal (oculta, solo para JS) -->
                                                 <div id="main-bundle-price" class="bundle-price" style="display:none;">

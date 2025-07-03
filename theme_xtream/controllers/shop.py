@@ -20,7 +20,6 @@ class ShopController(WebsiteSale):
         # Obtener productos accesorios de los productos en el carrito
         accessory_products = []
         if order and order.order_line:
-            # Tomar todos los accesorios de todos los productos en el carrito, sin duplicados ni el producto principal
             accessory_ids = set()
             main_product_ids = set(order.order_line.mapped('product_id.product_tmpl_id.id'))
             for line in order.order_line:
@@ -30,6 +29,17 @@ class ShopController(WebsiteSale):
                         accessory_products.append(acc)
                         accessory_ids.add(acc.id)
 
+        # Manejar productos seleccionados desde la vista de productos
+        selected_product_ids = post.getlist('bundle_product_ids[]')
+        if selected_product_ids:
+            for product_id in selected_product_ids:
+                product = request.env['product.product'].sudo().browse(int(product_id))
+                if product.exists():
+                    order._cart_update(
+                        product_id=product.id,
+                        add_qty=1,  # Ajusta la cantidad según sea necesario
+                    )
+
         # Preparar valores del carrito
         cart_values = self._prepare_cart_values()
         cart_values.update({
@@ -37,8 +47,6 @@ class ShopController(WebsiteSale):
         })
 
         if buy_now:
-            # Renderiza tu nueva plantilla personalizada
             return request.render('theme_xtream.website_cart_buy_now', cart_values)
 
-        # Si no es compra directa, usa el comportamiento normal
         return super(ShopController, self).cart(**post)
