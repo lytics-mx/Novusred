@@ -69,6 +69,7 @@
         'views/website_sale/website_view_products.xml',
         'views/website_sale/website_offers.xml',
         'views/website_sale/website_home.xml',
+        'views/website_sale/website_login.xml',
 
 
 # Búsqueda de productos en la web (incluye marcas y categorías)
