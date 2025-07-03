@@ -138,7 +138,7 @@
 <!-- ...existing code... -->
         <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function() {
-          // Replace your existing updateCartTotals function with this one
+          // Función para actualizar el precio por línea y el total
           function updateCartTotals() {
             let subtotal = 0;
             let totalItems = 0;
@@ -168,52 +168,30 @@
               subtotalElement.textContent = subtotal.toFixed(2);
             }
             
-            // Update ALL cart badge counters on the page
-            const cartBadges = document.querySelectorAll('.nav-item .badge, #top_menu .my_cart_quantity, .o_wsale_my_cart .badge');
-            cartBadges.forEach(function(badge) {
-              badge.textContent = totalItems;
+            // Actualiza el contador del carrito en el icono - usar selectores más específicos
+            const cartCounterElements = document.querySelectorAll('.my_cart_quantity, .fa-shopping-cart ~ .badge, #top_menu .badge');
+            cartCounterElements.forEach(function(element) {
+              if (element) {
+                element.textContent = totalItems;
+              }
             });
             
             // Actualiza también el texto del tab de carrito
-            const cartTabText = document.querySelector('.nav-link[data-tab="cart-tab"]');
+            const cartTabText = document.querySelector('.nav-link.active[data-tab="cart-tab"]');
             if (cartTabText) {
               cartTabText.innerHTML = `Carrito (${totalItems})`;
             }
-            
-            // Sync with server to update session
-            syncCartWithServer(totalItems);
           }
-          
-          // Add this new function after updateCartTotals
-          function syncCartWithServer(totalItems) {
-            // Use AJAX to update the server-side cart quantity
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', '/shop/cart/update_badge', true);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-            
-            // Get CSRF token
-            const csrfToken = document.querySelector('input[name="csrf_token"]')?.value || '';
-            
-            xhr.onreadystatechange = function() {
-              if (xhr.readyState === 4 && xhr.status === 200) {
-                // Optional: handle response if needed
-              }
-            };
-            
-            xhr.send(JSON.stringify({
-              jsonrpc: "2.0",
-              params: {
-                total_items: totalItems,
-                csrf_token: csrfToken
-              }
-            }));
-          }
-        
-          // Keep the rest of your code as is
+
           // Cargar cantidades guardadas en localStorage
           document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
-            // ...existing code...
+            const lineId = input.form.querySelector('input[name="line_id"]').value;
+            const savedQty = localStorage.getItem('cart_qty_' + lineId);
+            if (savedQty) {
+              // Solo actualizar visualmente, sin enviar al servidor automáticamente
+              input.value = parseInt(savedQty);
+              input.setAttribute('value', parseInt(savedQty));
+            }
           });
           
           // Calcular totales al cargar la página
@@ -221,7 +199,37 @@
           
           // Escuchar cambios en los inputs de cantidad
           document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
-            // ...existing code...
+            input.addEventListener('input', function() {
+              updateCartTotals();
+            });
+            
+            // También actualizar cuando se hacen clics en los botones + y -
+            const minusBtn = input.form.querySelector('button:first-of-type');
+            const plusBtn = input.form.querySelector('button:last-of-type');
+            
+            if (minusBtn) {
+              minusBtn.addEventListener('click', function() {
+                setTimeout(updateCartTotals, 10);
+              });
+            }
+            
+            if (plusBtn) {
+              plusBtn.addEventListener('click', function() {
+                setTimeout(updateCartTotals, 10);
+              });
+            }
+            
+            // Evitar enviar el formulario si la cantidad no cambió
+            input.form.addEventListener('submit', function(e) {
+              const currentQty = parseInt(input.getAttribute('value'));
+              const newQty = parseInt(input.value);
+              if (currentQty === newQty) {
+                e.preventDefault();
+              } else {
+                // Actualizar el contador inmediatamente al enviar el formulario
+                updateCartTotals();
+              }
+            });
           });
         });
         </script>
