@@ -1,6 +1,9 @@
+import logging
 from odoo import http
 from odoo.http import request
 from odoo.addons.website_sale.controllers.main import WebsiteSale
+
+_logger = logging.getLogger(__name__)
 
 class WebsiteSaleExtended(WebsiteSale):
     
@@ -31,22 +34,34 @@ class WebsiteSaleExtended(WebsiteSale):
         saved_items = request.session.get('saved_items', [])
         
         product = request.env['product.product'].sudo().browse(product_id)
+        
+        # Generar ID único para el elemento guardado
+        item_id = 1
+        if saved_items:
+            existing_ids = [item.get('id', 0) for item in saved_items]
+            item_id = max(existing_ids) + 1
+            
         saved_item = {
-            'id': len(saved_items) + 1,  # ID simple para el elemento guardado
+            'id': item_id,  # Usar un ID generado más confiable
             'product_id': product.id,
             'name': product.display_name,
-            'price': product.discounted_price if hasattr(product, 'discounted_price') and product.discounted_price else product.list_price,
+            'price': product.list_price,  # Simplificar para evitar errores de atributos
             'template_id': product.product_tmpl_id.id,
             'quantity_available': product.qty_available,
             'brand_id': product.product_tmpl_id.brand_type_id.id if hasattr(product.product_tmpl_id, 'brand_type_id') and product.product_tmpl_id.brand_type_id else '',
             'brand_name': product.product_tmpl_id.brand_type_id.name if hasattr(product.product_tmpl_id, 'brand_type_id') and product.product_tmpl_id.brand_type_id else '',
         }
         
+        # Forzar actualización de la sesión
         saved_items.append(saved_item)
         request.session['saved_items'] = saved_items
+        request.session.modified = True
         
-        # Eliminar el elemento del carrito
-        line.unlink()
+        try:
+            # Eliminar el elemento del carrito
+            order._cart_update(product_id=product.id, line_id=line_id, add_qty=0)
+        except Exception as e:
+            _logger.error("Error al eliminar producto del carrito: %s", e)
         
         return request.redirect("/shop/cart")
         
@@ -94,14 +109,9 @@ class WebsiteSaleExtended(WebsiteSale):
         request.session['saved_items'] = [i for i in saved_items if i['id'] != item_id]
         
         return request.redirect("/shop/cart")
-    # @http.route('/shop/cart/save_for_later', type='http', auth="public", website=True)
-    # def cart_save_for_later(self, line_id=None, product_id=None, **kw):
-    #     if line_id:
-    #         order = request.website.sale_get_order()
-    #         if order:
-    #             line = order.order_line.filtered(lambda l: l.id == int(line_id))
-    #             if line:
-    #                 # Aquí podrías guardar el producto en un historial personalizado
-    #                 # Por ejemplo: request.env['your.history.model'].sudo().create({...})
-    #                 line.unlink()
-    #     return request.redirect('/shop/history')    
+    
+    @http.route(['/debug/saved_items'], type='http', auth="public", website=True)
+    def debug_saved_items(self, **post):
+        """Debug para ver los elementos guardados en la sesión"""
+        saved_items = request.session.get('saved_items', [])
+        return request.make_response(f"<pre>Saved items: {saved_items}</pre>")
