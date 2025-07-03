@@ -9,21 +9,23 @@ class ShopController(WebsiteSale):
         buy_now = post.get('buy_now') or request.httprequest.args.get('buy_now')
         order = request.website.sale_get_order()
 
-        # Obtener productos relacionados basados en la marca del primer producto en el carrito
-        related_products = []
+        # Obtener productos accesorios de los productos en el carrito
+        accessory_products = []
         if order and order.order_line:
-            first_product = order.order_line[0].product_id.product_tmpl_id
-            if first_product.brand_type_id:
-                related_products = request.env['product.template'].sudo().search([
-                    ('brand_type_id', '=', first_product.brand_type_id.id),
-                    ('website_published', '=', True),
-                    ('id', 'not in', order.order_line.mapped('product_id.product_tmpl_id.id'))
-                ], limit=12)
+            # Tomar todos los accesorios de todos los productos en el carrito, sin duplicados ni el producto principal
+            accessory_ids = set()
+            main_product_ids = set(order.order_line.mapped('product_id.product_tmpl_id.id'))
+            for line in order.order_line:
+                product = line.product_id.product_tmpl_id
+                for acc in product.accessory_product_ids:
+                    if acc.id not in main_product_ids and acc.id not in accessory_ids:
+                        accessory_products.append(acc)
+                        accessory_ids.add(acc.id)
 
         # Preparar valores del carrito
-        cart_values = self._prepare_cart_values()
+        cart_values = super(ShopController, self)._prepare_cart_values()
         cart_values.update({
-            'related_products': related_products,
+            'accessory_products': accessory_products,
         })
 
         if buy_now:

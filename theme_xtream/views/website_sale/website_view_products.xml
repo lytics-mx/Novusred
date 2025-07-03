@@ -346,14 +346,14 @@
                                             function getPriceFromText(text) {
                                                 return parseFloat((text || '').replace(/[^0-9.]/g, '')) || 0;
                                             }
+                                    
                                             function updateTotal() {
                                                 var total = 0;
                                                 // Suma todos los productos seleccionados (incluyendo el principal y accesorios)
                                                 document.querySelectorAll('input[name="bundle_product_ids[]"]:checked').forEach(function(cb) {
-                                                    // Busca el precio en la card correspondiente
                                                     var priceDiv = null;
-                                                    if (cb.closest('.product-card')) {
-                                                        priceDiv = cb.closest('.product-card').querySelector('.mobile-main-price, .bundle-price');
+                                                    if (cb.closest('.accessory-product-card')) {
+                                                        priceDiv = cb.closest('.accessory-product-card').querySelector('.accessory-main-price');
                                                     } else {
                                                         // Es el producto principal (hidden)
                                                         priceDiv = document.getElementById('main-bundle-price');
@@ -364,49 +364,18 @@
                                                 });
                                                 document.getElementById('bundle-total').textContent = total.toLocaleString();
                                             }
+                                    
+                                            // Actualiza el total cuando se seleccionan o deseleccionan productos
                                             document.querySelectorAll('.bundle-checkbox').forEach(function(cb) {
                                                 cb.addEventListener('change', updateTotal);
                                             });
+                                    
                                             updateTotal();
-
-                                            // Al enviar el formulario, solo se envían los productos seleccionados (checks marcados + el principal)
+                                    
+                                            // Enviar productos seleccionados al carrito
                                             document.getElementById('bundle-form').addEventListener('submit', function(e) {
-                                                // Los productos seleccionados (checks marcados) se enviarán al backend
-                                                // Si algún accesorio está seleccionado, se enviará en bundle_product_ids[]
-                                                // No se necesita JS extra aquí, el backend debe manejar bundle_product_ids[]
-                                            });
-
-                                            // Comprar directo: envía los seleccionados y redirige a checkout
-                                            document.getElementById('bundle-buy-now').addEventListener('click', function() {
                                                 var form = document.getElementById('bundle-form');
-                                                var data = new FormData();
-                                                // Agrega todos los checkboxes marcados (incluyendo el hidden principal y accesorios seleccionados)
-                                                form.querySelectorAll('input[name="bundle_product_ids[]"]:checked').forEach(function(cb) {
-                                                    data.append('bundle_product_ids[]', cb.value);
-                                                });
-                                                // Agrega los otros campos ocultos (csrf_token, product_id)
-                                                form.querySelectorAll('input[type="hidden"]').forEach(function(input) {
-                                                    data.append(input.name, input.value);
-                                                });
-                                                fetch(form.action, {
-                                                    method: 'POST',
-                                                    body: data,
-                                                    credentials: 'same-origin'
-                                                }).then(function(response) {
-                                                    if (response.ok) {
-                                                        window.location.href = '/shop/checkout?try_skip_step=true';
-                                                    }
-                                                });
-                                            });
-
-                                            // Lógica para enviar accesorios seleccionados al carrito al hacer submit
-                                            document.getElementById('bundle-form').addEventListener('submit', function(e) {
-                                                // Por defecto, el formulario ya enviará todos los bundle_product_ids[] seleccionados (incluyendo accesorios)
-                                                // No se requiere JS adicional, pero si quieres forzar el envío por JS, puedes descomentar lo siguiente:
-                                                /*
-                                                e.preventDefault();
-                                                var form = document.getElementById('bundle-form');
-                                                var data = new FormData();
+                                                var data = new FormData(form);
                                                 form.querySelectorAll('input[name="bundle_product_ids[]"]:checked').forEach(function(cb) {
                                                     data.append('bundle_product_ids[]', cb.value);
                                                 });
@@ -422,7 +391,28 @@
                                                         window.location.href = '/shop/cart';
                                                     }
                                                 });
-                                                */
+                                                e.preventDefault();
+                                            });
+                                    
+                                            // Comprar directo: envía los seleccionados y redirige a checkout
+                                            document.getElementById('bundle-buy-now').addEventListener('click', function() {
+                                                var form = document.getElementById('bundle-form');
+                                                var data = new FormData();
+                                                form.querySelectorAll('input[name="bundle_product_ids[]"]:checked').forEach(function(cb) {
+                                                    data.append('bundle_product_ids[]', cb.value);
+                                                });
+                                                form.querySelectorAll('input[type="hidden"]').forEach(function(input) {
+                                                    data.append(input.name, input.value);
+                                                });
+                                                fetch(form.action, {
+                                                    method: 'POST',
+                                                    body: data,
+                                                    credentials: 'same-origin'
+                                                }).then(function(response) {
+                                                    if (response.ok) {
+                                                        window.location.href = '/shop/checkout?try_skip_step=true';
+                                                    }
+                                                });
                                             });
                                         });
                                     </script>
