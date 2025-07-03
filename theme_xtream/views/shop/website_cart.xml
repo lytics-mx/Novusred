@@ -132,33 +132,44 @@
               </div>
             </div>
           </div>
-          <script type="text/javascript">
-            document.addEventListener('DOMContentLoaded', function() {
-              function updateTotals() {
-                let subtotal = 0;
-                document.querySelectorAll('.cart-quantity-input').forEach(function(cartInput) {
-                  const qtyInput = cartInput.querySelector('input[name="set_qty"]');
-                  const priceSpan = cartInput.closest('.row').querySelector('.fw-bold t');
-                  const pricePerUnit = parseFloat(qtyInput.getAttribute('data-price'));
-                  const lineTotal = pricePerUnit * parseInt(qtyInput.value || 1);
-                  subtotal += lineTotal;
-                  // Actualiza el precio por línea
-                  if (priceSpan) priceSpan.innerText = '$' + lineTotal.toFixed(2);
-                });
-                // Actualiza el subtotal
-                const subtotalDiv = document.querySelector('.fw-semibold[style*="font-size:16px;"] t');
-                if (subtotalDiv) subtotalDiv.innerText = subtotal.toFixed(2);
-              }
-          
-              document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
-                input.addEventListener('input', function() {
-                  // Opcional: puedes enviar el formulario por AJAX aquí si quieres actualizar en backend
-                  updateTotals();
-                });
-              });
-            });
-          </script>
+
         </div>
+<!-- ...existing code... -->
+        <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+          // Actualiza el precio por línea y el total
+          function updateCartTotals() {
+            let subtotal = 0;
+            document.querySelectorAll('.cart-quantity-input').forEach(function(cartInput) {
+              const qtyInput = cartInput.querySelector('input[name="set_qty"]');
+              if (!qtyInput) return;
+              const pricePerUnit = parseFloat(qtyInput.getAttribute('data-price'));
+              const qty = parseInt(qtyInput.value) || 1;
+              const row = cartInput.closest('.row');
+              const lineTotalSpan = row.querySelector('.col-3 .fw-bold');
+              const lineTotal = pricePerUnit * qty;
+              subtotal += lineTotal;
+              if (lineTotalSpan) {
+                lineTotalSpan.textContent = '$' + lineTotal.toFixed(2);
+              }
+            });
+            // Actualiza el subtotal
+            const subtotalDiv = document.querySelector('.fw-semibold[style*="font-size:16px;"] t');
+            if (subtotalDiv) {
+              subtotalDiv.textContent = subtotal.toFixed(2);
+            }
+          }
+
+          // Escucha cambios en los inputs de cantidad
+          document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
+            input.addEventListener('input', function() {
+              updateCartTotals();
+            });
+          });
+        });
+        </script>
+<!-- ...existing code... -->
+
       </t>
     </xpath>
   </template>
