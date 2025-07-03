@@ -16,6 +16,12 @@ class ShopController(WebsiteSale):
         if buy_now:
             return request.render('theme_xtream.website_cart_buy_now', self._prepare_cart_values(**values))
         return super().cart(**post)
+    
+    def _prepare_cart_values(self, **kwargs):
+        values = super()._prepare_cart_values(**kwargs)
+        values['saved_items'] = kwargs.get('saved_items', request.session.get('saved_for_later', []))
+        return values
+
 
     @http.route('/shop/cart/remove', type='http', auth="public", website=True)
     def cart_remove(self, line_id=None, **kw):
@@ -61,6 +67,8 @@ class ShopController(WebsiteSale):
                     saved_items = request.session.get('saved_for_later', [])
                     saved_items.append(product_data)
                     request.session['saved_for_later'] = saved_items
+                    # Importante: asegurar que los cambios en la sesión persistan
+                    request.session.modified = True
                     
                     # Eliminar la línea del carrito
                     line.unlink()
