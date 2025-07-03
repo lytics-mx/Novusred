@@ -44,7 +44,7 @@ class ShopController(WebsiteSale):
             request.session['website_sale_cart_quantity'] = int(total_items)
             return {'success': True}
         return {'success': False}
-    
+       
     @http.route('/shop/cart/save_for_later', type='http', auth="public", website=True)
     def cart_save_for_later(self, line_id=None, product_id=None, **kw):
         try:
@@ -72,19 +72,23 @@ class ShopController(WebsiteSale):
                                 'brand_id': line.product_id.product_tmpl_id.brand_type_id.id,
                             })
                         
-                        # AÑADIR ESTAS LÍNEAS - Estaban faltando:
+                        # ESTAS LÍNEAS SON CRUCIALES - ASEGÚRATE DE QUE ESTÉN PRESENTES
                         saved_items = request.session.get('saved_for_later', [])
                         saved_items.append(product_data)
                         request.session['saved_for_later'] = saved_items
-                        request.session.modified = True  # Importante para guardar cambios
+                        request.session.modified = True  # Esta línea es MUY importante
                         
                         # Eliminar la línea del carrito
                         line.unlink()
+                        
+                        # Verificación de depuración
+                        print(f"Producto guardado correctamente: {product_data['name']}")
+                        print(f"Total de elementos guardados: {len(request.session.get('saved_for_later', []))}")
         except Exception as e:
             import traceback
             traceback.print_exc()
+            print(f"Error al guardar producto: {str(e)}")
             
-        # Redirigir a la página del carrito con la pestaña de guardados activa
         return request.redirect('/shop/cart?tab=saved')
     
     @http.route('/shop/cart/remove_saved_item', type='http', auth="public", website=True)
