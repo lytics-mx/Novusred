@@ -32,11 +32,11 @@ class ProductTemplate(models.Model):
           help='Imágenes adicionales del producto. Puedes arrastrar para ordenar.'
      )
 
-     product_model_id = fields.Many2one(
-         comodel_name='product.model',
-         string='Modelo',
-         help='Selecciona o registra un modelo previamente usado.'
-     )
+     # product_model_id = fields.Many2one(
+     #     comodel_name='product.model',
+     #     string='Modelo',
+     #     help='Selecciona o registra un modelo previamente usado.'
+     # )
 
      product_model = fields.Char('Modelo de producto')
 
@@ -215,11 +215,24 @@ class ProductTemplate(models.Model):
                                    break  # Solo usar la primera etiqueta con fecha de fin válida     
 
 
+     # @api.model
+     # def create(self, vals):
+     #     """Asegura que el nombre del modelo se registre en el modelo product.model."""
+     #     if 'product_model_id' in vals:
+     #         product_model = self.env['product.model'].browse(vals['product_model_id'])
+     #         if not product_model.exists():
+     #             self.env['product.model'].create({'name': product_model.name})
+     #     return super(ProductTemplate, self).create(vals)
+
      @api.model
      def create(self, vals):
-         """Asegura que el nombre del modelo se registre en el modelo product.model."""
-         if 'product_model_id' in vals:
-             product_model = self.env['product.model'].browse(vals['product_model_id'])
-             if not product_model.exists():
-                 self.env['product.model'].create({'name': product_model.name})
-         return super(ProductTemplate, self).create(vals)
+         res = super(ProductTemplate, self).create(vals)
+         # Ensure default_code is properly synchronized from variants
+         if res.product_variant_ids and res.product_variant_ids[0].default_code:
+             res.default_code = res.product_variant_ids[0].default_code
+         return res
+     
+     @api.onchange('default_code')
+     def _onchange_default_code(self):
+         if self.default_code and self.product_variant_ids:
+             self.product_variant_ids.write({'default_code': self.default_code})
