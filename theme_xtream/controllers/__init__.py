@@ -33,5 +33,5 @@ from . import brand_views
 from . import img_banner
 
 from . import search
-from . import shop
+from . import cart
 
