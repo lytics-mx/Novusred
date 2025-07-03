@@ -224,30 +224,4 @@ class ProductTemplate(models.Model):
      #             self.env['product.model'].create({'name': product_model.name})
      #     return super(ProductTemplate, self).create(vals)
 
-     @api.model
-     def create(self, vals):
-         res = super(ProductTemplate, self).create(vals)
-         # Ensure default_code is properly synchronized from variants
-         if res.product_variant_ids and res.product_variant_ids[0].default_code:
-             res.default_code = res.product_variant_ids[0].default_code
-         return res
-     
-     @api.onchange('default_code')
-     def _onchange_default_code(self):
-         if self.default_code and self.product_variant_ids:
-             self.product_variant_ids.write({'default_code': self.default_code})
 
-
-     
-     @api.model
-     def sync_existing_default_codes(self):
-          """Sincroniza los códigos de referencia para productos existentes"""
-          products = self.search([])
-          for product in products:
-               if product.product_variant_ids:
-                    # Sincroniza de variante a plantilla
-                    if product.product_variant_ids[0].default_code and not product.default_code:
-                         product.default_code = product.product_variant_ids[0].default_code
-                    # Sincroniza de plantilla a variantes
-                    elif product.default_code:
-                         product.product_variant_ids.write({'default_code': product.default_code})             
