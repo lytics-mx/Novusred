@@ -4,6 +4,14 @@ from odoo.http import request
 
 class ShopController(WebsiteSale):
 
+    def _prepare_cart_values(self):
+        """Prepara los valores del carrito para la plantilla."""
+        order = request.website.sale_get_order()
+        return {
+            'website_sale_order': order,
+            'order_lines': order.order_line if order else [],
+        }
+
     @http.route('/shop/cart', type='http', auth="public", website=True)
     def cart(self, **post):
         buy_now = post.get('buy_now') or request.httprequest.args.get('buy_now')
@@ -23,7 +31,7 @@ class ShopController(WebsiteSale):
                         accessory_ids.add(acc.id)
 
         # Preparar valores del carrito
-        cart_values = super(ShopController, self)._prepare_cart_values()
+        cart_values = self._prepare_cart_values()
         cart_values.update({
             'accessory_products': accessory_products,
         })
@@ -33,4 +41,4 @@ class ShopController(WebsiteSale):
             return request.render('theme_xtream.website_cart_buy_now', cart_values)
 
         # Si no es compra directa, usa el comportamiento normal
-        return super().cart(**post)
+        return super(ShopController, self).cart(**post)
