@@ -171,11 +171,9 @@
             const lineId = input.form.querySelector('input[name="line_id"]').value;
             const savedQty = localStorage.getItem('cart_qty_' + lineId);
             if (savedQty) {
-              input.value = savedQty;
-              // Actualizar valor en formulario para mantener coherencia
-              if (parseInt(savedQty) !== parseInt(input.getAttribute('value'))) {
-                input.form.submit(); // Enviar formulario para actualizar en servidor
-              }
+              // Solo actualizar visualmente, sin enviar al servidor automáticamente
+              input.value = parseInt(savedQty);
+              input.setAttribute('value', parseInt(savedQty));
             }
           });
           
