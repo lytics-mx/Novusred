@@ -9,4 +9,8 @@ class ProductProduct(models.Model):
     def _onchange_product_tmpl_id(self):
         if self.product_tmpl_id:
             self.product_model = self.product_tmpl_id.product_model
-
+            
+    @api.onchange('product_model')
+    def _onchange_product_model(self):
+        if self.product_tmpl_id:
+            self.product_tmpl_id.product_model = self.product_model
