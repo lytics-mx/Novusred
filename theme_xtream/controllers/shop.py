@@ -21,7 +21,12 @@ class ShopController(WebsiteSale):
                     line.unlink()
         return request.redirect('/shop/cart')
     
-
+    @http.route('/shop/cart/update_badge', type='json', auth="public", website=True)
+    def update_cart_badge(self, total_items=None, **post):
+        if total_items is not None:
+            request.session['website_sale_cart_quantity'] = int(total_items)
+            return {'success': True}
+        return {'success': False}
     
     # @http.route('/shop/cart/save_for_later', type='http', auth="public", website=True)
     # def cart_save_for_later(self, line_id=None, product_id=None, **kw):
