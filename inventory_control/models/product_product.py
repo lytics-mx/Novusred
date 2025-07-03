@@ -14,3 +14,18 @@ class ProductProduct(models.Model):
     def _onchange_product_model(self):
         if self.product_tmpl_id:
             self.product_tmpl_id.product_model = self.product_model
+
+    @api.model
+    def create(self, vals):
+        res = super(ProductProduct, self).create(vals)
+        # Sincronizar el model de la plantilla cuando se crea la variante
+        if 'product_model' in vals and res.product_tmpl_id:
+            res.product_tmpl_id.write({'product_model': vals['product_model']})
+        return res
+    
+    def write(self, vals):
+        res = super(ProductProduct, self).write(vals)
+        # Sincronizar el model de la plantilla cuando se actualiza la variante
+        if 'product_model' in vals and self.product_tmpl_id:
+            self.product_tmpl_id.write({'product_model': vals['product_model']})
+        return res            
