@@ -6,21 +6,15 @@ odoo.define('theme_xtream.cart', function (require) {
 
     publicWidget.registry.CartUpdateCounter = publicWidget.Widget.extend({
         selector: '.oe_website_sale',
-        events: {
-            'change .cart-quantity-input input[name="set_qty"]': '_onChangeQuantity',
-            'click .js_add_cart_json': '_onClickAddToCart',
-        },
-
-        _onChangeQuantity: function (ev) {
+        
+        start: function() {
             var self = this;
-            this._updateCartBadge();
-        },
-
-        _onClickAddToCart: function (ev) {
-            var self = this;
-            setTimeout(function() {
+            this._super.apply(this, arguments);
+            // Inicializar eventos manualmente si es necesario
+            this.$el.on('change', '.cart-quantity-input input[name="set_qty"]', function() {
                 self._updateCartBadge();
-            }, 500);
+            });
+            return this._super.apply(this, arguments);
         },
 
         _updateCartBadge: function () {
@@ -31,12 +25,9 @@ odoo.define('theme_xtream.cart', function (require) {
             
             ajax.jsonRpc('/shop/cart/update_badge', 'call', {
                 'total_items': totalItems
-            }).then(function (data) {
-                // Actualizar todos los indicadores del carrito en la página
-                document.querySelectorAll('.my_cart_quantity').forEach(function(badge) {
-                    badge.textContent = totalItems;
-                });
             });
         }
     });
+
+    return publicWidget.registry.CartUpdateCounter;
 });
