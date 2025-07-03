@@ -164,40 +164,76 @@
               </div>
               
               <!-- Pie: envío, total y botón (solo visible en tab de carrito) -->
-                <div id="cart-footer" class="card-footer bg-white border-0 pt-4 pb-4">
-                <div class="row align-items-center">
-                  <div class="col-md-6 col-12 mb-2 mb-md-0">
-                  <t t-if="order.partner_shipping_id">
-                    <div class="text-primary" style="font-size:15px;">
-                    <t t-if="order.partner_shipping_id.contact_address_complete">
-                      <span class="text-primary">Envío a:</span>
-                      <span class="d-inline-block text-primary" style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                      <t t-esc="order.partner_shipping_id.contact_address_complete"/>
-                      </span>
-                      <a class="ms-1" data-bs-toggle="collapse" href="#fullAddressCollapse" role="button" aria-expanded="false" aria-controls="fullAddressCollapse">
-                      <i class="fa fa-chevron-down small"></i>
-                      </a>
-                      <div class="collapse" id="fullAddressCollapse">
-                      <div class="mt-1">
-                        <span class="text-primary" t-field="order.partner_shipping_id.contact_address_complete" t-options="{}" />
-                      </div>
+                <div id="cart-footer" class="card-footer bg-white border-0 pt-4 pb-4" t-if="order and order.order_line">
+                  <div class="row align-items-center">
+                    <div class="col-md-6 col-12 mb-2 mb-md-0">
+                    <t t-if="order.partner_shipping_id">
+                      <div class="text-primary" style="font-size:15px;">
+                      <t t-if="order.partner_shipping_id.contact_address_complete">
+                        <span class="text-primary">Envío a:</span>
+                        <span class="d-inline-block text-primary" style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        <t t-esc="order.partner_shipping_id.contact_address_complete"/>
+                        </span>
+                        <a class="ms-1" data-bs-toggle="collapse" href="#fullAddressCollapse" role="button" aria-expanded="false" aria-controls="fullAddressCollapse">
+                        <i class="fa fa-chevron-down small"></i>
+                        </a>
+                        <div class="collapse" id="fullAddressCollapse">
+                        <div class="mt-1">
+                          <span class="text-primary" t-field="order.partner_shipping_id.contact_address_complete" t-options="{}" />
+                        </div>
+                        </div>
+                      </t>
                       </div>
                     </t>
                     </div>
-                  </t>
-                  </div>
-                  <div class="col-md-3 col-6 text-end">
-                  <div class="fw-semibold" style="font-size:16px;">
-                    Total: $<span id="cart-total-amount">
-                    <t t-set="subtotal" t-value="sum((line.product_id.discounted_price if line.product_id.discounted_price else line.product_id.list_price) * line.product_uom_qty for line in order.order_line)"/>
-                    <t t-esc="'%.2f' % subtotal"/>
-                    </span>
-                  </div>
-                  </div>
-                  <div class="col-md-3 col-6 text-end">
-                  <a href="/shop/checkout" class="btn btn-primary px-4">Continuar compra</a>
+                    <div class="col-md-3 col-6 text-end">
+                    <div class="fw-semibold" style="font-size:16px;">
+                      Total: $<span id="cart-total-amount">
+                      <t t-set="subtotal" t-value="sum((line.product_id.discounted_price if line.product_id.discounted_price else line.product_id.list_price) * line.product_uom_qty for line in order.order_line)"/>
+                      <t t-esc="'%.2f' % subtotal"/>
+                      </span>
+                    </div>
+                    </div>
+                    <div class="col-md-3 col-6 text-end">
+                    <a href="/shop/checkout" class="btn btn-primary px-4">Continuar compra</a>
+                    </div>
                   </div>
                 </div>
+
+                <div id="saved-footer" class="card-footer bg-white border-0 pt-4 pb-4 d-none" t-if="saved_items and len(saved_items) > 0">
+                  <div class="row align-items-center">
+                    <div class="col-md-6 col-12 mb-2 mb-md-0">
+                    <t t-if="order.partner_shipping_id">
+                      <div class="text-primary" style="font-size:15px;">
+                      <t t-if="order.partner_shipping_id.contact_address_complete">
+                        <span class="text-primary">Envío a:</span>
+                        <span class="d-inline-block text-primary" style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        <t t-esc="order.partner_shipping_id.contact_address_complete"/>
+                        </span>
+                        <a class="ms-1" data-bs-toggle="collapse" href="#fullAddressCollapseGuardado" role="button" aria-expanded="false" aria-controls="fullAddressCollapseGuardado">
+                        <i class="fa fa-chevron-down small"></i>
+                        </a>
+                        <div class="collapse" id="fullAddressCollapseGuardado">
+                        <div class="mt-1">
+                          <span class="text-primary" t-field="order.partner_shipping_id.contact_address_complete" t-options="{}" />
+                        </div>
+                        </div>
+                      </t>
+                      </div>
+                    </t>
+                    </div>
+                    <div class="col-md-3 col-6 text-end">
+                    <div class="fw-semibold" style="font-size:16px;">
+                      Total guardado: $<span id="saved-total-amount">
+                      <t t-set="saved_subtotal" t-value="sum(item['price'] for item in saved_items)"/>
+                      <t t-esc="'%.2f' % saved_subtotal"/>
+                      </span>
+                    </div>
+                    </div>
+                    <div class="col-md-3 col-6 text-end">
+                    <a href="/subcategory" class="btn btn-primary px-4">Continuar comprando</a>
+                    </div>
+                  </div>
                 </div>
             </div>
           </div>
