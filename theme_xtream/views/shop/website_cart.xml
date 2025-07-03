@@ -283,7 +283,7 @@
             });
 
           // Función para actualizar el precio por línea y el total
-            function updateCartTotals() {
+          function updateCartTotals() {
             let subtotal = 0;
             let totalItems = 0;
             
@@ -298,7 +298,7 @@
               const lineTotal = pricePerUnit * qty;
               subtotal += lineTotal;
               if (lineTotalSpan) {
-              lineTotalSpan.textContent = '$' + lineTotal.toFixed(2);
+                lineTotalSpan.textContent = '$' + lineTotal.toFixed(2);
               }
               
               // Guardar cantidad en localStorage
@@ -323,10 +323,10 @@
             if (cartTabText) {
               cartTabText.innerHTML = `Carrito (${totalItems})`;
             }
-            }
+          }
 
-            // Cargar cantidades guardadas en localStorage
-            document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
+          // Cargar cantidades guardadas en localStorage
+          document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
             const lineId = input.form.querySelector('input[name="line_id"]').value;
             const savedQty = localStorage.getItem('cart_qty_' + lineId);
             if (savedQty) {
@@ -334,13 +334,13 @@
               input.value = parseInt(savedQty);
               input.setAttribute('value', parseInt(savedQty));
             }
-            });
-            
-            // Calcular totales al cargar la página
-            updateCartTotals();
-            
-            // Escuchar cambios en los inputs de cantidad
-            document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
+          });
+          
+          // Calcular totales al cargar la página
+          updateCartTotals();
+          
+          // Escuchar cambios en los inputs de cantidad
+          document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
             input.addEventListener('input', function() {
               updateCartTotals();
             });
@@ -350,28 +350,11 @@
               const currentQty = parseInt(input.getAttribute('value'));
               const newQty = parseInt(input.value);
               if (currentQty === newQty) {
-              e.preventDefault();
+                e.preventDefault();
               }
             });
-            });
-
-            // Evitar duplicar productos al usar botones de incremento/decremento
-            document.querySelectorAll('.cart-quantity-input button').forEach(function(button) {
-            button.addEventListener('click', function(e) {
-              e.preventDefault();
-              const form = this.closest('form');
-              const qtyInput = form.querySelector('input[name="set_qty"]');
-              const currentQty = parseInt(qtyInput.value) || 1;
-              const newQty = this.textContent === '+' ? currentQty + 1 : currentQty - 1;
-              
-              if (newQty >= parseInt(qtyInput.getAttribute('min')) && newQty <= parseInt(qtyInput.getAttribute('max'))) {
-              qtyInput.value = newQty;
-              qtyInput.setAttribute('value', newQty);
-              updateCartTotals();
-              }
-            });
-            });
-          });
+          });            
+        });
         </script>
       </t>
     </xpath>
