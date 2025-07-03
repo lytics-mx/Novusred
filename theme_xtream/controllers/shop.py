@@ -30,7 +30,11 @@ class ShopController(WebsiteSale):
             if order:
                 line = order.order_line.filtered(lambda l: l.id == int(line_id))
                 if line:
-                    # Aquí podrías guardar el producto en un historial personalizado
-                    # Por ejemplo: request.env['your.history.model'].sudo().create({...})
+                    request.env['cart.history'].sudo().create({
+                        'product_id': line.product_id.id,
+                        'quantity': line.product_uom_qty,
+                        'partner_id': order.partner_id.id,
+                        # otros campos que necesites...
+                    })
                     line.unlink()
         return request.redirect('/shop/history')    
