@@ -237,13 +237,7 @@ class ProductTemplate(models.Model):
          if self.default_code and self.product_variant_ids:
              self.product_variant_ids.write({'default_code': self.default_code})
 
-     @api.multi
-     def write(self, vals):
-          res = super(ProductTemplate, self).write(vals)
-          if 'default_code' in vals:
-               for template in self:
-                    template.product_variant_ids.write({'default_code': template.default_code})
-          return res
+
      
      @api.model
      def sync_existing_default_codes(self):
