@@ -8,10 +8,15 @@ class ShopController(WebsiteSale):
     @http.route('/shop/cart', type='http', auth="public", website=True)
     def cart(self, **post):
         buy_now = post.get('buy_now') or request.httprequest.args.get('buy_now')
+        tab = post.get('tab') or request.httprequest.args.get('tab')
+        
         values = {}
         
         # Añadir saved_items a los valores
         values['saved_items'] = request.session.get('saved_for_later', [])
+        values['active_tab'] = tab or 'cart'
+        
+        print("ELEMENTOS GUARDADOS EN SESIÓN:", values['saved_items'])
         
         if buy_now:
             return request.render('theme_xtream.website_cart_buy_now', self._prepare_cart_values(**values))
@@ -42,38 +47,54 @@ class ShopController(WebsiteSale):
     
     @http.route('/shop/cart/save_for_later', type='http', auth="public", website=True)
     def cart_save_for_later(self, line_id=None, product_id=None, **kw):
-        if line_id and product_id:
-            order = request.website.sale_get_order()
-            if order:
-                line = order.order_line.filtered(lambda l: l.id == int(line_id))
-                if line:
-                    # Guardar información del producto antes de eliminar la línea
-                    product_data = {
-                        'id': int(time.time()),  # ID temporal único
-                        'product_id': int(product_id),
-                        'template_id': line.product_id.product_tmpl_id.id,
-                        'name': line.product_id.display_name,
-                        'price': line.product_id.discounted_price or line.product_id.list_price,
-                        'quantity_available': line.product_id.qty_available,
-                    }
+        try:
+            if line_id and product_id:
+                order = request.website.sale_get_order()
+                if order:
+                    line_id = int(line_id)
+                    product_id = int(product_id)
                     
-                    if line.product_id.product_tmpl_id.brand_type_id:
-                        product_data.update({
-                            'brand_name': line.product_id.product_tmpl_id.brand_type_id.name,
-                            'brand_id': line.product_id.product_tmpl_id.brand_type_id.id,
-                        })
-                    
-                    # Añadir a la lista de guardados en la sesión
-                    saved_items = request.session.get('saved_for_later', [])
-                    saved_items.append(product_data)
-                    request.session['saved_for_later'] = saved_items
-                    # Importante: asegurar que los cambios en la sesión persistan
-                    request.session.modified = True
-                    
-                    # Eliminar la línea del carrito
-                    line.unlink()
-                    
-        return request.redirect('/shop/cart')  
+                    line = order.order_line.filtered(lambda l: l.id == line_id)
+                    if line:
+                        # Guardar información del producto antes de eliminar la línea
+                        product_data = {
+                            'id': int(time.time()),  # ID temporal único
+                            'product_id': product_id,
+                            'template_id': line.product_id.product_tmpl_id.id,
+                            'name': line.product_id.display_name,
+                            'price': line.product_id.discounted_price or line.product_id.list_price,
+                            'quantity_available': line.product_id.qty_available,
+                        }
+                        
+                        if line.product_id.product_tmpl_id.brand_type_id:
+                            product_data.update({
+                                'brand_name': line.product_id.product_tmpl_id.brand_type_id.name,
+                                'brand_id': line.product_id.product_tmpl_id.brand_type_id.id,
+                            })
+                        
+                        # Añadir a la lista de guardados en la sesión
+                        saved_items = request.session.get('saved_for_later', [])
+                        saved_items.append(product_data)
+                        request.session['saved_for_later'] = saved_items
+                        request.session.modified = True
+                        
+                        # Para depuración
+                        print("PRODUCTO GUARDADO:", product_data)
+                        print("TOTAL GUARDADOS:", len(saved_items))
+                        
+                        # Eliminar la línea del carrito
+                        line.unlink()
+                    else:
+                        print("NO SE ENCONTRÓ LA LÍNEA:", line_id)
+                else:
+                    print("NO SE ENCONTRÓ LA ORDEN")
+        except Exception as e:
+            print("ERROR AL GUARDAR:", str(e))
+            import traceback
+            traceback.print_exc()
+            
+        # Redirigir a la página del carrito y mostrar la pestaña de guardados
+        return request.redirect('/shop/cart?tab=saved')
     
     @http.route('/shop/cart/remove_saved_item', type='http', auth="public", website=True)
     def remove_saved_item(self, item_id=None, **kw):
