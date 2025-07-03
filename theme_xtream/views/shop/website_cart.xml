@@ -39,20 +39,15 @@
                         </div>
                       </div>
                       <div class="col-2 text-center">
-                        <form t-att-action="'/shop/cart/update'" method="post" class="d-inline-flex align-items-center">
+                        <form t-att-action="'/shop/cart/update'" method="post" class="d-inline-flex">
                           <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                           <input type="hidden" name="line_id" t-att-value="line.id"/>
-                          <input type="hidden" name="product_id" t-att-value="line.product_id.id"/>
-                          <div class="btn-group">
-                            <button type="submit" name="set_qty" t-att-value="line.product_uom_qty - 1"
-                                    class="btn btn-outline-secondary" t-att-disabled="line.product_uom_qty &lt;= 1">-</button>
-                            <button type="button" class="btn btn-outline-secondary" disabled="disabled">
-                              <span t-esc="line.product_uom_qty"/>
-                            </button>
-                            <button type="submit" name="set_qty" t-att-value="line.product_uom_qty + 1"
-                                    class="btn btn-outline-secondary">+</button>
-                          </div>
-                          <input type="hidden" name="set_qty" t-att-value="line.product_uom_qty"/>
+                          <button name="set_qty" t-att-value="line.product_uom_qty - 1"
+                                  class="btn btn-link p-0" t-att-disabled="line.product_uom_qty &lt;= 1">-</button>
+                          <input type="number" name="set_qty" t-att-value="line.product_uom_qty" min="1"
+                                 class="form-control text-center mx-1" style="width:40px;"/>
+                          <button name="set_qty" t-att-value="line.product_uom_qty + 1"
+                                  class="btn btn-link p-0">+</button>
                         </form>
                         <div class="small text-muted mt-1"><t t-esc="int(line.product_id.qty_available)"/> disponibles</div>
                       </div>
@@ -71,18 +66,20 @@
                   <div class="col-md-6 col-12 mb-2 mb-md-0">
                     <t t-if="order.partner_shipping_id">
                       <div class="text-primary" style="font-size:15px;">
-                        Envío a: 
-                        <span class="d-inline-block" style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                          <t t-esc="order.partner_shipping_id.contact_address_complete"/>
-                        </span>
-                        <a class="ms-1" data-bs-toggle="collapse" href="#fullAddressCollapse" role="button" aria-expanded="false" aria-controls="fullAddressCollapse">
-                          <i class="fa fa-chevron-down small"></i>
-                        </a>
-                        <div class="collapse" id="fullAddressCollapse">
-                          <div class="mt-1">
-                            <span t-field="order.partner_shipping_id.contact_address_complete" t-options="{}" />
+                        <t t-if="order.partner_shipping_id.contact_address_complete">
+                          <span class="text-primary">Envío a:</span>
+                          <span class="d-inline-block text-primary" style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            <t t-esc="order.partner_shipping_id.contact_address_complete"/>
+                          </span>
+                          <a class="ms-1" data-bs-toggle="collapse" href="#fullAddressCollapse" role="button" aria-expanded="false" aria-controls="fullAddressCollapse">
+                            <i class="fa fa-chevron-down small"></i>
+                          </a>
+                          <div class="collapse" id="fullAddressCollapse">
+                            <div class="mt-1">
+                              <span class="text-primary" t-field="order.partner_shipping_id.contact_address_complete" t-options="{}" />
+                            </div>
                           </div>
-                        </div>
+                        </t>
                       </div>
                     </t>
                   </div>
