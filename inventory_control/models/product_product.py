@@ -25,7 +25,7 @@ class ProductProduct(models.Model):
     
     def write(self, vals):
         res = super(ProductProduct, self).write(vals)
-        # Sincronizar el model de la plantilla cuando se actualiza la variante
-        if 'product_model' in vals and self.product_tmpl_id:
-            self.product_tmpl_id.write({'product_model': vals['product_model']})
-        return res            
+        # Sincronizar solo si el cambio no vino del template
+        if 'product_model' in vals and not self.env.context.get('template_update'):
+            self.product_tmpl_id.with_context(product_variant_update=True).write({'product_model': vals['product_model']})
+        return res

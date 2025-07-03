@@ -242,7 +242,7 @@ class ProductTemplate(models.Model):
      
      def write(self, vals):
          res = super(ProductTemplate, self).write(vals)
-         # Actualizar todas las variantes cuando se cambia el product_model
-         if 'product_model' in vals:
-             self.product_variant_ids.write({'product_model': vals['product_model']})
-         return res           
+         # Actualizar las variantes solo si el cambio no vino de una variante
+         if 'product_model' in vals and not self.env.context.get('product_variant_update'):
+             self.with_context(template_update=True).product_variant_ids.write({'product_model': vals['product_model']})
+         return res         
