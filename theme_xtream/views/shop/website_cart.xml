@@ -18,7 +18,9 @@
                       </div>
                       <div class="col-5">
                         <div class="fw-semibold" style="font-size:15px;">
-                          <t t-esc="line.product_id.display_name"/>
+                          <span class="text-truncate d-block" style="max-width:100%;" t-att-title="line.product_id.display_name">
+                            <t t-esc="line.product_id.display_name"/>
+                          </span>
                         </div>
                         <div class="text-muted small mb-1">
                             <t t-if="line.product_id.product_tmpl_id.brand_type_id">
@@ -45,12 +47,12 @@
                           <input type="hidden" name="product_id" t-att-value="line.product_id.id"/>
                           <div class="btn-group">
                             <button type="submit" class="btn btn-outline-secondary" t-att-disabled="line.product_uom_qty &lt;= 1"
-                                   onclick="this.form.querySelector('[name=\'set_qty\']').value = parseInt(this.form.querySelector('[name=\'set_qty\']').value) - 1;">-</button>
+                                    onclick="this.form.querySelector('[name=\'set_qty\']').value = parseInt(this.form.querySelector('[name=\'set_qty\']').value) - 1;">-</button>
                             <button type="button" class="btn btn-outline-secondary" disabled="disabled">
                               <span t-esc="line.product_uom_qty"/>
                             </button>
                             <button type="submit" class="btn btn-outline-secondary"
-                                   onclick="this.form.querySelector('[name=\'set_qty\']').value = parseInt(this.form.querySelector('[name=\'set_qty\']').value) + 1;">+</button>
+                                    onclick="this.form.querySelector('[name=\'set_qty\']').value = parseInt(this.form.querySelector('[name=\'set_qty\']').value) + 1;">+</button>
                           </div>
                           <input type="hidden" name="set_qty" t-att-value="line.product_uom_qty"/>
                         </form>
