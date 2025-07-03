@@ -162,33 +162,25 @@
               localStorage.setItem('cart_qty_' + lineId, qty);
             });
             
-            // Guardar cantidad total del carrito en localStorage
-            localStorage.setItem('total_cart_quantity', totalItems);
-            
             // Actualiza el subtotal
             const subtotalElement = document.getElementById('cart-total-amount');
             if (subtotalElement) {
               subtotalElement.textContent = subtotal.toFixed(2);
             }
             
-            // Actualiza el contador del carrito en el icono globalmente
-            updateGlobalCartCounter(totalItems);
+            // Actualiza el contador del carrito en el icono - usar selectores más específicos
+            const cartCounterElements = document.querySelectorAll('.my_cart_quantity, .fa-shopping-cart ~ .badge, #top_menu .badge');
+            cartCounterElements.forEach(function(element) {
+              if (element) {
+                element.textContent = totalItems;
+              }
+            });
             
             // Actualiza también el texto del tab de carrito
             const cartTabText = document.querySelector('.nav-link.active[data-tab="cart-tab"]');
             if (cartTabText) {
               cartTabText.innerHTML = `Carrito (${totalItems})`;
             }
-          }
-
-          // Función para actualizar el contador del carrito en todos los posibles lugares
-          function updateGlobalCartCounter(quantity) {
-            const cartCounterElements = document.querySelectorAll('.my_cart_quantity, .fa-shopping-cart ~ .badge, #top_menu .badge');
-            cartCounterElements.forEach(function(element) {
-              if (element) {
-                element.textContent = quantity;
-              }
-            });
           }
 
           // Cargar cantidades guardadas en localStorage
@@ -240,35 +232,6 @@
             });
           });
         });
-
-        // Código para actualizar el contador de carrito en todas las páginas
-        (function() {
-          function updateCartCounterGlobally() {
-            const totalItems = localStorage.getItem('total_cart_quantity');
-            if (totalItems !== null) {
-              const cartCounterElements = document.querySelectorAll('.my_cart_quantity, .fa-shopping-cart ~ .badge, #top_menu .badge');
-              cartCounterElements.forEach(function(element) {
-                if (element) {
-                  element.textContent = totalItems;
-                }
-              });
-            }
-          }
-          
-          // Ejecutar cuando el DOM esté listo
-          if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', updateCartCounterGlobally);
-          } else {
-            updateCartCounterGlobally();
-          }
-          
-          // También actualizar cuando se recibe un mensaje de actualización
-          window.addEventListener('storage', function(e) {
-            if (e.key === 'total_cart_quantity') {
-              updateCartCounterGlobally();
-            }
-          });
-        })();
         </script>
 <!-- ...existing code... -->
 
