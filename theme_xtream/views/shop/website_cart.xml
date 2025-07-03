@@ -97,13 +97,13 @@
                         </div>
                       </div>
                     </t>
-                    <t t-else="">
-                      <div class="p-5 text-center text-muted">
-                        <i class="fa fa-shopping-cart fa-3x mb-3"></i>
-                        <p>Tu carrito está vacío</p>
-                        <a href="/shop" class="btn btn-primary">Ir a la tienda</a>
-                      </div>
-                    </t>
+                  </t>
+                  <t t-else="">
+                    <div class="p-5 text-center text-muted">
+                      <i class="fa fa-shopping-cart fa-3x mb-3"></i>
+                      <p>Tu carrito está vacío</p>
+                      <a href="/shop" class="btn btn-primary">Ir a la tienda</a>
+                    </div>
                   </t>
                 </div>
                 
@@ -168,34 +168,8 @@
                 <div class="row align-items-center">
                   <div class="col-md-6 col-12 mb-2 mb-md-0">
                     <t t-if="order.partner_shipping_id">
-                      <div class="text-primary" style="font-size:15px;">
-                        <t t-if="order.partner_shipping_id.contact_address_complete">
-                          <span class="text-primary">Envío a:</span>
-                          <span class="d-inline-block text-primary" style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                            <t t-esc="order.partner_shipping_id.contact_address_complete"/>
-                          </span>
-                          <a class="ms-1" data-bs-toggle="collapse" href="#fullAddressCollapse" role="button" aria-expanded="false" aria-controls="fullAddressCollapse">
-                            <i class="fa fa-chevron-down small"></i>
-                          </a>
-                          <div class="collapse" id="fullAddressCollapse">
-                            <div class="mt-1">
-                              <span class="text-primary" t-field="order.partner_shipping_id.contact_address_complete" t-options="{}" />
-                            </div>
-                          </div>
-                        </t>
-                      </div>
+                      <!-- Shipping information -->
                     </t>
-                  </div>
-                  <div class="col-md-3 col-6 text-end">
-                    <div class="fw-semibold" style="font-size:16px;">
-                      Total: $<span id="cart-total-amount">
-                      <t t-set="subtotal" t-value="sum((line.product_id.discounted_price if line.product_id.discounted_price else line.product_id.list_price) * line.product_uom_qty for line in order.order_line)"/>
-                      <t t-esc="'%.2f' % subtotal"/>
-                      </span>
-                    </div>
-                  </div>
-                  <div class="col-md-3 col-6 text-end">
-                    <a href="/shop/checkout" class="btn btn-primary px-4">Continuar compra</a>
                   </div>
                 </div>
               </div>
@@ -212,123 +186,21 @@
           const savedContent = document.getElementById('saved-tab-content');
           const cartFooter = document.getElementById('cart-footer');
           
-          // Función para cambiar entre pestañas
-          function switchTab(activeTab) {
-            if (activeTab === 'cart') {
-              cartTabBtn.classList.add('active');
-              savedTabBtn.classList.remove('active');
-              cartContent.classList.remove('d-none');
-              savedContent.classList.add('d-none');
-              cartFooter.classList.remove('d-none');
-            } else {
-              savedTabBtn.classList.add('active');
-              cartTabBtn.classList.remove('active');
-              savedContent.classList.remove('d-none');
-              cartContent.classList.add('d-none');
-              cartFooter.classList.add('d-none');
-            }
-          }
-          
-          // Event listeners para los botones de pestaña
+          // Cambio entre pestañas
           cartTabBtn.addEventListener('click', function() {
-            switchTab('cart');
+            cartTabBtn.classList.add('active');
+            savedTabBtn.classList.remove('active');
+            cartContent.classList.remove('d-none');
+            savedContent.classList.add('d-none');
+            cartFooter.classList.remove('d-none');
           });
           
           savedTabBtn.addEventListener('click', function() {
-            switchTab('saved');
-          });
-          
-          // Función para actualizar el precio por línea y el total
-          function updateCartTotals() {
-            let subtotal = 0;
-            let totalItems = 0;
-            
-            document.querySelectorAll('.cart-quantity-input').forEach(function(cartInput) {
-              const qtyInput = cartInput.querySelector('input[name="set_qty"]');
-              if (!qtyInput) return;
-              const pricePerUnit = parseFloat(qtyInput.getAttribute('data-price'));
-              const qty = parseInt(qtyInput.value) || 1;
-              totalItems += qty;
-              const row = cartInput.closest('.row');
-              const lineTotalSpan = row.querySelector('.col-3 .fw-bold');
-              const lineTotal = pricePerUnit * qty;
-              subtotal += lineTotal;
-              if (lineTotalSpan) {
-                lineTotalSpan.textContent = '$' + lineTotal.toFixed(2);
-              }
-              
-              // Guardar cantidad en localStorage
-              const lineId = qtyInput.form.querySelector('input[name="line_id"]').value;
-              localStorage.setItem('cart_qty_' + lineId, qty);
-            });
-            
-            // Actualiza el subtotal
-            const subtotalElement = document.getElementById('cart-total-amount');
-            if (subtotalElement) {
-              subtotalElement.textContent = subtotal.toFixed(2);
-            }
-            
-            // Actualiza el contador del carrito en el icono - usar selectores más específicos
-            const cartCounterElements = document.querySelectorAll('.my_cart_quantity, .fa-shopping-cart ~ .badge, #top_menu .badge');
-            cartCounterElements.forEach(function(element) {
-              if (element) {
-                element.textContent = totalItems;
-              }
-            });
-            
-            // Actualiza también el texto del tab de carrito
-            if (cartTabBtn) {
-              cartTabBtn.innerHTML = `Carrito (${totalItems})`;
-            }
-          }
-
-          // Cargar cantidades guardadas en localStorage
-          document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
-            const lineId = input.form.querySelector('input[name="line_id"]').value;
-            const savedQty = localStorage.getItem('cart_qty_' + lineId);
-            if (savedQty) {
-              // Solo actualizar visualmente, sin enviar al servidor automáticamente
-              input.value = parseInt(savedQty);
-              input.setAttribute('value', parseInt(savedQty));
-            }
-          });
-          
-          // Calcular totales al cargar la página
-          updateCartTotals();
-          
-          // Escuchar cambios en los inputs de cantidad
-          document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
-            input.addEventListener('input', function() {
-              updateCartTotals();
-            });
-            
-            // También actualizar cuando se hacen clics en los botones + y -
-            const minusBtn = input.form.querySelector('button:first-of-type');
-            const plusBtn = input.form.querySelector('button:last-of-type');
-            
-            if (minusBtn) {
-              minusBtn.addEventListener('click', function() {
-                setTimeout(updateCartTotals, 10);
-              });
-            }
-            
-            if (plusBtn) {
-              plusBtn.addEventListener('click', function() {
-                setTimeout(updateCartTotals, 10);
-              });
-            }
-            
-            // Evitar enviar el formulario si la cantidad no cambió
-            input.form.addEventListener('submit', function(e) {
-              const currentQty = parseInt(input.getAttribute('value'));
-              const newQty = parseInt(input.value);
-              if (currentQty === newQty) {
-                e.preventDefault();
-              } else {
-                // Actualizar el contador inmediatamente al enviar el formulario
-                updateCartTotals();
-              }
-            });
+            savedTabBtn.classList.add('active');
+            cartTabBtn.classList.remove('active');
+            savedContent.classList.remove('d-none');
+            cartContent.classList.add('d-none');
+            cartFooter.classList.add('d-none');
           });
         });
         </script>
