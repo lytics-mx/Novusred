@@ -66,10 +66,10 @@
                                       t-att-disabled="line.product_uom_qty &lt;= 1"
                                       onclick="this.form.querySelector('[name=\'set_qty\']').value = parseInt(this.form.querySelector('[name=\'set_qty\']').value) - 1;">-</button>
                                       
-                              <input type="number" name="set_qty" 
+                              <input type="number" name="set_qty"
                                      class="form-control text-center"
-                                     t-att-value="int(line.product_uom_qty)" 
-                                     min="1" 
+                                     t-att-value="int(line.product_uom_qty)"
+                                     min="1"
                                      t-att-max="int(line.product_id.qty_available)"
                                      t-att-data-price="(line.product_id.discounted_price or line.product_id.list_price)"
                                      style="width:2.5em; min-width:32px; max-width:3em; padding:0 4px; border:none; box-shadow:none; background:transparent; outline:none; font-size:14px;"
@@ -159,11 +159,19 @@
               subtotalDiv.textContent = subtotal.toFixed(2);
             }
           }
-
+        
           // Escucha cambios en los inputs de cantidad
           document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
             input.addEventListener('input', function() {
               updateCartTotals();
+            });
+            // Evita enviar el formulario si la cantidad no cambió
+            input.form.addEventListener('submit', function(e) {
+              const currentQty = parseInt(input.getAttribute('value'));
+              const newQty = parseInt(input.value);
+              if (currentQty === newQty) {
+                e.preventDefault();
+              }
             });
           });
         });
