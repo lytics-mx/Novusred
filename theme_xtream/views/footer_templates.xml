@@ -25,9 +25,7 @@
                         <div class="col-lg-3 col-md-6 col-12">
                             <h5 style="font-size: 16px; font-weight: bold; margin-bottom: 15px;">Categorías</h5>
                             <ul style="list-style: none; padding: 0; margin: 0;">
-                                <t t-set="all_categories" t-value="request.env['product.category'].search([('parent_id', '!=', False)], limit=50)" />
-                                <t t-set="random_categories" t-value="request.env['random'].sample(all_categories, min(len(all_categories), 10))" />
-                                <t t-foreach="random_categories" t-as="category">
+                                <t t-foreach="request.env['product.category'].search([('parent_id', '!=', False)], limit=10)" t-as="category">
                                     <li>
                                         <a t-att-href="'/category_search?search=' + category.name" style="text-decoration: none; color: inherit;">
                                             <t t-esc="category.name"/>
