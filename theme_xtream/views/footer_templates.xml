@@ -25,7 +25,10 @@
                         <div class="col-lg-3 col-md-6 col-12">
                             <h5 style="font-size: 16px; font-weight: bold; margin-bottom: 15px;">Categorías</h5>
                             <ul style="list-style: none; padding: 0; margin: 0;">
-                                <t t-foreach="request.env['product.category'].search([('parent_id', '!=', False)], limit=10)" t-as="category">
+                                <t t-set="all_categories" t-value="request.env['product.category'].search([('parent_id', '!=', False)])" />
+                                <t t-set="timestamp" t-value="int(time.time())" />
+                                <t t-set="random_offset" t-value="timestamp % (len(all_categories) or 1)" />
+                                <t t-foreach="all_categories[random_offset:random_offset+10] if len(all_categories) > 10 else all_categories" t-as="category">
                                     <li>
                                         <a t-att-href="'/category_search?search=' + category.name" style="text-decoration: none; color: inherit;">
                                             <t t-esc="category.name"/>
