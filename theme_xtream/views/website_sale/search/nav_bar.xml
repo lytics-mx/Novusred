@@ -87,11 +87,29 @@
                                             Categorías
                                         </a>
                                         <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
-                                            <t t-foreach="request.env['product.category'].search([])" t-as="category">
-                                                <li>
-                                                    <a class="dropdown-item" t-att-href="'/category/' + str(category.id)">
+                                            <t t-foreach="request.env['product.category'].search([('parent_id', '=', False)])" t-as="category">
+                                                <li class="dropdown-submenu">
+                                                    <a class="dropdown-item dropdown-toggle" t-att-href="'/category/' + str(category.id)">
                                                         <t t-esc="category.name"/>
                                                     </a>
+                                                    <ul class="dropdown-menu">
+                                                        <t t-foreach="request.env['product.category'].search([('parent_id', '=', category.id)])" t-as="sub_category">
+                                                            <li>
+                                                                <a class="dropdown-item" t-att-href="'/category/' + str(sub_category.id)">
+                                                                    <t t-esc="sub_category.name"/>
+                                                                </a>
+                                                                <ul class="dropdown-menu">
+                                                                    <t t-foreach="request.env['product.category'].search([('parent_id', '=', sub_category.id)])" t-as="child_category">
+                                                                        <li>
+                                                                            <a class="dropdown-item" t-att-href="'/category/' + str(child_category.id)">
+                                                                                <t t-esc="child_category.name"/>
+                                                                            </a>
+                                                                        </li>
+                                                                    </t>
+                                                                </ul>
+                                                            </li>
+                                                        </t>
+                                                    </ul>
                                                 </li>
                                             </t>
                                         </ul>
