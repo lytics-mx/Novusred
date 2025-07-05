@@ -5,6 +5,7 @@ from odoo.addons.web.controllers.home import Home
 from odoo.exceptions import UserError
 import logging
 
+
 _logger = logging.getLogger(__name__)
 
 class WebsiteAuth(Home):
@@ -12,10 +13,17 @@ class WebsiteAuth(Home):
     @http.route('/web/login', type='http', auth='public', website=True)
     def web_login(self, redirect=None, **kwargs):
         """Override the default login route to handle custom login logic."""
-        if request.env.user and request.env.user.id != request.website.user_id.id:
+        # Check if this is an anonymous user (public user)
+        if not request.env.user or request.env.user.id == request.website.user_id.id:
+            # Show our custom signup template for non-authenticated users
             return request.render('theme_xtream.website_signup', {
                 'redirect': '/subcategory',
             })
+        else:
+            # User is already logged in, redirect to their destination
+            return request.redirect(redirect or '/my/home')
+        
+        # Fallback to standard login page if needed
         return super(WebsiteAuth, self).web_login(redirect=redirect, **kwargs)
     
     
