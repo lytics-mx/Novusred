@@ -9,7 +9,7 @@ class WebsiteAuth(http.Controller):
     def shop_login(self, redirect=None, **post):
         """Custom login page for website users"""
         if request.httprequest.method == 'POST':
-            ensure_db()
+            db_name = ensure_db()
             
             # Get login credentials
             login = post.get('login', '')
@@ -17,7 +17,7 @@ class WebsiteAuth(http.Controller):
             
             # Try to authenticate
             try:
-                uid = request.session.authenticate(login, password)
+                uid = request.session.authenticate(db_name, login, password)
                 if uid:
                     user = request.env['res.users'].sudo().browse(uid)
                     # Check if user is a website user only (no backend access)
