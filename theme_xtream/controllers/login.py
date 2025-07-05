@@ -85,13 +85,13 @@ class WebsiteAuth(Home):
                     })
             
             try:
-                # Create values for portal user (website-only access)
+                # Create values for public user
                 name = post.get('name')
                 if post.get('last_name'):
                     name += ' ' + post.get('last_name')
                 
-                # Create a new portal user
-                portal_group = request.env.ref('base.group_portal')
+                # Create a new public user
+                public_group = request.env.ref('base.group_public')
                 
                 # Generate a partner first
                 partner_values = {
@@ -100,25 +100,25 @@ class WebsiteAuth(Home):
                 }
                 partner = request.env['res.partner'].sudo().create(partner_values)
                 
-                # Create the user with portal access
+                # Create the user with public access
                 user_values = {
                     'login': login,
                     'name': name,
                     'password': post.get('password'),
                     'partner_id': partner.id,
-                    'groups_id': [(6, 0, [portal_group.id])],
+                    'groups_id': [(6, 0, [public_group.id])],
                 }
                 
                 user_sudo = request.env['res.users'].sudo().with_context(
                     no_reset_password=True
                 ).create(user_values)
                 
-                _logger.info("Portal user created successfully: %s (ID: %s)", login, user_sudo.id)
+                _logger.info("Public user created successfully: %s (ID: %s)", login, user_sudo.id)
                 
                 # Authenticate the new user
                 request.session.authenticate(request.session.db, login, post.get('password'))
                 
-                return request.redirect(redirect or '/shop')
+                return request.redirect(redirect or '/subcategory')
             except Exception as e:
                 _logger.error("Signup error: %s (Exception type: %s)", str(e), type(e).__name__)
                 return request.render('theme_xtream.website_signup', {
