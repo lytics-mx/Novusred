@@ -2,10 +2,10 @@ from odoo import http, fields, _
 from odoo.http import request
 from odoo.addons.auth_signup.controllers.main import AuthSignupHome
 from odoo.addons.web.controllers.home import Home
-from . import category_views
-
 from odoo.exceptions import UserError
 import logging
+
+
 _logger = logging.getLogger(__name__)
 
 class WebsiteAuth(Home):
@@ -20,12 +20,8 @@ class WebsiteAuth(Home):
             
             # If login was successful
             if not request.env.user._is_public():
-                # VERIFICAR EXPLÍCITAMENTE si pertenece al grupo público
-                if request.env.user.has_group('base.group_public'):
-                    # Usuario con grupo público - forzar redirección
-                    return request.redirect('/subcategory')
                 # Check user type and redirect accordingly
-                elif request.env.user.has_group('base.group_user'):
+                if request.env.user.has_group('base.group_user'):
                     # Internal user
                     return request.redirect('/web')
                 elif request.env.user.has_group('base.group_portal'):
@@ -42,16 +38,16 @@ class WebsiteAuth(Home):
                 'redirect': redirect or '/subcategory'
             })
         
-        # User is already logged in - PRIMERO verificar si es del grupo público
-        if request.env.user.has_group('base.group_public'):
-            return request.redirect('/subcategory')
-        elif request.env.user.has_group('base.group_user'):
+        # User is already logged in, redirect based on user type
+        if request.env.user.has_group('base.group_user'):
             return request.redirect('/web')
         elif request.env.user.has_group('base.group_portal'):
             return request.redirect('/my')
         else:
             return request.redirect('/subcategory')
 
+    
+    
     @http.route(['/shop/signup'], type='http', auth="public", website=True)
     def shop_signup(self, redirect=None, **post):
         """Custom signup page for website users"""
@@ -75,13 +71,13 @@ class WebsiteAuth(Home):
                     })
             
             try:
-                # Create values for public user
+                # Create values for portal user (website-only access)
                 name = post.get('name')
                 if post.get('last_name'):
                     name += ' ' + post.get('last_name')
                 
-                # Create a new public user
-                public_group = request.env.ref('base.group_public')
+                # Create a new portal user
+                portal_group = request.env.ref('base.group_portal')
                 
                 # Generate a partner first
                 partner_values = {
@@ -90,25 +86,25 @@ class WebsiteAuth(Home):
                 }
                 partner = request.env['res.partner'].sudo().create(partner_values)
                 
-                # Create the user with public access
+                # Create the user with portal access
                 user_values = {
                     'login': login,
                     'name': name,
                     'password': post.get('password'),
                     'partner_id': partner.id,
-                    'groups_id': [(6, 0, [public_group.id])],
+                    'groups_id': [(6, 0, [portal_group.id])],
                 }
                 
                 user_sudo = request.env['res.users'].sudo().with_context(
                     no_reset_password=True
                 ).create(user_values)
                 
-                _logger.info("Public user created successfully: %s (ID: %s)", login, user_sudo.id)
+                _logger.info("Portal user created successfully: %s (ID: %s)", login, user_sudo.id)
                 
                 # Authenticate the new user
                 request.session.authenticate(request.session.db, login, post.get('password'))
                 
-                return request.redirect(redirect or '/subcategory')
+                return request.redirect(redirect or '/shop')
             except Exception as e:
                 _logger.error("Signup error: %s (Exception type: %s)", str(e), type(e).__name__)
                 return request.render('theme_xtream.website_signup', {
