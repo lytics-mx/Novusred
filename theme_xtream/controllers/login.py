@@ -1,12 +1,13 @@
 from odoo import http, fields, _
 from odoo.http import request
 from odoo.addons.auth_signup.controllers.main import AuthSignupHome
+from odoo.addons.web.controllers.home import Home
 from odoo.exceptions import UserError
 import logging
 
 _logger = logging.getLogger(__name__)
 
-class WebsiteAuth(http.Controller):
+class WebsiteAuth(Home):
 
     @http.route('/web/login', type='http', auth='public', website=True)
     def web_login(self, redirect=None, **kwargs):
@@ -16,6 +17,7 @@ class WebsiteAuth(http.Controller):
                 'redirect': '/subcategory',
             })
         return super(WebsiteAuth, self).web_login(redirect=redirect, **kwargs)
+    
     
     @http.route(['/shop/signup'], type='http', auth="public", website=True)
     def shop_signup(self, redirect=None, **post):
