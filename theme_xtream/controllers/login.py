@@ -9,7 +9,7 @@ class WebsiteAuth(http.Controller):
     def shop_login(self, redirect=None, **post):
         """Custom login page for website users"""
         if request.httprequest.method == 'POST':
-            db_name = ensure_db()
+            ensure_db()
             
             # Get login credentials
             login = post.get('login', '')
@@ -17,7 +17,7 @@ class WebsiteAuth(http.Controller):
             
             # Try to authenticate
             try:
-                uid = request.session.authenticate(db_name, login, password)
+                uid = request.session.authenticate(request.session.db, login, password)
                 if uid:
                     user = request.env['res.users'].sudo().browse(uid)
                     # Check if user is a website user only (no backend access)
@@ -32,18 +32,8 @@ class WebsiteAuth(http.Controller):
                             'redirect': redirect,
                         })
             except Exception as e:
-                # Log the exception for debugging
-                request.env['ir.logging'].sudo().create({
-                    'name': 'Website Login Error',
-                    'type': 'server',
-                    'level': 'error',
-                    'message': str(e),
-                    'path': 'controllers/login.py',
-                    'line': 34,
-                    'func': 'shop_login',
-                })
                 return request.render('theme_xtream.website_login', {
-                    'error': _("Wrong login/password. Please check your credentials or contact support."),
+                    'error': _("Wrong login/password"),
                     'redirect': redirect,
                 })
         
