@@ -4,5 +4,11 @@ from odoo.http import request
 class WishlistController(http.Controller):
     @http.route('/shop/wishlist', type='http', auth='public', website=True)
     def wishlist_page(self):
-        # Renderizar directamente el template sin lógica adicional
-        return request.render('theme_xtream.wishlist_template')
+        # Obtener los productos de la wishlist del usuario actual
+        wishlist_items = request.env['product.wishlist'].sudo().search([
+            ('partner_id', '=', request.env.user.partner_id.id)
+        ])
+        # Pasar los productos al template para renderizar
+        return request.render('theme_xtream.wishlist_template', {
+            'wishlist_items': wishlist_items
+        })
