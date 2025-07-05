@@ -15,17 +15,35 @@ class WebsiteAuth(http.Controller):
             login = post.get('login', '')
             password = post.get('password', '')
             
+            # Enhanced debugging information
+            _logger.info("Login attempt for user: %s from IP: %s", login, request.httprequest.remote_addr)
+            
+            # First check if user exists
+            user_exists = request.env['res.users'].sudo().search_count([('login', '=', login)])
+            if not user_exists:
+                _logger.warning("Login failed: User %s does not exist", login)
+                return request.render('theme_xtream.website_login', {
+                    'error': _("Wrong login/password"),
+                    'redirect': redirect,
+                })
+            
             # Try to authenticate
             try:
                 db_name = ensure_db()
+                _logger.info("Authenticating against database: %s", db_name)
+                
                 uid = request.session.authenticate(db_name, login, password)
                 if uid:
                     user = request.env['res.users'].sudo().browse(uid)
+                    _logger.info("Authentication successful for user %s (ID: %s)", login, uid)
+                    
                     # Check if user is a website user only (no backend access)
                     if user.has_group('base.group_portal') and not user.has_group('base.group_user'):
+                        _logger.info("User %s is portal user, redirecting to %s", login, redirect or '/home')
                         # Redirect to homepage or requested page
                         return request.redirect(redirect or '/home')
                     else:
+                        _logger.info("User %s has backend access, logging out", login)
                         # If user has backend access, log them out to prevent access
                         request.session.logout()
                         return request.render('theme_xtream.website_login', {
@@ -34,15 +52,16 @@ class WebsiteAuth(http.Controller):
                         })
                 else:
                     # Authentication returned falsy value
-                    _logger.info("Failed login attempt for user %s from %s", 
-                                 login, request.httprequest.remote_addr)
+                    _logger.warning("Authentication returned falsy value for user %s from %s", 
+                                   login, request.httprequest.remote_addr)
                     return request.render('theme_xtream.website_login', {
                         'error': _("Wrong login/password"),
                         'redirect': redirect,
                     })
             except Exception as e:
                 # Log the specific error
-                _logger.error("Login error for user %s: %s", login, str(e))
+                _logger.error("Login error for user %s: %s (Exception type: %s)", 
+                             login, str(e), type(e).__name__)
                 return request.render('theme_xtream.website_login', {
                     'error': _("Wrong login/password"),
                     'redirect': redirect,
