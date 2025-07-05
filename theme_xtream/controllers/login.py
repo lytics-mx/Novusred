@@ -50,7 +50,6 @@ class WebsiteAuth(http.Controller):
                 'login': post.get('login'),
                 'name': post.get('name') + ' ' + post.get('last_name', ''),
                 'password': post.get('password'),
-                'groups_id': [(6, 0, [request.env.ref('base.group_portal').id])],  # Specify portal group directly
             }
             
             try:
@@ -60,9 +59,8 @@ class WebsiteAuth(http.Controller):
                     signup_valid=True
                 ).create(values)
                 
-                # Remove the section that adds the user to the portal group since we already did it above
-                # portal_group = request.env.ref('base.group_portal')
-                # portal_group.sudo().write({'users': [(4, user_sudo.id)]})
+                # Ensure the user is removed from other groups and add to portal group only
+                user_sudo.sudo().write({'groups_id': [(6, 0, [request.env.ref('base.group_portal').id])]})
                 
                 # Log user in
                 request.session.authenticate(request.session.db, values['login'], values['password'])
@@ -72,6 +70,10 @@ class WebsiteAuth(http.Controller):
                     'error': str(e),
                     'redirect': redirect,
                 })
+        
+        return request.render('theme_xtream.website_signup', {
+            'redirect': redirect,
+        })
         
     @http.route(['/shop/reset_password'], type='http', auth="public", website=True)
     def shop_reset_password(self, redirect=None, **post):
