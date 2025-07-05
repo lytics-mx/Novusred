@@ -16,7 +16,7 @@ class WebsiteAuth(Home):
         # Check if this is an anonymous user (public user)
         if not request.env.user or request.env.user.id == request.website.user_id.id:
             # Show our custom signup template for non-authenticated users
-            return request.render('theme_xtream.website_signup', {
+            return request.render('theme_xtream.website_login', {
                 'redirect': '/subcategory',
             })
         else:
