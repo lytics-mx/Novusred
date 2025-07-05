@@ -87,40 +87,19 @@
                                             Categorías
                                         </a>
                                         <ul class="dropdown-menu category-menu" aria-labelledby="categoriesDropdown">
-                                            <t t-set="top_categories" t-value="request.env['product.category'].search([('parent_id', '=', False)])" />
+                                            <!-- Obtenemos las categorías de segundo nivel -->
+                                            <t t-set="second_level_categories" t-value="request.env['product.category'].search([('parent_id.parent_id', '=', False), ('parent_id', '!=', False)])" />
                                             <t t-set="counter" t-value="1" />
-                                            <t t-foreach="top_categories" t-as="category">
+                                            <t t-foreach="second_level_categories" t-as="category">
                                                 <li class="parent-category">
                                                     <a class="dropdown-item main-category" t-att-href="'/subcategory?category_id=' + str(category.id)">
                                                         <span class="category-number"><t t-esc="counter"/>. </span>
                                                         <t t-esc="category.name"/>
                                                     </a>
-                                                    <!-- Children categories -->
-                                                    <t t-if="category.child_id">
-                                                        <ul class="subcategory-list">
-                                                            <t t-set="subcounter" t-value="'a'" />
-                                                            <t t-foreach="category.child_id" t-as="child">
-                                                                <li class="child-category">
-                                                                    <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + str(child.id)">
-                                                                        <span class="subcategory-letter"><t t-esc="subcounter"/>. </span>
-                                                                        <t t-esc="child.name"/>
-                                                                    </a>
-                                                                    <!-- Grandchildren categories -->
-                                                                    <t t-if="child.child_id">
-                                                                        <ul class="grandchild-list">
-                                                                            <t t-foreach="child.child_id" t-as="grandchild">
-                                                                                <li class="grandchild-category">
-                                                                                    <a class="dropdown-item grand-sub-category" t-att-href="'/subcategory?category_id=' + str(grandchild.id)">
-                                                                                        <t t-esc="grandchild.name"/>
-                                                                                    </a>
-                                                                                </li>
-                                                                            </t>
-                                                                        </ul>
-                                                                    </t>
-                                                                </li>
-                                                                <t t-set="subcounter" t-value="chr(ord(subcounter) + 1)" />
-                                                            </t>
-                                                        </ul>
+                                                    <!-- Función recursiva para mostrar subcategorías sin límite de niveles -->
+                                                    <t t-call="theme_xtream.recursive_subcategories">
+                                                        <t t-set="subcategories" t-value="category.child_id"/>
+                                                        <t t-set="level" t-value="1"/>
                                                     </t>
                                                 </li>
                                                 <t t-set="counter" t-value="counter + 1" />
@@ -194,10 +173,62 @@
 
                         .dropdown-menu .dropdown-item {
                             padding: .25rem 1rem;
-                        }   
+                        }
+                        /* Estilos para niveles adicionales */
+                        .level-1 {
+                            padding-left: 20px;
+                        }
+                        
+                        .level-2 {
+                            padding-left: 20px;
+                        }
+                        
+                        .level-3, .level-4, .level-5 {
+                            padding-left: 20px;
+                        }
+                        
+                        .level-1-item, .level-2-item, .level-3-item, .level-4-item, .level-5-item {
+                            margin: 5px 0;
+                        }
+                        
+                        .level-1 .dropdown-item {
+                            font-weight: normal;
+                        }
+                        
+                        .level-2 .dropdown-item, .level-3 .dropdown-item, .level-4 .dropdown-item, .level-5 .dropdown-item {
+                            font-size: 0.95em;
+                            color: #555;
+                        }                           
                         </style>                     
                 </nav>                
             </div>
         </xpath>
+    </template>
+
+        <template id="recursive_subcategories" name="Recursive Subcategories">
+        <t t-if="subcategories">
+            <ul t-attf-class="subcategory-list level-#{level}">
+                <t t-set="subcounter" t-value="'a'" />
+                <t t-foreach="subcategories" t-as="subcat">
+                    <li t-attf-class="child-category level-#{level}-item">
+                        <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + str(subcat.id)">
+                            <t t-if="level == 1">
+                                <span class="subcategory-letter"><t t-esc="subcounter"/>. </span>
+                            </t>
+                            <t t-esc="subcat.name"/>
+                        </a>
+                        <t t-if="subcat.child_id">
+                            <t t-call="theme_xtream.recursive_subcategories">
+                                <t t-set="subcategories" t-value="subcat.child_id"/>
+                                <t t-set="level" t-value="level + 1"/>
+                            </t>
+                        </t>
+                    </li>
+                    <t t-if="level == 1">
+                        <t t-set="subcounter" t-value="chr(ord(subcounter) + 1)" />
+                    </t>
+                </t>
+            </ul>
+        </t>
     </template>
 </odoo>
