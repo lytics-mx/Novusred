@@ -35,4 +35,5 @@ from . import img_banner
 from . import search
 from . import cart
 from . import login
+from . import wishlist
 
