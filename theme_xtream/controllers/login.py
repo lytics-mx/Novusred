@@ -17,13 +17,14 @@ class WebsiteAuth(http.Controller):
             
             # Try to authenticate
             try:
-                uid = request.session.authenticate(request.session.db, login, password)
+                db_name = ensure_db()
+                uid = request.session.authenticate(db_name, login, password)
                 if uid:
                     user = request.env['res.users'].sudo().browse(uid)
                     # Check if user is a website user only (no backend access)
                     if user.has_group('base.group_portal') and not user.has_group('base.group_user'):
                         # Redirect to homepage or requested page
-                        return request.redirect(redirect or '/shop')
+                        return request.redirect(redirect or '/home')  # Redirect to /home
                     else:
                         # If user has backend access, log them out to prevent access
                         request.session.logout()
