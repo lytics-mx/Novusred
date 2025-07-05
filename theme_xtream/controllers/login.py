@@ -15,7 +15,7 @@ class WebsiteAuth(http.Controller):
             return request.render('theme_xtream.website_signup', {
                 'redirect': '/subcategory',
             })
-        return super(AuthSignupHome, self).web_login(redirect=redirect, **kwargs)
+        return super(WebsiteAuth, self).web_login(redirect=redirect, **kwargs)
     
     @http.route(['/shop/signup'], type='http', auth="public", website=True)
     def shop_signup(self, redirect=None, **post):
