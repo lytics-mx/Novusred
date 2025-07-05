@@ -17,7 +17,7 @@ class WebsiteAuth(http.Controller):
             
             # Try to authenticate
             try:
-                uid = request.session.authenticate(request.session.db, login, password)
+                uid = request.session.authenticate(login, password)
                 if uid:
                     user = request.env['res.users'].sudo().browse(uid)
                     # Check if user is a website user only (no backend access)
@@ -40,6 +40,7 @@ class WebsiteAuth(http.Controller):
                     'message': str(e),
                     'path': 'controllers/login.py',
                     'line': 34,
+                    'func': 'shop_login',
                 })
                 return request.render('theme_xtream.website_login', {
                     'error': _("Wrong login/password. Please check your credentials or contact support."),
