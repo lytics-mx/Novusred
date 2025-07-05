@@ -31,8 +31,9 @@ class WebsiteAuth(http.Controller):
             
             # Authentication attempt with correct parameters
             try:
-                # Corrected authenticate call - remove db_name parameter
-                uid = request.session.authenticate(login, password)
+                # Usar el nombre de la base de datos correcto
+                db_name = 'novusred'  # Usar el nombre que proporcionaste
+                uid = request.session.authenticate(db_name, login, password)
                 
                 if uid:
                     _logger.info("Authentication successful for user %s (ID: %s)", login, uid)
@@ -57,10 +58,6 @@ class WebsiteAuth(http.Controller):
                     'error': error_message,
                     'redirect': redirect,
                 })
-        
-        return request.render('theme_xtream.website_login', {
-            'redirect': redirect,
-        })
     
     @http.route(['/shop/signup'], type='http', auth="public", website=True)
     def shop_signup(self, redirect=None, **post):
