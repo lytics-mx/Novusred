@@ -2,6 +2,8 @@ from odoo import http, fields, _
 from odoo.http import request
 from odoo.addons.auth_signup.controllers.main import AuthSignupHome
 from odoo.exceptions import UserError
+import logging
+_logger = logging.getLogger(__name__)
 
 
 class WebsiteAuth(http.Controller):
@@ -9,8 +11,6 @@ class WebsiteAuth(http.Controller):
     def shop_login(self, redirect=None, **post):
         """Custom login page for website users"""
         if request.httprequest.method == 'POST':
-            ensure_db()
-            
             # Get login credentials
             login = post.get('login', '')
             password = post.get('password', '')
@@ -24,7 +24,7 @@ class WebsiteAuth(http.Controller):
                     # Check if user is a website user only (no backend access)
                     if user.has_group('base.group_portal') and not user.has_group('base.group_user'):
                         # Redirect to homepage or requested page
-                        return request.redirect(redirect or '/home')  # Redirect to /home
+                        return request.redirect(redirect or '/home')
                     else:
                         # If user has backend access, log them out to prevent access
                         request.session.logout()
@@ -32,7 +32,17 @@ class WebsiteAuth(http.Controller):
                             'error': _("This login is for website users only. Please use the regular login page for administrative access."),
                             'redirect': redirect,
                         })
-            except Exception:
+                else:
+                    # Authentication returned falsy value
+                    _logger.info("Failed login attempt for user %s from %s", 
+                                 login, request.httprequest.remote_addr)
+                    return request.render('theme_xtream.website_login', {
+                        'error': _("Wrong login/password"),
+                        'redirect': redirect,
+                    })
+            except Exception as e:
+                # Log the specific error
+                _logger.error("Login error for user %s: %s", login, str(e))
                 return request.render('theme_xtream.website_login', {
                     'error': _("Wrong login/password"),
                     'redirect': redirect,
