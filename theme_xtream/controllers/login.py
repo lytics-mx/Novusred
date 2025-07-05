@@ -13,6 +13,11 @@ class WebsiteAuth(Home):
     @http.route('/web/login', type='http', auth='public', website=True)
     def web_login(self, redirect=None, **kwargs):
         """Override the default login route to handle custom login logic."""
+        # Add debug logging
+        if not request.env.user._is_public() and request.env.user.has_group('base.group_public'):
+            _logger.info("DEBUG: User %s has public group, redirecting to /subcategory", request.env.user.login)
+            return request.redirect('/subcategory')
+        
         # If this is a POST request (login form submitted)
         if request.httprequest.method == 'POST':
             # Let the parent handle authentication
@@ -20,37 +25,39 @@ class WebsiteAuth(Home):
             
             # If login was successful
             if not request.env.user._is_public():
-                # Check user type and redirect accordingly
-                if request.env.user.has_group('base.group_user'):
-                    # Internal user
-                    return request.redirect('/web')
-                elif request.env.user.has_group('base.group_public'):
-                    # Public user - check this BEFORE portal
+                # Debug logging
+                _logger.info("User %s groups: %s", request.env.user.login, 
+                            request.env.user.groups_id.mapped('name'))
+                
+                # Check if the user has the public group - do this FIRST
+                if request.env.user.has_group('base.group_public'):
+                    _logger.info("Redirecting public user %s to /subcategory", request.env.user.login)
                     return request.redirect('/subcategory')
+                # Other group checks
+                elif request.env.user.has_group('base.group_user'):
+                    return request.redirect('/web')
                 elif request.env.user.has_group('base.group_portal'):
-                    # Portal user
                     return request.redirect('/my')
                 else:
-                    # Other authenticated user
                     return request.redirect('/subcategory')
             return response
         
-        # GET request - show login form for anonymous users
-        if request.env.user._is_public():
-            return request.render('theme_xtream.website_login', {
-                'redirect': redirect or '/subcategory'
-            })
+        # GET request handling
+        # Similar changes for GET requests as we did for POST
+        if not request.env.user._is_public():
+            if request.env.user.has_group('base.group_public'):
+                return request.redirect('/subcategory')
+            elif request.env.user.has_group('base.group_user'):
+                return request.redirect('/web')
+            elif request.env.user.has_group('base.group_portal'):
+                return request.redirect('/my')
+            else:
+                return request.redirect('/subcategory')
         
-        # User is already logged in, redirect based on user type
-        if request.env.user.has_group('base.group_user'):
-            return request.redirect('/web')
-        elif request.env.user.has_group('base.group_public'):
-            # Public user - check this BEFORE portal
-            return request.redirect('/subcategory')
-        elif request.env.user.has_group('base.group_portal'):
-            return request.redirect('/my')
-        else:
-            return request.redirect('/subcategory')
+        # Show login form for anonymous users
+        return request.render('theme_xtream.website_login', {
+            'redirect': redirect or '/subcategory'
+        })
     
     
     @http.route(['/shop/signup'], type='http', auth="public", website=True)
