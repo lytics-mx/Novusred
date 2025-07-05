@@ -29,11 +29,10 @@ class WebsiteAuth(http.Controller):
                         'redirect': redirect,
                     })
             
-            # Authentication attempt with correct parameters
+            # Authentication attempt with correct parameters (only 2 arguments)
             try:
-                # Usar el nombre de la base de datos correcto
-                db_name = 'novusred'  # Usar el nombre que proporcionaste
-                uid = request.session.authenticate(db_name, login, password)
+                # Removing the db_name parameter
+                uid = request.session.authenticate(login, password)
                 
                 if uid:
                     _logger.info("Authentication successful for user %s (ID: %s)", login, uid)
@@ -52,7 +51,6 @@ class WebsiteAuth(http.Controller):
                 })
             except Exception as e:
                 _logger.error("Login error: %s (Exception type: %s)", str(e), type(e).__name__)
-                # Show actual error for debugging
                 error_message = "Error de autenticación: " + str(e)
                 return request.render('theme_xtream.website_login', {
                     'error': error_message,
