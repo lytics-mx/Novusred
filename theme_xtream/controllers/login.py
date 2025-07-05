@@ -45,9 +45,19 @@ class WebsiteAuth(http.Controller):
     def shop_signup(self, redirect=None, **post):
         """Custom signup page for website users"""
         if request.httprequest.method == 'POST':
+            # Check if user already exists
+            login = post.get('login')
+            if login:
+                existing_user = request.env['res.users'].sudo().search([('login', '=', login)], limit=1)
+                if existing_user:
+                    return request.render('theme_xtream.website_signup', {
+                        'error': _("Ya existe una cuenta con este correo electrónico. Por favor utiliza otro correo o recupera tu contraseña."),
+                        'redirect': redirect,
+                    })
+            
             # Create values for user creation
             values = {
-                'login': post.get('login'),
+                'login': login,
                 'name': post.get('name') + ' ' + post.get('last_name', ''),
                 'password': post.get('password'),
                 'groups_id': [(6, 0, [request.env.ref('base.group_portal').id])],  # Specify portal group directly
@@ -60,10 +70,6 @@ class WebsiteAuth(http.Controller):
                     signup_valid=True
                 ).create(values)
                 
-                # Remove the section that adds the user to the portal group since we already did it above
-                # portal_group = request.env.ref('base.group_portal')
-                # portal_group.sudo().write({'users': [(4, user_sudo.id)]})
-                
                 # Log user in
                 request.session.authenticate(request.session.db, values['login'], values['password'])
                 return request.redirect(redirect or '/shop')
@@ -71,8 +77,7 @@ class WebsiteAuth(http.Controller):
                 return request.render('theme_xtream.website_signup', {
                     'error': str(e),
                     'redirect': redirect,
-                })
-        
+                })        
     @http.route(['/shop/reset_password'], type='http', auth="public", website=True)
     def shop_reset_password(self, redirect=None, **post):
         """Custom password reset for website users"""
