@@ -78,16 +78,15 @@
                 </nav>
                 <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #5081FF;">
                     <div class="container">
-                        <div class="d-flex align-items-center justify-content-center w-100 flex-wrap flex-lg-nowrap">
-                            <div class="d-flex align-items-center flex-grow-1" style="width: 100%;">
-                                <!-- Navbar links -->
-                                <ul class="nav nav-pills flex-grow-1 justify-content-center" style="width: 100%;">
+                        <div class="d-flex align-items-center justify-content-between w-100 flex-wrap flex-lg-nowrap">
+                            <!-- Left side: Categories, Offers, Brands, History, About Us, Contact -->
+                            <div class="d-flex align-items-center flex-grow-1 justify-content-start" style="width: 50%;">
+                                <ul class="nav nav-pills flex-grow-1 justify-content-start" style="width: 100%; color: white;">
                                     <li class="nav-item dropdown">
-                                        <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <a class="nav-link dropdown-toggle text-white" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                             Categorías
                                         </a>
                                         <ul class="dropdown-menu category-menu" aria-labelledby="categoriesDropdown">
-                                            <!-- Obtenemos las categorías de segundo nivel -->
                                             <t t-set="second_level_categories" t-value="request.env['product.category'].search([('parent_id.parent_id', '=', False), ('parent_id', '!=', False)])" />
                                             <t t-set="counter" t-value="1" />
                                             <t t-foreach="second_level_categories" t-as="category">
@@ -96,7 +95,6 @@
                                                         <span class="category-number"><t t-esc="counter"/>. </span>
                                                         <t t-esc="category.name"/>
                                                     </a>
-                                                    <!-- Función recursiva para mostrar subcategorías sin límite de niveles -->
                                                     <t t-call="theme_xtream.recursive_subcategories">
                                                         <t t-set="subcategories" t-value="category.child_id"/>
                                                         <t t-set="level" t-value="1"/>
@@ -107,30 +105,35 @@
                                         </ul>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="/offers">Ofertas</a>
+                                        <a class="nav-link text-white" href="/offers">Ofertas</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="/brand">Marcas</a>
+                                        <a class="nav-link text-white" href="/brand">Marcas</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="/shop/history">Historial</a>
+                                        <a class="nav-link text-white" href="/shop/history">Historial</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="/about">Sobre Nosotros</a>
+                                        <a class="nav-link text-white" href="/about">Sobre Nosotros</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="/contactus">Contacto</a>
+                                        <a class="nav-link text-white" href="/contactus">Contacto</a>
                                     </li>
+                                </ul>
+                            </div>
+                            <!-- Right side: User, Cart, Notifications -->
+                            <div class="d-flex align-items-center justify-content-end" style="width: 50%;">
+                                <ul class="nav nav-pills flex-grow-1 justify-content-end" style="width: 100%; color: white;">
                                     <li class="nav-item d-flex align-items-center">
                                         <t t-if="request.env.user.id == request.website.user_id.id">
-                                            <a class="nav-link d-flex align-items-center" href="/web/login">
+                                            <a class="nav-link text-white d-flex align-items-center" href="/web/login">
                                                 <span>Login</span>
                                                 <i class="fa fa-user ms-2"></i>
                                             </a>
                                         </t>
                                         <t t-else="">
                                             <div class="dropdown">
-                                                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                     <span><t t-esc="request.env.user.name or 'Usuario'"/></span>
                                                     <i class="fa fa-user ms-2"></i>
                                                 </a>
@@ -145,16 +148,18 @@
                                         </t>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="/shop/cart">
+                                        <a class="nav-link text-white" href="/shop/cart">
                                             <i class="fa fa-shopping-cart"></i>
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="/shop/notifications">
+                                        <a class="nav-link text-white" href="/shop/notifications">
                                             <i class="fa fa-bell"></i>
                                         </a>
                                     </li>
                                 </ul>
+                            </div>
+                        </div>
                             </div>
                         </div>
                     </div>
