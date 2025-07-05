@@ -2,8 +2,6 @@ from odoo import http, fields, _
 from odoo.http import request
 from odoo.addons.auth_signup.controllers.main import AuthSignupHome
 from odoo.exceptions import UserError
-import logging
-_logger = logging.getLogger(__name__)
 
 
 class WebsiteAuth(http.Controller):
@@ -11,23 +9,15 @@ class WebsiteAuth(http.Controller):
     def shop_login(self, redirect=None, **post):
         """Custom login page for website users"""
         if request.httprequest.method == 'POST':
-            db_name = ensure_db()
+            ensure_db()
             
             # Get login credentials
             login = post.get('login', '')
             password = post.get('password', '')
             
-            # Check if user exists first
-            user_exists = request.env['res.users'].sudo().search([('login', '=', login)], limit=1)
-            if not user_exists:
-                return request.render('theme_xtream.website_login', {
-                    'error': _("No se encontró ninguna cuenta con este correo electrónico."),
-                    'redirect': redirect,
-                })
-                
             # Try to authenticate
             try:
-                uid = request.session.authenticate(db_name, login, password)
+                uid = request.session.authenticate(request.session.db, login, password)
                 if uid:
                     user = request.env['res.users'].sudo().browse(uid)
                     # Check if user is a website user only (no backend access)
@@ -38,22 +28,27 @@ class WebsiteAuth(http.Controller):
                         # If user has backend access, log them out to prevent access
                         request.session.logout()
                         return request.render('theme_xtream.website_login', {
-                            'error': _("Este login es solo para usuarios del sitio web. Por favor use la página de login regular para acceso administrativo."),
+                            'error': _("This login is for website users only. Please use the regular login page for administrative access."),
                             'redirect': redirect,
                         })
-                else:
-                    # Authentication failed but no exception was raised
-                    return request.render('theme_xtream.website_login', {
-                        'error': _("Contraseña incorrecta. Por favor intente nuevamente."),
-                        'redirect': redirect,
-                    })
             except Exception as e:
-                # Log the error for debugging
-                _logger.error("Login error: %s", str(e))
+                # Log the exception for debugging
+                request.env['ir.logging'].sudo().create({
+                    'name': 'Website Login Error',
+                    'type': 'server',
+                    'level': 'error',
+                    'message': str(e),
+                    'path': 'controllers/login.py',
+                    'line': 34,
+                })
                 return request.render('theme_xtream.website_login', {
-                    'error': _("Error de autenticación. Por favor intente nuevamente."),
+                    'error': _("Wrong login/password. Please check your credentials or contact support."),
                     'redirect': redirect,
                 })
+        
+        return request.render('theme_xtream.website_login', {
+            'redirect': redirect,
+        })
     
     @http.route(['/shop/signup'], type='http', auth="public", website=True)
     def shop_signup(self, redirect=None, **post):
