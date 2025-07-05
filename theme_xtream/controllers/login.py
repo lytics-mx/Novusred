@@ -7,16 +7,142 @@ _logger = logging.getLogger(__name__)
 
 
 class WebsiteAuth(http.Controller):
-    @http.route('/web/login', type='http', auth='public', website=True)
-    def web_login(self, redirect=None, **kwargs):
-        """Override the default login route to handle custom login logic."""
-        if request.env.user and request.env.user.id != request.website.user_id.id:
-            return request.redirect('/subcategory')
-        return AuthSignupHome.web_login(self, redirect=redirect, **kwargs)
+    @http.route(['/shop/login'], type='http', auth="public", website=True)
+    def shop_login(self, redirect=None, **post):
+        """Custom login page for website users"""
+        if request.httprequest.method == 'POST':
+            # Get login credentials
+            login = post.get('login', '')
+            password = post.get('password', '')
+            
+            # Enhanced debugging information
+            _logger.info("Login attempt for user: %s from IP: %s", login, request.httprequest.remote_addr)
+            
+            # First check if user exists and is active
+            user = request.env['res.users'].sudo().search([
+                ('login', '=', login),
+                ('active', '=', True)
+            ], limit=1)
+            
+            if not user:
+                _logger.warning("Login failed: User %s does not exist or is inactive", login)
+                return request.render('theme_xtream.website_login', {
+                    'error': _("Invalid credentials"),
+                    'redirect': redirect,
+                })
+            
+            # Check if user is a portal user
+            if not user.has_group('base.group_portal') or user.has_group('base.group_user'):
+                _logger.warning("User %s is not a portal user or has backend access", login)
+                return request.render('theme_xtream.website_login', {
+                    'error': _("This login is for website users only. Please use the regular login page for administrative access."),
+                    'redirect': redirect,
+                })
+            
+            # Try to authenticate using the standard method
+            try:
+                db_name = request.session.db
+                if not db_name:
+                    db_name = request.env.cr.dbname
+                
+                _logger.info("Attempting authentication with database: %s", db_name)
+                
+                # Use the standard authenticate method
+                uid = request.session.authenticate(db_name, login, password)
+                
+                if uid:
+                    _logger.info("Authentication successful for user %s (ID: %s)", login, uid)
+                    return request.redirect(redirect or '/home')
+                else:
+                    _logger.warning("Authentication failed for user %s (password likely incorrect)", login)
+                    return request.render('theme_xtream.website_login', {
+                        'error': _("Invalid password"),
+                        'redirect': redirect,
+                    })
+                    
+            except Exception as e:
+                _logger.error("Authentication error for user %s: %s (type: %s)", 
+                              login, str(e), type(e).__name__)
+                return request.render('theme_xtream.website_login', {
+                    'error': _("Wrong login/password"),
+                    'redirect': redirect,
+                })
+        
+        return request.render('theme_xtream.website_login', {
+            'redirect': redirect,
+        })
+    
+    @http.route(['/shop/signup'], type='http', auth="public", website=True)
+    def shop_signup(self, redirect=None, **post):
+        """Custom signup page for website users"""
+        if request.httprequest.method == 'POST':
+            # Check if user already exists
+            login = post.get('login')
+            if login:
+                existing_user = request.env['res.users'].sudo().search([('login', '=', login)], limit=1)
+                if existing_user:
+                    return request.render('theme_xtream.website_signup', {
+                        'error': _("Ya existe una cuenta con este correo electrónico. Por favor utiliza otro correo o recupera tu contraseña."),
+                        'redirect': redirect,
+                    })
+            
+            # Create values for user creation
+            values = {
+                'login': login,
+                'name': post.get('name') + ' ' + post.get('last_name', ''),
+                'password': post.get('password'),
+                'groups_id': [(6, 0, [request.env.ref('base.group_portal').id])],  # Specify portal group directly
+            }
+            
+            try:
+                # Create a portal user (no backend access)
+                user_sudo = request.env['res.users'].sudo().with_context(
+                    no_reset_password=True,
+                    signup_valid=True
+                ).create(values)
+                
+                # Log user in - CORRECTED LINE
+                db_name = ensure_db()
+                request.session.authenticate(db_name, login, values['password'])
+                return request.redirect(redirect or '/shop')
+            except Exception as e:
+                return request.render('theme_xtream.website_signup', {
+                    'error': str(e),
+                    'redirect': redirect,
+                })        
+    @http.route(['/shop/reset_password'], type='http', auth="public", website=True)
+    def shop_reset_password(self, redirect=None, **post):
+        """Custom password reset for website users"""
+        if request.httprequest.method == 'POST':
+            login = post.get('login')
+            if login:
+                user = request.env['res.users'].sudo().search([('login', '=', login)])
+                if user and user.has_group('base.group_portal'):
+                    try:
+                        user.action_reset_password()
+                        return request.render('theme_xtream.website_reset_password_success', {
+                            'message': _("Password reset instructions have been sent to your email.")
+                        })
+                    except Exception as e:
+                        return request.render('theme_xtream.website_reset_password', {
+                            'error': str(e),
+                            'redirect': redirect,
+                        })
+                else:
+                    return request.render('theme_xtream.website_reset_password', {
+                        'error': _("No website account found with this email."),
+                        'redirect': redirect,
+                    })
+        
+        return request.render('theme_xtream.website_reset_password', {
+            'redirect': redirect,
+        })
 
-    @http.route('/web/logout', type='http', auth='user', website=True)
-    def web_logout(self, redirect=None):
-        """Override the default logout route to handle custom logout logic."""
-        if request.env.user and request.env.user.id != request.website.user_id.id:
-            return request.redirect('/subcategory')
-        return AuthSignupHome.web_logout(self, redirect=redirect)
+# Helper function to ensure database
+def ensure_db():
+    db = request.session.db
+    if not db:
+        db = request.env.cr.dbname
+    if not db:
+        raise http.LocalRedirect('/web/database/selector')
+    return db
