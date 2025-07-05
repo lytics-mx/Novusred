@@ -29,25 +29,22 @@ class WebsiteAuth(Home):
                 _logger.info("User %s groups: %s", request.env.user.login, 
                             request.env.user.groups_id.mapped('name'))
                 
-                # Check if the user has the public group - do this FIRST
+                # Check if the user has the public group
                 if request.env.user.has_group('base.group_public'):
                     _logger.info("Redirecting public user %s to /subcategory", request.env.user.login)
                     return request.redirect('/subcategory')
-                # Other group checks
                 elif request.env.user.has_group('base.group_user'):
                     return request.redirect('/web')
                 elif request.env.user.has_group('base.group_portal'):
                     return request.redirect('/my')
-                elif request.env.user.has_group('base.group_public'):
-                    return request.redirect('/subcategory')
                 else:
                     return request.redirect('/subcategory')
             return response
         
         # GET request handling
-        # Similar changes for GET requests as we did for POST
         if not request.env.user._is_public():
             if request.env.user.has_group('base.group_public'):
+                _logger.info("Redirecting public user %s to /subcategory", request.env.user.login)
                 return request.redirect('/subcategory')
             elif request.env.user.has_group('base.group_user'):
                 return request.redirect('/web')
@@ -61,7 +58,9 @@ class WebsiteAuth(Home):
             'redirect': redirect or '/subcategory'
         })
     
-    
+
+
+
     @http.route(['/shop/signup'], type='http', auth="public", website=True)
     def shop_signup(self, redirect=None, **post):
         """Custom signup page for website users"""
