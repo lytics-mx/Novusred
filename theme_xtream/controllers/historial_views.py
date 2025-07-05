@@ -20,47 +20,16 @@ class ProductHistoryController(http.Controller):
     def view_history(self, period_filter=None):
         """Obtiene el historial de productos vistos por el usuario actual agrupado por períodos."""
         
-        # Obtener todas las visitas del usuario con sudo() para garantizar acceso
+        # Buscar tracks usando el campo user_id directamente
         if request.env.user._is_public():
-            # Para usuarios anónimos, usar el visitor_id de la sesión actual
-            visitor_sudo = request.env['website.visitor'].sudo()._get_visitor_from_request()
-            if visitor_sudo:
-                tracks = request.env['website.track'].sudo().search([
-                    ('visitor_id', '=', visitor_sudo.id),
-                    ('product_id', '!=', False)
-                ], order='visit_datetime desc')
-            else:
-                tracks = request.env['website.track'].sudo()
+            # Usuario anónimo - no tiene historial
+            tracks = request.env['website.track'].sudo()
         else:
-            # Para usuarios autenticados, buscar TODOS sus visitors (actuales y pasados)
-            user_partner_id = request.env.user.partner_id.id
-            visitors = request.env['website.visitor'].sudo().search([
-                ('partner_id', '=', user_partner_id)
-            ])
-            
-            # Incluir el visitor actual aunque no esté vinculado al partner todavía
-            current_visitor = request.env['website.visitor'].sudo()._get_visitor_from_request()
-            if current_visitor and current_visitor.id not in visitors.ids:
-                visitors |= current_visitor
-            
-            # Buscar tracks de todos los visitors del usuario
+            # Usuario autenticado - buscar por user_id
             tracks = request.env['website.track'].sudo().search([
-                ('visitor_id', 'in', visitors.ids),
+                ('user_id', '=', request.env.user.id),
                 ('product_id', '!=', False)
             ], order='visit_datetime desc')
-        
-        # Resto del código sin cambios...
-            
-            # Si no hay resultados, buscar también el visitor actual 
-            # (puede ser que el usuario esté navegando ahora y sus visitas 
-            # no estén asociadas a su partner_id todavía)
-            if not tracks:
-                visitor_sudo = request.env['website.visitor']._get_visitor_from_request()
-                if visitor_sudo:
-                    tracks = request.env['website.track'].sudo().search([
-                        ('visitor_id', '=', visitor_sudo.id),
-                        ('product_id', '!=', False)
-                    ], order='visit_datetime desc')
         
         # Configurar zona horaria
         user_tz = pytz.timezone('America/Mexico_City')
@@ -156,32 +125,21 @@ class ProductHistoryController(http.Controller):
             'total_products': total_products,
         })
 
-    @http.route('/shop/history/remove/<int:product_id>', type='http', auth='public', website=True)
+    @http.route('/shop/history/remove/<int:product_id>', type='http', auth='user', website=True)
     def remove_from_history(self, product_id):
         """Elimina un producto del historial del usuario actual."""
+        user_partner_id = request.env.user.partner_id.id
         
-        if request.env.user._is_public():
-            visitor_sudo = request.env['website.visitor']._get_visitor_from_request()
-            if visitor_sudo:
-                track_entries = request.env['website.track'].sudo().search([
-                    ('visitor_id', '=', visitor_sudo.id),
-                    ('product_id.product_tmpl_id', '=', product_id)
-                ])
-            else:
-                track_entries = request.env['website.track'].sudo()
-        else:
-            user_partner_id = request.env.user.partner_id.id
-            track_entries = request.env['website.track'].sudo().search([
-                '|',
-                ('visitor_id.partner_id', '=', user_partner_id),
-                ('visitor_id', '=', request.env['website.visitor']._get_visitor_from_request().id),
-                ('product_id.product_tmpl_id', '=', product_id)
-            ])
-    
+        # Buscar todos los registros de este producto para este usuario
+        track_entries = request.env['website.track'].sudo().search([
+            ('visitor_id.partner_id', '=', user_partner_id),
+            ('product_id.product_tmpl_id', '=', product_id)
+        ])
+
         # Eliminar todos los registros
         if track_entries:
             track_entries.unlink()
-    
+
         # Redirigir de vuelta al historial
         return request.redirect('/shop/history')
     
