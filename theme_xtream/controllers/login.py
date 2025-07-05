@@ -7,55 +7,15 @@ import logging
 _logger = logging.getLogger(__name__)
 
 class WebsiteAuth(http.Controller):
-    @http.route(['/shop/login'], type='http', auth="public", website=True)
-    def shop_login(self, redirect=None, **post):
-        """Custom login page for website users"""
-        if request.httprequest.method == 'POST':
-            # Get login credentials
-            login = post.get('login', '')
-            password = post.get('password', '')
-            
-            _logger.info("Login attempt for user: %s from IP: %s", login, request.httprequest.remote_addr)
-            
-            # Check if user exists and is active
-            user_exists = request.env['res.users'].sudo().search([('login', '=', login)], limit=1)
-            if user_exists:
-                _logger.info("User found: %s (ID: %s, Active: %s)", login, user_exists.id, user_exists.active)
-                
-                if not user_exists.active:
-                    _logger.warning("User %s is inactive", login)
-                    return request.render('theme_xtream.website_login', {
-                        'error': _("Esta cuenta está desactivada. Contacte al administrador."),
-                        'redirect': redirect,
-                    })
-            
-            # Authentication attempt with correct parameters (only 2 arguments)
-            try:
-                # Removing the db_name parameter
-                uid = request.session.authenticate(login, password)
-                
-                if uid:
-                    _logger.info("Authentication successful for user %s (ID: %s)", login, uid)
-                    return request.redirect(redirect or '/shop')
-                else:
-                    _logger.warning("Invalid credentials for user %s", login)
-                    return request.render('theme_xtream.website_login', {
-                        'error': _("Usuario o contraseña incorrectos"),
-                        'redirect': redirect,
-                    })
-            except UserError as ue:
-                _logger.error("User error during login: %s", str(ue))
-                return request.render('theme_xtream.website_login', {
-                    'error': str(ue),
-                    'redirect': redirect,
-                })
-            except Exception as e:
-                _logger.error("Login error: %s (Exception type: %s)", str(e), type(e).__name__)
-                error_message = "Error de autenticación: " + str(e)
-                return request.render('theme_xtream.website_login', {
-                    'error': error_message,
-                    'redirect': redirect,
-                })
+
+    @http.route('/web/login', type='http', auth='public', website=True)
+    def web_login(self, redirect=None, **kwargs):
+        """Override the default login route to handle custom login logic."""
+        if request.env.user and request.env.user.id != request.website.user_id.id:
+            return request.render('theme_xtream.website_signup', {
+                'redirect': '/subcategory',
+            })
+        return AuthSignupHome.web_login(self, redirect=redirect, **kwargs)
     
     @http.route(['/shop/signup'], type='http', auth="public", website=True)
     def shop_signup(self, redirect=None, **post):
