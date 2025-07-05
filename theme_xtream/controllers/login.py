@@ -104,7 +104,7 @@ class WebsiteAuth(Home):
                 # Authenticate the new user
                 request.session.authenticate(request.session.db, login, post.get('password'))
                 
-                return request.redirect(redirect or '/shop')
+                return request.redirect(redirect or '/subcategory')
             except Exception as e:
                 _logger.error("Signup error: %s (Exception type: %s)", str(e), type(e).__name__)
                 return request.render('theme_xtream.website_signup', {
