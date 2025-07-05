@@ -20,14 +20,7 @@ class WebsiteAuth(http.Controller):
             # Check if user exists and is active
             user_exists = request.env['res.users'].sudo().search([('login', '=', login)], limit=1)
             if user_exists:
-                # Debug info - very detailed logging
                 _logger.info("User found: %s (ID: %s, Active: %s)", login, user_exists.id, user_exists.active)
-                _logger.info("User groups: %s", ','.join([g.name for g in user_exists.groups_id]))
-                _logger.info("Database being used: %s", request.session.db)
-                
-                # Check if user has portal access
-                has_portal = request.env.ref('base.group_portal').id in user_exists.groups_id.ids
-                _logger.info("Has portal access: %s", has_portal)
                 
                 if not user_exists.active:
                     _logger.warning("User %s is inactive", login)
@@ -35,18 +28,13 @@ class WebsiteAuth(http.Controller):
                         'error': _("Esta cuenta está desactivada. Contacte al administrador."),
                         'redirect': redirect,
                     })
-            else:
-                _logger.warning("User not found: %s", login)
             
-            # Authentication attempt with detailed error logging
+            # Authentication attempt with correct parameters
             try:
-                # Use explicit database name for clarity
-                db_name = request.session.db
-                _logger.info("Attempting authentication on database: %s", db_name)
+                # Corrected authenticate call - remove db_name parameter
+                uid = request.session.authenticate(login, password)
                 
-                uid = request.session.authenticate(db_name, login, password)
                 if uid:
-                    user = request.env['res.users'].sudo().browse(uid)
                     _logger.info("Authentication successful for user %s (ID: %s)", login, uid)
                     return request.redirect(redirect or '/shop')
                 else:
