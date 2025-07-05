@@ -13,18 +13,38 @@ class WebsiteAuth(Home):
     @http.route('/web/login', type='http', auth='public', website=True)
     def web_login(self, redirect=None, **kwargs):
         """Override the default login route to handle custom login logic."""
-        # Check if this is an anonymous user (public user)
-        if not request.env.user or request.env.user.id == request.website.user_id.id:
-            # Show our custom signup template for non-authenticated users
-            return request.render('theme_xtream.website_login', {
-                'redirect': '/subcategory',
-            })
-        else:
-            # User is already logged in, redirect to their destination
-            return request.redirect(redirect or '/my/home')
+        # If this is a POST request (login form submitted)
+        if request.httprequest.method == 'POST':
+            # Let the parent handle authentication
+            response = super(WebsiteAuth, self).web_login(redirect=redirect, **kwargs)
+            
+            # If login was successful
+            if not request.env.user._is_public():
+                # Check user type and redirect accordingly
+                if request.env.user.has_group('base.group_user'):
+                    # Internal user
+                    return request.redirect('/web')
+                elif request.env.user.has_group('base.group_portal'):
+                    # Portal user
+                    return request.redirect('/my')
+                else:
+                    # Other authenticated user
+                    return request.redirect('/subcategory')
+            return response
         
-        # Fallback to standard login page if needed
-        return super(WebsiteAuth, self).web_login(redirect=redirect, **kwargs)
+        # GET request - show login form for anonymous users
+        if request.env.user._is_public():
+            return request.render('theme_xtream.website_login', {
+                'redirect': redirect or '/subcategory'
+            })
+        
+        # User is already logged in, redirect based on user type
+        if request.env.user.has_group('base.group_user'):
+            return request.redirect('/web')
+        elif request.env.user.has_group('base.group_portal'):
+            return request.redirect('/my')
+        else:
+            return request.redirect('/subcategory')
     
     
     @http.route(['/shop/signup'], type='http', auth="public", website=True)
