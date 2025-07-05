@@ -36,6 +36,8 @@ class WebsiteAuth(Home):
                 elif request.env.user.has_group('base.group_user'):
                     return request.redirect('/web')
                 elif request.env.user.has_group('base.group_portal'):
+                    if request.env.user.has_group('base.group_public'):
+                        return request.redirect('/subcategory')
                     return request.redirect('/my')
                 else:
                     return request.redirect('/subcategory')
