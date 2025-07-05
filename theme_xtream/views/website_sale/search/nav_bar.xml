@@ -86,13 +86,44 @@
                                         <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                             Categorías
                                         </a>
-                                        <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
-                                            <t t-foreach="request.env['product.category'].search([])" t-as="category">
-                                                <li>
-                                                    <a class="dropdown-item" t-att-href="'/subcategory?category_id=' + str(category.id)">
+                                        <ul class="dropdown-menu category-menu" aria-labelledby="categoriesDropdown">
+                                            <t t-set="top_categories" t-value="request.env['product.category'].search([('parent_id', '=', False)])" />
+                                            <t t-set="counter" t-value="1" />
+                                            <t t-foreach="top_categories" t-as="category">
+                                                <li class="parent-category">
+                                                    <a class="dropdown-item main-category" t-att-href="'/subcategory?category_id=' + str(category.id)">
+                                                        <span class="category-number"><t t-esc="counter"/>. </span>
                                                         <t t-esc="category.name"/>
                                                     </a>
+                                                    <!-- Children categories -->
+                                                    <t t-if="category.child_id">
+                                                        <ul class="subcategory-list">
+                                                            <t t-set="subcounter" t-value="'a'" />
+                                                            <t t-foreach="category.child_id" t-as="child">
+                                                                <li class="child-category">
+                                                                    <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + str(child.id)">
+                                                                        <span class="subcategory-letter"><t t-esc="subcounter"/>. </span>
+                                                                        <t t-esc="child.name"/>
+                                                                    </a>
+                                                                    <!-- Grandchildren categories -->
+                                                                    <t t-if="child.child_id">
+                                                                        <ul class="grandchild-list">
+                                                                            <t t-foreach="child.child_id" t-as="grandchild">
+                                                                                <li class="grandchild-category">
+                                                                                    <a class="dropdown-item grand-sub-category" t-att-href="'/subcategory?category_id=' + str(grandchild.id)">
+                                                                                        <t t-esc="grandchild.name"/>
+                                                                                    </a>
+                                                                                </li>
+                                                                            </t>
+                                                                        </ul>
+                                                                    </t>
+                                                                </li>
+                                                                <t t-set="subcounter" t-value="chr(ord(subcounter) + 1)" />
+                                                            </t>
+                                                        </ul>
+                                                    </t>
                                                 </li>
+                                                <t t-set="counter" t-value="counter + 1" />
                                             </t>
                                         </ul>
                                     </li>
@@ -118,6 +149,53 @@
                             </div>
                         </div>
                     </div>
+                        <style>
+                        .category-menu {
+                            min-width: 300px;
+                            padding: 10px;
+                        }
+
+                        .main-category {
+                            font-weight: bold;
+                        }
+
+                        .subcategory-list {
+                            list-style: none;
+                            padding-left: 20px;
+                            margin-bottom: 5px;
+                        }
+
+                        .grandchild-list {
+                            list-style: none;
+                            padding-left: 20px;
+                        }
+
+                        .child-category, .grandchild-category {
+                            margin: 5px 0;
+                        }
+
+                        .category-number {
+                            font-weight: bold;
+                            margin-right: 5px;
+                        }
+
+                        .subcategory-letter {
+                            font-weight: normal;
+                            margin-right: 5px;
+                        }
+
+                        .sub-category {
+                            font-weight: normal;
+                        }
+
+                        .dropdown-menu li {
+                            position: relative;
+                        }
+
+                        .dropdown-menu .dropdown-item {
+                            padding: .25rem 1rem;
+                        }   
+                        </style>                     
                 </nav>                
             </div>
         </xpath>
