@@ -20,15 +20,31 @@ class WebsiteAuth(http.Controller):
             # Check if user exists and is active
             user_exists = request.env['res.users'].sudo().search([('login', '=', login)], limit=1)
             if user_exists:
-                _logger.info("User found: %s (ID: %s, Active: %s, Groups: %s)", 
-                            login, user_exists.id, user_exists.active,
-                            ','.join([g.name for g in user_exists.groups_id]))
+                # Debug info - very detailed logging
+                _logger.info("User found: %s (ID: %s, Active: %s)", login, user_exists.id, user_exists.active)
+                _logger.info("User groups: %s", ','.join([g.name for g in user_exists.groups_id]))
+                _logger.info("Database being used: %s", request.session.db)
+                
+                # Check if user has portal access
+                has_portal = request.env.ref('base.group_portal').id in user_exists.groups_id.ids
+                _logger.info("Has portal access: %s", has_portal)
+                
+                if not user_exists.active:
+                    _logger.warning("User %s is inactive", login)
+                    return request.render('theme_xtream.website_login', {
+                        'error': _("Esta cuenta está desactivada. Contacte al administrador."),
+                        'redirect': redirect,
+                    })
             else:
                 _logger.warning("User not found: %s", login)
             
             # Authentication attempt with detailed error logging
             try:
-                uid = request.session.authenticate(request.session.db, login, password)
+                # Use explicit database name for clarity
+                db_name = request.session.db
+                _logger.info("Attempting authentication on database: %s", db_name)
+                
+                uid = request.session.authenticate(db_name, login, password)
                 if uid:
                     user = request.env['res.users'].sudo().browse(uid)
                     _logger.info("Authentication successful for user %s (ID: %s)", login, uid)
@@ -36,7 +52,7 @@ class WebsiteAuth(http.Controller):
                 else:
                     _logger.warning("Invalid credentials for user %s", login)
                     return request.render('theme_xtream.website_login', {
-                        'error': _("Invalid username or password"),
+                        'error': _("Usuario o contraseña incorrectos"),
                         'redirect': redirect,
                     })
             except UserError as ue:
@@ -47,8 +63,10 @@ class WebsiteAuth(http.Controller):
                 })
             except Exception as e:
                 _logger.error("Login error: %s (Exception type: %s)", str(e), type(e).__name__)
+                # Show actual error for debugging
+                error_message = "Error de autenticación: " + str(e)
                 return request.render('theme_xtream.website_login', {
-                    'error': _("Authentication error. Please try again."),
+                    'error': error_message,
                     'redirect': redirect,
                 })
         
