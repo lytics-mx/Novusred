@@ -6,7 +6,7 @@ class WishlistController(http.Controller):
     def wishlist_page(self):
         # Obtener los productos del wishlist del usuario actual
         user_id = request.env.user.id
-        wishlist_items = request.env['product.wishlist'].sudo().search([('user_id', '=', user_id)])
+        wishlist_items = request.env['product.wishlist'].sudo().search([('create_uid', '=', user_id)])
         
         # Preparar los productos para el template
         products = wishlist_items.mapped('product_id')
