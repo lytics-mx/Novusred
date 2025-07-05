@@ -70,8 +70,9 @@ class WebsiteAuth(http.Controller):
                     signup_valid=True
                 ).create(values)
                 
-                # Log user in
-                request.session.authenticate(request.session.db, values['login'], values['password'])
+                # Log user in - CORRECTED LINE
+                db_name = ensure_db()
+                request.session.authenticate(db_name, login, values['password'])
                 return request.redirect(redirect or '/shop')
             except Exception as e:
                 return request.render('theme_xtream.website_signup', {
