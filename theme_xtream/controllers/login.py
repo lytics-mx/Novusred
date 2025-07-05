@@ -18,7 +18,7 @@ class WebsiteAuth(http.Controller):
             # Enhanced debugging information
             _logger.info("Login attempt for user: %s from IP: %s", login, request.httprequest.remote_addr)
             
-            # First check if user exists and is active
+            # 1. First check if user exists and is active
             user = request.env['res.users'].sudo().search([
                 ('login', '=', login),
                 ('active', '=', True)
@@ -31,7 +31,7 @@ class WebsiteAuth(http.Controller):
                     'redirect': redirect,
                 })
             
-            # Check if user is a portal user
+            # 2. Check if user is a portal user
             if not user.has_group('base.group_portal') or user.has_group('base.group_user'):
                 _logger.warning("User %s is not a portal user or has backend access", login)
                 return request.render('theme_xtream.website_login', {
@@ -39,32 +39,39 @@ class WebsiteAuth(http.Controller):
                     'redirect': redirect,
                 })
             
-            # Try to authenticate using the standard method
+            # 3. Try to authenticate
             try:
-                db_name = request.session.db
-                if not db_name:
-                    db_name = request.env.cr.dbname
+                db_name = request.session.db or request.env.cr.dbname
+                _logger.info("Authenticating against database: %s", db_name)
                 
-                _logger.info("Attempting authentication with database: %s", db_name)
+                # Direct authentication method
+                user_id = request.env['res.users'].sudo()._login(db_name, login, password)
                 
-                # Use the standard authenticate method
-                uid = request.session.authenticate(db_name, login, password)
-                
-                if uid:
-                    _logger.info("Authentication successful for user %s (ID: %s)", login, uid)
+                if user_id:
+                    # Create session without using authenticate()
+                    request.session.uid = user_id
+                    request.session.login = login
+                    request.session.session_token = request.env['res.users'].sudo().browse(user_id).session_token
+                    request.uid = user_id
+                    
+                    _logger.info("Authentication successful for user %s (ID: %s)", login, user_id)
+                    
+                    # Redirect to homepage or requested page
                     return request.redirect(redirect or '/home')
                 else:
-                    _logger.warning("Authentication failed for user %s (password likely incorrect)", login)
+                    # Authentication returned falsy value
+                    _logger.warning("Password validation failed for user %s", login)
                     return request.render('theme_xtream.website_login', {
                         'error': _("Invalid password"),
                         'redirect': redirect,
                     })
                     
             except Exception as e:
-                _logger.error("Authentication error for user %s: %s (type: %s)", 
-                              login, str(e), type(e).__name__)
+                # Log the specific error
+                _logger.error("Login error for user %s: %s (Exception type: %s)", 
+                             login, str(e), type(e).__name__)
                 return request.render('theme_xtream.website_login', {
-                    'error': _("Wrong login/password"),
+                    'error': _("System error: {0}".format(str(e)) if request.env.user.has_group('base.group_system') else _("Authentication error")),
                     'redirect': redirect,
                 })
         
