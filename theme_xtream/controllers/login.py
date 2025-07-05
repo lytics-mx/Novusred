@@ -17,7 +17,16 @@ class WebsiteAuth(http.Controller):
             
             _logger.info("Login attempt for user: %s from IP: %s", login, request.httprequest.remote_addr)
             
-            # Simple authentication using Odoo's built-in method
+            # Check if user exists and is active
+            user_exists = request.env['res.users'].sudo().search([('login', '=', login)], limit=1)
+            if user_exists:
+                _logger.info("User found: %s (ID: %s, Active: %s, Groups: %s)", 
+                            login, user_exists.id, user_exists.active,
+                            ','.join([g.name for g in user_exists.groups_id]))
+            else:
+                _logger.warning("User not found: %s", login)
+            
+            # Authentication attempt with detailed error logging
             try:
                 uid = request.session.authenticate(request.session.db, login, password)
                 if uid:
@@ -30,6 +39,12 @@ class WebsiteAuth(http.Controller):
                         'error': _("Invalid username or password"),
                         'redirect': redirect,
                     })
+            except UserError as ue:
+                _logger.error("User error during login: %s", str(ue))
+                return request.render('theme_xtream.website_login', {
+                    'error': str(ue),
+                    'redirect': redirect,
+                })
             except Exception as e:
                 _logger.error("Login error: %s (Exception type: %s)", str(e), type(e).__name__)
                 return request.render('theme_xtream.website_login', {
