@@ -20,10 +20,10 @@ class ProductHistoryController(http.Controller):
     def view_history(self, period_filter=None):
         """Obtiene el historial de productos vistos por el usuario actual agrupado por períodos."""
         
-        # Obtener todas las visitas del usuario
+        # Obtener todas las visitas del usuario con sudo() para garantizar acceso
         if request.env.user._is_public():
             # Para usuarios anónimos, usar el visitor_id de la sesión actual
-            visitor_sudo = request.env['website.visitor']._get_visitor_from_request()
+            visitor_sudo = request.env['website.visitor'].sudo()._get_visitor_from_request()
             if visitor_sudo:
                 tracks = request.env['website.track'].sudo().search([
                     ('visitor_id', '=', visitor_sudo.id),
@@ -32,14 +32,24 @@ class ProductHistoryController(http.Controller):
             else:
                 tracks = request.env['website.track'].sudo()
         else:
-            # Para usuarios autenticados
+            # Para usuarios autenticados, buscar TODOS sus visitors (actuales y pasados)
             user_partner_id = request.env.user.partner_id.id
+            visitors = request.env['website.visitor'].sudo().search([
+                ('partner_id', '=', user_partner_id)
+            ])
             
-            # Primero buscar por partner_id
+            # Incluir el visitor actual aunque no esté vinculado al partner todavía
+            current_visitor = request.env['website.visitor'].sudo()._get_visitor_from_request()
+            if current_visitor and current_visitor.id not in visitors.ids:
+                visitors |= current_visitor
+            
+            # Buscar tracks de todos los visitors del usuario
             tracks = request.env['website.track'].sudo().search([
-                ('visitor_id.partner_id', '=', user_partner_id),
+                ('visitor_id', 'in', visitors.ids),
                 ('product_id', '!=', False)
             ], order='visit_datetime desc')
+        
+        # Resto del código sin cambios...
             
             # Si no hay resultados, buscar también el visitor actual 
             # (puede ser que el usuario esté navegando ahora y sus visitas 
