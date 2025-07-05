@@ -20,8 +20,12 @@ class WebsiteAuth(Home):
             
             # If login was successful
             if not request.env.user._is_public():
+                # VERIFICAR EXPLÍCITAMENTE si pertenece al grupo público
+                if request.env.user.has_group('base.group_public'):
+                    # Usuario con grupo público - forzar redirección
+                    return request.redirect('/subcategory')
                 # Check user type and redirect accordingly
-                if request.env.user.has_group('base.group_user'):
+                elif request.env.user.has_group('base.group_user'):
                     # Internal user
                     return request.redirect('/web')
                 elif request.env.user.has_group('base.group_portal'):
@@ -38,14 +42,15 @@ class WebsiteAuth(Home):
                 'redirect': redirect or '/subcategory'
             })
         
-        # User is already logged in, redirect based on user type
-        if request.env.user.has_group('base.group_user'):
+        # User is already logged in - PRIMERO verificar si es del grupo público
+        if request.env.user.has_group('base.group_public'):
+            return request.redirect('/subcategory')
+        elif request.env.user.has_group('base.group_user'):
             return request.redirect('/web')
         elif request.env.user.has_group('base.group_portal'):
             return request.redirect('/my')
         else:
             return request.redirect('/subcategory')
-
 
     @http.route(['/shop/signup'], type='http', auth="public", website=True)
     def shop_signup(self, redirect=None, **post):
