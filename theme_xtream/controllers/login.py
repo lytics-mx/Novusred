@@ -31,7 +31,7 @@ class WebsiteAuth(http.Controller):
                             'error': _("This login is for website users only. Please use the regular login page for administrative access."),
                             'redirect': redirect,
                         })
-            except Exception as e:
+            except Exception:
                 return request.render('theme_xtream.website_login', {
                     'error': _("Wrong login/password"),
                     'redirect': redirect,
