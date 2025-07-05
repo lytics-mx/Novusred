@@ -2,9 +2,10 @@ from odoo import http, fields, _
 from odoo.http import request
 from odoo.addons.auth_signup.controllers.main import AuthSignupHome
 from odoo.addons.web.controllers.home import Home
+from . import category_views
+
 from odoo.exceptions import UserError
 import logging
-from . import category_subcategory
 _logger = logging.getLogger(__name__)
 
 class WebsiteAuth(Home):
