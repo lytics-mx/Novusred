@@ -16,20 +16,16 @@ class ProductHistoryController(http.Controller):
         }
         return f"{months_spanish[date.month]} {date.year}"
 
-    @http.route(['/shop/history', '/shop/history/<string:period_filter>'], type='http', auth='public', website=True)
+    @http.route(['/shop/history', '/shop/history/<string:period_filter>'], type='http', auth='user', website=True)
     def view_history(self, period_filter=None):
         """Obtiene el historial de productos vistos por el usuario actual agrupado por períodos."""
+        user_partner_id = request.env.user.partner_id.id
         
-        # Buscar tracks usando el campo user_id directamente
-        if request.env.user._is_public():
-            # Usuario anónimo - no tiene historial
-            tracks = request.env['website.track'].sudo()
-        else:
-            # Usuario autenticado - buscar por user_id
-            tracks = request.env['website.track'].sudo().search([
-                ('user_id', '=', request.env.user.id),
-                ('product_id', '!=', False)
-            ], order='visit_datetime desc')
+        # Obtener todas las visitas del usuario
+        tracks = request.env['website.track'].sudo().search([
+            ('visitor_id.partner_id', '=', user_partner_id),
+            ('product_id', '!=', False)
+        ], order='visit_datetime desc')
         
         # Configurar zona horaria
         user_tz = pytz.timezone('America/Mexico_City')

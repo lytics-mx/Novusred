@@ -18,5 +18,5 @@ class WebsiteAuth(http.Controller):
     def web_logout(self, redirect=None):
         """Override the default logout route to handle custom logout logic."""
         if request.env.user and request.env.user.id != request.website.user_id.id:
-            return request.redirect('/shop')
+            return request.redirect('/subcategory')
         return AuthSignupHome.web_logout(self, redirect=redirect)
