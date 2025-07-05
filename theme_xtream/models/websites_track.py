@@ -1,6 +1,5 @@
 from odoo import models, fields, api
 from datetime import date
-import calendar
 
 class WebsiteTrack(models.Model):
     _inherit = 'website.track'
@@ -17,10 +16,7 @@ class WebsiteTrack(models.Model):
     
     def get_grouped_viewed_products(self, user_id=None):
         """Agrupa los productos vistos por 'Hoy' y por mes para un usuario específico."""
-        # Initialize grouped products dynamically for all months
-        grouped_products = {'Hoy': []}
-        grouped_products.update({month: [] for month in calendar.month_name if month})
-        
+        grouped_products = {'Hoy': [], 'Enero': [], 'Febrero': [], 'Marzo': [], 'Abril': [], 'Mayo': []}
         today = date.today()
     
         # Use the provided user_id or fall back to current user
@@ -29,9 +25,8 @@ class WebsiteTrack(models.Model):
         # Query using the direct user_id relationship
         viewed_products = self.env['website.track'].sudo().search([
             ('user_id', '=', target_user_id),  # Use the target user
-            ('product_id', '!=', False),
-            ('product_id.website_published', '=', True)  # Directly filter published products
-        ], order='id desc').mapped('product_id.product_tmpl_id')
+            ('product_id', '!=', False)
+        ], order='id desc').mapped('product_id.product_tmpl_id').filtered(lambda p: p.website_published)
     
         for product in viewed_products:
             last_viewed_date = product.last_viewed_date

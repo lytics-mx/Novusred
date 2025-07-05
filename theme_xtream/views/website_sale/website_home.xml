@@ -906,50 +906,47 @@
                         ('cover_image', '!=', False),
                         ('active', '=', True)
                     ], limit=15)" />
-                    <t t-if="len(brands) > 5">
-                        <!-- Carrusel para más de 5 marcas, 5 por slide alineadas ocupando todo el ancho -->
-                        <div id="brandsCarousel" class="carousel slide" data-bs-ride="carousel">
-                            <div class="carousel-inner">
-                                <t t-set="chunks" t-value="[brands[i:i+5] for i in range(0, len(brands), 5)]" />
-                                <t t-foreach="chunks" t-as="chunk" t-key="chunk_index">
+                    
+                    <!-- Brands section with responsive design -->
+                    <div id="brandsCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <!-- For desktop (more than 5 brands) - show 5 per slide -->
+                            <t t-set="desktop_chunks" t-value="[brands[i:i+5] for i in range(0, len(brands), 5)]" />
+                            <!-- For mobile (all brands) - show 2 per slide -->
+                            <t t-set="mobile_chunks" t-value="[brands[i:i+2] for i in range(0, len(brands), 2)]" />
+                            
+                            <!-- Desktop Carousel (hidden on small screens) -->
+                            <div class="d-none d-md-block">
+                                <t t-foreach="desktop_chunks" t-as="chunk" t-key="chunk_index">
                                     <div t-att-class="'carousel-item' + (' active' if chunk_index == 0 else '')">
-                                        <div class="row g-3 align-items-stretch" style="min-height: 100%;">
+                                        <div class="row g-3 align-items-stretch">
                                             <t t-foreach="chunk" t-as="brand" t-key="brand.id">
-                                                <div class="col-12 col-sm-6 col-md-4 col-lg-2 d-flex justify-content-center align-items-stretch" style="flex: 1 0 20%; max-width: 20%;">
-                                                    <div class="position-relative text-center w-100 d-flex flex-column h-100"
-                                                         style="background-color: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.10); min-height: 350px; display: flex;">
-                                                        <!-- Imagen de portada (cover_image) -->
+                                                <div class="col-md-4 col-lg brand-item">
+                                                    <div class="brand-card h-100">
                                                         <img t-att-src="'data:image/png;base64,' + brand.cover_image.decode('utf-8')"
                                                              alt="Portada de la Marca"
-                                                             style="width: 100%; height: 120px; object-fit: cover;" />
-                                                        <!-- Ícono de la marca (icon_image) sin borde -->
-                                                        <div style="background-color: white; padding: 10px; margin-top: -20px; width: 80%; margin-left: auto; margin-right: auto;">
+                                                             class="brand-cover" />
+                                                        <div class="brand-icon-container">
                                                             <img t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')"
                                                                  alt="Ícono de la Marca"
-                                                                 style="width: 100%; height: auto; object-fit: contain;" />
+                                                                 class="brand-icon" />
                                                         </div>
-                                                        <!-- Nombre de la marca -->
-                                                        <div style="margin-top: 10px;">
-                                                            <span style="font-family: 'Questrial', sans-serif; font-size: 16px; font-weight: bold;">
-                                                                <t t-esc="brand.name" />
-                                                            </span>
+                                                        <div class="brand-name">
+                                                            <span><t t-esc="brand.name" /></span>
                                                         </div>
-                                                        <!-- Productos relacionados -->
-                                                        <div class="d-flex justify-content-center gap-2 flex-wrap mt-2" style="min-height: 64px;">
+                                                        <div class="brand-products">
                                                             <t t-set="published_products" t-value="brand.product_ids.filtered(lambda p: p.website_published)" />
                                                             <t t-if="published_products">
                                                                 <t t-foreach="published_products[:3]" t-as="product" t-key="product.id">
-                                                                    <div style="width: 60px; height: 60px; border-radius: 5px; overflow: hidden;">
+                                                                    <div class="product-thumbnail">
                                                                         <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                                                                            alt="Producto"
-                                                                            style="width: 100%; height: 100%; object-fit: cover;" />
+                                                                            alt="Producto" />
                                                                     </div>
                                                                 </t>
                                                             </t>
                                                         </div>
-                                                        <!-- Enlace para ver más SIEMPRE abajo -->
-                                                        <div style="margin-top: auto; margin-bottom: 10px;">
-                                                            <a t-att-href="'/brand/' + (brand.name or '').replace(' ', '').lower()" style="font-family: 'Questrial', sans-serif; font-size: 14px; color: #6c757d; text-decoration: none;">
+                                                        <div class="brand-view-link">
+                                                            <a t-att-href="'/brand/' + (brand.name or '').replace(' ', '').lower()">
                                                                 Ver marca
                                                             </a>
                                                         </div>
@@ -960,65 +957,175 @@
                                     </div>
                                 </t>
                             </div>
-                            <!-- Controles del carrusel -->
-                            <button class="carousel-control-prev" type="button" data-bs-target="#brandsCarousel" data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Previous</span>
-                            </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#brandsCarousel" data-bs-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Next</span>
-                            </button>
-                        </div>
-                    </t>
-                    <t t-else="">
-                        <!-- Mostrar exactamente 5 marcas en una sola línea, bien ajustadas y ocupando todo el ancho -->
-                        <div class="row g-3 align-items-stretch justify-content-center" style="width: 100%;">
-                            <t t-foreach="brands" t-as="brand" t-key="brand.id">
-                                <div class="col-12 col-sm-6 col-md-4 col-lg-2 d-flex justify-content-center align-items-stretch" style="flex: 1 0 20%; max-width: 20%;">
-                                    <div class="position-relative text-center w-100 d-flex flex-column h-100"
-                                         style="background-color: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.10); min-height: 350px; display: flex;">
-                                        <!-- Imagen de portada (cover_image) -->
-                                        <img t-att-src="'data:image/png;base64,' + brand.cover_image.decode('utf-8')"
-                                             alt="Portada de la Marca"
-                                             style="width: 100%; height: 120px; object-fit: cover;" />
-                                        <!-- Ícono de la marca (icon_image) sin borde -->
-                                        <div style="background-color: white; padding: 10px; margin-top: -20px; width: 80%; margin-left: auto; margin-right: auto;">
-                                            <img t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')"
-                                                 alt="Ícono de la Marca"
-                                                 style="width: 100%; height: auto; object-fit: contain;" />
-                                        </div>
-                                        <!-- Nombre de la marca -->
-                                        <div style="margin-top: 10px;">
-                                            <span style="font-family: 'Questrial', sans-serif; font-size: 16px; font-weight: bold;">
-                                                <t t-esc="brand.name" />
-                                            </span>
-                                        </div>
-                                        <!-- Productos relacionados -->
-                                        <div class="d-flex justify-content-center gap-2 flex-wrap mt-2" style="min-height: 64px;">
-                                            <t t-set="published_products" t-value="brand.product_ids.filtered(lambda p: p.website_published)" />
-                                            <t t-if="published_products">
-                                                <t t-foreach="published_products[:3]" t-as="product" t-key="product.id">
-                                                    <div style="width: 60px; height: 60px; border-radius: 5px; overflow: hidden;">
-                                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                                                             alt="Producto"
-                                                             style="width: 100%; height: 100%; object-fit: cover;" />
+                            
+                            <!-- Mobile Carousel (only visible on small screens) -->
+                            <div class="d-block d-md-none">
+                                <t t-foreach="mobile_chunks" t-as="chunk" t-key="chunk_index">
+                                    <div t-att-class="'carousel-item' + (' active' if chunk_index == 0 else '')">
+                                        <div class="row g-2">
+                                            <t t-foreach="chunk" t-as="brand" t-key="brand.id">
+                                                <div class="col-6">
+                                                    <div class="brand-card h-100">
+                                                        <img t-att-src="'data:image/png;base64,' + brand.cover_image.decode('utf-8')"
+                                                             alt="Portada de la Marca"
+                                                             class="brand-cover" />
+                                                        <div class="brand-icon-container">
+                                                            <img t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')"
+                                                                 alt="Ícono de la Marca"
+                                                                 class="brand-icon" />
+                                                        </div>
+                                                        <div class="brand-name">
+                                                            <span><t t-esc="brand.name" /></span>
+                                                        </div>
+                                                        <div class="brand-products">
+                                                            <t t-set="published_products" t-value="brand.product_ids.filtered(lambda p: p.website_published)" />
+                                                            <t t-if="published_products">
+                                                                <t t-foreach="published_products[:2]" t-as="product" t-key="product.id">
+                                                                    <div class="product-thumbnail">
+                                                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                                                                            alt="Producto" />
+                                                                    </div>
+                                                                </t>
+                                                            </t>
+                                                        </div>
+                                                        <div class="brand-view-link">
+                                                            <a t-att-href="'/brand/' + (brand.name or '').replace(' ', '').lower()">
+                                                                Ver marca
+                                                            </a>
+                                                        </div>
                                                     </div>
-                                                </t>
+                                                </div>
                                             </t>
                                         </div>
-                                        <!-- Enlace para ver más SIEMPRE abajo -->
-                                        <div style="margin-top: auto; margin-bottom: 10px;">
-                                            <a t-att-href="'/brand/' + (brand.name or '').replace(' ', '').lower()" style="font-family: 'Questrial', sans-serif; font-size: 14px; color: #6c757d; text-decoration: none;">
-                                                Ver marca
-                                            </a>
-                                        </div>
                                     </div>
-                                </div>
-                            </t>
+                                </t>
+                            </div>
                         </div>
-                    </t>
+                        
+                        <!-- Carousel Controls -->
+                        <button class="carousel-control-prev" type="button" data-bs-target="#brandsCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#brandsCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
                 </div>
+                
+                <!-- Add these styles to your style tag -->
+                <style>
+                    /* Brand card styles */
+                    .brand-card {
+                        background-color: white;
+                        border-radius: 10px;
+                        overflow: hidden;
+                        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.10);
+                        display: flex;
+                        flex-direction: column;
+                        min-height: 350px;
+                        position: relative;
+                        text-align: center;
+                    }
+                    
+                    .brand-cover {
+                        width: 100%;
+                        height: 120px;
+                        object-fit: cover;
+                    }
+                    
+                    .brand-icon-container {
+                        background-color: white;
+                        padding: 10px;
+                        margin-top: -20px;
+                        width: 80%;
+                        margin-left: auto;
+                        margin-right: auto;
+                    }
+                    
+                    .brand-icon {
+                        width: 100%;
+                        height: auto;
+                        object-fit: contain;
+                    }
+                    
+                    .brand-name {
+                        margin-top: 10px;
+                        padding: 0 5px;
+                    }
+                    
+                    .brand-name span {
+                        font-family: 'Questrial', sans-serif;
+                        font-size: 16px;
+                        font-weight: bold;
+                    }
+                    
+                    .brand-products {
+                        display: flex;
+                        justify-content: center;
+                        gap: 2px;
+                        flex-wrap: wrap;
+                        margin-top: 10px;
+                        min-height: 64px;
+                        padding: 0 10px;
+                    }
+                    
+                    .product-thumbnail {
+                        width: 60px;
+                        height: 60px;
+                        border-radius: 5px;
+                        overflow: hidden;
+                    }
+                    
+                    .product-thumbnail img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                    }
+                    
+                    .brand-view-link {
+                        margin-top: auto;
+                        margin-bottom: 10px;
+                        padding: 5px;
+                    }
+                    
+                    .brand-view-link a {
+                        font-family: 'Questrial', sans-serif;
+                        font-size: 14px;
+                        color: #6c757d;
+                        text-decoration: none;
+                    }
+                    
+                    /* Mobile adjustments */
+                    @media (max-width: 767.98px) {
+                        .brand-card {
+                            min-height: 280px;
+                        }
+                        
+                        .brand-cover {
+                            height: 80px;
+                        }
+                        
+                        .brand-name span {
+                            font-size: 14px;
+                        }
+                        
+                        .brand-products {
+                            min-height: 45px;
+                        }
+                        
+                        .product-thumbnail {
+                            width: 40px;
+                            height: 40px;
+                        }
+                        
+                        .carousel-control-prev,
+                        .carousel-control-next {
+                            width: 10%;
+                        }
+                    }
+                </style>            
                 <div style="height: 30px;"></div>
 
 
