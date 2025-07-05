@@ -24,12 +24,12 @@ class WebsiteAuth(Home):
                 if request.env.user.has_group('base.group_user'):
                     # Internal user
                     return request.redirect('/web')
+                elif request.env.user.has_group('base.group_public'):
+                    # Public user - check this BEFORE portal
+                    return request.redirect('/subcategory')
                 elif request.env.user.has_group('base.group_portal'):
                     # Portal user
                     return request.redirect('/my')
-                elif request.env.user.has_group('base.group_public'):
-                    # Public user
-                    return request.redirect('/subcategory')
                 else:
                     # Other authenticated user
                     return request.redirect('/subcategory')
@@ -44,10 +44,11 @@ class WebsiteAuth(Home):
         # User is already logged in, redirect based on user type
         if request.env.user.has_group('base.group_user'):
             return request.redirect('/web')
+        elif request.env.user.has_group('base.group_public'):
+            # Public user - check this BEFORE portal
+            return request.redirect('/subcategory')
         elif request.env.user.has_group('base.group_portal'):
             return request.redirect('/my')
-        elif request.env.user.has_group('base.group_public'):
-            return request.redirect('/subcategory')
         else:
             return request.redirect('/subcategory')
     
