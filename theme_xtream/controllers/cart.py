@@ -142,19 +142,23 @@ class ShopController(WebsiteSale):
     @http.route('/shop/cart/update_bundle', type='http', auth="public", website=True)
     def update_bundle_cart(self, **post):
         """
-        Handle adding multiple products (bundle) to the cart, including the root product and accessory products.
+        Handle adding multiple products (bundle) to the cart.
         """
-        bundle_product_ids = post.getlist('bundle_product_ids[]')  # Get selected product IDs from the form
-        root_product_id = post.get('root_product_id')  # Get the root product ID
-        add_qty = int(post.get('add_qty', 1))  # Default quantity is 1
-
+        bundle_product_ids = post.get('bundle_product_ids[]')  # Get selected product IDs from the form
+        if isinstance(bundle_product_ids, str):
+            # Convert a single string value to a list
+            bundle_product_ids = [bundle_product_ids]
+        elif not bundle_product_ids:
+            # If no products are selected, initialize an empty list
+            bundle_product_ids = []
+    
+        # Add the root product to the list
+        root_product_id = post.get('product_id')
         if root_product_id:
-            try:
-                root_product_id = int(root_product_id)
-                bundle_product_ids.append(root_product_id)  # Ensure the root product is included
-            except ValueError:
-                _logger.error(f"Invalid root product ID: {root_product_id}")
-
+            bundle_product_ids.append(root_product_id)
+    
+        add_qty = int(post.get('add_qty', 1))  # Default quantity is 1
+    
         if bundle_product_ids:
             order = request.website.sale_get_order(force_create=1)
             for product_id in bundle_product_ids:
@@ -162,10 +166,9 @@ class ShopController(WebsiteSale):
                     product_id = int(product_id)
                     order._cart_update(product_id=product_id, add_qty=add_qty)
                 except ValueError:
-                    _logger.error(f"Invalid product ID: {product_id}")
                     continue
-
+    
         # Debugging: Log the products added to the cart
         _logger.info(f"Productos añadidos al carrito: {bundle_product_ids}")
-
+    
         return request.redirect('/shop/cart')
