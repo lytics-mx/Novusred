@@ -320,42 +320,16 @@
                                     </div>
                                     <script type="text/javascript">
                                         document.addEventListener('DOMContentLoaded', function() {
-                                            function getPriceFromText(text) {
-                                                return parseFloat((text || '').replace(/[^0-9.]/g, '')) || 0;
-                                            }
-                                    
-                                            function updateTotal() {
-                                                var total = 0;
-                                                document.querySelectorAll('input[name="bundle_product_ids[]"]:checked').forEach(function(cb) {
-                                                    var priceDiv = null;
-                                                    if (cb.closest('.product-card')) {
-                                                        priceDiv = cb.closest('.product-card').querySelector('.mobile-main-price, .bundle-price');
-                                                    } else {
-                                                        priceDiv = document.getElementById('main-bundle-price');
-                                                    }
-                                                    if (priceDiv) {
-                                                        total += getPriceFromText(priceDiv.textContent);
-                                                    }
-                                                });
-                                                document.getElementById('bundle-total').textContent = total.toLocaleString();
-                                            }
-                                    
-                                            document.querySelectorAll('.bundle-checkbox').forEach(function(cb) {
-                                                cb.addEventListener('change', updateTotal);
-                                            });
-                                    
-                                            updateTotal();
-                                    
                                             var bundleForm = document.getElementById('bundle-form');
                                             bundleForm.addEventListener('submit', function(e) {
                                                 e.preventDefault();
                                                 var data = new FormData(bundleForm);
-                                    
+
                                                 // Agregar todos los productos seleccionados al carrito
                                                 document.querySelectorAll('input[name="bundle_product_ids[]"]:checked').forEach(function(cb) {
                                                     data.append('bundle_product_ids[]', cb.value);
                                                 });
-                                    
+
                                                 fetch(bundleForm.action, {
                                                     method: 'POST',
                                                     body: data,
@@ -363,25 +337,6 @@
                                                 }).then(function(response) {
                                                     if (response.ok) {
                                                         window.location.href = '/shop/cart';
-                                                    }
-                                                });
-                                            });
-                                    
-                                            document.getElementById('bundle-buy-now').addEventListener('click', function() {
-                                                var data = new FormData(bundleForm);
-                                    
-                                                // Agregar todos los productos seleccionados al carrito
-                                                document.querySelectorAll('input[name="bundle_product_ids[]"]:checked').forEach(function(cb) {
-                                                    data.append('bundle_product_ids[]', cb.value);
-                                                });
-                                    
-                                                fetch(bundleForm.action, {
-                                                    method: 'POST',
-                                                    body: data,
-                                                    credentials: 'same-origin'
-                                                }).then(function(response) {
-                                                    if (response.ok) {
-                                                        window.location.href = '/shop/checkout?try_skip_step=true';
                                                     }
                                                 });
                                             });
