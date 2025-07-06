@@ -144,8 +144,12 @@ class ShopController(WebsiteSale):
         """
         Handle adding multiple products (bundle) to the cart.
         """
-        bundle_product_ids = post.getlist('bundle_product_ids[]')  # Get selected product IDs from the form
-        if not bundle_product_ids:
+        bundle_product_ids = post.get('bundle_product_ids[]')  # Get selected product IDs from the form
+        if isinstance(bundle_product_ids, str):
+            # Convert a single string value to a list
+            bundle_product_ids = [bundle_product_ids]
+        elif not bundle_product_ids:
+            # If no products are selected, initialize an empty list
             bundle_product_ids = []
     
         # Add the root product to the list
@@ -162,7 +166,6 @@ class ShopController(WebsiteSale):
                     product_id = int(product_id)
                     order._cart_update(product_id=product_id, add_qty=add_qty)
                 except ValueError:
-                    _logger.error(f"Error al procesar el ID del producto: {product_id}")
                     continue
     
         # Debugging: Log the products added to the cart
