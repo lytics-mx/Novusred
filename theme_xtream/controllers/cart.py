@@ -136,3 +136,23 @@ class ShopController(WebsiteSale):
                 order._cart_update(product_id=item_to_move['product_id'], add_qty=1)
                 
         return request.redirect('/shop/cart')
+    
+    @http.route('/shop/cart/update_bundle', type='http', auth="public", website=True)
+    def update_bundle_cart(self, **post):
+        """
+        Handle adding multiple products (bundle) to the cart.
+        """
+        bundle_product_ids = post.getlist('bundle_product_ids[]')  # Get selected product IDs from the form
+        add_qty = int(post.get('add_qty', 1))  # Default quantity is 1
+
+        if bundle_product_ids:
+            order = request.website.sale_get_order(force_create=1)
+            for product_id in bundle_product_ids:
+                try:
+                    product_id = int(product_id)
+                    order._cart_update(product_id=product_id, add_qty=add_qty)
+                except ValueError:
+                    # Handle invalid product IDs
+                    continue
+
+        return request.redirect('/shop/cart')    
