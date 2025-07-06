@@ -1510,21 +1510,25 @@
 
 
                         /* Estilos para productos compactos */
+
+                        
+                        /* Ajusta el diseño para que siempre haya tres tarjetas en una fila */
                         .compact-products-grid {
                             display: flex;
-                            gap: 2px;
-                            flex-wrap: wrap;
+                            gap: 12px; /* Espaciado uniforme entre las tarjetas */
+                            flex-wrap: nowrap; /* Evita que las tarjetas se desplacen a otra línea */
+                            justify-content: space-between; /* Distribuye las tarjetas uniformemente */
                         }
                         
                         .compact-product-card {
-                            flex: 1;
-                            min-width: 200px;
-                            max-width: 280px;
+                            flex: 1 1 calc(33.33% - 12px); /* Cada tarjeta ocupa un tercio del espacio disponible */
+                            max-width: calc(33.33% - 12px); /* Limita el ancho máximo */
+                            min-width: calc(33.33% - 12px); /* Limita el ancho mínimo */
                             background: #fff;
                             border: 1px solid #e0e0e0;
                             border-radius: 8px;
                             overflow: hidden;
-                            margin-bottom: 2px;
+                            margin-bottom: 12px;
                             transition: box-shadow 0.2s ease;
                         }
                         
@@ -1532,25 +1536,26 @@
                             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
                         }
                         
-                        /* Responsive para productos compactos */
-                        @media (max-width: 767.98px) {
-                            .compact-products-grid {
-                                flex-direction: column;
-                                gap: 1px;
-                            }
-                            
+                        /* Ajustes responsivos */
+                        @media (max-width: 991.98px) {
                             .compact-product-card {
-                                min-width: 100%;
-                                max-width: 100%;
+                                flex: 1 1 calc(33.33% - 8px); /* Ajusta el espacio para pantallas medianas */
+                                max-width: calc(33.33% - 8px);
+                                min-width: calc(33.33% - 8px);
                             }
                         }
                         
-                        @media (min-width: 768px) and (max-width: 991.98px) {
-                            .compact-product-card {
-                                min-width: calc(50% - 1px);
-                                max-width: calc(50% - 1px);
+                        @media (max-width: 767.98px) {
+                            .compact-products-grid {
+                                flex-wrap: wrap; /* Permite que las tarjetas se ajusten en filas múltiples */
+                                gap: 8px; /* Reduce el espacio entre las tarjetas */
                             }
-                        }                                                                                    
+                            .compact-product-card {
+                                flex: 1 1 calc(50% - 8px); /* Dos tarjetas por fila en pantallas pequeñas */
+                                max-width: calc(50% - 8px);
+                                min-width: calc(50% - 8px);
+                            }
+                        }                                                                               
                                
                         </style>  
             </t>
