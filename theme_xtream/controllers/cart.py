@@ -146,7 +146,6 @@ class ShopController(WebsiteSale):
         """
         bundle_product_ids = post.getlist('bundle_product_ids[]')  # Get selected product IDs from the form
         if not bundle_product_ids:
-            # If no products are selected, initialize an empty list
             bundle_product_ids = []
     
         # Add the root product to the list
