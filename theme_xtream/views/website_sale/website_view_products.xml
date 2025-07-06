@@ -311,9 +311,20 @@
                                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" t-nocache="The csrf token must always be up to date."/>
                                                 <input type="hidden" name="add_qty" id="bundle-qty" value="1"/>
                                                 <input type="hidden" name="product_id" t-att-value="product.product_variant_id.id"/>
-
+                                        
+                                                <!-- Precio total -->
+                                                <div id="bundle-total-container" style="margin-bottom: 12px; font-size: 18px; font-weight: bold; color: #000;">
+                                                    Precio total: <span id="bundle-total">$0.00</span>
+                                                </div>
+                                        
+                                                <!-- Botón para agregar al carrito -->
                                                 <button type="submit" class="btn" id="bundle-add-to-cart" style="width:100%; height:48px; border-radius:6px; background:#4285f4; color:#fff; border:none; font-weight:500; font-size:18px; letter-spacing:0.5px; font-family:'Questrial', sans-serif;">
                                                     Agregar al carrito
+                                                </button>
+                                        
+                                                <!-- Botón para comprar directamente -->
+                                                <button type="button" class="btn" id="bundle-buy-now" style="width:100%; height:48px; border-radius:6px; background:#a8ccff; color:#1757e6; border:none; font-weight:500; font-size:18px; letter-spacing:0.5px; font-family:'Questrial', sans-serif; margin-top: 10px;">
+                                                    Comprar
                                                 </button>
                                             </form>
                                         </div>
@@ -321,6 +332,37 @@
                                     <script type="text/javascript">
                                     document.addEventListener('DOMContentLoaded', function() {
                                         var bundleForm = document.getElementById('bundle-form');
+                                        var totalPriceElement = document.getElementById('bundle-total'); // Elemento para mostrar el precio total
+                                        var buyNowButton = document.getElementById('bundle-buy-now'); // Botón "Comprar"
+                                    
+                                        // Función para obtener el precio de un producto
+                                        function getPriceFromText(text) {
+                                            return parseFloat((text || '').replace(/[^0-9.]/g, '')) || 0;
+                                        }
+                                    
+                                        // Función para actualizar el precio total
+                                        function updateTotal() {
+                                            var total = 0;
+                                            document.querySelectorAll('input[name="bundle_product_ids[]"]:checked').forEach(function(cb) {
+                                                var priceDiv = cb.closest('.accessory-card')?.querySelector('.accessory-main-price') || null;
+                                                if (priceDiv) {
+                                                    total += getPriceFromText(priceDiv.textContent);
+                                                }
+                                            });
+                                            if (totalPriceElement) {
+                                                totalPriceElement.textContent = `$${total.toLocaleString('es-MX', { minimumFractionDigits: 2 })}`;
+                                            }
+                                        }
+                                    
+                                        // Escuchar cambios en los checkboxes
+                                        document.querySelectorAll('input[name="bundle_product_ids[]"]').forEach(function(cb) {
+                                            cb.addEventListener('change', updateTotal);
+                                        });
+                                    
+                                        // Actualizar el precio total al cargar la página
+                                        updateTotal();
+                                    
+                                        // Manejo del envío del formulario para "Agregar al carrito"
                                         bundleForm.addEventListener('submit', function(e) {
                                             e.preventDefault();
                                             var data = new FormData(bundleForm);
@@ -354,8 +396,42 @@
                                                 alert('Hubo un error al procesar tu solicitud.');
                                             });
                                         });
+                                    
+                                        // Manejo del botón "Comprar"
+                                        buyNowButton.addEventListener('click', function() {
+                                            var data = new FormData(bundleForm);
+                                    
+                                            // Agregar el producto raíz al carrito
+                                            var productRoot = document.querySelector('input[name="product_id"]').value;
+                                            data.append('product_id', productRoot);
+                                    
+                                            // Agregar todos los productos seleccionados al carrito
+                                            var selectedProducts = document.querySelectorAll('input[name="bundle_product_ids[]"]:checked');
+                                            if (selectedProducts.length === 0) {
+                                                alert('Por favor selecciona al menos un producto para comprar.');
+                                                return;
+                                            }
+                                            selectedProducts.forEach(function(cb) {
+                                                data.append('bundle_product_ids[]', cb.value);
+                                            });
+                                    
+                                            fetch(bundleForm.action, {
+                                                method: 'POST',
+                                                body: data,
+                                                credentials: 'same-origin'
+                                            }).then(function(response) {
+                                                if (response.ok) {
+                                                    window.location.href = '/shop/checkout?try_skip_step=true';
+                                                } else {
+                                                    alert('Hubo un error al procesar tu compra. Por favor intenta nuevamente.');
+                                                }
+                                            }).catch(function(error) {
+                                                console.error('Error:', error);
+                                                alert('Hubo un error al procesar tu solicitud.');
+                                            });
+                                        });
                                     });
-                                    </script>
+                                    </script>  
                                 </t>
                                 <!-- ...existing code... -->
                                 <!-- ...busca la sección donde aparece la descripción... -->
