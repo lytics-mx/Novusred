@@ -509,7 +509,7 @@
                                                             <div t-attf-class="carousel-item #{'active' if idx == 0 else ''}">
                                                                 <div class="d-flex flex-row compact-products-grid" style="gap:12px;">
                                                                     <t t-foreach="related_products[idx:idx+3]" t-as="rel_prod">
-                                                                        <div class="compact-product-card p-2" style="flex: 1 1 calc(33.33% - 8px); max-width: calc(33.33% - 8px); box-sizing: border-box; margin: 4px;">
+                                                                        <div class="compact-product-card p-2">
                                                                             <a t-att-href="'/shop/product/' + str(rel_prod.id)" style="text-decoration: none; color: inherit;">
                                                                                 <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%; background: #fff;">
                                                                                     <img t-att-src="'/web/image/product.template/' + str(rel_prod.id) + '/image_1920'"
@@ -597,6 +597,48 @@
                                                         });
                                                     ]]></script>
                                                 </t>
+
+                                                <t t-jquery="body" t-operation="append">
+                                                    <style>
+                                                        /* Ajustes para productos compactos */
+                                                        .compact-products-grid {
+                                                            display: flex;
+                                                            gap: 12px; /* Espaciado entre los productos */
+                                                            flex-wrap: nowrap; /* Evita que los productos se desplacen a otra línea */
+                                                            justify-content: space-between; /* Distribuye los productos uniformemente */
+                                                        }
+                                                
+                                                        .compact-product-card {
+                                                            flex: 1 1 calc(33.33% - 12px); /* Ajusta el tamaño para que quepan tres en una línea */
+                                                            max-width: calc(33.33% - 12px); /* Tamaño máximo para mantener el diseño */
+                                                            box-sizing: border-box; /* Incluye padding y border en el tamaño */
+                                                            margin: 0; /* Elimina márgenes adicionales */
+                                                            background: #fff;
+                                                            border: 1px solid #e0e0e0;
+                                                            border-radius: 8px;
+                                                            overflow: hidden;
+                                                            transition: box-shadow 0.2s ease;
+                                                        }
+                                                
+                                                        .compact-product-card:hover {
+                                                            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                                                        }
+                                                
+                                                        /* Ajustes para pantallas pequeñas */
+                                                        @media (max-width: 767.98px) {
+                                                            .compact-products-grid {
+                                                                flex-wrap: wrap; /* Permite que los productos se desplacen a otra línea en pantallas pequeñas */
+                                                                gap: 8px; /* Reduce el espacio entre los productos */
+                                                            }
+                                                
+                                                            .compact-product-card {
+                                                                flex: 1 1 100%; /* Cada producto ocupa toda la línea en pantallas pequeñas */
+                                                                max-width: 100%;
+                                                            }
+                                                        }
+                                                    </style>
+                                                </t>
+                                             
                                             </t>
                                             <t t-else="">
                                                 <div class="d-flex flex-row compact-products-grid" style="gap:12px;">
@@ -666,6 +708,7 @@
                                                     </t>
                                                 </div>
                                             </t>
+                                            
                                         </div>
                                     </t>
                                 </div>
