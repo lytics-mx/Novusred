@@ -144,12 +144,18 @@ class ShopController(WebsiteSale):
         """
         Handle adding multiple products (bundle) to the cart.
         """
-        bundle_product_ids = post.getlist('bundle_product_ids[]')  # Correct handling of multiple product IDs
+        # Obtener los IDs de los productos seleccionados como una lista
+        bundle_product_ids = post.get('bundle_product_ids[]')
+        if bundle_product_ids:
+            if isinstance(bundle_product_ids, str):  # Si solo se envió un producto, será un string
+                bundle_product_ids = [bundle_product_ids]
+            elif isinstance(bundle_product_ids, list):  # Si se envió una lista, úsala directamente
+                bundle_product_ids = bundle_product_ids
+            else:
+                bundle_product_ids = []
+    
         root_product_id = post.get('product_id')
         add_qty = int(post.get('add_qty', 1))  # Default quantity is 1
-    
-        if not bundle_product_ids:
-            bundle_product_ids = []
     
         if root_product_id:
             bundle_product_ids.append(root_product_id)
