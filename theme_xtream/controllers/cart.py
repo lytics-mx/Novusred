@@ -135,7 +135,7 @@ class ShopController(WebsiteSale):
                 order = request.website.sale_get_order(force_create=1)
                 order._cart_update(product_id=item_to_move['product_id'], add_qty=1)
                 
-        return request.redirect('/shop/cart')
+        return request.redirect('/shop/cart')    
     
     @http.route('/shop/cart/update_bundle', type='http', auth="public", website=True)
     def update_bundle_cart(self, **post):
@@ -155,4 +155,4 @@ class ShopController(WebsiteSale):
                     # Handle invalid product IDs
                     continue
 
-        return request.redirect('/shop/cart')    
+        return request.redirect('/shop/cart')

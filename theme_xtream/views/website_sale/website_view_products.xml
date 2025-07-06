@@ -322,11 +322,9 @@
                                                     </div>
                                                 </div>
                                                 <div style="width:100%; display:flex; flex-direction:column; gap:14px;">
-                                                    <button type="submit" class="btn"
-                                                        id="bundle-add-to-cart"
-                                                        style="width:100%; height:48px; border-radius:6px; background:#4285f4; color:#fff; border:none; font-weight:500; font-size:18px; letter-spacing:0.5px; font-family:'Questrial', sans-serif;">
+                                                    <button type="submit" class="btn" id="bundle-add-to-cart" style="width:100%; height:48px; border-radius:6px; background:#4285f4; color:#fff; border:none; font-weight:500; font-size:18px; letter-spacing:0.5px; font-family:'Questrial', sans-serif;">
                                                         Agregar al carrito
-                                                    </button>                                                    
+                                                    </button>                                                 
                                                     <button type="button" class="btn" id="bundle-buy-now"
                                                         style="width:100%; height:48px; border-radius:6px; background:#a8ccff; color:#1757e6; border:none; font-weight:500; font-size:18px; letter-spacing:0.5px; font-family:'Questrial', sans-serif;">
                                                         Comprar
@@ -390,6 +388,37 @@
 
                                             document.getElementById('bundle-buy-now').addEventListener('click', function() {
                                                 document.getElementById('bundle-qty').value = 1;
+                                                var form = document.getElementById('bundle-form');
+                                                var data = new FormData(form);
+                                                fetch(form.action, {
+                                                    method: 'POST',
+                                                    body: data,
+                                                    credentials: 'same-origin'
+                                                }).then(function(response) {
+                                                    if (response.ok) {
+                                                        window.location.href = '/shop/checkout?try_skip_step=true';
+                                                    }
+                                                });
+                                            });
+                                        });
+
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                            var bundleForm = document.getElementById('bundle-form');
+                                            bundleForm.addEventListener('submit', function(e) {
+                                                e.preventDefault();
+                                                var data = new FormData(bundleForm);
+                                                fetch(bundleForm.action, {
+                                                    method: 'POST',
+                                                    body: data,
+                                                    credentials: 'same-origin'
+                                                }).then(function(response) {
+                                                    if (response.ok) {
+                                                        window.location.href = '/shop/cart';
+                                                    }
+                                                });
+                                            });
+
+                                            document.getElementById('bundle-buy-now').addEventListener('click', function() {
                                                 var form = document.getElementById('bundle-form');
                                                 var data = new FormData(form);
                                                 fetch(form.action, {
