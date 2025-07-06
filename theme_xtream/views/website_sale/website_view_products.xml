@@ -322,6 +322,7 @@
                                         document.addEventListener('DOMContentLoaded', function() {
                                             var bundleForm = document.getElementById('bundle-form');
                                             
+                                            // Actualizar el evento submit para enviar todos los productos seleccionados
                                             bundleForm.addEventListener('submit', function(e) {
                                                 e.preventDefault();
                                                 var data = new FormData(bundleForm);
@@ -335,7 +336,6 @@
                                                     data.append('bundle_product_ids[]', cb.value);
                                                 });
                                     
-                                                // Enviar los datos al controlador
                                                 fetch(bundleForm.action, {
                                                     method: 'POST',
                                                     body: data,
@@ -350,6 +350,30 @@
                                                     console.error("Error en la solicitud:", error);
                                                 });
                                             });
+                                    
+                                            function getPriceFromText(text) {
+                                                return parseFloat((text || '').replace(/[^0-9.]/g, '')) || 0;
+                                            }
+                                    
+                                            function updateTotal() {
+                                                var total = 0;
+                                                document.querySelectorAll('input[name="bundle_product_ids[]"]:checked').forEach(function(cb) {
+                                                    var priceDiv = cb.closest('.product-card')?.querySelector('.mobile-main-price, .bundle-price') || document.getElementById('main-bundle-price');
+                                                    if (priceDiv) {
+                                                        total += getPriceFromText(priceDiv.textContent);
+                                                    }
+                                                });
+                                                var bundleTotalElement = document.getElementById('bundle-total');
+                                                if (bundleTotalElement) {
+                                                    bundleTotalElement.textContent = total.toLocaleString();
+                                                }
+                                            }
+                                    
+                                            document.querySelectorAll('.bundle-checkbox').forEach(function(cb) {
+                                                cb.addEventListener('change', updateTotal);
+                                            });
+                                    
+                                            updateTotal();
                                         });
                                     </script>
                                 </t>
