@@ -2,6 +2,8 @@ from odoo.addons.website_sale.controllers.main import WebsiteSale
 from odoo import http
 from odoo.http import request
 import time
+import logging
+_logger = logging.getLogger(__name__)
 
 
 class ShopController(WebsiteSale):
@@ -153,5 +155,8 @@ class ShopController(WebsiteSale):
                     order._cart_update(product_id=product_id, add_qty=add_qty)
                 except ValueError:
                     continue
+    
+        # Debugging: Log the products added to the cart
+        _logger.info(f"Productos añadidos al carrito: {bundle_product_ids}")
     
         return request.redirect('/shop/cart')
