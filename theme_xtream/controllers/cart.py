@@ -144,20 +144,15 @@ class ShopController(WebsiteSale):
         """
         Handle adding multiple products (bundle) to the cart.
         """
-        bundle_product_ids = post.get('bundle_product_ids[]')  # Get selected product IDs from the form
-        if isinstance(bundle_product_ids, str):
-            # Convert a single string value to a list
-            bundle_product_ids = [bundle_product_ids]
-        elif not bundle_product_ids:
-            # If no products are selected, initialize an empty list
+        bundle_product_ids = post.getlist('bundle_product_ids[]')  # Correct handling of multiple product IDs
+        root_product_id = post.get('product_id')
+        add_qty = int(post.get('add_qty', 1))  # Default quantity is 1
+    
+        if not bundle_product_ids:
             bundle_product_ids = []
     
-        # Add the root product to the list
-        root_product_id = post.get('product_id')
         if root_product_id:
             bundle_product_ids.append(root_product_id)
-    
-        add_qty = int(post.get('add_qty', 1))  # Default quantity is 1
     
         if bundle_product_ids:
             order = request.website.sale_get_order(force_create=1)
@@ -168,7 +163,5 @@ class ShopController(WebsiteSale):
                 except ValueError:
                     continue
     
-        # Debugging: Log the products added to the cart
         _logger.info(f"Productos añadidos al carrito: {bundle_product_ids}")
-    
         return request.redirect('/shop/cart')

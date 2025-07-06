@@ -319,91 +319,65 @@
                                         </div>
                                     </div>
                                     <script type="text/javascript">
-                                        document.addEventListener('DOMContentLoaded', function() {
-                                            var bundleForm = document.getElementById('bundle-form');
-                                            bundleForm.addEventListener('submit', function(e) {
-                                                e.preventDefault();
-                                                var data = new FormData(bundleForm);
-                                        
-                                                // Agregar el producto raíz al carrito
-                                                var productRoot = document.querySelector('input[name="product_id"]').value;
-                                                data.append('product_id', productRoot);
-                                        
-                                                // Agregar todos los productos seleccionados al carrito
-                                                document.querySelectorAll('input[name="bundle_product_ids[]"]:checked').forEach(function(cb) {
-                                                    data.append('bundle_product_ids[]', cb.value);
-                                                });
-                                        
-                                                fetch(bundleForm.action, {
-                                                    method: 'POST',
-                                                    body: data,
-                                                    credentials: 'same-origin'
-                                                }).then(function(response) {
-                                                    if (response.ok) {
-                                                        window.location.href = '/shop/cart';
-                                                    }
-                                                });
-                                            });
-
-                                            function getPriceFromText(text) {
-                                                return parseFloat((text || '').replace(/[^0-9.]/g, '')) || 0;
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        var bundleForm = document.getElementById('bundle-form');
+                                        bundleForm.addEventListener('submit', function(e) {
+                                            e.preventDefault();
+                                            var data = new FormData(bundleForm);
+                                    
+                                            // Agregar el producto raíz al carrito
+                                            var productRoot = document.querySelector('input[name="product_id"]').value;
+                                            data.append('product_id', productRoot);
+                                    
+                                            // Agregar todos los productos seleccionados al carrito
+                                            var selectedProducts = document.querySelectorAll('input[name="bundle_product_ids[]"]:checked');
+                                            if (selectedProducts.length === 0) {
+                                                alert('Por favor selecciona al menos un producto para agregar al carrito.');
+                                                return;
                                             }
-                                            function updateTotal() {
-                                                var total = 0;
-                                                document.querySelectorAll('input[name="bundle_product_ids[]"]:checked').forEach(function(cb) {
-                                                    var priceDiv = null;
-                                                    if (cb.closest('.product-card')) {
-                                                        priceDiv = cb.closest('.product-card').querySelector('.mobile-main-price, .bundle-price');
-                                                    } else {
-                                                        priceDiv = document.getElementById('main-bundle-price');
-                                                    }
-                                                    if (priceDiv) {
-                                                        total += getPriceFromText(priceDiv.textContent);
-                                                    }
-                                                });
-                                                var bundleTotalElement = document.getElementById('bundle-total');
-                                                if (bundleTotalElement) {
-                                                    bundleTotalElement.textContent = total.toLocaleString();
+                                            selectedProducts.forEach(function(cb) {
+                                                data.append('bundle_product_ids[]', cb.value);
+                                            });
+                                    
+                                            fetch(bundleForm.action, {
+                                                method: 'POST',
+                                                body: data,
+                                                credentials: 'same-origin'
+                                            }).then(function(response) {
+                                                if (response.ok) {
+                                                    window.location.href = '/shop/cart';
+                                                } else {
+                                                    alert('Hubo un error al agregar los productos al carrito. Por favor intenta nuevamente.');
                                                 }
-                                            }
-                                            document.querySelectorAll('.bundle-checkbox').forEach(function(cb) {
-                                                cb.addEventListener('change', updateTotal);
-                                            });
-                                            updateTotal();
-
-                                            // Siempre enviar add_qty=1 para cada producto seleccionado
-                                            var bundleForm = document.getElementById('bundle-form');
-                                            bundleForm.addEventListener('submit', function(e) {
-                                                e.preventDefault();
-                                                document.getElementById('bundle-qty').value = 1;
-                                                var form = document.getElementById('bundle-form');
-                                                var data = new FormData(form);
-                                                fetch(form.action, {
-                                                    method: 'POST',
-                                                    body: data,
-                                                    credentials: 'same-origin'
-                                                }).then(function(response) {
-                                                    if (response.ok) {
-                                                        window.location.href = '/shop/cart';
-                                                    }
-                                                });
-                                            });
-
-                                            document.getElementById('bundle-buy-now').addEventListener('click', function() {
-                                                document.getElementById('bundle-qty').value = 1;
-                                                var form = document.getElementById('bundle-form');
-                                                var data = new FormData(form);
-                                                fetch(form.action, {
-                                                    method: 'POST',
-                                                    body: data,
-                                                    credentials: 'same-origin'
-                                                }).then(function(response) {
-                                                    if (response.ok) {
-                                                        window.location.href = '/shop/checkout?try_skip_step=true';
-                                                    }
-                                                });
+                                            }).catch(function(error) {
+                                                console.error('Error:', error);
+                                                alert('Hubo un error al procesar tu solicitud.');
                                             });
                                         });
+                                    
+                                        function getPriceFromText(text) {
+                                            return parseFloat((text || '').replace(/[^0-9.]/g, '')) || 0;
+                                        }
+                                    
+                                        function updateTotal() {
+                                            var total = 0;
+                                            document.querySelectorAll('input[name="bundle_product_ids[]"]:checked').forEach(function(cb) {
+                                                var priceDiv = cb.closest('.product-card')?.querySelector('.mobile-main-price, .bundle-price') || document.getElementById('main-bundle-price');
+                                                if (priceDiv) {
+                                                    total += getPriceFromText(priceDiv.textContent);
+                                                }
+                                            });
+                                            var bundleTotalElement = document.getElementById('bundle-total');
+                                            if (bundleTotalElement) {
+                                                bundleTotalElement.textContent = total.toLocaleString();
+                                            }
+                                        }
+                                    
+                                        document.querySelectorAll('.bundle-checkbox').forEach(function(cb) {
+                                            cb.addEventListener('change', updateTotal);
+                                        });
+                                        updateTotal();
+                                    });
                                     </script>
                                 </t>
                                 <!-- ...existing code... -->
