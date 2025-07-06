@@ -82,28 +82,80 @@
                                         <!-- Accesorios a la izquierda -->
                                         <div class="col-12 col-md-9">
                                             <h5 style="font-weight:600; margin-bottom:12px; font-size:22px; text-align:left;">Productos que podrían interesarte</h5>
-                                            <t t-foreach="product.accessory_product_ids[:2]" t-as="acc">
-                                                <div class="card accessory-card" style="width:150px; margin-right:10px;">
-                                                    <a t-att-href="'/shop/product/' + str(acc.product_tmpl_id.id)">
-                                                        <img t-att-src="'/web/image/product.template/' + str(acc.product_tmpl_id.id) + '/image_1920'"
-                                                             class="card-img-top" style="object-fit:contain; height:100px;" />
-                                                    </a>
-                                                    <div class="card-body" style="text-align:center; padding:10px;">
-                                                        <h6 class="card-title" style="font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                                                            <t t-esc="acc.name"></t>
-                                                        </h6>
-                                                        <span style="font-size:14px; font-weight:bold;">
-                                                            $<t t-esc="'{:,}'.format(int(acc.list_price or 0))"></t>
-                                                        </span>
-                                                        <div>
-                                                            <!-- Checkboxes for accessory products -->
-                                                            <input type="checkbox" name="bundle_product_ids[]" t-att-value="acc.product_variant_id.id" class="bundle-checkbox"/>
-                                                        </div>
+                                            <t t-set="acc_list" t-value="[acc for acc in product.accessory_product_ids if acc.product_variant_id.id != product.product_variant_id.id]"/>
+                                            <t t-set="acc_count" t-value="len(acc_list)"/>
+                                            <t t-if="acc_count > 3">
+                                                <div id="accessory-carousel" class="carousel slide" data-bs-ride="carousel">
+                                                    <div style="display: flex; flex-wrap: wrap; gap: 16px;">
+                                                        <!-- Checkboxes for accessory products -->
+                                                        <t t-foreach="product.accessory_product_ids" t-as="acc">
+                                                            <div class="accessory-card-100">
+                                                                <input type="checkbox" name="bundle_product_ids[]" t-att-value="acc.product_variant_id.id" class="custom-bundle-checkbox"/>
+                                                                <a t-att-href="'/shop/product/' + str(acc.id)" style="text-decoration: none; color: inherit;">
+                                                                    <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%; background: #fff;">
+                                                                        <img t-att-src="'/web/image/product.template/' + str(acc.id) + '/image_1920'"
+                                                                             class="card-img-top"
+                                                                             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 10px;" />
+                                                                    </div>
+                                                                    <div class="card-body" style="text-align: center;">
+                                                                        <h6 class="card-title" style="font-size: 14px; line-height: 1.2; max-height: 2.4em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                                                                            <t t-esc="acc.name" />
+                                                                        </h6>
+                                                                        <div class="accessory-price-container">
+                                                                            <span class="accessory-main-price">
+                                                                                $<t t-esc="'{:,}'.format(int(acc.list_price or 0))" />
+                                                                            </span>
+                                                                            <t t-if="acc.discounted_price and acc.discounted_price < acc.list_price">
+                                                                                <span class="accessory-discount-amount">
+                                                                                    $<t t-esc="'{:,}'.format(int(acc.list_price))" />
+                                                                                </span>
+                                                                                <span class="accessory-discount">
+                                                                                    <t t-esc="int((1 - acc.discounted_price / acc.list_price) * 100)" />% OFF
+                                                                                </span>
+                                                                            </t>
+                                                                        </div>
+                                                                    </div>
+                                                                </a>
+                                                            </div>
+                                                        </t>
                                                     </div>
+                                                    <button class="carousel-control-prev" type="button" data-bs-target="#accessory-carousel" data-bs-slide="prev"
+                                                        style="z-index: 10; width: 48px; height: 48px; top: 50%; left: 0; transform: translateY(-50%); position: absolute; background: rgba(255,255,255,0.7); border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center;">
+                                                        <span aria-hidden="true" style="font-size: 38px; color: #222; display: flex; align-items: center;">
+                                                            <svg width="32" height="32" viewBox="0 0 48 48" fill="none" style="display:block;" xmlns="http://www.w3.org/2000/svg">
+                                                                <polyline points="32,8 16,24 32,40" stroke="#222" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                                                                <polyline points="40,8 24,24 40,40" stroke="#222" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                                                            </svg>
+                                                        </span>
+                                                        <span class="visually-hidden">Anterior</span>
+                                                    </button>
+                                                    <button class="carousel-control-next" type="button" data-bs-target="#accessory-carousel" data-bs-slide="next"
+                                                        style="z-index: 10; width: 48px; height: 48px; top: 50%; right: 0; transform: translateY(-50%); position: absolute; background: rgba(255,255,255,0.7); border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center;">
+                                                        <span aria-hidden="true" style="font-size: 38px; color: #222; display: flex; align-items: center;">
+                                                            <svg width="32" height="32" viewBox="0 0 48 48" fill="none" style="display:block;" xmlns="http://www.w3.org/2000/svg">
+                                                                <polyline points="16,8 32,24 16,40" stroke="#222" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                                                                <polyline points="8,8 24,24 8,40" stroke="#222" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                                                            </svg>
+                                                        </span>
+                                                        <span class="visually-hidden">Siguiente</span>
+                                                    </button>
                                                 </div>
+                                                <t t-jquery="body" t-operation="append">
+                                                    <script type="text/javascript"><![CDATA[
+                                                        document.addEventListener('DOMContentLoaded', function() {
+                                                            if (window.bootstrap && window.bootstrap.Carousel) {
+                                                                var el = document.getElementById('accessory-carousel');
+                                                                if (el) {
+                                                                    new window.bootstrap.Carousel(el, {interval: 0, wrap: true});
+                                                                }
+                                                            }
+                                                        });
+                                                    ]]></script>
+                                                </t>
                                             </t>
+ 
                                         </div>
-                                    </div>
+
 
                                         <!-- Selección y precio a la derecha (sin mostrar el card del producto principal, solo lógica de precio) -->
                                         <div class="col-12 col-md-3 d-flex flex-column align-items-center justify-content-center" style="padding-top: 30px;">
