@@ -90,7 +90,7 @@
                                                         <t t-foreach="range(0, acc_count, 3)" t-as="idx">
                                                             <div t-attf-class="carousel-item #{'active' if idx == 0 else ''}">
                                                                 <div class="d-flex flex-nowrap align-items-stretch" style="gap:48px;">
-                                                                    <t t-foreach="product.accessory_product_ids" t-as="acc">
+                                                                    <t t-foreach="acc_list[idx:idx+3]" t-as="acc" t-index="acc_idx" t-key="acc.id">
                                                                         <div class="d-flex flex-column align-items-center" style="position:relative;">
                                                                             <div class="card shadow-sm accessory-card accessory-card-100" style="border-radius: 10px; overflow: hidden; width:150px; min-width:150px; max-width:150px;">
                                                                                 <div style="position: absolute; z-index: 2; left: 8px; top: 8px;">
@@ -169,6 +169,11 @@
                                                                                 </div>
                                                                             </div>
                                                                         </div>
+                                                                        <t t-if="acc_idx is not None and acc_idx + 1 != min(3, acc_count - idx)">
+                                                                            <div class="d-flex align-items-center justify-content-center" style="height:100%; min-height:40px;">
+                                                                                <span style="font-size: 48px; font-weight: bold; color: #222; line-height: 1;">+</span>
+                                                                            </div>
+                                                                        </t>
                                                                     </t>
                                                                 </div>
                                                             </div>
@@ -306,12 +311,7 @@
                                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" t-nocache="The csrf token must always be up to date."/>
                                                 <input type="hidden" name="add_qty" id="bundle-qty" value="1"/>
                                                 <input type="hidden" name="product_id" t-att-value="product.product_variant_id.id"/>
-                                                <div>
-                                                    <!-- Checkboxes for accessory products -->
-                                                    <t t-foreach="product.accessory_product_ids" t-as="acc">
-                                                        <input type="checkbox" name="bundle_product_ids[]" t-att-value="acc.product_variant_id.id" class="bundle-checkbox"/>
-                                                    </t>
-                                                </div>
+
                                                 <button type="submit" class="btn" id="bundle-add-to-cart" style="width:100%; height:48px; border-radius:6px; background:#4285f4; color:#fff; border:none; font-weight:500; font-size:18px; letter-spacing:0.5px; font-family:'Questrial', sans-serif;">
                                                     Agregar al carrito
                                                 </button>
@@ -324,12 +324,12 @@
                                             bundleForm.addEventListener('submit', function(e) {
                                                 e.preventDefault();
                                                 var data = new FormData(bundleForm);
-
+                                        
                                                 // Agregar todos los productos seleccionados al carrito
                                                 document.querySelectorAll('input[name="bundle_product_ids[]"]:checked').forEach(function(cb) {
                                                     data.append('bundle_product_ids[]', cb.value);
                                                 });
-
+                                        
                                                 fetch(bundleForm.action, {
                                                     method: 'POST',
                                                     body: data,
