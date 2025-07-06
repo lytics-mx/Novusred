@@ -144,7 +144,7 @@ class ShopController(WebsiteSale):
         """
         bundle_product_ids = post.getlist('bundle_product_ids[]')  # Get selected product IDs from the form
         add_qty = int(post.get('add_qty', 1))  # Default quantity is 1
-
+    
         if bundle_product_ids:
             order = request.website.sale_get_order(force_create=1)
             for product_id in bundle_product_ids:
@@ -152,7 +152,6 @@ class ShopController(WebsiteSale):
                     product_id = int(product_id)
                     order._cart_update(product_id=product_id, add_qty=add_qty)
                 except ValueError:
-                    # Handle invalid product IDs
                     continue
-
+    
         return request.redirect('/shop/cart')

@@ -82,7 +82,7 @@
                                         <!-- Accesorios a la izquierda -->
                                         <div class="col-12 col-md-9">
                                             <h5 style="font-weight:600; margin-bottom:12px; font-size:22px; text-align:left;">Productos que podrían interesarte</h5>
-                                            <t t-set="acc_list" t-value="[acc for acc in product.accessory_product_ids if acc.product_variant_id.id != product.product_variant_id.id]"/>
+                                            <t t-set="acc_list" t-value="[acc for acc in product.accessory_product_ids if acc.product_variant_id.id != product.product_variant_id.id][:2]"/>
                                             <t t-set="acc_count" t-value="len(acc_list)"/>
                                             <div class="d-flex flex-nowrap align-items-stretch" style="gap:48px;">
                                                 <t t-foreach="acc_list" t-as="acc" t-index="acc_idx" t-key="acc.id">
@@ -140,11 +140,17 @@
                                                     </div>
                                                 </div>
                                                 <div style="width:100%; display:flex; flex-direction:column; gap:14px;">
-                                                    <button type="submit" class="btn"
-                                                        id="bundle-add-to-cart"
-                                                        style="width:100%; height:48px; border-radius:6px; background:#4285f4; color:#fff; border:none; font-weight:500; font-size:18px; letter-spacing:0.5px; font-family:'Questrial', sans-serif;">
-                                                        Agregar al carrito
-                                                    </button>
+                                                    <form id="bundle-form" action="/shop/cart/update_bundle" method="POST" style="width:100%; max-width:320px;">
+                                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" t-nocache="The csrf token must always be up to date."/>
+                                                        <input type="hidden" name="add_qty" id="bundle-qty" value="1"/>
+                                                        <div style="width:100%; display:flex; flex-direction:column; gap:14px;">
+                                                            <button type="submit" class="btn"
+                                                                id="bundle-add-to-cart"
+                                                                style="width:100%; height:48px; border-radius:6px; background:#4285f4; color:#fff; border:none; font-weight:500; font-size:18px; letter-spacing:0.5px; font-family:'Questrial', sans-serif;">
+                                                                Agregar al carrito
+                                                            </button>
+                                                        </div>
+                                                    </form>
                                                     <button type="button" class="btn" id="bundle-buy-now"
                                                         style="width:100%; height:48px; border-radius:6px; background:#a8ccff; color:#1757e6; border:none; font-weight:500; font-size:18px; letter-spacing:0.5px; font-family:'Questrial', sans-serif;">
                                                         Comprar
