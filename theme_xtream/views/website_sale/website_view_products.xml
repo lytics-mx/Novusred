@@ -507,7 +507,7 @@
                                                     <div class="carousel-inner">
                                                         <t t-foreach="range(0, len(related_products), 3)" t-as="idx">
                                                             <div t-attf-class="carousel-item #{'active' if idx == 0 else ''}">
-                                                                <div class="d-flex flex-row compact-products-grid" style="gap:5px;">
+                                                                <div class="d-flex flex-row compact-products-grid" style="gap:12px;">
                                                                     <t t-foreach="related_products[idx:idx+3]" t-as="rel_prod">
                                                                         <div class="compact-product-card p-2">
                                                                             <a t-att-href="'/shop/product/' + str(rel_prod.id)" style="text-decoration: none; color: inherit;">
@@ -1111,7 +1111,42 @@
                         }
                     }  
 
+                    /* Ajusta el contenedor de las tarjetas */
+                    .compact-products-grid {
+                        display: flex;
+                        gap: 12px; /* Espaciado entre las tarjetas */
+                        justify-content: space-between; /* Distribuye las tarjetas uniformemente */
+                        flex-wrap: nowrap; /* Evita que las tarjetas se desplacen a otra línea */
+                    }
 
+                    /* Ajusta las tarjetas */
+                    .compact-product-card {
+                        flex: 1 1 calc(33.33% - 12px); /* Cada tarjeta ocupa un tercio del espacio disponible */
+                        max-width: calc(33.33% - 12px); /* Tamaño máximo de cada tarjeta */
+                        min-width: calc(33.33% - 12px); /* Tamaño mínimo de cada tarjeta */
+                        background: #fff;
+                        border: 1px solid #e0e0e0;
+                        border-radius: 8px;
+                        overflow: hidden;
+                        transition: box-shadow 0.2s ease;
+                    }
+
+                    /* Hover para las tarjetas */
+                    .compact-product-card:hover {
+                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                    }
+
+                    /* Ajustes para pantallas pequeñas */
+                    @media (max-width: 767.98px) {
+                        .compact-products-grid {
+                            flex-wrap: wrap; /* Permite que las tarjetas se ajusten en pantallas pequeñas */
+                        }
+
+                        .compact-product-card {
+                            flex: 1 1 100%; /* Cada tarjeta ocupa el ancho completo */
+                            max-width: 100%;
+                        }
+                    }
                 .accessory-container {
                     display: flex;
                     gap: 24px; /* Espaciado uniforme entre las tarjetas */
