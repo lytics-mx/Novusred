@@ -389,6 +389,14 @@ class CategoryController(http.Controller):
         product_tags = []
     
         if search:
+            # Buscar productos por nombre o modelo
+            products = request.env['product.template'].sudo().search([
+                '|',  # Condición OR
+                ('name', 'ilike', search),
+                ('product_model', 'ilike', search)
+            ])
+            
+            # Buscar categorías relacionadas con el término de búsqueda
             searched_categories = request.env['product.category'].sudo().search([
                 '|',
                 ('name', 'ilike', search),
@@ -403,10 +411,6 @@ class CategoryController(http.Controller):
                 ])
                 brands = products_in_cat.mapped('brand_type_id').filtered(lambda b: b.icon_image and b.active)
                 product_tags = products_in_cat.mapped('product_tag_ids').filtered(lambda t: t.is_active)
-            products = request.env['product.template'].sudo().search([
-                ('website_published', '=', True),
-                ('categ_id', 'in', searched_categories.ids)
-            ])
         else:
             brands = request.env['brand.type'].sudo().search([
                 ('icon_image', '!=', False),
