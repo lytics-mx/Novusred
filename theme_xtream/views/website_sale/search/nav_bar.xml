@@ -53,6 +53,7 @@
                                     document.addEventListener('DOMContentLoaded', function() {
                                         const searchInput = document.getElementById('searchInput');
                                         const searchResults = document.getElementById('searchResults');
+                                        const searchTypeInput = document.querySelector('input[name="search_type"]');
 
                                         if (!searchInput || !searchResults) {
                                             console.error('searchInput or searchResults element not found in the DOM.');
@@ -61,7 +62,9 @@
 
                                         searchInput.addEventListener('input', function() {
                                             const query = searchInput.value.trim();
-                                            if (query.length > 0) {
+                                            const searchType = searchTypeInput ? searchTypeInput.value : 'all';
+                                            // Solo mostrar productos si el filtro es "all"
+                                            if (query.length > 0 && searchType === 'all') {
                                                 fetch(`/search_live?query=${encodeURIComponent(query)}`)
                                                     .then(response => {
                                                         if (!response.ok) {
@@ -107,7 +110,33 @@
                                                 searchResults.style.display = 'none';
                                             }
                                         });
+
+                                        // Manejo de los filtros para cambiar el placeholder y el tipo de búsqueda
+                                        var dropdownItems = document.querySelectorAll('.dropdown-menu .dropdown-item');
+                                        dropdownItems.forEach(function(item) {
+                                            item.addEventListener('click', function() {
+                                                var value = '';
+                                                var placeholder = '';
+                                                if (this.textContent.includes('Todo')) {
+                                                    value = 'all';
+                                                    placeholder = 'Buscar productos, marcas o categorías...';
+                                                } else if (this.textContent.includes('Marca')) {
+                                                    value = 'brand';
+                                                    placeholder = 'Buscar marca...';
+                                                } else if (this.textContent.includes('Categoría')) {
+                                                    value = 'category';
+                                                    placeholder = 'Buscar categoría...';
+                                                }
+                                                if (searchTypeInput) searchTypeInput.value = value;
+                                                if (searchInput) searchInput.placeholder = placeholder;
+                                                // Oculta los resultados si no es "all"
+                                                if (value !== 'all') {
+                                                    searchResults.style.display = 'none';
+                                                }
+                                            });
+                                        });
                                     });
+                                ]]>
                                 ]]>
                                 </script>
                             </div>
