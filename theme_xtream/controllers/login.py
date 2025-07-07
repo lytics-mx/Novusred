@@ -52,6 +52,13 @@ class WebsiteAuth(Home):
     def shop_signup(self, redirect=None, **post):
         """Custom signup page for website users"""
         if request.httprequest.method == 'POST':
+            # Check if terms and conditions checkbox is checked
+            if not post.get('accept_terms'):
+                return request.render('theme_xtream.website_signup', {
+                    'error': _("You must accept the terms and conditions to create an account."),
+                    'redirect': redirect,
+                })
+    
             # Check required fields
             for field in ['login', 'name', 'password']:
                 if not post.get(field):
@@ -59,7 +66,7 @@ class WebsiteAuth(Home):
                         'error': _("All fields are required."),
                         'redirect': redirect,
                     })
-            
+    
             # Check if user already exists
             login = post.get('login')
             if login:
@@ -69,23 +76,23 @@ class WebsiteAuth(Home):
                         'error': _("An account with this email already exists. Please use another email or reset your password."),
                         'redirect': redirect,
                     })
-            
+    
             try:
                 # Create values for portal user (website-only access)
                 name = post.get('name')
                 if post.get('last_name'):
                     name += ' ' + post.get('last_name')
-                
+    
                 # Create a new portal user
                 portal_group = request.env.ref('base.group_portal')
-                
+    
                 # Generate a partner first
                 partner_values = {
                     'name': name,
                     'email': login,
                 }
                 partner = request.env['res.partner'].sudo().create(partner_values)
-                
+    
                 # Create the user with portal access
                 user_values = {
                     'login': login,
@@ -94,24 +101,25 @@ class WebsiteAuth(Home):
                     'partner_id': partner.id,
                     'groups_id': [(6, 0, [portal_group.id])],
                 }
-                
+    
                 user_sudo = request.env['res.users'].sudo().with_context(
                     no_reset_password=True
                 ).create(user_values)
-                
+    
                 _logger.info("Portal user created successfully: %s (ID: %s)", login, user_sudo.id)
-                
+    
                 # Authenticate the new user
                 request.session.authenticate(request.session.db, login, post.get('password'))
-                
-                return request.redirect(redirect or '/subcategory')
+    
+                # Redirect to /web/login after successful signup
+                return request.redirect('/web/login')
             except Exception as e:
                 _logger.error("Signup error: %s (Exception type: %s)", str(e), type(e).__name__)
                 return request.render('theme_xtream.website_signup', {
                     'error': _("Could not create your account: {0}").format(str(e)),
                     'redirect': redirect,
                 })
-        
+    
         return request.render('theme_xtream.website_signup', {
             'redirect': redirect,
         })
