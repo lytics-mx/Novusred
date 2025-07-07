@@ -13,9 +13,21 @@
                                 <ul class="list-unstyled">
                                     <t t-foreach="categories" t-as="category">
                                         <li>
-                                            <a t-att-href="'/subcategory?category_id=%s%s' % (category['category_id'], '&amp;subcategory_id=%s' % category['subcategory_id'] if category['subcategory_id'] and category['subcategory_id'] != category['category_id'] else '')">
+                                            <a t-att-href="'/subcategory?category_id=%s' % category['category_id']">
                                                 <t t-esc="category['name']"/> (<t t-esc="category['product_count']"/>)
                                             </a>
+                                            <!-- Mostrar subcategorías recursivamente -->
+                                            <ul class="list-unstyled">
+                                                <t t-foreach="category['children']" t-as="child">
+                                                    <li>
+                                                        <a t-att-href="'/subcategory?category_id=%s' % child['category_id']">
+                                                            <t t-esc="child['name']"/> (<t t-esc="child['product_count']"/>)
+                                                        </a>
+                                                        <!-- Subcategorías de nivel inferior -->
+                                                        <t t-call="theme_xtream.render_subcategories" t-vars="subcategory=child"/>
+                                                    </li>
+                                                </t>
+                                            </ul>
                                         </li>
                                     </t>
                                 </ul>
@@ -31,14 +43,21 @@
                                             <ul class="list-unstyled">
                                                 <t t-foreach="column" t-as="category">
                                                     <li>
-                                                        <a t-att-href="
-                                                            '/subcategory?category_id=%s%s' % (
-                                                                category['category_id'],
-                                                                '&amp;subcategory_id=%s' % category['subcategory_id'] if category.get('subcategory_id') and category['subcategory_id'] != category['category_id'] else ''
-                                                            )
-                                                        ">
+                                                        <a t-att-href="'/subcategory?category_id=%s' % category['category_id']">
                                                             <t t-esc="category['name']"/> (<t t-esc="category['product_count']"/>)
                                                         </a>
+                                                        <!-- Mostrar subcategorías recursivamente -->
+                                                        <ul class="list-unstyled">
+                                                            <t t-foreach="category['children']" t-as="child">
+                                                                <li>
+                                                                    <a t-att-href="'/subcategory?category_id=%s' % child['category_id']">
+                                                                        <t t-esc="child['name']"/> (<t t-esc="child['product_count']"/>)
+                                                                    </a>
+                                                                    <!-- Subcategorías de nivel inferior -->
+                                                                    <t t-call="theme_xtream.render_subcategories" t-vars="subcategory=child"/>
+                                                                </li>
+                                                            </t>
+                                                        </ul>
                                                     </li>
                                                 </t>
                                             </ul>
@@ -51,5 +70,19 @@
                 </div>
             </div>
         </t>
+    </template>
+
+    <!-- Template para renderizar subcategorías recursivamente -->
+    <template id="render_subcategories" name="Render Subcategories">
+        <ul class="list-unstyled">
+            <t t-foreach="subcategory['children']" t-as="child">
+                <li>
+                    <a t-att-href="'/subcategory?category_id=%s' % child['category_id']">
+                        <t t-esc="child['name']"/> (<t t-esc="child['product_count']"/>)
+                    </a>
+                    <t t-call="theme_xtream.render_subcategories" t-vars="subcategory=child"/>
+                </li>
+            </t>
+        </ul>
     </template>
 </odoo>
