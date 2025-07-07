@@ -70,7 +70,7 @@ class ShopController(WebsiteSale):
                     
                     line = order.order_line.filtered(lambda l: l.id == line_id)
                     if line:
-                        # Guardar información del producto antes de eliminar la línea
+                        # Guardar información del producto
                         product_data = {
                             'id': int(time.time()),  # ID temporal único
                             'product_id': product_id,
@@ -86,23 +86,24 @@ class ShopController(WebsiteSale):
                                 'brand_id': line.product_id.product_tmpl_id.brand_type_id.id,
                             })
                         
-                        # ESTAS LÍNEAS SON CRUCIALES - ASEGÚRATE DE QUE ESTÉN PRESENTES
+                        # Agregar el producto a la lista de guardados
                         saved_items = request.session.get('saved_for_later', [])
                         saved_items.append(product_data)
                         request.session['saved_for_later'] = saved_items
-                        request.session.modified = True  # Esta línea asegura que la sesión se actualice
+                        request.session.modified = True  # Asegurar que la sesión se actualice
                         _logger.info(f"Productos guardados en sesión: {saved_items}")
                         
-                        # Eliminar la línea del carrito
-                        line.unlink()
+                        # Actualizar la cantidad del producto en el carrito a 0 en lugar de eliminarlo
+                        line.product_uom_qty = 0
+                        order._cart_update(product_id=product_id, set_qty=0)
                         
                         # Verificación de depuración
-                        print(f"Producto guardado correctamente: {product_data['name']}")
+                        print(f"Producto movido a guardados: {product_data['name']}")
                         print(f"Total de elementos guardados: {len(request.session.get('saved_for_later', []))}")
         except Exception as e:
             import traceback
             traceback.print_exc()
-            print(f"Error al guardar producto: {str(e)}")
+            print(f"Error al mover producto a guardados: {str(e)}")
             
         return request.redirect('/shop/cart?tab=saved')
     
