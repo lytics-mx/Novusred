@@ -31,20 +31,17 @@
                                             <ul class="list-unstyled">
                                                 <t t-foreach="column" t-as="category">
                                                     <li>
-                                                        <a t-att-href="'/subcategory?category_id=%s&amp;subcategory_id=%s' % (category['category_id'], category['subcategory_id'])">
-                                                            <t t-esc="category['name']"/> (<t t-esc="category['product_count']"/>)
-                                                        </a>
-                                                        <!-- Verificar si la categoría tiene subcategorías -->
-                                                        <t t-if="category.get('subcategories')">
-                                                            <ul class="list-unstyled ms-3">
-                                                                <t t-foreach="category['subcategories']" t-as="subcategory">
-                                                                    <li>
-                                                                        <a t-att-href="'/subcategory?category_id=%s&amp;subcategory_id=%s' % (subcategory['category_id'], subcategory['subcategory_id'])">
-                                                                            <t t-esc="subcategory['name']"/> (<t t-esc="subcategory['product_count']"/>)
-                                                                        </a>
-                                                                    </li>
-                                                                </t>
-                                                            </ul>
+                                                        <!-- Verificar si es nivel 1 (sin subcategory_id) -->
+                                                        <t t-if="not category.get('subcategory_id')">
+                                                            <a t-att-href="'/subcategory?category_id=%s' % category['category_id']">
+                                                                <t t-esc="category['name']"/> (<t t-esc="category['product_count']"/>)
+                                                            </a>
+                                                        </t>
+                                                        <!-- Verificar si es nivel 2 o superior (con subcategory_id) -->
+                                                        <t t-else="">
+                                                            <a t-att-href="'/subcategory?category_id=%s&amp;subcategory_id=%s' % (category['category_id'], category['subcategory_id'])">
+                                                                <t t-esc="category['name']"/> (<t t-esc="category['product_count']"/>)
+                                                            </a>
                                                         </t>
                                                     </li>
                                                 </t>
