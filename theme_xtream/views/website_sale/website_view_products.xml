@@ -163,12 +163,17 @@
                                                                                             </span>
                                                                                         </div>
                                                                                     </t>
-                                                                                    <h6 class="card-title mb-2" style="font-size: 13px; line-height: 1.1; max-height: 2.2em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; width:100px;">
+                                                                                    <h6 class="card-title mb-2" style="font-size: 13px; line-height: 1.1; max-height: 3.3em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; width:100px;">
                                                                                         <t t-esc="acc.name" />
                                                                                     </h6>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
+                                                                        <t t-if="acc_idx is not None and acc_idx + 1 != min(3, acc_count - idx)">
+                                                                            <div class="d-flex align-items-center justify-content-center" style="height:100%; min-height:40px;">
+                                                                                <span style="font-size: 48px; font-weight: bold; color: #222; line-height: 1;">+</span>
+                                                                            </div>
+                                                                        </t>
                                                                     </t>
                                                                 </div>
                                                             </div>
@@ -283,13 +288,17 @@
                                                                             </span>
                                                                         </div>
                                                                     </t>
-                                                                    <h6 class="card-title mb-2" style="font-size: 13px; line-height: 1.1; max-height: 2.2em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-transform: uppercase; width:100px;">
+                                                                    <h6 class="card-title mb-2" style="font-size: 13px; line-height: 1.1; max-height: 3.3em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; text-transform: uppercase; width:100px;">
                                                                         <t t-esc="acc.name" />
                                                                     </h6>
                                                                 </div>
                                                             </div>
                                                         </div>
-
+                                                        <t t-if="acc_idx is not None and acc_idx + 1 != acc_count">
+                                                            <div class="d-flex align-items-center justify-content-center" style="height:100%; min-height:40px;">
+                                                                <span style="font-size: 48px; font-weight: bold; color: #222; line-height: 1;">+</span>
+                                                            </div>
+                                                        </t>
                                                     </t>
                                                 </div>
                                             </t>
@@ -1094,78 +1103,7 @@
                     }  
 
 
-                    /* Ajusta el diseño para que siempre haya tres tarjetas en una fila */
-                    .compact-products-grid {
-                        display: flex;
-                        gap: 8px; /* Espaciado uniforme entre las tarjetas */
-                        flex-wrap: wrap; /* Permite que las tarjetas se ajusten en filas múltiples si es necesario */
-                        justify-content: space-between; /* Distribuye las tarjetas uniformemente */
-                    }
-
-                    .compact-product-card {
-                        flex: 1 1 calc(33.33% - 8px); /* Cada tarjeta ocupa un tercio del espacio disponible */
-                        max-width: calc(33.33% - 8px); /* Limita el ancho máximo */
-                        min-width: calc(33.33% - 8px); /* Limita el ancho mínimo */
-                        background: #fff;
-                        border: 1px solid #e0e0e0;
-                        border-radius: 8px;
-                        overflow: hidden;
-                        margin-bottom: 8px;
-                        transition: box-shadow 0.2s ease;
-                    }
-
-                    .compact-product-card:hover {
-                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                    }
-
-                    /* Ajustes responsivos */
-                    @media (max-width: 991.98px) {
-                        .compact-product-card {
-                            flex: 1 1 calc(33.33% - 6px); /* Ajusta el espacio para pantallas medianas */
-                            max-width: calc(33.33% - 6px);
-                            min-width: calc(33.33% - 6px);
-                        }
-                    }
-
-                    @media (max-width: 767.98px) {
-                        .compact-products-grid {
-                            flex-wrap: wrap; /* Permite que las tarjetas se ajusten en filas múltiples */
-                            gap: 6px; /* Reduce el espacio entre las tarjetas */
-                        }
-                        .compact-product-card {
-                            flex: 1 1 calc(50% - 6px); /* Dos tarjetas por fila en pantallas pequeñas */
-                            max-width: calc(50% - 6px);
-                            min-width: calc(50% - 6px);
-                        }
-                    }
-
-                    /* Ajusta el texto y los detalles del producto */
-                    .mobile-card-body {
-                        padding: 4px 6px; /* Reducido */
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: space-between;
-                    }
-
-                    .mobile-main-price {
-                        font-size: 14px; /* Más reducido */
-                        font-weight: bold;
-                    }
-
-                    .mobile-discount {
-                        font-size: 10px; /* Más reducido */
-                        font-weight: normal;
-                        color: #FF5207;
-                    }
-
-                    .mobile-shipping-text {
-                        font-size: 10px; /* Más reducido */
-                        color: #FF5207;
-                        font-weight: bold;
-                        font-style: italic;
-                    }
-
-
+                
 
 
                             /* Regla global para envío gratis - aplicar a todos los tamaños */
@@ -1416,7 +1354,88 @@
                         }
 
 
-
+                        /* Card blanco y ajuste de tamaño */
+                        .accessory-card-100 {
+                            background: #fff !important;
+                            width: 150px !important;
+                            min-width: 150px !important;
+                            max-width: 150px !important;
+                            position: relative;
+                        }
+                        /* Espacio para el "+" entre cards excepto la última */
+                        .accessory-card-100:not(:last-child) {
+                            margin-right: 24px;
+                        }
+                        /* Estilo para el "+" entre cards */
+                        .accessory-card-100:not(:last-child)::after {
+                            content: "+";
+                            position: absolute;
+                            right: -20px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            font-size: 48px;
+                            font-weight: bold;
+                            color: #222;
+                            line-height: 1;
+                            pointer-events: none;
+                        }
+                        .accessory-card-100 .card-body,
+                        .accessory-card-100 .card-title {
+                            width: 100px;
+                            max-width: 100px;
+                            white-space: normal;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            font-size: 13px;
+                            line-height: 1.1;
+                            word-break: break-word;
+                            padding: 4px 2px 2px 2px;
+                            background: #fff !important;
+                        }
+                        .accessory-card-100 .card-title {
+                            display: -webkit-box;
+                            -webkit-line-clamp: 3;
+                            -webkit-box-orient: vertical;
+                            max-height: 3.3em;
+                        }
+                        /* Badge de tag */
+                        .accessory-card-100 .accessory-badge,
+                        .accessory-card-100 .accessory-badge-container .badge {
+                            font-size: 10px !important;
+                            padding: 2px 4px !important;
+                            border-radius: 0 !important;
+                            max-width: 90px;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            display: inline-block;
+                        }
+                        /* Precios */
+                        .accessory-card-100 .accessory-main-price {
+                            font-size: 16px !important;
+                            font-weight: bold;
+                            color: #000;
+                            margin-right: 4px;
+                        }
+                        .accessory-card-100 .accessory-discount-amount span,
+                        .accessory-card-100 .accessory-discount-amount {
+                            font-size: 12px !important;
+                            color: #888;
+                            text-decoration: line-through;
+                            margin-right: 4px;
+                        }
+                        .accessory-card-100 .accessory-discount {
+                            font-size: 12px !important;
+                            color: #FF5207;
+                            font-weight: normal;
+                            margin-left: 2px;
+                            vertical-align: middle;
+                        }
+                        .accessory-card-100 .accessory-price-container {
+                            display: flex;
+                            align-items: center;
+                            gap: 2px;
+                        }
 
 
 
