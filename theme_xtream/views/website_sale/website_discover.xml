@@ -31,7 +31,12 @@
                                             <ul class="list-unstyled">
                                                 <t t-foreach="column" t-as="category">
                                                     <li>
-                                                        <a t-att-href="'/subcategory?category_id=%s%s' % (category['category_id'], '&amp;subcategory_id=%s' % category['subcategory_id'] if category['subcategory_id'] and category['subcategory_id'] != category['category_id'] else '')">
+                                                        <a t-att-href="
+                                                            '/subcategory?category_id=%s%s' % (
+                                                                category['category_id'],
+                                                                '&amp;subcategory_id=%s' % category['subcategory_id'] if category.get('subcategory_id') and category['subcategory_id'] != category['category_id'] else ''
+                                                            )
+                                                        ">
                                                             <t t-esc="category['name']"/> (<t t-esc="category['product_count']"/>)
                                                         </a>
                                                     </li>
