@@ -16,9 +16,14 @@ class WishlistController(http.Controller):
 
     @http.route('/shop/wishlist/clear', type='http', auth='public', methods=['POST'], website=True)
     def clear_wishlist(self):
-        # Eliminar todos los productos de la wishlist del usuario actual
-        wishlist_items = request.env['product.wishlist'].sudo().search([('partner_id', '=', request.env.user.partner_id.id)])
-        wishlist_items.unlink()
+        # Obtener los IDs de los productos seleccionados desde el formulario
+        selected_ids = request.httprequest.form.getlist('wishlist_select')
+        
+        if selected_ids:
+            # Convertir los IDs a enteros y eliminar los productos seleccionados
+            wishlist_items = request.env['product.wishlist'].sudo().browse([int(item_id) for item_id in selected_ids])
+            wishlist_items.unlink()
+        
         return request.redirect('/shop/wishlist')
     
     @http.route('/shop/wishlist/remove/<int:item_id>', type='http', auth='public', methods=['POST'], website=True)
