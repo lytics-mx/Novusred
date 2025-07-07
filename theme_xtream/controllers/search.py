@@ -13,12 +13,19 @@ class WebsiteSearch(http.Controller):
             return request.redirect('/category_search?search=%s' % search)
         elif search_type == 'model':
             Product = request.env['product.template'].sudo()
-            # Cambiar default_code por product_model
+            # Buscar producto exacto por modelo
             product = Product.search([('product_model', '=', search)], limit=1)
             if product:
                 return request.redirect('/shop/%s?product=product.template(%s,)' % (product.slug(), product.id))
             else:
-                return request.redirect('/subcategory?search=%s' % search)
+                # Buscar productos con coincidencias parciales en el modelo
+                products = Product.search([('product_model', 'ilike', search)], limit=10)
+                if products:
+                    # Redirigir a subcategory con los resultados de búsqueda
+                    return request.redirect('/subcategory?search=%s' % search)
+                else:
+                    # Si no hay resultados, redirigir con el término de búsqueda
+                    return request.redirect('/subcategory?search=%s' % search)
         else:
             # Buscar si el texto coincide con una marca activa
             Brand = request.env['brand.type'].sudo()
