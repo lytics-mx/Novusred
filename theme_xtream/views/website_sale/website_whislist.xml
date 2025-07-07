@@ -5,12 +5,13 @@
                 <div style="margin-bottom: 10px;">
                     <a href="/checkout" style="font-size:16px; color:#656565; text-decoration:none;">Compras</a>
                     &#160;&gt;&#160;
-                    <a href="/shop/whislist" style="font-size:16px; color:#656565; text-decoration:none;">Favoritos</a>
+                    <a href="/shop/wishlist" style="font-size:16px; color:#656565; text-decoration:none;">Favoritos</a>
                 </div>
                 <div style="font-size:22px; color:#000000; font-weight:normal; margin-bottom: 20px;">
                     Favoritos
                 </div>
                 <form method="post" action="/shop/wishlist/clear">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token"/>
                     <label style="display: flex; align-items: center; cursor: pointer; margin-bottom: 20px;">
                         <input type="checkbox" id="select_all" onchange="toggleCheckboxes(this)" style="margin-right: 8px;" />
                         Eliminar todos los productos de Favoritos
@@ -20,6 +21,7 @@
                 <div class="products-list">
                     <t t-foreach="wishlist_items" t-as="item" t-key="item.id">
                         <form method="post" t-att-action="'/shop/wishlist/remove/%s' % item.id">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token"/>
                             <div class="product-list-item p-3" style="border: 1px solid #dee2e6; border-radius: 8px; background: #fff; margin-bottom: 15px;">
                                 <div class="row align-items-center">
                                     <!-- Checkbox para seleccionar el producto -->
