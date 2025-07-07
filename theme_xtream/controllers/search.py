@@ -36,12 +36,17 @@ class WebsiteSearch(http.Controller):
 
     @http.route('/search_live', type='http', auth='public', website=True)
     def search_live(self, query):
+        # Buscar productos por nombre o modelo
         products = request.env['product.template'].sudo().search([
-            ('name', 'ilike', query)
+            '|',  # Condición OR
+            ('name', 'ilike', query),
+            ('product_model', 'ilike', query)
         ], limit=10)
+        
         results = [{
             'id': product.id,
             'name': product.name,
             'price': product.list_price,
         } for product in products]
-        return request.make_response(json.dumps({'results': results}), headers=[('Content-Type', 'application/json')])        
+        
+        return request.make_response(json.dumps({'results': results}), headers=[('Content-Type', 'application/json')])
