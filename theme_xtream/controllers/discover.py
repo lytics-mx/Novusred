@@ -5,4 +5,21 @@ class DiscoverController(http.Controller):
 
     @http.route('/discover', type='http', auth='public', website=True)
     def website_discover(self, **kw):
-        return request.render('theme_xtream.website_discover')
+        # Obtener todas las categorías
+        categories = request.env['product.category'].sudo().search([])
+        
+        # Preparar datos con el contador de productos por categoría
+        category_data = []
+        for category in categories:
+            product_count = request.env['product.template'].sudo().search_count([
+                ('categ_id', 'child_of', category.id)
+            ])
+            category_data.append({
+                'name': category.name,
+                'product_count': product_count
+            })
+        
+        # Renderizar el template con los datos
+        return request.render('theme_xtream.website_discover', {
+            'categories': category_data
+        })
