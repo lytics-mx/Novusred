@@ -64,9 +64,11 @@
 
             <t t-if="request.env.user and request.env.user.id != request.env.ref('base.public_user').id">
                 <div class="container mt-4">
-                    <div style="text-align: left;">
-                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">De acuerdo a tu última vista</h2>
-                    </div>
+                    <t t-if="suggested_products">
+                        <div style="text-align: left;">
+                            <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">De acuerdo a tu última vista</h2>
+                        </div>
+                    </t>
                     <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
                         <t t-set="viewed_categories" t-value="request.env['website.track'].sudo().search([
                             ('visitor_id', '=', request.env['website.visitor']._get_visitor_from_request().id),
@@ -705,9 +707,11 @@
                 <!-- Bloque de productos en formato carrusel -->
                 <t t-if="request.env.user and request.env.user.id != request.env.ref('base.public_user').id">
                     <div class="container mt-4">
-                        <div style="text-align: left;">
-                            <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Historial</h2>
-                        </div>
+                        <t t-if="viewed_products">
+                            <div style="text-align: left;">
+                                <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Historial</h2>
+                            </div>
+                        </t>
                         <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
                             <t t-set="visitor" t-value="request.env['website.visitor']._get_visitor_from_request()" />
                             <t t-set="viewed_products" t-value="request.env['website.track'].sudo().search([
