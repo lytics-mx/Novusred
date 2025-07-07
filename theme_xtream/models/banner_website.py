@@ -24,7 +24,7 @@ class BannerImageLine(models.Model):
         'banner_product_images_rel',
         'banner_id',
         'attachment_id',
-        string="Imágenes de la sección de Descubre",
+        string="Imágenes de la sección",
         domain=[('mimetype', 'ilike', 'image/')],
         help="Upload product cover images."
     )
