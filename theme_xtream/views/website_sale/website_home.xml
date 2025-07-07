@@ -474,6 +474,12 @@
                                                     <t t-set="cat_search" t-value="img_name[9:].split('.')[0].replace('_', ' ')"/>
                                                     <t t-set="url" t-value="'/category_search?search=' + cat_search"/>
                                                 </t>
+                                                <t t-elif="img_name and '.' in img_name and not img_name.startswith('brand_') and not img_name.startswith('category_')">
+                                                    <!-- Si solo es un nombre de producto/categoría, ejemplo: paneles solares.png -->
+                                                    <t t-set="cat_search" t-value="img_name.rsplit('.', 1)[0].replace('_', ' ').replace('%20', ' ')" />
+                                                    <t t-set="cat_search_url" t-value="cat_search.replace(' ', '%20')" />
+                                                    <t t-set="url" t-value="'/subcategory?search=' + cat_search_url"/>
+                                                </t>
                                                 <t t-else="">
                                                     <t t-set="url" t-value="'/discover'"/>
                                                 </t>
