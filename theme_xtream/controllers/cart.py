@@ -59,6 +59,8 @@ class ShopController(WebsiteSale):
             return {'success': True, 'cart_quantity': total_items}
         return {'success': False}
        
+
+       
     @http.route('/shop/cart/save_for_later', type='http', auth="public", website=True)
     def cart_save_for_later(self, line_id=None, product_id=None, **kw):
         try:
@@ -76,32 +78,25 @@ class ShopController(WebsiteSale):
                             'product_id': product_id,
                             'template_id': line.product_id.product_tmpl_id.id,
                             'name': line.product_id.display_name,
-                            'price': line.product_id.discounted_price or line.product_id.list_price,
+                            'price': getattr(line.product_id, 'discounted_price', line.product_id.list_price),
                             'quantity_available': line.product_id.qty_available,
                         }
                         
-                        if line.product_id.product_tmpl_id.brand_type_id:
+                        if getattr(line.product_id.product_tmpl_id, 'brand_type_id', False):
                             product_data.update({
                                 'brand_name': line.product_id.product_tmpl_id.brand_type_id.name,
                                 'brand_id': line.product_id.product_tmpl_id.brand_type_id.id,
                             })
                         
-                        # ESTAS LÍNEAS SON CRUCIALES - ASEGÚRATE DE QUE ESTÉN PRESENTES
                         saved_items = request.session.get('saved_for_later', [])
                         saved_items.append(product_data)
                         request.session['saved_for_later'] = saved_items
-                        request.session.modified = True  # Esta línea es MUY importante
+                        request.session.modified = True
                         
                         # Eliminar la línea del carrito
                         line.unlink()
-                        
-                        # Verificación de depuración
-                        print(f"Producto guardado correctamente: {product_data['name']}")
-                        print(f"Total de elementos guardados: {len(request.session.get('saved_for_later', []))}")
         except Exception as e:
-            import traceback
-            traceback.print_exc()
-            print(f"Error al guardar producto: {str(e)}")
+            _logger.error(f"Error al guardar producto para después: {str(e)}", exc_info=True)
             
         return request.redirect('/shop/cart?tab=saved')
     
