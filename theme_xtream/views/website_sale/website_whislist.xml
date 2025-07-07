@@ -14,15 +14,16 @@
                 <form method="post" action="/shop/wishlist/clear">
                     <t t-call="theme_xtream.csrf_token"/>
                     <div style="background: #fff; border: 1px solid #dee2e6; border-radius: 8px; padding: 16px 24px; margin-bottom: 20px;">
-                        <label style="display: flex; align-items: center; cursor: pointer; margin-bottom: 0;">
-                            <input type="checkbox" id="select_all" onchange="toggleCheckboxes(this)" style="margin-right: 8px; border-radius: 7px;" />
-                            <span style="margin-right: 8px;">Eliminar todos los productos seleccionados</span>
-                            <button type="submit" style="background: none; border: none; padding: 0; cursor: pointer;"
-                                onclick="return confirm('¿Estás seguro de que deseas eliminar todos los productos seleccionados?');">
-                                <i class="fa fa-trash" style="color: #000; font-size: 20px; transition: color 0.2s, transform 0.2s;"></i>
-                                <!-- <i class="fa fa-mouse-pointer" style="color: #007bff; font-size: 14px; margin-left: -10px; margin-top: -10px; position: relative; transition: transform 0.2s;"></i> -->
-                            </button>
-                        </label>
+                    <t t-if="wishlist_items">
+                        <div style="background: #fff; border: 1px solid #dee2e6; border-radius: 8px; padding: 16px 24px; margin-bottom: 20px;">
+                            <label style="display: flex; align-items: center; cursor: pointer; margin-bottom: 0;">
+                                <input type="checkbox" id="select_all" onchange="toggleCheckboxes(this)" style="margin-right: 8px; border-radius: 7px;" />
+                                <span style="margin-right: 8px;">Eliminar todos los productos seleccionados</span>
+                                <button type="submit" style="background: none; border: none; padding: 0; cursor: pointer;"
+                                    onclick="return confirm('¿Estás seguro de que deseas eliminar todos los productos seleccionados?');">
+                                    <i class="fa fa-trash" style="color: #000; font-size: 20px; transition: color 0.2s, transform 0.2s;"></i>
+                                </button>
+                            </label>
                         <style>
                             button[type="submit"]:hover .fa-trash {
                                 color: #dc3545;
@@ -32,18 +33,12 @@
                         </style>
                     </div>
                 </form>
-<div class="products-list">
+                <div class="products-list">
                     <t t-foreach="wishlist_items" t-as="item" t-key="item.id">
                         <form method="post" t-att-action="'/shop/wishlist/remove/%s' % item.id">
                             <t t-call="theme_xtream.csrf_token"/>
                             <div class="product-list-item p-3" style="border: 1px solid #dee2e6; border-radius: 8px; background: #fff; margin-bottom: 15px;">
-                                <!-- Verificar si product_data['product'] está definido -->
-                                <t t-if="product_data and product_data['product']">
-                                    <a t-att-href="'/shop/product/%s' % product_data['product'].id" 
-                                       style="text-decoration: none; color: inherit; display: block; width: 100%; height: 100%; position: absolute; left: 0; top: 0; z-index: 1;">
-                                    </a>
-                                </t>
-                                <div class="row align-items-center" style="position: relative; z-index: 2;">
+                                <div class="row align-items-center">
                                     <!-- Checkbox para seleccionar el producto -->
                                     <div class="col-auto pr-0" style="max-width: 20px;">
                                         <input type="checkbox" name="wishlist_select" t-att-value="item.id" class="wishlist-checkbox" style="margin-right: 0; width: 22px; height: 22px; accent-color: #FF5207;"/>
@@ -103,10 +98,13 @@
                                                 </span>
                                             </div>
                                         </t>
-                                        <button type="submit" class="btn btn-link" style="color: #dc3545; text-decoration: none; font-size: 14px; margin-top: 8px; padding-left: 0; display: block; text-align: left; font-weight: normal; font-family: 'Questrial', sans-serif;">
-                                            Eliminar
-                                        </button>
+                                        <t t-else="">
+                                            <button type="submit" class="btn btn-link" style="color: #dc3545; text-decoration: none; font-size: 14px; margin-top: 8px; padding-left: 0; display: block; text-align: left; font-weight: normal; font-family: 'Questrial', sans-serif;">
+                                                Eliminar
+                                            </button>
+                                        </t>
                                     </div>
+
                                 </div>
                             </div>
                         </form>
