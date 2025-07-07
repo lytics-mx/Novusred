@@ -14,9 +14,71 @@
                                 <form class="d-flex flex-grow-1" action="/search_redirect" method="get" style="width: 100%;">
                                     <div class="input-group w-100">
                                         <input type="search" name="search" class="form-control"
-                                               placeholder="Buscar productos, marcas o categorías..." aria-label="Search"
-                                               style="border-radius: 20px; font-size: 14px; height: 36px;"/>
+                                            placeholder="Buscar productos, marcas o categorías..." aria-label="Search"
+                                            style="border-radius: 20px; font-size: 14px; height: 36px;"
+                                            autocomplete="off" id="navbar-search-input"/>
                                         <input type="hidden" name="search_type" value="all"/>
+                                        <div id="navbar-search-suggestions" class="list-group position-absolute w-100" style="z-index: 9999; top: 40px; display: none;"></div>
+                                        <script>
+                                            document.addEventListener('DOMContentLoaded', function() {
+                                             var searchInput = document.getElementById('navbar-search-input');
+                                             var suggestionsBox = document.getElementById('navbar-search-suggestions');
+                                             var searchTypeInput = document.querySelector('input[name="search_type"]');
+                                             var lastQuery = '';
+                                             var debounceTimeout = null;
+
+                                             function showSuggestions(items) {
+                                                 suggestionsBox.innerHTML = '';
+                                                 if (items.length === 0) {
+                                                  suggestionsBox.style.display = 'none';
+                                                  return;
+                                                 }
+                                                 items.forEach(function(item) {
+                                                  var a = document.createElement('a');
+                                                  a.className = 'list-group-item list-group-item-action';
+                                                  a.href = '/shop/product/' + item.id;
+                                                  a.innerHTML = '<img src="' + (item.image || '/web/static/img/placeholder.png') + '" style="height:32px;width:32px;object-fit:cover;margin-right:10px;">' +
+                                                          '<span>' + item.name + '</span>' +
+                                                          (item.price ? '<span class="float-end fw-bold">$' + item.price + '</span>' : '');
+                                                  suggestionsBox.appendChild(a);
+                                                 });
+                                                 suggestionsBox.style.display = 'block';
+                                             }
+
+                                             function hideSuggestions() {
+                                                 suggestionsBox.style.display = 'none';
+                                             }
+
+                                             searchInput.addEventListener('input', function() {
+                                                 var query = this.value.trim();
+                                                 var searchType = searchTypeInput.value;
+                                                 if (debounceTimeout) clearTimeout(debounceTimeout);
+                                                 if (searchType !== 'all' || query.length === 0) {
+                                                  hideSuggestions();
+                                                  return;
+                                                 }
+                                                 debounceTimeout = setTimeout(function() {
+                                                  if (query === lastQuery) return;
+                                                  lastQuery = query;
+                                                  fetch('/shop/product_suggest?q=' + encodeURIComponent(query))
+                                                      .then(function(resp) { return resp.json(); })
+                                                      .then(function(data) {
+                                                       showSuggestions(data.slice(0, 5));
+                                                      });
+                                                 }, 200);
+                                             });
+
+                                             searchInput.addEventListener('focus', function() {
+                                                 if (suggestionsBox.innerHTML) suggestionsBox.style.display = 'block';
+                                             });
+
+                                             document.addEventListener('click', function(e) {
+                                                 if (!suggestionsBox.contains(e.target) && e.target !== searchInput) {
+                                                  hideSuggestions();
+                                                 }
+                                             });
+                                            });
+                                        </script>
                                         <!-- Filtro visible en todas las pantallas -->
                                         <div class="dropdown">
                                             <button class="btn btn-outline-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false"
