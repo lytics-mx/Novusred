@@ -80,7 +80,8 @@ class ShopController(WebsiteSale):
                             'product_id': product_id,
                             'template_id': line.product_id.product_tmpl_id.id,
                             'name': line.product_id.display_name,
-                            'price': line.product_id.discounted_price or line.product_id.list_price,
+                            'price': line.price_subtotal,  # Usar el precio de la línea
+                            'quantity': line.product_uom_qty,
                             'quantity_available': line.product_id.qty_available,
                         }
                         
@@ -91,9 +92,14 @@ class ShopController(WebsiteSale):
                             })
                         
                         saved_items = request.session.get('saved_for_later', [])
-                        saved_items.append(product_data)
+                        # Evitar duplicados
+                        if not any(item['id'] == line.id for item in saved_items):
+                            saved_items.append(product_data)
                         request.session['saved_for_later'] = saved_items
                         request.session.modified = True
+
+                        # Eliminar la línea del carrito (opcional, si quieres que desaparezca del carrito)
+                        line.unlink()
         except Exception as e:
             import traceback
             traceback.print_exc()
