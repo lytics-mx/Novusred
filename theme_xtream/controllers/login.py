@@ -122,30 +122,30 @@ class WebsiteAuth(Home):
             'redirect': redirect,
         })
     
-    @http.route(['/shop/reset_password'], type='http', auth="public", website=True)
-    def shop_reset_password(self, redirect=None, **post):
-        """Custom password reset for website users"""
-        if request.httprequest.method == 'POST':
-            login = post.get('login')
-            if login:
-                user = request.env['res.users'].sudo().search([('login', '=', login)])
-                if user:
-                    try:
-                        user.action_reset_password()
-                        return request.render('theme_xtream.website_reset_password_success', {
-                            'message': _("Password reset instructions have been sent to your email.")
-                        })
-                    except Exception as e:
-                        return request.render('theme_xtream.website_reset_password', {
-                            'error': _("Could not reset password: {0}").format(str(e)),
-                            'redirect': redirect,
-                        })
-                else:
-                    return request.render('theme_xtream.website_reset_password', {
-                        'error': _("No account found with this email."),
-                        'redirect': redirect,
-                    })
+    # @http.route(['/shop/reset_password'], type='http', auth="public", website=True)
+    # def shop_reset_password(self, redirect=None, **post):
+    #     """Custom password reset for website users"""
+    #     if request.httprequest.method == 'POST':
+    #         login = post.get('login')
+    #         if login:
+    #             user = request.env['res.users'].sudo().search([('login', '=', login)])
+    #             if user:
+    #                 try:
+    #                     user.action_reset_password()
+    #                     return request.render('theme_xtream.website_reset_password_success', {
+    #                         'message': _("Password reset instructions have been sent to your email.")
+    #                     })
+    #                 except Exception as e:
+    #                     return request.render('theme_xtream.website_reset_password', {
+    #                         'error': _("Could not reset password: {0}").format(str(e)),
+    #                         'redirect': redirect,
+    #                     })
+    #             else:
+    #                 return request.render('theme_xtream.website_reset_password', {
+    #                     'error': _("No account found with this email."),
+    #                     'redirect': redirect,
+    #                 })
         
-        return request.render('theme_xtream.website_reset_password', {
-            'redirect': redirect,
-        })
+    #     return request.render('theme_xtream.website_reset_password', {
+    #         'redirect': redirect,
+    #     })

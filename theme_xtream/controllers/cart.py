@@ -90,7 +90,8 @@ class ShopController(WebsiteSale):
                         saved_items = request.session.get('saved_for_later', [])
                         saved_items.append(product_data)
                         request.session['saved_for_later'] = saved_items
-                        request.session.modified = True  # Esta línea es MUY importante
+                        request.session.modified = True  # Esta línea asegura que la sesión se actualice
+                        _logger.info(f"Productos guardados en sesión: {saved_items}")
                         
                         # Eliminar la línea del carrito
                         line.unlink()
