@@ -70,13 +70,38 @@ class ShopController(WebsiteSale):
                     
                     line = order.order_line.filtered(lambda l: l.id == line_id)
                     if line:
-                        # Marcar la línea como "Guardada para después"
-                        line.is_saved_for_later = True
-                        _logger.info(f"Línea marcada como guardada: {line.product_id.display_name}")
+                        # Guardar información del producto antes de eliminar la línea
+                        product_data = {
+                            'id': int(time.time()),  # ID temporal único
+                            'product_id': product_id,
+                            'template_id': line.product_id.product_tmpl_id.id,
+                            'name': line.product_id.display_name,
+                            'price': line.product_id.discounted_price or line.product_id.list_price,
+                            'quantity_available': line.product_id.qty_available,
+                        }
+                        
+                        if line.product_id.product_tmpl_id.brand_type_id:
+                            product_data.update({
+                                'brand_name': line.product_id.product_tmpl_id.brand_type_id.name,
+                                'brand_id': line.product_id.product_tmpl_id.brand_type_id.id,
+                            })
+                        
+                        # ESTAS LÍNEAS SON CRUCIALES - ASEGÚRATE DE QUE ESTÉN PRESENTES
+                        saved_items = request.session.get('saved_for_later', [])
+                        saved_items.append(product_data)
+                        request.session['saved_for_later'] = saved_items
+                        request.session.modified = True  # Esta línea es MUY importante
+                        
+                        # Eliminar la línea del carrito
+                        line.unlink()
+                        
+                        # Verificación de depuración
+                        print(f"Producto guardado correctamente: {product_data['name']}")
+                        print(f"Total de elementos guardados: {len(request.session.get('saved_for_later', []))}")
         except Exception as e:
             import traceback
             traceback.print_exc()
-            print(f"Error al mover producto a guardados: {str(e)}")
+            print(f"Error al guardar producto: {str(e)}")
             
         return request.redirect('/shop/cart?tab=saved')
     
@@ -91,15 +116,28 @@ class ShopController(WebsiteSale):
 
     
     @http.route('/shop/cart/move_to_cart', type='http', auth="public", website=True)
-    def move_to_cart(self, line_id=None, **kw):
-        if line_id:
-            order = request.website.sale_get_order()
-            if order:
-                line = order.order_line.filtered(lambda l: l.id == int(line_id))
-                if line:
-                    line.is_saved_for_later = False
-                    _logger.info(f"Línea movida al carrito: {line.product_id.display_name}")
-        return request.redirect('/shop/cart') 
+    def move_to_cart(self, item_id=None, **kw):
+        if item_id:
+            item_id = int(item_id)
+            saved_items = request.session.get('saved_for_later', [])
+            item_to_move = None
+            new_saved_items = []
+            
+            for item in saved_items:
+                if item['id'] == item_id:
+                    item_to_move = item
+                else:
+                    new_saved_items.append(item)
+                    
+            if item_to_move:
+                request.session['saved_for_later'] = new_saved_items
+                request.session.modified = True
+                
+                # Añadir al carrito
+                order = request.website.sale_get_order(force_create=1)
+                order._cart_update(product_id=item_to_move['product_id'], add_qty=1)
+                
+        return request.redirect('/shop/cart')    
     
     @http.route('/shop/cart/update_bundle', type='http', auth="public", website=True)
     def update_bundle_cart(self, **post):
