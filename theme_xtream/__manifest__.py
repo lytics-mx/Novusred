@@ -82,7 +82,7 @@
         
 
 
-        'views/shop/website_cart.xml',
+        # 'views/shop/website_cart.xml',
 
         'views/csrf_token.xml',
 
