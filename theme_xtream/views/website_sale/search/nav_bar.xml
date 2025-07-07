@@ -74,15 +74,18 @@
                                                         if (data.results.length > 0) {
                                                             searchResults.style.display = 'block';
                                                             data.results.slice(0, 5).forEach(result => {
+                                                                const truncatedName = result.name.length > 160 ? result.name.substring(0, 157) + '...' : result.name;
+                                                                const price = result.discount_price || result.fixed_price || result.list_price;
+                                    
                                                                 const item = document.createElement('a');
                                                                 item.className = 'dropdown-item';
                                                                 item.href = `/shop/product/${result.id}`;
                                                                 item.innerHTML = `
                                                                     <div class="d-flex align-items-start">
-                                                                        <img src="/web/image/product.template/${result.id}/image_1024" alt="${result.name}" style="width: 40px; height: 40px; object-fit: contain; margin-right: 10px;" />
+                                                                        <img src="/web/image/product.template/${result.id}/image_1024" alt="${truncatedName}" style="width: 40px; height: 40px; object-fit: contain; margin-right: 10px;" />
                                                                         <div>
-                                                                            <span>${result.name}</span><br>
-                                                                            <span style="font-weight: bold; color: #000;">$${result.price}</span>
+                                                                            <span>${truncatedName}</span><br>
+                                                                            <span style="font-weight: bold; color: #000;">$${price}</span>
                                                                         </div>
                                                                     </div>
                                                                 `;
@@ -358,12 +361,27 @@
                         
                         .dropdown-item img {
                             margin-right: 10px;
+                            width: 40px;
+                            height: 40px;
+                            object-fit: contain;
                         }
                         
                         .dropdown-item div {
                             display: flex;
                             flex-direction: column;
-                        }                        
+                        }
+                        
+                        .dropdown-item span:first-child {
+                            font-size: 14px;
+                            font-weight: normal;
+                            color: #333;
+                        }
+                        
+                        .dropdown-item span:last-child {
+                            font-size: 16px;
+                            font-weight: bold;
+                            color: #000;
+                        }                      
 
                         </style>                     
                 </nav>                
