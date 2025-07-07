@@ -15,7 +15,7 @@ class BannerImageLine(models.Model):
         'banner_general_images_rel',
         'banner_id',
         'attachment_id',
-        string="General Images",
+        string="Imágenes de la sección",
         domain=[('mimetype', 'ilike', 'image/')],
         help="Upload general cover images."
     )
