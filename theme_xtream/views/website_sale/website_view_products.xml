@@ -92,7 +92,7 @@
                                                                 <div class="d-flex flex-nowrap align-items-stretch" style="gap:8px;">
                                                                     <t t-foreach="acc_list[idx:idx+3]" t-as="acc" t-index="acc_idx" t-key="acc.id">
                                                                         <div class="d-flex flex-column align-items-center" style="position:relative;">
-                                                                            <div class="card shadow-sm accessory-card accessory-card-100" style="border-radius: 10px; overflow: hidden; width:120px; min-width:120px; max-width:120px;">                                                                                
+                                                                            <div t-attf-class="card shadow-sm accessory-card accessory-card-100 #{'not-last' if acc_idx != (min(2, acc_count-idx-1)) else ''}" style="border-radius: 10px; overflow: hidden; width:120px; min-width:120px; max-width:120px;">
                                                                                 <div style="position: absolute; z-index: 2; left: 8px; top: 8px;">
                                                                                     <input type="checkbox" name="bundle_product_ids[]" t-att-value="acc.product_variant_id.id" class="bundle-checkbox custom-bundle-checkbox" style="width:30px; height:30px; border-radius:9px; border:1px solid #888; background:#f8f8f8;"/>
                                                                                 </div>
@@ -167,6 +167,9 @@
                                                                                         <t t-esc="acc.name" />
                                                                                     </h6>
                                                                                 </div>
+                                                                                <t t-if="acc_idx != (min(2, acc_count-idx-1))">
+                                                                                    <span style="position: absolute; right: -20px; top: 50%; transform: translateY(-50%); font-size: 24px; font-weight: bold; color: #888; line-height: 1; pointer-events: none;">+</span>
+                                                                                </t>
                                                                             </div>
                                                                         </div>
                                                                     </t>
