@@ -7,13 +7,18 @@
                     &#160;&gt;&#160;
                     <a href="/shop/whislist" style="font-size:16px; color:#656565; text-decoration:none;">Favoritos</a>
                 </div>
-                <div style="font-size:22px; color:#656565; font-weight:bold; margin-bottom: 20px;">
+                <div style="font-size:22px; color:#000000; font-weight:normal; margin-bottom: 20px;">
                     Favoritos
                 </div>
                 <div class="products-list">
                     <t t-foreach="wishlist_items" t-as="item" t-key="item.id">
-                        <a t-att-href="'/shop/product/%s' % item.product_id.id" style="text-decoration: none; color: inherit;">
-                            <div class="product-list-item p-3" style="border: 1px solid #dee2e6; border-radius: 8px; background: #fff; margin-bottom: 0;">
+                        <div class="product-list-item p-3" style="border: 1px solid #dee2e6; border-radius: 8px; background: #fff; margin-bottom: 0; position: relative;">
+                            <!-- Checkbox arriba del producto -->
+                            <div style="position: absolute; top: 10px; left: 10px; z-index: 2; display: flex; align-items: center;">
+                                <input type="checkbox" name="wishlist_select" t-att-value="item.id" style="width:18px; height:18px;"/>
+                                <span style="font-size:14px; color:#656565; margin-left:6px;">Eliminar favoritos seleccionados</span>
+                            </div>
+                            <a t-att-href="'/shop/product/%s' % item.product_id.id" style="text-decoration: none; color: inherit;">
                                 <div class="row align-items-center">
                                     <!-- Imagen del producto -->
                                     <div class="col-3">
@@ -30,8 +35,8 @@
                                         </span>
                                     </div>
                                 </div>
-                            </div>
-                        </a>
+                            </a>
+                        </div>
                     </t>
                 </div>
             </div>
