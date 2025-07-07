@@ -20,7 +20,9 @@ class DiscoverController(http.Controller):
             if product_count > 0:  # Solo incluir categorías con al menos un producto
                 category_data.append({
                     'name': category.name,
-                    'product_count': product_count
+                    'product_count': product_count,
+                    'category_id': category.id,  # Agregar category_id
+                    'subcategory_id': category.parent_id.id if category.parent_id else category.id  # Agregar subcategory_id
                 })
         
         # Mezclar las categorías aleatoriamente

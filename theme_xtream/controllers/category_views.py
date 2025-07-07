@@ -62,19 +62,18 @@ class CategoryController(http.Controller):
         if subcategory_id:
             try:
                 subcategory_id = int(subcategory_id)
+                # Si hay subcategoría, filtrar por todos sus descendientes (child_of)
                 domain = [d for d in domain if d[0] != 'categ_id']  # Remover filtro de categoría padre
-                domain.append(('categ_id', '=', subcategory_id))
+                domain.append(('categ_id', 'child_of', subcategory_id))
                 selected_subcategory = request.env['product.category'].sudo().browse(subcategory_id)
-                
-                # Obtener subcategorías de la subcategoría seleccionada
-                subcategories = request.env['product.category'].sudo().search([('parent_id', '=', subcategory_id)])
             except (ValueError, TypeError):
                 subcategory_id = None
 
         selected_subcategory_children = []
         if selected_subcategory:
+            # Traer hijos directos de la subcategoría seleccionada (para mostrar en filtros)
             selected_subcategory_children = request.env['product.category'].sudo().search([('parent_id', '=', selected_subcategory.id)])
-
+        
         # Filtro por marca
         if brand_id:
             try:
