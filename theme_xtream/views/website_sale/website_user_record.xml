@@ -37,30 +37,30 @@
                             <div class="d-flex justify-content-center">
                                 <button type="submit" class="btn" style="background:#388bff;color:#fff;font-size:18px;padding:10px 60px;border-radius:10px;">Crear</button>
                             </div>
-                            <script type="text/javascript">
-                                document.getElementById('registration_form').addEventListener('submit', function(e) {
-                                    e.preventDefault();
-                                    var form = this;
-                                    var xhr = new XMLHttpRequest();
-                                    xhr.open(form.method, form.action, true);
-                                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                                    xhr.onload = function() {
-                                        if (xhr.status === 200 && xhr.responseText.indexOf('error') === -1) {
+                            <script>
+                                document.getElementById('registration_form').addEventListener('submit', function(event) {
+                                    event.preventDefault(); // Evita el comportamiento predeterminado
+                                    const form = event.target;
+
+                                    // Realiza la solicitud POST
+                                    fetch(form.action, {
+                                        method: form.method,
+                                        body: new FormData(form),
+                                    })
+                                    .then(response => {
+                                        if (response.ok) {
+                                            // Redirige al usuario al login
                                             window.location.href = '/web/login';
                                         } else {
-                                            form.submit(); // fallback to normal submit if error
+                                            alert('Hubo un error al procesar el formulario.');
                                         }
-                                    };
-                                    var formData = [];
-                                    for (var i = 0; i < form.elements.length; i++) {
-                                        var el = form.elements[i];
-                                        if (el.name && !el.disabled) {
-                                            formData.push(encodeURIComponent(el.name) + '=' + encodeURIComponent(el.value));
-                                        }
-                                    }
-                                    xhr.send(formData.join('&amp;'));
+                                    })
+                                    .catch(error => {
+                                        console.error('Error:', error);
+                                        alert('Hubo un error al procesar el formulario.');
+                                    });
                                 });
-                            </script>
+                            </script>                            
                         </form>
                     </div>
                 </div>
