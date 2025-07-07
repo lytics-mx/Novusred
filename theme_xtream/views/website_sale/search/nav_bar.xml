@@ -17,8 +17,7 @@
                                             placeholder="Buscar productos, marcas o categorías..." aria-label="Search"
                                             style="border-radius: 20px; font-size: 14px; height: 36px;" autocomplete="off"/>
                                         <input type="hidden" name="search_type" value="all"/>
-                                        <div id="searchResults" class="dropdown-menu" style="display: none; position: absolute; z-index: 1000; width: 100%;"></div>
-                                                                            
+                                        <div id="searchResults" class="dropdown-menu" style="display: none; position: absolute; z-index: 1000; width: 100%; top: 100%; left: 0; background-color: white; border: 1px solid #ccc; padding: 10px;"></div>                                                                            
                                         <!-- Filtro visible en todas las pantallas -->
                                         <div class="dropdown">
                                             <button class="btn btn-outline-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false"
@@ -54,12 +53,12 @@
                                     document.addEventListener('DOMContentLoaded', function() {
                                         const searchInput = document.getElementById('searchInput');
                                         const searchResults = document.getElementById('searchResults');
-                                
+                                    
                                         if (!searchInput || !searchResults) {
                                             console.error('searchInput or searchResults element not found in the DOM.');
                                             return;
                                         }
-                                
+                                    
                                         searchInput.addEventListener('input', function() {
                                             const query = searchInput.value.trim();
                                             if (query.length > 0) {
@@ -79,10 +78,10 @@
                                                                 item.className = 'dropdown-item';
                                                                 item.href = `/shop/product/${result.id}`;
                                                                 item.innerHTML = `
-                                                                    <div class="d-flex align-items-center">
+                                                                    <div class="d-flex align-items-start">
                                                                         <img src="/web/image/product.template/${result.id}/image_1024" alt="${result.name}" style="width: 40px; height: 40px; object-fit: contain; margin-right: 10px;" />
                                                                         <div>
-                                                                            <span>${result.name}</span>
+                                                                            <span>${result.name}</span><br>
                                                                             <span style="font-weight: bold; color: #000;">$${result.price}</span>
                                                                         </div>
                                                                     </div>
@@ -91,7 +90,7 @@
                                                             });
                                                             const allResultsLink = document.createElement('a');
                                                             allResultsLink.className = 'dropdown-item text-center';
-                                                            allResultsLink.href = `/search_redirect?search=${encodeURIComponent(query)}`;
+                                                            allResultsLink.href = `/subcategory?category_id=${encodeURIComponent(query)}`;
                                                             allResultsLink.innerHTML = 'Ver todos los resultados';
                                                             searchResults.appendChild(allResultsLink);
                                                         } else {
@@ -106,7 +105,7 @@
                                                 searchResults.style.display = 'none';
                                             }
                                         });
-                                
+                                    
                                         document.addEventListener('click', function(event) {
                                             if (!searchResults.contains(event.target) && event.target !== searchInput) {
                                                 searchResults.style.display = 'none';
@@ -334,7 +333,38 @@
                         .level-2 .dropdown-item, .level-3 .dropdown-item, .level-4 .dropdown-item, .level-5 .dropdown-item {
                             font-size: 0.95em;
                             color: #555;
-                        }                           
+                        } 
+
+                        #searchResults {
+                            display: none;
+                            position: absolute;
+                            top: 100%; /* Posiciona debajo del input */
+                            left: 0;
+                            z-index: 1000;
+                            background-color: white;
+                            border: 1px solid #ccc;
+                            width: 100%;
+                            max-height: 300px;
+                            overflow-y: auto;
+                            padding: 10px;
+                        }
+                        
+                        .dropdown-item {
+                            display: flex;
+                            align-items: start;
+                            padding: 10px;
+                            border-bottom: 1px solid #eee;
+                        }
+                        
+                        .dropdown-item img {
+                            margin-right: 10px;
+                        }
+                        
+                        .dropdown-item div {
+                            display: flex;
+                            flex-direction: column;
+                        }                        
+
                         </style>                     
                 </nav>                
             </div>
