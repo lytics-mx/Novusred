@@ -19,7 +19,7 @@ class WishlistController(http.Controller):
         wishlist_items = request.env['product.wishlist'].sudo().search([('partner_id', '=', request.env.user.partner_id.id)])
         wishlist_items.unlink()
         return request.redirect('/shop/wishlist')
-
+    
     @http.route('/shop/wishlist/remove/<int:item_id>', type='http', auth='public', methods=['POST'], website=True)
     def remove_wishlist_item(self, item_id):
         # Eliminar un producto específico de la wishlist
