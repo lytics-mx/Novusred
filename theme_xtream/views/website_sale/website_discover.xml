@@ -3,17 +3,17 @@
         <t t-call="website.layout">
             <div id="wrap" style="background:#ededed;min-height:100vh;">
                 <div class="container py-5">
-                    <h2 class="text-left" style="margin-top:0; font-size:24px;"><strong>Tendencias</strong></h2>
+                    <h2 class="text-left" style="margin-top:0; font-size:24px;">Tendencias</h2>
                     <p class="text-left" style="margin-bottom:2rem;">Lo más buscado</p>
                     <div class="row">
                         <!-- Categorías -->
                         <div class="col-md-3">
                             <div class="card p-3 shadow-sm" style="background:#fff;">
-                                <h3 class="card-title" style="font-size:22px;"><strong>Categorías</strong></h3>
+                                <h3 class="card-title" style="font-size:22px;">Categorías</h3>
                                 <ul class="list-unstyled">
                                     <t t-foreach="categories" t-as="category">
                                         <li>
-                                            <a t-att-href="'/subcategory?category_id=%s&amp;subcategory_id=%s' % (category['category_id'], category['subcategory_id'])">
+                                            <a t-att-href="'/subcategory?category_id=' + str(category['id'])" style="color:#777777;">
                                                 <t t-esc="category['name']"/> (<t t-esc="category['product_count']"/>)
                                             </a>
                                         </li>
@@ -24,25 +24,16 @@
                         <!-- Búsquedas populares -->
                         <div class="col-md-9">
                             <div class="card p-3 shadow-sm" style="background:#fff;">
-                                <h3 class="card-title" style="font-size:22px;"><strong>Las búsquedas más populares en novusred</strong></h3>
+                                <h3 class="card-title" style="font-size:22px;">Las búsquedas más populares en novusred</h3>
                                 <div class="row">
                                     <t t-foreach="columns" t-as="column">
                                         <div class="col-md-4">
                                             <ul class="list-unstyled">
                                                 <t t-foreach="column" t-as="category">
                                                     <li>
-                                                        <!-- Verificar si es nivel 1 (sin subcategory_id) -->
-                                                        <t t-if="not category.get('subcategory_id')">
-                                                            <a t-att-href="'/subcategory?category_id=%s' % category['category_id']">
-                                                                <t t-esc="category['name']"/> (<t t-esc="category['product_count']"/>)
-                                                            </a>
-                                                        </t>
-                                                        <!-- Verificar si es nivel 2 o superior (con subcategory_id) -->
-                                                        <t t-else="">
-                                                            <a t-att-href="'/subcategory?category_id=%s&amp;subcategory_id=%s' % (category['category_id'], category['subcategory_id'])">
-                                                                <t t-esc="category['name']"/> (<t t-esc="category['product_count']"/>)
-                                                            </a>
-                                                        </t>
+                                                        <a t-att-href="'/subcategory?category_id=' + str(category['id'])" style="color:#777777;">
+                                                            <t t-esc="category['name']"/> (<t t-esc="category['product_count']"/>)
+                                                        </a>
                                                     </li>
                                                 </t>
                                             </ul>
