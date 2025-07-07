@@ -1,5 +1,7 @@
 from odoo import http
 from odoo.http import request
+import json
+
 
 class WebsiteSearch(http.Controller):
 
@@ -29,3 +31,16 @@ class WebsiteSearch(http.Controller):
                 return request.redirect('/subcategory?category_id=%s' % category.id)
             # Si no es marca ni categoría, redirigir a subcategory con search
             return request.redirect('/subcategory?search=%s' % search)
+        
+
+    @http.route('/search_live', type='http', auth='public', website=True)
+    def search_live(self, query):
+        products = request.env['product.template'].sudo().search([
+            ('name', 'ilike', query)
+        ], limit=10)
+        results = [{
+            'id': product.id,
+            'name': product.name,
+            'price': product.list_price,
+        } for product in products]
+        return request.make_response(json.dumps({'results': results}), headers=[('Content-Type', 'application/json')])        

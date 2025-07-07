@@ -13,72 +13,10 @@
                                 <!-- Search bar after logo -->
                                 <form class="d-flex flex-grow-1" action="/search_redirect" method="get" style="width: 100%;">
                                     <div class="input-group w-100">
-                                        <input type="search" name="search" class="form-control"
-                                            placeholder="Buscar productos, marcas o categorías..." aria-label="Search"
-                                            style="border-radius: 20px; font-size: 14px; height: 36px;"
-                                            autocomplete="off" id="navbar-search-input"/>
+                                        <input type="search" name="search" id="searchInput" class="form-control"
+                                               placeholder="Buscar productos, marcas o categorías..." aria-label="Search"
+                                               style="border-radius: 20px; font-size: 14px; height: 36px;" autocomplete="off"/>
                                         <input type="hidden" name="search_type" value="all"/>
-                                        <div id="navbar-search-suggestions" class="list-group position-absolute w-100" style="z-index: 9999; top: 40px; display: none;"></div>
-                                        <script>
-                                            document.addEventListener('DOMContentLoaded', function() {
-                                             var searchInput = document.getElementById('navbar-search-input');
-                                             var suggestionsBox = document.getElementById('navbar-search-suggestions');
-                                             var searchTypeInput = document.querySelector('input[name="search_type"]');
-                                             var lastQuery = '';
-                                             var debounceTimeout = null;
-
-                                             function showSuggestions(items) {
-                                                 suggestionsBox.innerHTML = '';
-                                                 if (items.length === 0) {
-                                                  suggestionsBox.style.display = 'none';
-                                                  return;
-                                                 }
-                                                 items.forEach(function(item) {
-                                                  var a = document.createElement('a');
-                                                  a.className = 'list-group-item list-group-item-action';
-                                                  a.href = '/shop/product/' + item.id;
-                                                  a.innerHTML = '<img src="' + (item.image || '/web/static/img/placeholder.png') + '" style="height:32px;width:32px;object-fit:cover;margin-right:10px;">' +
-                                                          '<span>' + item.name + '</span>' +
-                                                          (item.price ? '<span class="float-end fw-bold">$' + item.price + '</span>' : '');
-                                                  suggestionsBox.appendChild(a);
-                                                 });
-                                                 suggestionsBox.style.display = 'block';
-                                             }
-
-                                             function hideSuggestions() {
-                                                 suggestionsBox.style.display = 'none';
-                                             }
-
-                                             searchInput.addEventListener('input', function() {
-                                                 var query = this.value.trim();
-                                                 var searchType = searchTypeInput.value;
-                                                 if (debounceTimeout) clearTimeout(debounceTimeout);
-                                                 if (searchType !== 'all' || query.length === 0) {
-                                                  hideSuggestions();
-                                                  return;
-                                                 }
-                                                 debounceTimeout = setTimeout(function() {
-                                                  if (query === lastQuery) return;
-                                                  lastQuery = query;
-                                                  fetch('/shop/product_suggest?q=' + encodeURIComponent(query))
-                                                      .then(function(resp) { return resp.json(); })
-                                                      .then(function(data) {
-                                                       showSuggestions(data.slice(0, 5));
-                                                      });
-                                                 }, 200);
-                                             });
-
-                                             searchInput.addEventListener('focus', function() {
-                                                 if (suggestionsBox.innerHTML) suggestionsBox.style.display = 'block';
-                                             });
-
-                                             document.addEventListener('click', function(e) {
-                                                 if (!suggestionsBox.contains(e.target) && e.target !== searchInput) {
-                                                  hideSuggestions();
-                                                 }
-                                             });
-                                            });
-                                        </script>
                                         <!-- Filtro visible en todas las pantallas -->
                                         <div class="dropdown">
                                             <button class="btn btn-outline-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false"
@@ -111,26 +49,51 @@
                                 </form>
                                 <script>
                                     document.addEventListener('DOMContentLoaded', function() {
-                                        var dropdownItems = document.querySelectorAll('.dropdown-menu .dropdown-item');
-                                        var searchInput = document.querySelector('input[name="search"]');
-                                        var searchTypeInput = document.querySelector('input[name="search_type"]');
-                                        dropdownItems.forEach(function(item) {
-                                            item.addEventListener('click', function() {
-                                                var value = '';
-                                                var placeholder = '';
-                                                if (this.textContent.includes('Todo')) {
-                                                    value = 'all';
-                                                    placeholder = 'Buscar productos...';
-                                                } else if (this.textContent.includes('Marca')) {
-                                                    value = 'brand';
-                                                    placeholder = 'Buscar marca...';
-                                                } else if (this.textContent.includes('Categoría')) {
-                                                    value = 'category';
-                                                    placeholder = 'Buscar categoría...';
-                                                }
-                                                searchTypeInput.value = value;
-                                                searchInput.placeholder = placeholder;
-                                            });
+                                        const searchInput = document.getElementById('searchInput');
+                                        const searchResults = document.getElementById('searchResults');
+
+                                        searchInput.addEventListener('input', function() {
+                                            const query = searchInput.value.trim();
+                                            if (query.length > 0) {
+                                                fetch(`/search_live?query=${encodeURIComponent(query)}`)
+                                                    .then(response => response.json())
+                                                    .then(data => {
+                                                        searchResults.innerHTML = '';
+                                                        if (data.results.length > 0) {
+                                                            searchResults.style.display = 'block';
+                                                            data.results.slice(0, 5).forEach(result => {
+                                                                const item = document.createElement('a');
+                                                                item.className = 'dropdown-item';
+                                                                item.href = `/shop/product/${result.id}`;
+                                                                item.innerHTML = `
+                                                                    <div class="d-flex align-items-center">
+                                                                        <img src="/web/image/product.template/${result.id}/image_1024" alt="${result.name}" style="width: 40px; height: 40px; object-fit: contain; margin-right: 10px;">
+                                                                        <div>
+                                                                            <span>${result.name}</span>
+                                                                            <span style="font-weight: bold; color: #000;">$${result.price}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                `;
+                                                                searchResults.appendChild(item);
+                                                            });
+                                                            const allResultsLink = document.createElement('a');
+                                                            allResultsLink.className = 'dropdown-item text-center';
+                                                            allResultsLink.href = `/search_redirect?search=${encodeURIComponent(query)}`;
+                                                            allResultsLink.innerHTML = 'Ver todos los resultados';
+                                                            searchResults.appendChild(allResultsLink);
+                                                        } else {
+                                                            searchResults.style.display = 'none';
+                                                        }
+                                                    });
+                                            } else {
+                                                searchResults.style.display = 'none';
+                                            }
+                                        });
+
+                                        document.addEventListener('click', function(event) {
+                                            if (!searchResults.contains(event.target) && event.target !== searchInput) {
+                                                searchResults.style.display = 'none';
+                                            }
                                         });
                                     });
                                 </script>
