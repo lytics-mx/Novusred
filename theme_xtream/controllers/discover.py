@@ -1,6 +1,5 @@
 from odoo import http
 from odoo.http import request
-import random
 
 class DiscoverController(http.Controller):
 
@@ -22,16 +21,7 @@ class DiscoverController(http.Controller):
                     'product_count': product_count
                 })
         
-        # Mezclar las categorías aleatoriamente
-        random.shuffle(category_data)
-        
-        # Dividir las categorías en tres columnas con un límite de 6 nombres por columna
-        columns = [category_data[i * 6:(i + 1) * 6] for i in range(3)]
-        
-        # Eliminar columnas vacías
-        columns = [column for column in columns if column]
-
         # Renderizar el template con los datos
         return request.render('theme_xtream.website_discover', {
-            'columns': columns
+            'categories': category_data
         })
