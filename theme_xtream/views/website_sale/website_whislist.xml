@@ -49,13 +49,58 @@
                                     </div>
                                     <!-- Detalles del producto -->
                                     <div class="col-6">
-                                        <h6 style="font-size: 16px; margin-bottom: 5px;">
-                                            <t t-esc="item.product_id.name" />
+                                        <t t-set="product" t-value="item.product_id"/>
+                                        <!-- Badge solo si hay tag -->
+                                        <t t-if="product.product_tag_ids">
+                                            <span>
+                                                <t t-esc="product.product_tag_ids[0].name if product.product_tag_ids else ''"/>
+                                            </span>
+                                        </t>
+                                        <!-- Nombre del producto -->
+                                        <h6>
+                                            <t t-esc="product.name" />
                                         </h6>
-                                        <span style="font-size: 25px; font-weight: bold; color: #000;">
-                                            $<t t-esc="'{:,}'.format(int(item.product_id.list_price))" />
-                                        </span>
-                                        <button type="submit" class="btn btn-link" style="color: #dc3545; text-decoration: none; font-size: 14px; margin-top: 10px;">
+                                        <!-- Marca debajo del nombre -->
+                                        <t t-if="product.brand_type_id">
+                                            <span>
+                                                Por <t t-esc="product.brand_type_id.name"/>
+                                            </span>
+                                        </t>
+                                        <!-- Precios y descuentos -->
+                                        <t t-if="product.discounted_price &lt; product.list_price">
+                                            <span style="text-decoration:line-through;">
+                                                $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                            </span>
+                                            <span style="font-weight:bold;">
+                                                $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
+                                            </span>
+                                            <t t-if="product.discount_percentage">
+                                                <span style="color:#FF5207;">
+                                                    <t t-esc="int(product.discount_percentage)" />% OFF
+                                                </span>
+                                            </t>
+                                            <t t-elif="product.fixed_discount">
+                                                <span style="color:#FF5207;">
+                                                    -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
+                                                </span>
+                                            </t>
+                                            <span>
+                                                $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" /> descuento
+                                            </span>
+                                        </t>
+                                        <t t-else="">
+                                            <span style="font-weight:bold;">
+                                                $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                            </span>
+                                        </t>
+                                        <t t-if="product.free_shipping">
+                                            <span style="color:#FF5207; font-weight:bold;">
+                                                Envío gratis
+                                            </span>
+                                        </t>
+                                        <!-- Botón eliminar hasta abajo -->
+                                        <br/>
+                                        <button type="submit" class="btn btn-link" style="color: #dc3545; text-decoration: none; font-size: 14px; margin-top: 8px; padding-left: 0; display: block; text-align: left;">
                                             Eliminar
                                         </button>
                                     </div>
