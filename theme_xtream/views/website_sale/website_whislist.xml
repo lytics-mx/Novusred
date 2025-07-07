@@ -32,12 +32,17 @@
                         </style>
                     </div>
                 </form>
-                <div class="products-list">
+<div class="products-list">
                     <t t-foreach="wishlist_items" t-as="item" t-key="item.id">
                         <form method="post" t-att-action="'/shop/wishlist/remove/%s' % item.id">
                             <t t-call="theme_xtream.csrf_token"/>
                             <div class="product-list-item p-3" style="border: 1px solid #dee2e6; border-radius: 8px; background: #fff; margin-bottom: 15px;">
-                                <a t-att-href="'/shop/product/%s' % product_data['product'].id" style="text-decoration: none; color: inherit; display: block; width: 100%; height: 100%; position: absolute; left: 0; top: 0; z-index: 1;"></a>
+                                <!-- Verificar si product_data['product'] está definido -->
+                                <t t-if="product_data and product_data['product']">
+                                    <a t-att-href="'/shop/product/%s' % product_data['product'].id" 
+                                       style="text-decoration: none; color: inherit; display: block; width: 100%; height: 100%; position: absolute; left: 0; top: 0; z-index: 1;">
+                                    </a>
+                                </t>
                                 <div class="row align-items-center" style="position: relative; z-index: 2;">
                                     <!-- Checkbox para seleccionar el producto -->
                                     <div class="col-auto pr-0" style="max-width: 20px;">
@@ -98,11 +103,9 @@
                                                 </span>
                                             </div>
                                         </t>
-                                        <t t-else="">
-                                            <button type="submit" class="btn btn-link" style="color: #dc3545; text-decoration: none; font-size: 14px; margin-top: 8px; padding-left: 0; display: block; text-align: left; font-weight: normal; font-family: 'Questrial', sans-serif;">
-                                                Eliminar
-                                            </button>
-                                        </t>
+                                        <button type="submit" class="btn btn-link" style="color: #dc3545; text-decoration: none; font-size: 14px; margin-top: 8px; padding-left: 0; display: block; text-align: left; font-weight: normal; font-family: 'Questrial', sans-serif;">
+                                            Eliminar
+                                        </button>
                                     </div>
                                 </div>
                             </div>
