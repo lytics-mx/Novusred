@@ -36,8 +36,9 @@ class CategoryController(http.Controller):
         subcategories = []
         
         if search:
+            domain.append('|')  # OR condition
             domain.append(('name', 'ilike', search))
-
+            domain.append(('product_model', 'ilike', search))
         # Filtro por categoría (ESTE ES EL PRINCIPAL)
         if category_id:
             try:
