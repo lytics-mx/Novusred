@@ -93,9 +93,8 @@ class ShopController(WebsiteSale):
                         request.session.modified = True  # Asegurar que la sesión se actualice
                         _logger.info(f"Productos guardados en sesión: {saved_items}")
                         
-                        # Actualizar la cantidad del producto en el carrito a 0 en lugar de eliminarlo
-                        line.product_uom_qty = 0
-                        order._cart_update(product_id=product_id, set_qty=0)
+                        # Mantener la cantidad del producto en el carrito en 1
+                        order._cart_update(product_id=product_id, set_qty=1)
                         
                         # Verificación de depuración
                         print(f"Producto movido a guardados: {product_data['name']}")
