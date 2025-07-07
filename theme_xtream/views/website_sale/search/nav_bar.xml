@@ -53,12 +53,12 @@
                                     document.addEventListener('DOMContentLoaded', function() {
                                         const searchInput = document.getElementById('searchInput');
                                         const searchResults = document.getElementById('searchResults');
-                                    
+
                                         if (!searchInput || !searchResults) {
                                             console.error('searchInput or searchResults element not found in the DOM.');
                                             return;
                                         }
-                                    
+
                                         searchInput.addEventListener('input', function() {
                                             const query = searchInput.value.trim();
                                             if (query.length > 0) {
@@ -75,19 +75,12 @@
                                                             searchResults.style.display = 'block';
                                                             data.results.slice(0, 5).forEach(result => {
                                                                 const truncatedName = result.name.length > 160 ? result.name.substring(0, 157) + '...' : result.name;
-                                                                const price = result.discount_price || result.fixed_price || result.list_price;
-                                    
                                                                 const item = document.createElement('a');
                                                                 item.className = 'dropdown-item';
                                                                 item.href = `/shop/product/${result.id}`;
                                                                 item.innerHTML = `
-                                                                    <div class="d-flex align-items-start">
-                                                                        <img src="/web/image/product.template/${result.id}/image_1024" alt="${truncatedName}" style="width: 40px; height: 40px; object-fit: contain; margin-right: 10px;" />
-                                                                        <div>
-                                                                            <span>${truncatedName}</span><br>
-                                                                            <span style="font-weight: bold; color: #000;">$${price}</span>
-                                                                        </div>
-                                                                    </div>
+                                                                    <img src="/web/image/product.template/${result.id}/image_1024" alt="${truncatedName}" style="width: 40px; height: 40px; object-fit: contain; margin-right: 10px;" />
+                                                                    <span style="display: inline-block; vertical-align: middle; max-width: 110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${truncatedName}</span>
                                                                 `;
                                                                 searchResults.appendChild(item);
                                                             });
@@ -108,7 +101,7 @@
                                                 searchResults.style.display = 'none';
                                             }
                                         });
-                                    
+
                                         document.addEventListener('click', function(event) {
                                             if (!searchResults.contains(event.target) && event.target !== searchInput) {
                                                 searchResults.style.display = 'none';
