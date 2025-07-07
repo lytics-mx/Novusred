@@ -11,14 +11,16 @@
                     Favoritos
                 </div>
                 <div class="products-list">
+                    <!-- Checkbox para eliminar todos los productos del wishlist -->
+                    <form t-if="wishlist_items" method="post" action="/shop/whislist/clear" style="margin-bottom: 20px;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" name="clear_wishlist" onchange="if(this.checked){this.form.submit();}" style="margin-right: 8px;"/>
+                            Eliminar todos los productos de Favoritos
+                        </label>
+                    </form>
                     <t t-foreach="wishlist_items" t-as="item" t-key="item.id">
-                        <div class="product-list-item p-3" style="border: 1px solid #dee2e6; border-radius: 8px; background: #fff; margin-bottom: 0; position: relative;">
-                            <!-- Checkbox arriba del producto -->
-                            <div style="position: absolute; top: 10px; left: 10px; z-index: 2; display: flex; align-items: center;">
-                                <input type="checkbox" name="wishlist_select" t-att-value="item.id" style="width:18px; height:18px;"/>
-                                <span style="font-size:14px; color:#656565; margin-left:6px;">Eliminar favoritos seleccionados</span>
-                            </div>
-                            <a t-att-href="'/shop/product/%s' % item.product_id.id" style="text-decoration: none; color: inherit;">
+                        <a t-att-href="'/shop/product/%s' % item.product_id.id" style="text-decoration: none; color: inherit;">
+                            <div class="product-list-item p-3" style="border: 1px solid #dee2e6; border-radius: 8px; background: #fff; margin-bottom: 0;">
                                 <div class="row align-items-center">
                                     <!-- Imagen del producto -->
                                     <div class="col-3">
@@ -35,8 +37,8 @@
                                         </span>
                                     </div>
                                 </div>
-                            </a>
-                        </div>
+                            </div>
+                        </a>
                     </t>
                 </div>
             </div>
