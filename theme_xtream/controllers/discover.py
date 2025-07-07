@@ -15,7 +15,7 @@ class DiscoverController(http.Controller):
                 'name': category.name,
                 'category_id': category.id,
                 'product_count': 0,  # Inicializar el contador de productos
-                'children': []
+                'children': []  # Garantizar que siempre sea una lista
             }
             # Obtener subcategorías
             subcategories = request.env['product.category'].sudo().search([('parent_id', '=', category.id)])

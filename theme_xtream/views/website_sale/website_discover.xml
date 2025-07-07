@@ -75,13 +75,15 @@
     <!-- Template para renderizar subcategorías recursivamente -->
     <template id="render_subcategories" name="Render Subcategories">
         <ul class="list-unstyled">
-            <t t-foreach="subcategory['children']" t-as="child">
-                <li>
-                    <a t-att-href="'/subcategory?category_id=%s' % child['category_id']">
-                        <t t-esc="child['name']"/> (<t t-esc="child['product_count']"/>)
-                    </a>
-                    <t t-call="theme_xtream.render_subcategories" t-vars="subcategory=child"/>
-                </li>
+            <t t-if="subcategory['children']">
+                <t t-foreach="subcategory['children']" t-as="child">
+                    <li>
+                        <a t-att-href="'/subcategory?category_id=%s' % child['category_id']">
+                            <t t-esc="child['name']"/> (<t t-esc="child['product_count']"/>)
+                        </a>
+                        <t t-call="theme_xtream.render_subcategories" t-vars="subcategory=child"/>
+                    </li>
+                </t>
             </t>
         </ul>
     </template>
