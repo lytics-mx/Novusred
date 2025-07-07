@@ -13,7 +13,8 @@ class WebsiteSearch(http.Controller):
             return request.redirect('/category_search?search=%s' % search)
         elif search_type == 'model':
             Product = request.env['product.template'].sudo()
-            product = Product.search([('default_code', '=', search)], limit=1)
+            # Cambiar default_code por product_model
+            product = Product.search([('product_model', '=', search)], limit=1)
             if product:
                 return request.redirect('/shop/%s?product=product.template(%s,)' % (product.slug(), product.id))
             else:
