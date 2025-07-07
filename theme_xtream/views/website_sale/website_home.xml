@@ -464,8 +464,21 @@
                                     <div t-att-class="'carousel-item' + (' active' if chunk_index == 0 else '')">
                                         <div class="row g-3">
                                             <t t-foreach="chunk" t-as="image" t-key="image.id">
+                                                <t t-set="img_name" t-value="image.name or ''"/>
+                                                <t t-set="url" t-value="''"/>
+                                                <t t-if="img_name.startswith('brand_')">
+                                                    <t t-set="brand_slug" t-value="img_name[6:].split('.')[0].replace(' ', '').lower()"/>
+                                                    <t t-set="url" t-value="'/brand/' + brand_slug"/>
+                                                </t>
+                                                <t t-elif="img_name.startswith('category_')">
+                                                    <t t-set="cat_search" t-value="img_name[9:].split('.')[0].replace('_', ' ')"/>
+                                                    <t t-set="url" t-value="'/category_search?search=' + cat_search"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <t t-set="url" t-value="'/discover'"/>
+                                                </t>
                                                 <div class="col-12 col-md-6">
-                                                    <a t-att-href="'/category' if image.id % 2 == 0 else '/discover'">
+                                                    <a t-att-href="url">
                                                         <img t-att-src="'/web/image/' + str(image.id)" 
                                                             alt="Product Image" 
                                                             class="img-fluid w-100"
