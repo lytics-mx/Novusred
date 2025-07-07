@@ -73,33 +73,6 @@ class ShopController(WebsiteSale):
                         # Marcar la línea como "Guardada para después"
                         line.is_saved_for_later = True
                         _logger.info(f"Línea marcada como guardada: {line.product_id.display_name}")
-                        
-                        # Guardar información del producto en la sesión (opcional)
-                        product_data = {
-                            'id': line.id,
-                            'product_id': product_id,
-                            'template_id': line.product_id.product_tmpl_id.id,
-                            'name': line.product_id.display_name,
-                            'price': line.price_subtotal,  # Usar el precio de la línea
-                            'quantity': line.product_uom_qty,
-                            'quantity_available': line.product_id.qty_available,
-                        }
-                        
-                        if line.product_id.product_tmpl_id.brand_type_id:
-                            product_data.update({
-                                'brand_name': line.product_id.product_tmpl_id.brand_type_id.name,
-                                'brand_id': line.product_id.product_tmpl_id.brand_type_id.id,
-                            })
-                        
-                        saved_items = request.session.get('saved_for_later', [])
-                        # Evitar duplicados
-                        if not any(item['id'] == line.id for item in saved_items):
-                            saved_items.append(product_data)
-                        request.session['saved_for_later'] = saved_items
-                        request.session.modified = True
-
-                        # Eliminar la línea del carrito (opcional, si quieres que desaparezca del carrito)
-                        line.unlink()
         except Exception as e:
             import traceback
             traceback.print_exc()
