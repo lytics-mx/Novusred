@@ -10,38 +10,56 @@
                 <div style="font-size:22px; color:#000000; font-weight:normal; margin-bottom: 20px;">
                     Favoritos
                 </div>
+                <form method="post" action="/shop/wishlist/clear">
+                    <label style="display: flex; align-items: center; cursor: pointer; margin-bottom: 20px;">
+                        <input type="checkbox" id="select_all" onchange="toggleCheckboxes(this)" style="margin-right: 8px;" />
+                        Eliminar todos los productos de Favoritos
+                    </label>
+                    <button type="submit" class="btn btn-danger">Eliminar seleccionados</button>
+                </form>
                 <div class="products-list">
-                    <!-- Checkbox para eliminar todos los productos del wishlist -->
-                    <form t-if="wishlist_items" method="post" action="/shop/whislist/clear" style="margin-bottom: 20px;">
-                        <label style="display: flex; align-items: center; cursor: pointer;">
-                            <input type="checkbox" name="clear_wishlist" onchange="if(this.checked){this.form.submit();}" style="margin-right: 8px;"/>
-                            Eliminar todos los productos de Favoritos
-                        </label>
-                    </form>
                     <t t-foreach="wishlist_items" t-as="item" t-key="item.id">
-                        <a t-att-href="'/shop/product/%s' % item.product_id.id" style="text-decoration: none; color: inherit;">
-                            <div class="product-list-item p-3" style="border: 1px solid #dee2e6; border-radius: 8px; background: #fff; margin-bottom: 0;">
+                        <form method="post" t-att-action="'/shop/wishlist/remove/%s' % item.id">
+                            <div class="product-list-item p-3" style="border: 1px solid #dee2e6; border-radius: 8px; background: #fff; margin-bottom: 15px;">
                                 <div class="row align-items-center">
+                                    <!-- Checkbox para seleccionar el producto -->
+                                    <div class="col-1">
+                                        <input type="checkbox" name="wishlist_select" value="item.id" class="wishlist-checkbox" />
+                                    </div>
                                     <!-- Imagen del producto -->
-                                    <div class="col-3">
+                                    <div class="col-2">
                                         <img t-att-src="'/web/image/product.template/%s/image_1024' % item.product_id.id" 
-                                             class="img-fluid d-block mx-auto" alt="Product Image" style="max-height: 182px; object-fit: contain;"/>
+                                             class="img-fluid d-block mx-auto" alt="Product Image" style="max-height: 120px; object-fit: contain;"/>
                                     </div>
                                     <!-- Detalles del producto -->
-                                    <div class="col-9">
-                                        <h6 class="card-title" style="font-size:16px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:0;">
+                                    <div class="col-6">
+                                        <h6 style="font-size: 16px; margin-bottom: 5px;">
                                             <t t-esc="item.product_id.name" />
                                         </h6>
-                                        <span class="fw-bold d-block mobile-main-price" style="font-size: 25px;">
+                                        <span style="font-size: 25px; font-weight: bold; color: #000;">
                                             $<t t-esc="'{:,}'.format(int(item.product_id.list_price))" />
                                         </span>
                                     </div>
+                                    <!-- Botón para eliminar el producto -->
+                                    <div class="col-3 text-end">
+                                        <button type="submit" class="btn btn-link" style="color: #dc3545; text-decoration: none; font-size: 14px;">
+                                            Eliminar
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </a>
+                        </form>
                     </t>
                 </div>
             </div>
         </t>
+        <script>
+            function toggleCheckboxes(selectAllCheckbox) {
+                const checkboxes = document.querySelectorAll('.wishlist-checkbox');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = selectAllCheckbox.checked;
+                });
+            }
+        </script>
     </template>
 </odoo>
