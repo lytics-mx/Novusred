@@ -19,8 +19,11 @@
                         Eliminar todos los productos seleccionados
                     </label>
                     <button type="submit" class="btn btn-danger">Eliminar seleccionados</button>
-                    <div class="products-list">
-                        <t t-foreach="wishlist_items" t-as="item" t-key="item.id">
+                </form>
+                <div class="products-list">
+                    <t t-foreach="wishlist_items" t-as="item" t-key="item.id">
+                        <form method="post" t-att-action="'/shop/wishlist/remove/%s' % item.id">
+                            <t t-call="theme_xtream.csrf_token"/>
                             <div class="product-list-item p-3" style="border: 1px solid #dee2e6; border-radius: 8px; background: #fff; margin-bottom: 15px;">
                                 <div class="row align-items-center">
                                     <!-- Checkbox para seleccionar el producto -->
@@ -49,9 +52,9 @@
                                     </div>
                                 </div>
                             </div>
-                        </t>
-                    </div>
-                </form>
+                        </form>
+                    </t>
+                </div>
             </div>
         </t>
         <script>
