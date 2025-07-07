@@ -74,7 +74,8 @@
                         ]).mapped('product_id.categ_id')" />
                         <t t-set="suggested_products" t-value="request.env['product.template'].sudo().search([
                             ('categ_id', 'in', viewed_categories.ids),
-                            ('website_published', '=', True)
+                            ('website_published', '=', True),
+                            ('qty_available', '>', 1)
                         ], limit=10)" />
                         <t t-if="suggested_products">
                             <t t-if="len(suggested_products) > 5">
