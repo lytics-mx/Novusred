@@ -2,9 +2,8 @@
     <template id="wishlist_template" name="Favoritos">
         <t t-call="website.layout">
             <div class="container">
-                <div style="height: 30px;"></div>
                 <div style="margin-bottom: 10px;">
-                    <a href="/shop/checkout" style="font-size:16px; color:#656565; text-decoration:none;">Compras</a>
+                    <a href="/checkout" style="font-size:16px; color:#656565; text-decoration:none;">Compras</a>
                     &#160;&gt;&#160;
                     <a href="/shop/wishlist" style="font-size:16px; color:#656565; text-decoration:none;">Favoritos</a>
                 </div>
@@ -38,73 +37,36 @@
                             <t t-call="theme_xtream.csrf_token"/>
                             <div class="product-list-item p-3" style="border: 1px solid #dee2e6; border-radius: 8px; background: #fff; margin-bottom: 15px;">
                                 <div class="row align-items-center">
-                                    <!-- Checkbox para seleccionar el producto -->
-                                    <div class="col-1">
-                                        <input type="checkbox" name="wishlist_select" t-att-value="item.id" class="wishlist-checkbox" />
-                                    </div>
                                     <!-- Imagen del producto -->
                                     <div class="col-2">
                                         <img t-att-src="'/web/image/product.template/%s/image_1024' % item.product_id.id" 
                                              class="img-fluid d-block mx-auto" alt="Product Image" style="max-height: 120px; object-fit: contain;"/>
                                     </div>
                                     <!-- Detalles del producto -->
-                                    <div class="col-6">
-                                        <t t-set="product" t-value="item.product_id"/>
-                                        <!-- Badge solo si hay tag -->
-                                        <t t-if="product.product_tag_ids">
-                                            <span>
-                                                <t t-esc="product.product_tag_ids[0].name if product.product_tag_ids else ''"/>
-                                            </span>
-                                        </t>
-                                        <!-- Nombre del producto -->
-                                        <h6>
-                                            <t t-esc="product.name" />
+                                    <div class="col-10">
+                                        <h6 style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">
+                                            <t t-esc="item.product_id.name" />
                                         </h6>
-                                        <!-- Marca debajo del nombre -->
-                                        <t t-if="product.brand_type_id">
-                                            <span>
-                                                Por <t t-esc="product.brand_type_id.name"/>
-                                            </span>
-                                        </t>
-                                        <!-- Precios y descuentos -->
-                                        <t t-if="product.discounted_price &lt; product.list_price">
-                                            <span style="text-decoration:line-through;">
-                                                $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                            </span>
-                                            <span style="font-weight:bold;">
-                                                $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
-                                            </span>
-                                            <t t-if="product.discount_percentage">
-                                                <span style="color:#FF5207;">
-                                                    <t t-esc="int(product.discount_percentage)" />% OFF
-                                                </span>
-                                            </t>
-                                            <t t-elif="product.fixed_discount">
-                                                <span style="color:#FF5207;">
-                                                    -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
-                                                </span>
-                                            </t>
-                                            <span>
-                                                $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" /> descuento
-                                            </span>
-                                        </t>
-                                        <t t-else="">
-                                            <span style="font-weight:bold;">
-                                                $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                            </span>
-                                        </t>
-                                        <t t-if="product.free_shipping">
-                                            <span style="color:#FF5207; font-weight:bold;">
-                                                Envío gratis
-                                            </span>
-                                        </t>
-                                        <!-- Botón eliminar hasta abajo -->
-                                        <br/>
-                                        <button type="submit" class="btn btn-link" style="color: #dc3545; text-decoration: none; font-size: 14px; margin-top: 8px; padding-left: 0; display: block; text-align: left;">
+                                        <p style="margin-bottom: 5px; color: #6c757d;">
+                                            por <t t-esc="item.product_id.website_published_by" />
+                                        </p>
+                                        <span style="font-size: 25px; font-weight: bold; color: #000;">
+                                            $<t t-esc="'{:,}'.format(int(item.product_id.list_price))" />
+                                        </span>
+                                        <span style="color: #dc3545; font-size: 14px; margin-left: 10px;">
+                                            <t t-esc="'%s%% OFF' % item.product_id.discount_percentage" />
+                                        </span>
+                                        <p style="margin-top: 5px; color: #28a745;">
+                                            Envío gratis
+                                        </p>
+                                        <p style="margin-top: 5px; color: #000;">
+                                            <t t-esc="'%s de descuento' % item.product_id.discounted_price" />
+                                        </p>
+                                        <!-- Botón para eliminar el producto -->
+                                        <button type="submit" class="btn btn-link" style="color: #007bff; text-decoration: none; font-size: 14px; padding-left: 0;">
                                             Eliminar
                                         </button>
                                     </div>
-
                                 </div>
                             </div>
                         </form>
