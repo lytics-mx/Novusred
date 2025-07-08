@@ -53,11 +53,11 @@ class WishlistController(http.Controller):
 
         if existing_item:
             existing_item.unlink()
-            return {'added': False}
+            return {'added': False, 'message': 'Removed from wishlist'}
         else:
             wishlist_model.create({
                 'partner_id': partner.id,
                 'product_template_id': int(product_template_id),
                 'product_variant_id': int(product_variant_id)
             })
-            return {'added': True}
+            return {'added': True, 'message': 'Added to wishlist'}

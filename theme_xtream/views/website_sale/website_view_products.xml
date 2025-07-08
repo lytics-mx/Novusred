@@ -96,22 +96,32 @@
                                                     product_variant_id: productVariantId
                                                 })
                                             })
-                                            .then(response => response.json())
+                                            .then(response => {
+                                                if (!response.ok) {
+                                                    throw new Error('Network response was not ok');
+                                                }
+                                                return response.json();
+                                            })
                                             .then(data => {
                                                 if (data.error) {
                                                     console.error('Error:', data.error);
                                                     alert('Hubo un error al procesar tu solicitud.');
                                                 } else if (data.added) {
                                                     icon.classList.add('active'); // Cambia el estilo del ícono (ej. color rojo)
+                                                    alert(data.message);
                                                 } else {
                                                     icon.classList.remove('active'); // Cambia el estilo del ícono (ej. color gris)
+                                                    alert(data.message);
                                                 }
                                             })
-                                            .catch(error => console.error('Error:', error));
+                                            .catch(error => {
+                                                console.error('Error:', error);
+                                                alert('Hubo un error inesperado.');
+                                            });
                                         });
                                     });
                                 });
-                                </script>                              
+                                </script>                             
                             </div>
                             <div style="height:30px;"></div>                            
 
