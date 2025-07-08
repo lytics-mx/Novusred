@@ -327,49 +327,61 @@
                                         var bundleForm = document.getElementById('bundle-form');
                                         var totalPriceElement = document.getElementById('bundle-total'); // Elemento para mostrar el precio total
                                         var buyNowButton = document.getElementById('bundle-buy-now'); // Botón "Comprar"
-                                    
-                                        // Función para obtener el precio de un producto
-                                        function getPriceFromText(text) {
-                                            return parseFloat((text || '').replace(/[^0-9.]/g, '')) || 0;
+
+                                        // Función para obtener el precio correcto (descuento si existe, sino lista)
+                                        function getPriceFromElement(priceContainer) {
+                                            if (!priceContainer) return 0;
+                                            // Busca el precio con clase .accessory-main-price o .new-main-price
+                                            var discounted = priceContainer.querySelector('.accessory-main-price, .new-main-price');
+                                            if (discounted) {
+                                                return parseFloat((discounted.textContent || '').replace(/[^0-9.]/g, '')) || 0;
+                                            }
+                                            // Si no hay descuento, busca el precio de lista
+                                            var list = priceContainer.querySelector('.accessory-main-price, .fw-bold.d-block, .fw-bold.d-block.new-main-price');
+                                            if (list) {
+                                                return parseFloat((list.textContent || '').replace(/[^0-9.]/g, '')) || 0;
+                                            }
+                                            // Si solo hay un texto de precio
+                                            return parseFloat((priceContainer.textContent || '').replace(/[^0-9.]/g, '')) || 0;
                                         }
-                                    
+
                                         // Función para actualizar el precio total
                                         function updateTotal() {
                                             var total = 0;
-                                            // Sumar el precio del producto raíz
-                                            var rootPriceDiv = document.querySelector('.col-12.col-md-4 .mobile-main-price');
+                                            // Sumar el precio del producto raíz (usa discounted_price si existe, sino list_price)
+                                            var rootPriceDiv = document.querySelector('.col-12.col-md-4');
                                             if (rootPriceDiv) {
-                                                total += getPriceFromText(rootPriceDiv.textContent);
+                                                total += getPriceFromElement(rootPriceDiv);
                                             }
-                                            // Sumar los accesorios seleccionados
+                                            // Sumar los accesorios seleccionados (usa discounted_price si existe, sino list_price)
                                             document.querySelectorAll('input[name="bundle_product_ids[]"]:checked').forEach(function(cb) {
-                                                var priceDiv = cb.closest('.accessory-card')?.querySelector('.accessory-main-price') || null;
-                                                if (priceDiv) {
-                                                    total += getPriceFromText(priceDiv.textContent);
+                                                var card = cb.closest('.accessory-card');
+                                                if (card) {
+                                                    total += getPriceFromElement(card);
                                                 }
                                             });
                                             if (totalPriceElement) {
                                                 totalPriceElement.textContent = `$${total.toLocaleString('es-MX', { minimumFractionDigits: 2 })}`;
                                             }
                                         }
-                                    
+
                                         // Escuchar cambios en los checkboxes
                                         document.querySelectorAll('input[name="bundle_product_ids[]"]').forEach(function(cb) {
                                             cb.addEventListener('change', updateTotal);
                                         });
-                                    
+
                                         // Actualizar el precio total al cargar la página
                                         updateTotal();
-                                    
+
                                         // Manejo del envío del formulario para "Agregar al carrito"
                                         bundleForm.addEventListener('submit', function(e) {
                                             e.preventDefault();
                                             var data = new FormData(bundleForm);
-                                    
+
                                             // Agregar el producto raíz al carrito
                                             var productRoot = document.querySelector('input[name="product_id"]').value;
                                             data.append('product_id', productRoot);
-                                    
+
                                             // Agregar todos los productos seleccionados al carrito
                                             var selectedProducts = document.querySelectorAll('input[name="bundle_product_ids[]"]:checked');
                                             if (selectedProducts.length === 0) {
@@ -379,7 +391,7 @@
                                             selectedProducts.forEach(function(cb) {
                                                 data.append('bundle_product_ids[]', cb.value);
                                             });
-                                    
+
                                             fetch(bundleForm.action, {
                                                 method: 'POST',
                                                 body: data,
@@ -395,15 +407,15 @@
                                                 alert('Hubo un error al procesar tu solicitud.');
                                             });
                                         });
-                                    
+
                                         // Manejo del botón "Comprar"
                                         buyNowButton.addEventListener('click', function() {
                                             var data = new FormData(bundleForm);
-                                    
+
                                             // Agregar el producto raíz al carrito
                                             var productRoot = document.querySelector('input[name="product_id"]').value;
                                             data.append('product_id', productRoot);
-                                    
+
                                             // Agregar todos los productos seleccionados al carrito
                                             var selectedProducts = document.querySelectorAll('input[name="bundle_product_ids[]"]:checked');
                                             if (selectedProducts.length === 0) {
@@ -413,7 +425,7 @@
                                             selectedProducts.forEach(function(cb) {
                                                 data.append('bundle_product_ids[]', cb.value);
                                             });
-                                    
+
                                             fetch(bundleForm.action, {
                                                 method: 'POST',
                                                 body: data,
@@ -430,7 +442,7 @@
                                             });
                                         });
                                     });
-                                    </script>  
+                                    </script>
                                 </t>
                                 <!-- ...existing code... -->
                                 <!-- ...busca la sección donde aparece la descripción... -->
