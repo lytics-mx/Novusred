@@ -75,6 +75,41 @@
                                         <span class="fa fa-heart wishlist-icon" role="img" aria-label="Agregar a la lista de deseos"></span>
                                     </button>
                                 </div>
+                                <script type="text/javascript">
+                                // filepath: c:\Users\jenn\Documents\GitHub\novusred\theme_xtream\views\website_sale\website_view_products.xml
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const wishlistButtons = document.querySelectorAll('.wishlist-toggle');
+                                
+                                    wishlistButtons.forEach(button => {
+                                        button.addEventListener('click', function () {
+                                            const productTemplateId = this.getAttribute('data-product-template-id');
+                                            const productVariantId = this.getAttribute('data-product-product-id');
+                                            const icon = this.querySelector('.wishlist-icon');
+                                
+                                            fetch('/shop/wishlist/toggle', {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                    'X-CSRF-TOKEN': document.querySelector('input[name="csrf_token"]').value
+                                                },
+                                                body: JSON.stringify({
+                                                    product_template_id: productTemplateId,
+                                                    product_variant_id: productVariantId
+                                                })
+                                            })
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                if (data.added) {
+                                                    icon.classList.add('active'); // Cambia el estilo del ícono (ej. color rojo)
+                                                } else {
+                                                    icon.classList.remove('active'); // Cambia el estilo del ícono (ej. color gris)
+                                                }
+                                            })
+                                            .catch(error => console.error('Error:', error));
+                                        });
+                                    });
+                                });
+                                </script>                                
                             </div>
                             <div style="height:30px;"></div>                            
 

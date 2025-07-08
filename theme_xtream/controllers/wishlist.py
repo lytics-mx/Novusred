@@ -33,3 +33,28 @@ class WishlistController(http.Controller):
         if wishlist_item.exists():
             wishlist_item.unlink()
         return request.redirect('/shop/wishlist')
+    
+
+    @http.route('/shop/wishlist/toggle', type='json', auth='public', methods=['POST'], website=True)
+    def toggle_wishlist(self, product_template_id, product_variant_id):
+        partner = request.env.user.partner_id
+        if not partner:
+            return {'error': 'User not logged in'}
+
+        wishlist_model = request.env['product.wishlist'].sudo()
+        existing_item = wishlist_model.search([
+            ('partner_id', '=', partner.id),
+            ('product_template_id', '=', int(product_template_id)),
+            ('product_variant_id', '=', int(product_variant_id))
+        ])
+
+        if existing_item:
+            existing_item.unlink()
+            return {'added': False}
+        else:
+            wishlist_model.create({
+                'partner_id': partner.id,
+                'product_template_id': int(product_template_id),
+                'product_variant_id': int(product_variant_id)
+            })
+            return {'added': True}    
