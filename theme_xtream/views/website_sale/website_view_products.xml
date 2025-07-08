@@ -68,60 +68,8 @@
                                     class="img-fluid main-img-large"
                                     style="max-height:500px;cursor:pointer; margin-bottom: 18px; width:100%; object-fit:contain;"/>
                                 <div style="position:absolute; top:12px; right:12px; z-index:10;">
-                                    <button type="button" role="button" class="btn btn-light o_add_wishlist o_editable wishlist-toggle" 
-                                            data-action="toggle_wishlist" title="Agregar a la lista de deseos" 
-                                            t-att-data-product-template-id="product.id" 
-                                            t-att-data-product-product-id="product.product_variant_id.id">
-                                        <span class="fa fa-heart wishlist-icon" role="img" aria-label="Agregar a la lista de deseos"></span>
-                                    </button>
+                                    <t t-call="website_sale_wishlist.wishlist_button"/>
                                 </div>
-                                <script type="text/javascript">
-                                document.addEventListener('DOMContentLoaded', function () {
-                                    const wishlistButtons = document.querySelectorAll('.wishlist-toggle');
-                                
-                                    wishlistButtons.forEach(button => {
-                                        button.addEventListener('click', function () {
-                                            const productTemplateId = this.getAttribute('data-product-template-id');
-                                            const productVariantId = this.getAttribute('data-product-product-id');
-                                            const icon = this.querySelector('.wishlist-icon');
-                                
-                                            fetch('/shop/wishlist/toggle', {
-                                                method: 'POST',
-                                                headers: {
-                                                    'Content-Type': 'application/json',
-                                                    'X-CSRF-TOKEN': document.querySelector('input[name="csrf_token"]').value
-                                                },
-                                                body: JSON.stringify({
-                                                    product_template_id: productTemplateId,
-                                                    product_variant_id: productVariantId
-                                                })
-                                            })
-                                            .then(response => {
-                                                if (!response.ok) {
-                                                    throw new Error('Network response was not ok');
-                                                }
-                                                return response.json();
-                                            })
-                                            .then(data => {
-                                                if (data.error) {
-                                                    console.error('Error:', data.error);
-                                                    alert('Hubo un error al procesar tu solicitud.');
-                                                } else if (data.added) {
-                                                    icon.classList.add('active'); // Cambia el estilo del ícono (ej. color rojo)
-                                                    alert(data.message);
-                                                } else {
-                                                    icon.classList.remove('active'); // Cambia el estilo del ícono (ej. color gris)
-                                                    alert(data.message);
-                                                }
-                                            })
-                                            .catch(error => {
-                                                console.error('Error:', error);
-                                                alert('Hubo un error inesperado.');
-                                            });
-                                        });
-                                    });
-                                });
-                                </script>                             
                             </div>
                             <div style="height:30px;"></div>                            
 

@@ -1,7 +1,5 @@
 from odoo import http
 from odoo.http import request
-from odoo.addons.website_sale.controllers.main import WebsiteSale
-
 
 class WishlistController(http.Controller):
     @http.route('/shop/wishlist', type='http', auth='public', website=True)
@@ -35,31 +33,3 @@ class WishlistController(http.Controller):
         if wishlist_item.exists():
             wishlist_item.unlink()
         return request.redirect('/shop/wishlist')
-    
-
-    @http.route('/shop/wishlist/toggle', type='json', auth='public', methods=['POST'], website=True)
-    def toggle_wishlist(self, product_template_id=None, product_variant_id=None):
-        if not product_template_id or not product_variant_id:
-            return {'error': 'Missing parameters'}
-
-        partner = request.env.user.partner_id
-        if not partner:
-            return {'error': 'User not logged in'}
-
-        wishlist_model = request.env['product.wishlist'].sudo()
-        existing_item = wishlist_model.search([
-            ('partner_id', '=', partner.id),
-            ('product_template_id', '=', int(product_template_id)),
-            ('product_variant_id', '=', int(product_variant_id))
-        ])
-
-        if existing_item:
-            existing_item.unlink()
-            return {'added': False, 'message': 'Removed from wishlist'}
-        else:
-            wishlist_model.create({
-                'partner_id': partner.id,
-                'product_template_id': int(product_template_id),
-                'product_variant_id': int(product_variant_id)
-            })
-            return {'added': True, 'message': 'Added to wishlist'}
