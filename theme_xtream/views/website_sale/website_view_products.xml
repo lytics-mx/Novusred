@@ -68,7 +68,13 @@
                                     class="img-fluid main-img-large"
                                     style="max-height:500px;cursor:pointer; margin-bottom: 18px; width:100%; object-fit:contain;"/>
                                 <div style="position:absolute; top:12px; right:12px; z-index:10;">
-                                    <t t-call="website_sale_wishlist.wishlist_button"/>
+                                    <t t-set="wishlist_view" t-value="request.env['ir.ui.view'].sudo().search([('key', '=', 'website_sale_wishlist.wishlist_button')])"/>
+                                    <t t-if="wishlist_view">
+                                        <t t-call="website_sale_wishlist.wishlist_button"/>
+                                    </t>
+                                    <t t-else="">
+                                        <span style="color: red;">La vista 'website_sale_wishlist.wishlist_button' no está disponible.</span>
+                                    </t>
                                 </div>
                             </div>
                             <div style="height:30px;"></div>                            
