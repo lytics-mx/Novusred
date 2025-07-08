@@ -76,7 +76,6 @@
                                     </button>
                                 </div>
                                 <script type="text/javascript">
-                                // filepath: c:\Users\jenn\Documents\GitHub\novusred\theme_xtream\views\website_sale\website_view_products.xml
                                 document.addEventListener('DOMContentLoaded', function () {
                                     const wishlistButtons = document.querySelectorAll('.wishlist-toggle');
                                 
@@ -99,7 +98,10 @@
                                             })
                                             .then(response => response.json())
                                             .then(data => {
-                                                if (data.added) {
+                                                if (data.error) {
+                                                    console.error('Error:', data.error);
+                                                    alert('Hubo un error al procesar tu solicitud.');
+                                                } else if (data.added) {
                                                     icon.classList.add('active'); // Cambia el estilo del ícono (ej. color rojo)
                                                 } else {
                                                     icon.classList.remove('active'); // Cambia el estilo del ícono (ej. color gris)
@@ -109,7 +111,7 @@
                                         });
                                     });
                                 });
-                                </script>                                
+                                </script>                              
                             </div>
                             <div style="height:30px;"></div>                            
 

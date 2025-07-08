@@ -36,7 +36,10 @@ class WishlistController(http.Controller):
     
 
     @http.route('/shop/wishlist/toggle', type='json', auth='public', methods=['POST'], website=True)
-    def toggle_wishlist(self, product_template_id, product_variant_id):
+    def toggle_wishlist(self, product_template_id=None, product_variant_id=None):
+        if not product_template_id or not product_variant_id:
+            return {'error': 'Missing parameters'}
+
         partner = request.env.user.partner_id
         if not partner:
             return {'error': 'User not logged in'}
@@ -57,4 +60,4 @@ class WishlistController(http.Controller):
                 'product_template_id': int(product_template_id),
                 'product_variant_id': int(product_variant_id)
             })
-            return {'added': True}    
+            return {'added': True}
