@@ -1,5 +1,7 @@
 from odoo import http
 from odoo.http import request
+from odoo.http import JsonRequest
+
 
 class WishlistController(http.Controller):
     @http.route('/shop/wishlist', type='http', auth='public', website=True)
