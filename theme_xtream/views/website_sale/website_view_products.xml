@@ -328,36 +328,32 @@
                                         var totalPriceElement = document.getElementById('bundle-total'); // Elemento para mostrar el precio total
                                         var buyNowButton = document.getElementById('bundle-buy-now'); // Botón "Comprar"
 
-                                        // Función para obtener el precio correcto (descuento si existe, sino lista)
-                                        function getPriceFromElement(priceContainer) {
-                                            if (!priceContainer) return 0;
-                                            // Busca el precio con clase .accessory-main-price o .new-main-price
-                                            var discounted = priceContainer.querySelector('.accessory-main-price, .new-main-price');
+                                        // Función para obtener el precio de un producto
+                                        function getPriceFromText(text) {
+                                            return parseFloat((text || '').replace(/[^0-9.]/g, '')) || 0;
+                                        }
+
+                                        // Función para obtener el precio raíz (descuento si existe, si no, list_price)
+                                        function getRootPrice() {
+                                            var discounted = document.querySelector('.col-12.col-md-4 .new-main-price');
                                             if (discounted) {
-                                                return parseFloat((discounted.textContent || '').replace(/[^0-9.]/g, '')) || 0;
+                                                return getPriceFromText(discounted.textContent);
                                             }
-                                            // Si no hay descuento, busca el precio de lista
-                                            var list = priceContainer.querySelector('.accessory-main-price, .fw-bold.d-block, .fw-bold.d-block.new-main-price');
+                                            var list = document.querySelector('.col-12.col-md-4 .fw-bold.d-block.new-main-price');
                                             if (list) {
-                                                return parseFloat((list.textContent || '').replace(/[^0-9.]/g, '')) || 0;
+                                                return getPriceFromText(list.textContent);
                                             }
-                                            // Si solo hay un texto de precio
-                                            return parseFloat((priceContainer.textContent || '').replace(/[^0-9.]/g, '')) || 0;
+                                            return 0;
                                         }
 
                                         // Función para actualizar el precio total
                                         function updateTotal() {
-                                            var total = 0;
-                                            // Sumar el precio del producto raíz (usa discounted_price si existe, sino list_price)
-                                            var rootPriceDiv = document.querySelector('.col-12.col-md-4');
-                                            if (rootPriceDiv) {
-                                                total += getPriceFromElement(rootPriceDiv);
-                                            }
-                                            // Sumar los accesorios seleccionados (usa discounted_price si existe, sino list_price)
+                                            var total = getRootPrice();
+                                            // Sumar los accesorios seleccionados
                                             document.querySelectorAll('input[name="bundle_product_ids[]"]:checked').forEach(function(cb) {
-                                                var card = cb.closest('.accessory-card');
-                                                if (card) {
-                                                    total += getPriceFromElement(card);
+                                                var priceDiv = cb.closest('.accessory-card')?.querySelector('.accessory-main-price') || null;
+                                                if (priceDiv) {
+                                                    total += getPriceFromText(priceDiv.textContent);
                                                 }
                                             });
                                             if (totalPriceElement) {
