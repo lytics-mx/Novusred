@@ -1,6 +1,6 @@
 from odoo import http
 from odoo.http import request
-from odoo.http import JsonRequest
+from odoo.addons.website_sale.controllers.main import WebsiteSale
 
 
 class WishlistController(http.Controller):
