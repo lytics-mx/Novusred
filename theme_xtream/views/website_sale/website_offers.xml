@@ -569,8 +569,8 @@
                     
                     <!-- Productos en oferta -->
                     <div class="col-lg-9 col-md-8 col-12">
-                        <div class="row mobile-products-grid">
-                            <t t-foreach="discounted_products" t-as="product">
+                        <div class="row mobile-products-grid" id="product-container">
+                            <t t-foreach="discounted_products[:20]" t-as="product">
                                 <div class="col-6 col-md-6 col-lg-4 mobile-product-col">
                                     <a t-att-href="'/shop/product/' + str(product.id)" style="text-decoration: none; color: inherit;">
                                         <div class="card shadow-sm product-card mobile-product-card">
@@ -649,7 +649,77 @@
                                 </div>
                             </t>
                         </div>
+                        <div id="loading-spinner" style="text-align: center; display: none;">
+                            <img src="/path/to/spinner.gif" alt="Loading..." />
+                        </div>
                     </div>
+                    <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        let offset = 20; // Número inicial de productos cargados
+                        const limit = 20; // Número de productos a cargar por solicitud
+                        const productContainer = document.getElementById('product-container');
+                        const loadingSpinner = document.getElementById('loading-spinner');
+                        let isLoading = false;
+
+                        // Función para cargar más productos
+                        async function loadMoreProducts() {
+                            if (isLoading) return;
+                            isLoading = true;
+                            loadingSpinner.style.display = 'block';
+
+                            try {
+                                const response = await fetch('/offers/load_more', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({ offset, limit }),
+                                });
+                                const data = await response.json();
+                                if (data.products.length > 0) {
+                                    data.products.forEach(product => {
+                                        const productHTML = `
+                                            <div class="col-6 col-md-6 col-lg-4 mobile-product-col">
+                                                <a href="/shop/product/${product.id}" style="text-decoration: none; color: inherit;">
+                                                    <div class="card shadow-sm product-card mobile-product-card">
+                                                        <img src="${product.image_url}" 
+                                                            class="card-img-top product-image-no-scale" style="height: 300px; object-fit: contain;" />
+                                                        <div class="card-body mobile-card-body">
+                                                            <h6 class="card-title mb-2" style="font-size: 16px;">${product.name}</h6>
+                                                            <span class="text-dark fw-bold mobile-main-price">$${product.discounted_price}</span>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        `;
+                                        productContainer.insertAdjacentHTML('beforeend', productHTML);
+                                    });
+                                    offset += limit;
+                                } else {
+                                    // No más productos
+                                    window.removeEventListener('scroll', handleScroll);
+                                }
+                            } catch (error) {
+                                console.error('Error loading more products:', error);
+                            } finally {
+                                isLoading = false;
+                                loadingSpinner.style.display = 'none';
+                            }
+                        }
+
+                        // Manejar el evento de desplazamiento
+                        function handleScroll() {
+                            const scrollPosition = window.innerHeight + window.scrollY;
+                            const threshold = document.body.offsetHeight - 500; // Cargar más cuando queden 500px para el final
+                            if (scrollPosition >= threshold) {
+                                loadMoreProducts();
+                            }
+                        }
+
+                        window.addEventListener('scroll', handleScroll);
+                    });
+                    </script>
+
                     <style>
                         /* Evita que la imagen del producto se expanda fuera del card */
                         .product-card .card-img-top:hover,
