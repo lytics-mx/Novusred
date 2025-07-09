@@ -192,3 +192,38 @@ class OffersController(http.Controller):
             'product_tags': product_tags,
             'all_offer_tags': all_offer_tags,
         })
+    
+    @http.route('/offers/load_more', type='json', auth='public', website=True)
+    def load_more_offers(self, limit=20, offset=0, **kwargs):
+        tag_id = kwargs.get('tag_id')
+        brand_type_id = kwargs.get('brand_type_id')
+        category_id = kwargs.get('category_id')
+        free_shipping = kwargs.get('free_shipping', 'false').lower() == 'true'
+        min_price = kwargs.get('min_price')
+        max_price = kwargs.get('max_price')
+
+        # Dominio base con filtros
+        domain = [
+            ('website_published', '=', True),
+            ('sale_ok', '=', True),
+            '|',
+            ('discount_percentage', '>', 0),
+            ('fixed_discount', '>', 0)
+        ]
+        if tag_id:
+            domain.append(('product_tag_ids', 'in', [int(tag_id)]))
+        if brand_type_id:
+            domain.append(('brand_type_id', '=', int(brand_type_id)))
+        if category_id:
+            domain.append(('categ_id', 'child_of', int(category_id)))
+        if free_shipping:
+            domain.append(('free_shipping', '=', True))
+
+        Product = request.env['product.template'].sudo()
+        products = Product.search(domain, offset=int(offset), limit=int(limit))
+        discounted_products = products.filtered(lambda p: p.list_price > (p.discounted_price if hasattr(p, 'discounted_price') else p.list_price))
+
+        # Renderizar los productos como HTML parcial
+        return request.env['ir.ui.view']._render_template('theme_xtream.lazy_load_products', {
+            'discounted_products': discounted_products,
+        })    
