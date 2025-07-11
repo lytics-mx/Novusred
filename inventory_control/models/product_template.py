@@ -88,9 +88,10 @@ class ProductTemplate(models.Model):
      free_shipping = fields.Boolean('Envío Gratis', default=False, tracking=True)
 
      def _cron_update_list_price(self):
-        """Tarea programada para actualizar list_price con discounted_price."""
-        self.update_list_price_from_discounted_price()
-
+         """Tarea programada para actualizar list_price con discounted_price."""
+         products = self.search([('discounted_price', '!=', False)])
+         for product in products:
+             product.list_price = product.discounted_price
 
      @api.model
      def update_free_shipping_from_model(self):
