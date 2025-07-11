@@ -10,6 +10,12 @@ class WebsiteCheckout(http.Controller):
             ('state', '=', 'done'),
             ('partner_id', '=', user.partner_id.id)
         ])
+        # Filtrar pickings pendientes y relacionados con el usuario actual
+        pending_pickings = request.env['stock.picking'].sudo().search([
+            ('state', 'not in', ['done', 'cancel']),
+            ('partner_id', '=', user.partner_id.id)
+        ])
         return request.render('theme_xtream.delivered_template', {
             'delivered_pickings': delivered_pickings,
+            'pending_pickings': pending_pickings,
         })

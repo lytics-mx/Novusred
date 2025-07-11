@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="delivered_template" name="Delivered Products">
+    <template id="delivered_template" name="Delivered and Pending Products">
         <t t-call="website.layout">
             <div class="container mt-5">
-                <h2 class="mb-4">Mis Compras Entregadas</h2>
+                <h2 class="mb-4">Mis Compras</h2>
                 <div class="row">
+                    <!-- Mostrar productos entregados -->
                     <t t-foreach="delivered_pickings" t-as="picking">
                         <div class="col-12 mb-3">
                             <div class="card p-3 shadow-sm">
@@ -34,6 +35,42 @@
                                         <div class="mt-2">
                                             <a href="#" class="btn btn-primary">Ingresar</a>
                                             <a href="#" class="btn btn-outline-primary">Volver a comprar</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                    <!-- Mostrar productos pendientes -->
+                    <t t-foreach="pending_pickings" t-as="picking">
+                        <div class="col-12 mb-3">
+                            <div class="card p-3 shadow-sm">
+                                <div class="d-flex align-items-center">
+                                    <!-- Imagen del producto -->
+                                    <div class="me-3">
+                                        <img t-att-src="'/web/image/product.product/%s/image_1920' % picking.move_ids_without_package[0].product_id.id" class="img-fluid rounded" alt="Product Image" style="width: 100px; height: auto;"/>
+                                    </div>
+                                    <!-- Detalles del producto -->
+                                    <div class="flex-grow-1">
+                                        <h5 class="text-orange">
+                                            <t t-esc="picking.move_ids_without_package[0].product_id.name"/>
+                                        </h5>
+                                        <p class="text-muted mb-1">
+                                            Fecha estimada de entrega: <t t-esc="picking.scheduled_date"/>
+                                        </p>
+                                        <p class="text-muted mb-1">
+                                            Cantidad: <t t-esc="picking.move_ids_without_package[0].product_qty"/> unidades
+                                        </p>
+                                        <p class="text-warning font-weight-bold">
+                                            Pendiente de entrega
+                                        </p>
+                                    </div>
+                                    <!-- Botones de acción -->
+                                    <div class="ms-3 text-end">
+                                        <a href="#" class="btn btn-link text-orange">Enviar mensaje</a>
+                                        <div class="mt-2">
+                                            <a href="#" class="btn btn-primary">Ingresar</a>
+                                            <a href="#" class="btn btn-outline-primary">Cancelar pedido</a>
                                         </div>
                                     </div>
                                 </div>
