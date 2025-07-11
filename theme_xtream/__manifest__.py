@@ -81,8 +81,9 @@
         'views/website_sale/search/nav_bar.xml',
         
 
-
+# Vistas de carrito y checkout
         'views/shop/website_cart.xml',
+        'views/shop/website_checkout.xml',
 
         'views/csrf_token.xml',
 
