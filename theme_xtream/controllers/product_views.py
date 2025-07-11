@@ -9,9 +9,10 @@ _logger = logging.getLogger(__name__)
 class ShopController(WebsiteSale):
 
     @http.route([
-        '/shop/product/<int:product_id>'
+        '/shop/product/<int:product_id>',
+        '/shop/product/<int:product_id>-<string:slug>'
     ], type='http', auth="public", website=True, sitemap=False)
-    def product_page(self, product_id, **kwargs):
+    def product_page(self, product_id, slug=None, **kwargs):
         # Obtener el producto template
         product_template = request.env['product.template'].sudo().browse(product_id)
         if not product_template.exists():
@@ -81,9 +82,6 @@ class ShopController(WebsiteSale):
                 ('website_published', '=', True)
             ])
 
-        # Construir la URL amigable con el id y el nombre del producto
-        product_slug = f"{product_sudo.id}/{product_sudo.name.replace(' ', '-').lower()}"
-
         context = {
             'product': product_sudo,  # Usar product_sudo en lugar de product
             'categories': categories,
@@ -94,6 +92,5 @@ class ShopController(WebsiteSale):
             'list_price': product_sudo.list_price,
             'general_images': general_images,
             'brand_type_products_count': brand_type_products_count,
-            'product_slug': product_slug,  # Agregar el slug al contexto
         }
         return request.render("theme_xtream.website_view_product_xtream", context)
