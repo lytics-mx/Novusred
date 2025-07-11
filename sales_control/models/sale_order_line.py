@@ -6,9 +6,9 @@ class SaleOrderLine(models.Model):
     @api.depends('product_id', 'product_uom_qty', 'discount', 'price_unit')
     def _compute_amount(self):
         for line in self:
-            # Verificar si el producto tiene cualquier etiqueta
+            # Verificar si el producto tiene etiquetas y aplicar lógica de descuento
             if line.product_id.tag_ids:
-                price_unit = line.product_id.discount_price
+                price_unit = line.product_id.discount_price or line.product_id.list_price
             else:
                 price_unit = line.product_id.list_price
 
