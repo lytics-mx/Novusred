@@ -5,6 +5,8 @@ from datetime import datetime, timezone  # Importar datetime
 class ProductTemplate(models.Model):
      _inherit = 'product.template'
 
+     product_model = fields.Char('Modelo de producto')
+
      brand_ids = fields.Many2many(
           'product.brand',
           'product_template_brand_rel',  # Relación con las marcas
@@ -32,13 +34,8 @@ class ProductTemplate(models.Model):
           help='Imágenes adicionales del producto. Puedes arrastrar para ordenar.'
      )
 
-     # product_model_id = fields.Many2one(
-     #     comodel_name='product.model',
-     #     string='Modelo',
-     #     help='Selecciona o registra un modelo previamente usado.'
-     # )
 
-     product_model = fields.Char('Modelo de producto')
+
 
 
 
@@ -64,11 +61,40 @@ class ProductTemplate(models.Model):
 
      free_shipping = fields.Boolean('Envío Gratis', default=False, tracking=True)
 
-     is_discount_tag_visible = fields.Boolean(
-          string="Etiqueta de descuento visible",
-          default=True,
-          help="Controla si la etiqueta de descuento es visible en el sitio web"
+     fixed_discount = fields.Float(
+          string="Monto Fijo",
+          compute="_compute_discount_percentage_from_tags",
+          store=True,
+          help="Cantidad fija de descuento aplicada al producto."
      )
+     remaining_time_text = fields.Char(
+          string="Tiempo restante",
+          compute="_compute_remaining_time_text",
+          store=False,
+          help="Tiempo restante para finalizar la oferta"
+     )
+
+     offer_end_time = fields.Datetime(
+          string="Fecha de fin de la oferta",
+          compute="_compute_offer_end_time",
+          store=True,
+          help="Fecha y hora en que termina la oferta más cercana para este producto."
+     )
+
+     brand_website = fields.Char(
+          string='Marca en el sitio web',
+          compute='_compute_brand_website',
+          store=True,
+          help='Displays the brand type on the website'
+     )
+
+
+
+     # is_discount_tag_visible = fields.Boolean(
+     #      string="Etiqueta de descuento visible",
+     #      default=True,
+     #      help="Controla si la etiqueta de descuento es visible en el sitio web"
+     # )
      # last_viewed_date = fields.Datetime(string="Última fecha vista")
 
      # type = fields.Selection(
@@ -77,6 +103,19 @@ class ProductTemplate(models.Model):
      # ],
      # ondelete={'product': 'set default'},
      # )
+
+     # product_model_id = fields.Many2one(
+     #     comodel_name='product.model',
+     #     string='Modelo',
+     #     help='Selecciona o registra un modelo previamente usado.'
+     # )
+
+     @api.depends('brand_type_id')
+     def _compute_brand_website(self):
+          for product in self:
+               product.brand_website = product.brand_type_id.name if product.brand_type_id else ''
+
+
      @api.model
      def update_free_shipping_from_model(self):
           """Actualiza el campo free_shipping basado en el modelo free.shipping"""
@@ -119,38 +158,11 @@ class ProductTemplate(models.Model):
                     price -= product.fixed_discount
                product.discounted_price = max(price, 0)  # Evita precios negativos
 
-     fixed_discount = fields.Float(
-          string="Monto Fijo",
-          compute="_compute_discount_percentage_from_tags",
-          store=True,
-          help="Cantidad fija de descuento aplicada al producto."
-     )
-
-     @api.depends('brand_type_id')
-     def _compute_brand_website(self):
-          for product in self:
-               product.brand_website = product.brand_type_id.name if product.brand_type_id else ''
-
-     brand_website = fields.Char(
-          string='Marca en el sitio web',
-          compute='_compute_brand_website',
-          store=True,
-          help='Displays the brand type on the website'
-     )
-
-     @api.depends('public_categ_ids')
-     def _compute_categ_id(self):
-         """Sincroniza categ_id con public_categ_ids."""
-         for product in self:
-             product.categ_id = product.public_categ_ids[:1].id if product.public_categ_ids else False
 
 
-     offer_end_time = fields.Datetime(
-          string="Fecha de fin de la oferta",
-          compute="_compute_offer_end_time",
-          store=True,
-          help="Fecha y hora en que termina la oferta más cercana para este producto."
-     )
+
+
+
 
      @api.depends('product_tag_ids.end_date')
      def _compute_offer_end_time(self):
@@ -182,12 +194,7 @@ class ProductTemplate(models.Model):
                  time_remaining[product.id] = "Sin fecha"
          return time_remaining
      
-     remaining_time_text = fields.Char(
-          string="Tiempo restante",
-          compute="_compute_remaining_time_text",
-          store=False,
-          help="Tiempo restante para finalizar la oferta"
-     )
+
      
      def _compute_remaining_time_text(self):
           """Calcula el tiempo restante hasta la finalización de la oferta."""
