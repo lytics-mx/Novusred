@@ -37,4 +37,4 @@ from . import cart
 from . import login
 from . import wishlist
 from . import discover
-
+from . import checkout
