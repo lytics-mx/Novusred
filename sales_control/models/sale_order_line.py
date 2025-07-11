@@ -7,9 +7,9 @@ class SaleOrderLine(models.Model):
     def _compute_amount(self):
         for line in self:
             # Verificar si el producto tiene etiquetas
-            if line.product_id.product_tag_ids:
-                # Si tiene etiquetas, usar discounted_price
-                price_unit = line.product_id.discounted_price or line.product_id.list_price
+            if line.product_id.tag_ids:
+                # Si tiene etiquetas, usar discount_price
+                price_unit = line.product_id.discount_price or line.product_id.list_price
             else:
                 # Si no tiene etiquetas, usar list_price
                 price_unit = line.product_id.list_price
