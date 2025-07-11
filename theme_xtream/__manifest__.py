@@ -86,6 +86,7 @@
         'views/shop/website_checkout.xml',
 
         'views/csrf_token.xml',
+        'views/sale_order_line/sale_order_line_views.xml',
 
 
 
