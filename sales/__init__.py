@@ -19,12 +19,5 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 #############################################################################
-from . import xtream_testimonials
-from . import banner_website
-from . import banner_img
-# from . import free_shipping
-# from . import historial
-
-
-# from . import product_image
-# from . import websites_track
+from . import controllers
+from . import models
