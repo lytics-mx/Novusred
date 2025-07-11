@@ -1,7 +1,7 @@
 from odoo import models, fields, api
 
 class SaleOrderLine(models.Model):
-    _inherit = 'sale.order'
+    _inherit = 'sale.order.line'
 
     @api.depends('product_id', 'product_uom_qty', 'discount', 'price_unit')
     def _compute_amount(self):
