@@ -87,6 +87,9 @@ class ProductTemplate(models.Model):
 
      free_shipping = fields.Boolean('Envío Gratis', default=False, tracking=True)
 
+     def _cron_update_list_price(self):
+        """Tarea programada para actualizar list_price con discounted_price."""
+        self.update_list_price_from_discounted_price()
 
 
      @api.model
@@ -132,12 +135,6 @@ class ProductTemplate(models.Model):
                product.discounted_price = max(price, 0)  # Evita precios negativos
 
 
-     @api.model
-     def update_list_price_from_discounted_price(self):
-          """Actualiza el list_price con el valor de discounted_price para todos los productos."""
-          products = self.search([('discounted_price', '!=', False)])
-          for product in products:
-               product.list_price = product.discounted_price
 
 
 
