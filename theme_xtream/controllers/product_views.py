@@ -81,6 +81,9 @@ class ShopController(WebsiteSale):
                 ('website_published', '=', True)
             ])
 
+        # Construir la URL amigable con el id y el nombre del producto
+        product_slug = f"{product_sudo.id}/{product_sudo.name.replace(' ', '-').lower()}"
+
         context = {
             'product': product_sudo,  # Usar product_sudo en lugar de product
             'categories': categories,
@@ -91,5 +94,6 @@ class ShopController(WebsiteSale):
             'list_price': product_sudo.list_price,
             'general_images': general_images,
             'brand_type_products_count': brand_type_products_count,
+            'product_slug': product_slug,  # Agregar el slug al contexto
         }
         return request.render("theme_xtream.website_view_product_xtream", context)
