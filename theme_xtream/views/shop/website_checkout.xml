@@ -2,27 +2,41 @@
 <odoo>
     <template id="delivered_template" name="Delivered Products">
         <t t-call="website.layout">
-            <div class="container">
-                <h2>Mis Compras Entregadas</h2>
+            <div class="container mt-5">
+                <h2 class="mb-4">Mis Compras Entregadas</h2>
                 <div class="row">
                     <t t-foreach="delivered_pickings" t-as="picking">
-                        <div class="col-md-4">
-                            <div class="card">
-                                <!-- Iterar sobre las líneas de movimiento -->
-                                <t t-foreach="picking.move_ids_without_package" t-as="line">
-                                    <img t-att-src="'/web/image/product.product/%s/image_1920' % line.product_id.id" class="card-img-top" alt="Product Image"/>
-                                    <div class="card-body">
-                                        <h5 class="card-title">
-                                            <t t-esc="line.product_id.name"/>
+                        <div class="col-12 mb-3">
+                            <div class="card p-3 shadow-sm">
+                                <div class="row">
+                                    <!-- Imagen del producto -->
+                                    <div class="col-md-3">
+                                        <img t-att-src="'/web/image/product.product/%s/image_1920' % picking.move_ids_without_package[0].product_id.id" class="img-fluid rounded" alt="Product Image"/>
+                                    </div>
+                                    <!-- Detalles del producto -->
+                                    <div class="col-md-6">
+                                        <h5 class="text-primary">
+                                            <t t-esc="picking.move_ids_without_package[0].product_id.name"/>
                                         </h5>
-                                        <p class="card-text">
+                                        <p class="text-muted mb-1">
                                             Entregado el: <t t-esc="picking.date_done"/>
                                         </p>
-                                        <p class="card-text">
-                                            Cantidad: <t t-esc="line.product_qty"/> unidades
+                                        <p class="text-muted mb-1">
+                                            Cantidad: <t t-esc="picking.move_ids_without_package[0].product_qty"/> unidades
+                                        </p>
+                                        <p class="text-success font-weight-bold">
+                                            Envío gratis
                                         </p>
                                     </div>
-                                </t>
+                                    <!-- Botones de acción -->
+                                    <div class="col-md-3 text-end">
+                                        <a href="#" class="btn btn-link text-primary">Enviar mensaje</a>
+                                        <div class="mt-2">
+                                            <a href="#" class="btn btn-primary">Ingresar</a>
+                                            <a href="#" class="btn btn-outline-primary">Volver a comprar</a>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </t>
