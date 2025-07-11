@@ -24,6 +24,7 @@ class WebsiteCheckout(http.Controller):
                     'product_name': move.product_id.name,
                     'quantity': move.product_qty,
                     'delivery_date': picking.date_done,
+                    'purchase_date': picking.date.strftime('%d de %B') if picking.date else '',  # Formato de fecha
                     'image_url': f'/web/image/product.product/{move.product_id.id}/image_1920',
                 })
         
@@ -35,6 +36,7 @@ class WebsiteCheckout(http.Controller):
                     'product_name': move.product_id.name,
                     'quantity': move.product_qty,
                     'scheduled_date': picking.scheduled_date,
+                    'purchase_date': picking.date.strftime('%d de %B') if picking.date else '',  # Formato de fecha
                     'image_url': f'/web/image/product.product/{move.product_id.id}/image_1920',
                 })
         
