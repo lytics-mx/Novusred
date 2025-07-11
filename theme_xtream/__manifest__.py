@@ -83,6 +83,7 @@
 
 
         'views/shop/website_cart.xml',
+        'views/shop/website_checkout.xml',
 
         'views/csrf_token.xml',
 
