@@ -132,27 +132,11 @@ class ProductTemplate(models.Model):
                product.discounted_price = max(price, 0)  # Evita precios negativos
 
 
-     @api.depends('product_tag_ids', 'product_tag_ids.discount_percentage', 'product_tag_ids.is_percentage', 'list_price')
-     def _compute_discounted_price(self):
-          """Calcula el precio ajustado basado en el descuento y actualiza list_price si no hay etiquetas."""
-          for product in self:
-               # Si no hay etiquetas, asignar un precio predeterminado
-               if not product.product_tag_ids:
-                    product.list_price = 100.0  # Valor predeterminado, ajusta según sea necesario
-                    product.discounted_price = product.list_price
-                    continue
-
-               # Calcular el precio ajustado basado en los descuentos
-               price = product.list_price
-               if product.discount_percentage > 0:
-                    price *= (1 - (product.discount_percentage / 100))
-               if product.fixed_discount > 0:
-                    price -= product.fixed_discount
-
-               # Evitar precios negativos
-               product.discounted_price = max(price, 0)
-
-               # Actualizar list_price si hay etiquetas
+     @api.model
+     def update_list_price_from_discounted_price(self):
+          """Actualiza el list_price con el valor de discounted_price para todos los productos."""
+          products = self.search([('discounted_price', '!=', False)])
+          for product in products:
                product.list_price = product.discounted_price
 
 
