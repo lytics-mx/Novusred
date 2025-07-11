@@ -1,35 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="checkout_template" name="Checkout Page">
-        <t t-call="website.layout">
-            <div class="container">
-                <h1>Revisar Orden</h1>
-                <div class="row">
-                    <div class="col-md-6">
-                        <h3>Dirección de Entrega</h3>
-                        <p>
-                            <t t-esc="partner.name"/><br/>
-                            <t t-esc="partner.street"/><br/>
-                            <t t-esc="partner.city"/>, <t t-esc="partner.state_id.name"/><br/>
-                            <t t-esc="partner.zip"/>, <t t-esc="partner.country_id.name"/>
-                        </p>
-                        <a href="/shop/address/edit" class="btn btn-primary">Editar</a>
+    <template id="delivered_template" name="Delivered Products">
+        <div class="container">
+            <h2>Mis Compras Entregadas</h2>
+            <div class="row">
+                <t t-foreach="delivered_pickings" t-as="picking">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <img t-att-src="'/web/image/product.product/%s/image_1920' % picking.product_id.id" class="card-img-top" alt="Product Image">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <t t-esc="picking.product_id.name"/>
+                                </h5>
+                                <p class="card-text">
+                                    Entregado el: <t t-esc="picking.date_done"/>
+                                </p>
+                                <p class="card-text">
+                                    Cantidad: <t t-esc="picking.product_qty"/>
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <h3>Resumen de la Orden</h3>
-                        <ul>
-                            <li>Subtotal: <t t-esc="subtotal"/> </li>
-                            <li>Impuestos: <t t-esc="taxes"/> </li>
-                            <li>Total: <t t-esc="total"/> </li>
-                        </ul>
-                        <form method="POST" action="/shop/checkout/confirm">
-                            <button type="submit" class="btn btn-success">Confirmar</button>
-                        </form>
-                    </div>
-                </div>
+                </t>
             </div>
-        </t>
+        </div>
     </template>
 </odoo>
-
-
