@@ -1,17 +1,15 @@
 from odoo import models, fields, api
 
 class SaleOrderLine(models.Model):
-    _inherit = 'sale.order'
+    _inherit = 'sale.order.line'
 
     @api.depends('product_id', 'product_uom_qty', 'discount', 'price_unit')
     def _compute_amount(self):
         for line in self:
-            # Verificar si el producto tiene etiquetas
+            # Verificar si el producto tiene etiquetas y aplicar lógica de descuento
             if line.product_id.tag_ids:
-                # Si tiene etiquetas, usar discount_price
                 price_unit = line.product_id.discount_price or line.product_id.list_price
             else:
-                # Si no tiene etiquetas, usar list_price
                 price_unit = line.product_id.list_price
 
             # Calcular el subtotal con el precio correcto
