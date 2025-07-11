@@ -9,6 +9,6 @@ class WebsiteCheckout(http.Controller):
             ('state', '=', 'done'),
             ('partner_id', '=', user.partner_id.id)
         ])
-        return request.render('theme_xtream.checkout_template', {
+        return request.render('theme_xtream.delivered_template', {
             'delivered_pickings': delivered_pickings,
         })
