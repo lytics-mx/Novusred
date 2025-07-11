@@ -7,21 +7,21 @@
                 <t t-foreach="delivered_pickings" t-as="picking">
                     <div class="col-md-4">
                         <div class="card">
-                            <img t-att-src="'/web/image/product.product/%s/image_1920' % line.product_id.id" class="card-img-top" alt="Product Image"/>
-                            <div class="card-body">
-                                <h5 class="card-title">
-                                    <t t-esc="line.product_id.name"/>
-                                </h5>
-                                <p class="card-text">
-                                    Entregado el: <t t-esc="picking.date_done"/>
-                                </p>
-                                <p class="card-text">
-                                    Cantidad: 
-                                    <t t-foreach="picking.move_ids_without_package" t-as="line">
-                                        <t t-esc="line.product_qty"/> unidades
-                                    </t>
-                                </p>
-                            </div>
+                            <!-- Iterar sobre las líneas de movimiento -->
+                            <t t-foreach="picking.move_ids_without_package" t-as="line">
+                                <img t-att-src="'/web/image/product.product/%s/image_1920' % line.product_id.id" class="card-img-top" alt="Product Image"/>
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <t t-esc="line.product_id.name"/>
+                                    </h5>
+                                    <p class="card-text">
+                                        Entregado el: <t t-esc="picking.date_done"/>
+                                    </p>
+                                    <p class="card-text">
+                                        Cantidad: <t t-esc="line.product_qty"/> unidades
+                                    </p>
+                                </div>
+                            </t>
                         </div>
                     </div>
                 </t>
