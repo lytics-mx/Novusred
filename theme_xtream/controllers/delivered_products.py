@@ -40,6 +40,7 @@ class WebsiteCheckout(http.Controller):
                         'product_name': move.product_id.name,
                         'quantity': move.product_qty,
                         'delivery_date': picking.date_done or '',
+                        'order_date': picking.date or '',  # Agregar la fecha de la orden
                         'image_url': f'/web/image/product.product/{move.product_id.id}/image_1920',
                     })
 
@@ -52,6 +53,7 @@ class WebsiteCheckout(http.Controller):
                         'product_name': move.product_id.name,
                         'quantity': move.product_qty,
                         'scheduled_date': picking.scheduled_date or '',
+                        'order_date': picking.date or '',  # Agregar la fecha de la orden
                         'image_url': f'/web/image/product.product/{move.product_id.id}/image_1920',
                     })
 
