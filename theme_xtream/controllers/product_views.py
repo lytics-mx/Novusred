@@ -9,7 +9,7 @@ _logger = logging.getLogger(__name__)
 class ShopController(WebsiteSale):
 
     @http.route([
-        '/shop/product/<int:product_id>/<string:product_name>'
+        '/shop/product/<int:product_id>/<path:product_name>'
     ], type='http', auth="public", website=True, sitemap=False)
     def product_page(self, product_id, product_name, **kwargs):
         # Obtener el producto template
@@ -18,12 +18,17 @@ class ShopController(WebsiteSale):
             _logger.warning(f"El producto template con ID {product_id} no existe.")
             return request.not_found()
 
+        # Decodificar el nombre del producto desde la URL
+        from urllib.parse import unquote
+        product_name = unquote(product_name).replace('-', ' ').lower()
+
         # Validar que el nombre en la URL coincida con el nombre del producto
-        url_name = product_name.replace('-', ' ').lower()
         db_name = product_template.name.lower()
-        if url_name != db_name.replace(' ', '-').lower() and url_name != db_name:
+        if product_name != db_name.replace(' ', '-').lower() and product_name != db_name:
             _logger.warning(f"El nombre '{product_name}' no coincide con el producto ID {product_id}.")
             return request.not_found()
+
+        # ...existing code...
 
         # Obtener la variante principal del producto (product.product)
         product_variant = product_template.product_variant_id
