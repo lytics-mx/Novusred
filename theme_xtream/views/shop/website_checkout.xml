@@ -6,24 +6,24 @@
                 <h2 class="mb-4">Mis Compras</h2>
                 <div class="row">
                     <!-- Mostrar productos entregados -->
-                    <t t-foreach="delivered_pickings" t-as="picking">
+                    <t t-foreach="delivered_products" t-as="product">
                         <div class="col-12 mb-3">
                             <div class="card p-3 shadow-sm">
                                 <div class="d-flex align-items-center">
                                     <!-- Imagen del producto -->
                                     <div class="me-3">
-                                        <img t-att-src="'/web/image/product.product/%s/image_1920' % picking.move_ids_without_package[0].product_id.id" class="img-fluid rounded" alt="Product Image" style="width: 100px; height: auto;"/>
+                                        <img t-att-src="product['image_url']" class="img-fluid rounded" alt="Product Image" style="width: 100px; height: auto;"/>
                                     </div>
                                     <!-- Detalles del producto -->
                                     <div class="flex-grow-1">
                                         <h5 class="text-orange">
-                                            <t t-esc="picking.move_ids_without_package[0].product_id.name"/>
+                                            <t t-esc="product['product_name']"/>
                                         </h5>
                                         <p class="text-muted mb-1">
-                                            Entregado el: <t t-esc="picking.date_done"/>
+                                            Entregado el: <t t-esc="product['delivery_date']"/>
                                         </p>
                                         <p class="text-muted mb-1">
-                                            Cantidad: <t t-esc="picking.move_ids_without_package[0].product_qty"/> unidades
+                                            Cantidad: <t t-esc="product['quantity']"/> unidades
                                         </p>
                                         <p class="text-success font-weight-bold">
                                             Envío gratis
@@ -42,24 +42,24 @@
                         </div>
                     </t>
                     <!-- Mostrar productos pendientes -->
-                    <t t-foreach="pending_pickings" t-as="picking">
+                    <t t-foreach="pending_products" t-as="product">
                         <div class="col-12 mb-3">
                             <div class="card p-3 shadow-sm">
                                 <div class="d-flex align-items-center">
                                     <!-- Imagen del producto -->
                                     <div class="me-3">
-                                        <img t-att-src="'/web/image/product.product/%s/image_1920' % picking.move_ids_without_package[0].product_id.id" class="img-fluid rounded" alt="Product Image" style="width: 100px; height: auto;"/>
+                                        <img t-att-src="product['image_url']" class="img-fluid rounded" alt="Product Image" style="width: 100px; height: auto;"/>
                                     </div>
                                     <!-- Detalles del producto -->
                                     <div class="flex-grow-1">
                                         <h5 class="text-orange">
-                                            <t t-esc="picking.move_ids_without_package[0].product_id.name"/>
+                                            <t t-esc="product['product_name']"/>
                                         </h5>
                                         <p class="text-muted mb-1">
-                                            Fecha estimada de entrega: <t t-esc="picking.scheduled_date"/>
+                                            Fecha estimada de entrega: <t t-esc="product['scheduled_date']"/>
                                         </p>
                                         <p class="text-muted mb-1">
-                                            Cantidad: <t t-esc="picking.move_ids_without_package[0].product_qty"/> unidades
+                                            Cantidad: <t t-esc="product['quantity']"/> unidades
                                         </p>
                                         <p class="text-warning font-weight-bold">
                                             Pendiente de entrega
