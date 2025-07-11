@@ -5,6 +5,7 @@ class WebsiteCheckout(http.Controller):
     @http.route(['/delivered_products'], type='http', auth='user', website=True)
     def delivered_products(self):
         user = request.env.user
+        # Filtrar pickings completados y relacionados con el usuario actual
         delivered_pickings = request.env['stock.picking'].sudo().search([
             ('state', '=', 'done'),
             ('partner_id', '=', user.partner_id.id)
