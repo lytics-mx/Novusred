@@ -27,9 +27,6 @@
         'views/product_tag.xml',
         # 'views/product_model.xml',
         
-
-        # Data
-        'data/cron_jobs.xml',  # Agrega esta línea para cargar el cron job
      
     ],
     'demo': [],
