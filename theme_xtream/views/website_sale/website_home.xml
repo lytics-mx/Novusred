@@ -68,10 +68,15 @@
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">De acuerdo a tu última vista</h2>
                     </div>
                     <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
+                        <t t-set="viewed_categories" t-value="request.env['website.track'].sudo().search([
+                            ('visitor_id', '=', request.env['website.visitor']._get_visitor_from_request().id),
+                            ('product_id', '!=', False)
+                        ]).mapped('product_id.categ_id')" />
                         <t t-set="suggested_products" t-value="request.env['product.template'].sudo().search([
+                            ('categ_id', 'in', viewed_categories.ids),
                             ('website_published', '=', True),
                             ('qty_available', '>', 1)
-                        ], order='sale_count desc', limit=10)" />
+                        ], limit=10)" />
                         <t t-if="suggested_products">
                             <t t-if="len(suggested_products) > 5">
                                 <div id="suggestionsCarousel" class="carousel slide" data-bs-ride="carousel">
