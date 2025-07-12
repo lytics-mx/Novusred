@@ -9,19 +9,31 @@ _logger = logging.getLogger(__name__)
 class ShopController(WebsiteSale):
 
     @http.route([
-        '/shop/product/<int:product_id>'
+        '/shop/product/<int:product_id>/<string:product_name>',
+        '/shop/product/<int:product_id>',
+        '/shop/product/<string:product_name>'
     ], type='http', auth="public", website=True, sitemap=False)
-    def product_page(self, product_id, **kwargs):
-        # Obtener el producto template
-        product_template = request.env['product.template'].sudo().browse(product_id)
-        if not product_template.exists():
-            _logger.warning(f"El producto template con ID {product_id} no existe.")
+    def product_page(self, product_id=None, product_name=None, **kwargs):
+        # Buscar el producto por ID o por nombre
+        product_template = None
+        if product_id:
+            product_template = request.env['product.template'].sudo().browse(product_id)
+            if not product_template.exists():
+                _logger.warning(f"El producto template con ID {product_id} no existe.")
+                return request.not_found()
+        elif product_name:
+            product_template = request.env['product.template'].sudo().search([('name', '=', product_name)], limit=1)
+            if not product_template:
+                _logger.warning(f"El producto template con nombre '{product_name}' no existe.")
+                return request.not_found()
+        else:
+            _logger.warning("No se proporcionó ni ID ni nombre de producto.")
             return request.not_found()
 
         # Obtener la variante principal del producto (product.product)
         product_variant = product_template.product_variant_id
         if not product_variant.exists():
-            _logger.warning(f"No se encontró una variante para el producto template con ID {product_id}.")
+            _logger.warning(f"No se encontró una variante para el producto template con ID {product_template.id}.")
             return request.not_found()
 
         # Registrar el producto en el historial
@@ -31,7 +43,7 @@ class ShopController(WebsiteSale):
                 try:
                     request.env['website.track'].sudo().create({
                         'visitor_id': visitor.id,
-                        'product_id': product_variant.id,  # Usar el ID de la variante
+                        'product_id': product_variant.id,
                         'visit_datetime': datetime.now()
                     })
                 except Exception as e:
@@ -72,7 +84,6 @@ class ShopController(WebsiteSale):
             ('is_active_carousel', '=', True)
         ])    
 
-        # Calcular el contador de productos publicados y disponibles por cada marca en available_brands
         brand_type_products_count = 0
         if product_sudo.brand_type_id:
             brand_type_products_count = request.env['product.template'].sudo().search_count([
@@ -82,7 +93,7 @@ class ShopController(WebsiteSale):
             ])
 
         context = {
-            'product': product_sudo,  # Usar product_sudo en lugar de product
+            'product': product_sudo,
             'categories': categories,
             'referer': referer,
             'discounted_price': discounted_price,
