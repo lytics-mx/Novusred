@@ -457,47 +457,46 @@
                     <t t-set="active_product_banner" t-value="request.env['banner.image.line'].sudo().search([('is_active_product_carousel', '=', True)], limit=1)" />
 
                     <t t-if="active_product_banner and active_product_banner.product_images">
-                        <div id="productImagesCarousel" class="carousel slide" data-bs-ride="carousel">
-                            <div class="carousel-inner">
-                                <t t-set="chunks" t-value="[active_product_banner.product_images[i:i+2] for i in range(0, len(active_product_banner.product_images), 2)]" />
-                                <t t-foreach="chunks" t-as="chunk" t-key="chunk_index">
-                                    <div t-att-class="'carousel-item' + (' active' if chunk_index == 0 else '')">
-                                        <div class="row g-3">
-                                            <t t-foreach="chunk" t-as="image" t-key="image.id">
-                                                <t t-set="img_name" t-value="image.name or ''"/>
-                                                <t t-set="url" t-value="''"/>
-                                                <t t-if="img_name.startswith('brand_')">
-                                                    <t t-set="brand_slug" t-value="img_name[6:].split('.')[0].replace(' ', '').lower()"/>
-                                                    <t t-set="url" t-value="'/brand/' + brand_slug"/>
+                        <t t-if="len(active_product_banner.product_images) > 2">
+                            <!-- Carrusel si hay más de 2 imágenes -->
+                            <div id="productImagesCarousel" class="carousel slide" data-bs-ride="carousel">
+                                <div class="carousel-inner">
+                                    <t t-set="chunks" t-value="[active_product_banner.product_images[i:i+2] for i in range(0, len(active_product_banner.product_images), 2)]" />
+                                    <t t-foreach="chunks" t-as="chunk" t-key="chunk_index">
+                                        <div t-att-class="'carousel-item' + (' active' if chunk_index == 0 else '')">
+                                            <div class="row g-3">
+                                                <t t-foreach="chunk" t-as="image" t-key="image.id">
+                                                    <t t-set="img_name" t-value="image.name or ''"/>
+                                                    <t t-set="url" t-value="''"/>
+                                                    <t t-if="img_name.startswith('brand_')">
+                                                        <t t-set="brand_slug" t-value="img_name[6:].split('.')[0].replace(' ', '').lower()"/>
+                                                        <t t-set="url" t-value="'/brand/' + brand_slug"/>
+                                                    </t>
+                                                    <t t-elif="img_name.startswith('category_')">
+                                                        <t t-set="cat_search" t-value="img_name[9:].split('.')[0].replace('_', ' ')"/>
+                                                        <t t-set="url" t-value="'/category_search?search=' + cat_search"/>
+                                                    </t>
+                                                    <t t-elif="img_name and '.' in img_name and not img_name.startswith('brand_') and not img_name.startswith('category_')">
+                                                        <t t-set="cat_search" t-value="img_name.rsplit('.', 1)[0].replace('_', ' ').replace('%20', ' ')" />
+                                                        <t t-set="cat_search_url" t-value="cat_search.replace(' ', '%20')" />
+                                                        <t t-set="url" t-value="'/subcategory?search=' + cat_search_url"/>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <t t-set="url" t-value="'/discover'"/>
+                                                    </t>
+                                                    <div class="col-12 col-md-6">
+                                                        <a t-att-href="url">
+                                                            <img t-att-src="'/web/image/' + str(image.id)" 
+                                                                alt="Product Image" 
+                                                                class="img-fluid w-100"
+                                                                style="object-fit: cover;" />
+                                                        </a>
+                                                    </div>
                                                 </t>
-                                                <t t-elif="img_name.startswith('category_')">
-                                                    <t t-set="cat_search" t-value="img_name[9:].split('.')[0].replace('_', ' ')"/>
-                                                    <t t-set="url" t-value="'/category_search?search=' + cat_search"/>
-                                                </t>
-                                                <t t-elif="img_name and '.' in img_name and not img_name.startswith('brand_') and not img_name.startswith('category_')">
-                                                    <!-- Si solo es un nombre de producto/categoría, ejemplo: paneles solares.png -->
-                                                    <t t-set="cat_search" t-value="img_name.rsplit('.', 1)[0].replace('_', ' ').replace('%20', ' ')" />
-                                                    <t t-set="cat_search_url" t-value="cat_search.replace(' ', '%20')" />
-                                                    <t t-set="url" t-value="'/subcategory?search=' + cat_search_url"/>
-                                                </t>
-                                                <t t-else="">
-                                                    <t t-set="url" t-value="'/discover'"/>
-                                                </t>
-                                                <div class="col-12 col-md-6">
-                                                    <a t-att-href="url">
-                                                        <img t-att-src="'/web/image/' + str(image.id)" 
-                                                            alt="Product Image" 
-                                                            class="img-fluid w-100"
-                                                            style="object-fit: cover;" />
-                                                    </a>
-                                                </div>
-                                            </t>
+                                            </div>
                                         </div>
-                                    </div>
-                                </t>
-                            </div>
-
-                            <t t-if="len(active_product_banner.product_images) > 2">
+                                    </t>
+                                </div>
                                 <button class="carousel-control-prev" type="button" data-bs-target="#productImagesCarousel" data-bs-slide="prev">
                                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                     <span class="visually-hidden">Previous</span>
@@ -506,8 +505,41 @@
                                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                     <span class="visually-hidden">Next</span>
                                 </button>
-                            </t>
-                        </div>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <!-- No carrusel si hay 2 o menos imágenes -->
+                            <div class="row g-3">
+                                <t t-foreach="active_product_banner.product_images" t-as="image" t-key="image.id">
+                                    <t t-set="img_name" t-value="image.name or ''"/>
+                                    <t t-set="url" t-value="''"/>
+                                    <t t-if="img_name.startswith('brand_')">
+                                        <t t-set="brand_slug" t-value="img_name[6:].split('.')[0].replace(' ', '').lower()"/>
+                                        <t t-set="url" t-value="'/brand/' + brand_slug"/>
+                                    </t>
+                                    <t t-elif="img_name.startswith('category_')">
+                                        <t t-set="cat_search" t-value="img_name[9:].split('.')[0].replace('_', ' ')"/>
+                                        <t t-set="url" t-value="'/category_search?search=' + cat_search"/>
+                                    </t>
+                                    <t t-elif="img_name and '.' in img_name and not img_name.startswith('brand_') and not img_name.startswith('category_')">
+                                        <t t-set="cat_search" t-value="img_name.rsplit('.', 1)[0].replace('_', ' ').replace('%20', ' ')" />
+                                        <t t-set="cat_search_url" t-value="cat_search.replace(' ', '%20')" />
+                                        <t t-set="url" t-value="'/subcategory?search=' + cat_search_url"/>
+                                    </t>
+                                    <t t-else="">
+                                        <t t-set="url" t-value="'/discover'"/>
+                                    </t>
+                                    <div class="col-12 col-md-6">
+                                        <a t-att-href="url">
+                                            <img t-att-src="'/web/image/' + str(image.id)" 
+                                                alt="Product Image" 
+                                                class="img-fluid w-100"
+                                                style="object-fit: cover;" />
+                                        </a>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
                     </t>
                 </div>
                 <div style="height: 30px;"></div>
