@@ -29,16 +29,30 @@
                         <div class="card mb-4 shadow-sm" style="border: none;">
                             <div class="card-body">
                                 <h5 class="mb-3">Llega en uno o dos días</h5>
-                                <ul class="list-unstyled">
-                                    <t t-foreach="purchase_details[0]['tracking_states']" t-as="state">
-                                        <li t-if="state == purchase_details[0]['state']" class="text-primary">
-                                            <t t-esc="state"/>
-                                        </li>
-                                        <li t-if="state != purchase_details[0]['state']" class="text-muted">
-                                            <t t-esc="state"/>
-                                        </li>
-                                    </t>
-                                </ul>
+                                <div style="display: flex;">
+                                    <div style="display: flex; flex-direction: column; align-items: center; margin-right: 16px;">
+                                        <t t-foreach="purchase_details[0]['tracking_states']" t-as="state" t-set="idx" t-value="loop.index0">
+                                            <div style="display: flex; flex-direction: column; align-items: center;">
+                                                <div t-if="state == purchase_details[0]['state']"
+                                                     style="width: 12px; height: 12px; border-radius: 50%; background: #0047FF; border: 2px solid #0047FF;"></div>
+                                                <div t-if="state != purchase_details[0]['state']"
+                                                     style="width: 12px; height: 12px; border-radius: 50%; background: #ccc; border: 2px solid #ccc;"></div>
+                                                <div t-if="idx &lt; (purchase_details[0]['tracking_states']|length - 1)"
+                                                     style="width: 4px; height: 32px; background: t-if='state == purchase_details[0]['state']' ? '#0047FF' : '#ccc';"></div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <div style="display: flex; flex-direction: column; justify-content: flex-start;">
+                                        <t t-foreach="purchase_details[0]['tracking_states']" t-as="state">
+                                            <span t-if="state == purchase_details[0]['state']" style="color: #000; font-weight: 500;">
+                                                <t t-esc="state"/>
+                                            </span>
+                                            <span t-if="state != purchase_details[0]['state']" style="color: #aaa;">
+                                                <t t-esc="state"/>
+                                            </span>
+                                        </t>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <!-- Chat -->
