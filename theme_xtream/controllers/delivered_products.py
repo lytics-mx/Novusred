@@ -12,7 +12,7 @@ class WebsiteCheckout(http.Controller):
         ])
         # Filtrar pickings pendientes y relacionados con el usuario actual
         pending_pickings = request.env['stock.picking'].sudo().search([
-            ('state', 'not in', ['done', 'cancel', 'draft']),
+            ('state', 'not in', ['done', 'cancel']),
             ('partner_id', '=', user.partner_id.id)
         ])
         
@@ -27,6 +27,7 @@ class WebsiteCheckout(http.Controller):
                     'delivery_date': picking.date_done,
                     'purchase_date': picking.date.strftime('%d de %B') if picking.date else '',  # Formato de fecha
                     'image_url': f'/web/image/product.product/{move.product_id.id}/image_1920',
+                    'state': picking.state,  # Agregar el estado del stock.picking
                 })
         
         # Obtener todos los productos de los pickings pendientes
@@ -40,6 +41,7 @@ class WebsiteCheckout(http.Controller):
                     'scheduled_date': picking.scheduled_date,
                     'purchase_date': picking.date.strftime('%d de %B') if picking.date else '',  # Formato de fecha
                     'image_url': f'/web/image/product.product/{move.product_id.id}/image_1920',
+                    'state': picking.state,  # Agregar el estado del stock.picking
                 })
         
         return request.render('theme_xtream.delivered_template', {
