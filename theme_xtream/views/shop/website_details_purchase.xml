@@ -35,13 +35,13 @@
                                         <t t-foreach="purchase_details[0]['tracking_states']" t-as="state" t-index="idx">
                                             <div style="display: flex; flex-direction: column; align-items: center;">
                                                 <div t-if="idx == 0" style="height: 0;"></div>
-                                                <div t-if="idx &gt; 0 and purchase_details[0]['state_index'] &gt;= idx" 
-                                                    style="width: 4px; height: 24px; background: #0057FF; border-radius: 2px;">
+                                                <div t-if="idx &gt; 0 and purchase_details[0]['state_index'] is not None and purchase_details[0]['state_index'] &gt;= idx" 
+                                                     style="width: 4px; height: 24px; background: #0057FF; border-radius: 2px;">
                                                 </div>
-                                                <div t-if="idx &gt; 0 and purchase_details[0]['state_index'] &lt; idx" 
-                                                    style="width: 4px; height: 24px; background: #e0e0e0; border-radius: 2px;">
+                                                <div t-if="idx &gt; 0 and purchase_details[0]['state_index'] is not None and purchase_details[0]['state_index'] &lt; idx" 
+                                                     style="width: 4px; height: 24px; background: #e0e0e0; border-radius: 2px;">
                                                 </div>
-                                                <t t-if="purchase_details[0]['tracking_states'].index(purchase_details[0]['state']) &gt;= idx">
+                                                <t t-if="purchase_details[0]['state_index'] is not None and purchase_details[0]['tracking_states'].index(purchase_details[0]['state']) &gt;= idx">
                                                     <span style="
                                                         display: inline-block;
                                                         width: 12px;
@@ -64,16 +64,16 @@
                                             </div>
                                         </t>
                                     </div>
-
+                        
                                     <!-- States -->
                                     <div style="display: flex; flex-direction: column; justify-content: flex-start;">
                                         <t t-foreach="purchase_details[0]['tracking_states']" t-as="state" t-index="idx">
-                                            <t t-if="purchase_details[0]['state_index'] == idx">
+                                            <t t-if="purchase_details[0]['state_index'] is not None and purchase_details[0]['state_index'] == idx">
                                                 <span style="font-size: 13px; margin-bottom: 16px; color: #222; font-weight: 500;">
                                                     <t t-esc="state"/>
                                                 </span>
                                             </t>
-                                            <t t-elif="purchase_details[0]['state_index'] &gt; idx">
+                                            <t t-elif="purchase_details[0]['state_index'] is not None and purchase_details[0]['state_index'] &gt; idx">
                                                 <span style="font-size: 13px; margin-bottom: 16px; color: #222; font-weight: 400;">
                                                     <t t-esc="state"/>
                                                 </span>
@@ -88,7 +88,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <!-- Chat -->
                         <div class="card shadow-sm" style="border: none;">
                             <div class="card-body" style="background-color: #fff;">
