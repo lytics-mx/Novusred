@@ -9,18 +9,23 @@ class ProductDetails(http.Controller):
         # Buscar el producto por ID
         product = request.env['product.product'].sudo().browse(product_id)
 
+        # Obtener la marca desde el modelo brand.type
+        brand = product.product_tmpl_id.brand_type_id.name if product.product_tmpl_id.brand_type_id else 'Sin marca'
+
         # Buscar pickings relacionados con el producto y el usuario
         pickings = request.env['stock.picking'].sudo().search([
             ('partner_id', '=', user.partner_id.id),
             ('move_ids_without_package.product_id', '=', product_id)
         ])
 
-        # Preparar datos para el template
+        # Preparar datos del producto
         product_info = {
             'name': product.name,
+            'brand': brand,  # Marca obtenida desde brand.type
             'image_url': f'/web/image/product.product/{product.id}/image_1920',
         }
 
+        # Preparar detalles de la compra
         purchase_details = []
         for picking in pickings:
             for move in picking.move_ids_without_package.filtered(lambda m: m.product_id.id == product_id):
@@ -29,6 +34,8 @@ class ProductDetails(http.Controller):
                     'purchase_date': picking.date.strftime('%d de %B') if picking.date else '',
                     'delivery_date': picking.date_done,
                     'state': picking.state,
+                    'price': move.product_id.list_price,  # Precio del producto
+                    'total': move.product_qty * move.product_id.list_price,  # Total calculado
                 })
 
         return request.render('theme_xtream.product_details_template', {
