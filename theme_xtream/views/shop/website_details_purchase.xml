@@ -30,14 +30,13 @@
                             <div class="card-body">
                                 <h5 class="mb-3">Llega en uno o dos días</h5>
                                 <ul class="list-unstyled" style="position: relative; padding-left: 20px;">
-                                    <t t-foreach="purchase_details[0]['tracking_states']" t-as="state">
-                                        <li t-if="state == purchase_details[0]['state']" class="text-primary" style="position: relative; padding-left: 20px;">
-                                            <span style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 10px; height: 10px; background-color: blue; border-radius: 50%;"></span>
-                                            <t t-esc="state"/>
-                                        </li>
-                                        <li t-if="state != purchase_details[0]['state']" class="text-muted" style="position: relative; padding-left: 20px;">
-                                            <span style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 10px; height: 10px; background-color: gray; border-radius: 50%;"></span>
-                                            <t t-esc="state"/>
+                                    <t t-foreach="purchase_details[0]['tracking_states']" t-as="state" t-index="index">
+                                        <li style="position: relative; padding-left: 20px;">
+                                            <span style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 10px; height: 10px; background-color: <t t-if="state == purchase_details[0]['state']">blue</t><t t-else>gray</t>; border-radius: 50%;"></span>
+                                            <t t-if="index > 0">
+                                                <span style="position: absolute; left: 4px; top: -50%; height: 100%; width: 2px; background-color: <t t-if="state == purchase_details[0]['state']">blue</t><t t-else>gray</t>;"></span>
+                                            </t>
+                                            <t t-esc="state" style="margin-left: 20px;"/>
                                         </li>
                                     </t>
                                 </ul>
