@@ -37,7 +37,7 @@ class ProductDetails(http.Controller):
                     'quantity': move.product_qty,
                     'purchase_date': picking.date.strftime('%d de %B') if picking.date else '',
                     'delivery_date': picking.date_done,
-                    'state': picking.state,  # Estado actual del picking
+                    'state': picking.state or 'draft',  # Estado actual del picking (por defecto 'draft')
                     'tracking_states': tracking_states,  # Posibles estados
                     'price': move.product_id.list_price,  # Precio del producto
                     'total': move.product_qty * move.product_id.list_price,  # Total calculado
