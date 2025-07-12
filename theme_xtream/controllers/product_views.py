@@ -4,7 +4,10 @@ from odoo.http import request
 from odoo.addons.website_sale.controllers.main import WebsiteSale
 from datetime import datetime
 import logging
+from urllib.parse import unquote
+
 _logger = logging.getLogger(__name__)
+
 
 class ShopController(WebsiteSale):
 
@@ -18,15 +21,15 @@ class ShopController(WebsiteSale):
             _logger.warning(f"El producto template con ID {product_id} no existe.")
             return request.not_found()
 
-        # Decodificar el nombre del producto desde la URL
-        from urllib.parse import unquote
-        product_name = unquote(product_name).replace('-', ' ').lower()
+        # Decodificar y limpiar el nombre del producto desde la URL
+        product_name = unquote(product_name).replace('-', ' ').replace('|', '').replace('.', '').replace('%', '').replace('/', '').strip().lower()
 
         # Validar que el nombre en la URL coincida con el nombre del producto
-        db_name = product_template.name.lower()
+        db_name = product_template.name.replace('|', '').replace('.', '').replace('%', '').replace('/', '').strip().lower()
         if product_name != db_name.replace(' ', '-').lower() and product_name != db_name:
             _logger.warning(f"El nombre '{product_name}' no coincide con el producto ID {product_id}.")
             return request.not_found()
+
 
         # ...existing code...
 
