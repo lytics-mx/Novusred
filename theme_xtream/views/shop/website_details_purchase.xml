@@ -34,76 +34,60 @@
                                         <li t-if="purchase_details[0]['tracking_states'].index(state) &lt;= purchase_details[0]['state_index']" class="text-primary" style="position: relative; padding-left: 30px;">
                                             <span class="circle"></span>
                                             <span class="line"></span>
-                                            <t t-esc="state"/>
-                                            <t t-if="state == 'Entregado' and purchase_details[0]['state'] == 'done'">
+                                            <t t-if="state == 'waiting'">Alistándose</t>
+                                            <t t-if="state == 'assigned'">En camino</t>
+                                            <t t-if="state == 'done'">Entregado</t>
+                                            <t t-if="state == 'done' and purchase_details[0]['state'] == 'done'">
                                                 <span class="badge bg-success ms-2">Entregado</span>
                                             </t>
                                         </li>
                                         <li t-if="purchase_details[0]['tracking_states'].index(state) &gt; purchase_details[0]['state_index']" class="text-muted" style="position: relative; padding-left: 30px;">
                                             <span class="circle"></span>
                                             <span class="line"></span>
-                                            <t t-esc="state"/>
+                                            <t t-if="state == 'waiting'">Alistándose</t>
+                                            <t t-if="state == 'assigned'">En camino</t>
+                                            <t t-if="state == 'done'">Entregado</t>
                                         </li>
                                     </t>
                                 </ul>
                             </div>
                         </div>
                         <style>
-                            .text-primary {
-                                color: #2B65FB !important;
-                            }
-                        
-                            ul.list-unstyled {
-                                position: relative;
-                                padding-left: 30px;
-                            }
-                        
-                            ul.list-unstyled li {
-                                position: relative;
-                                padding-left: 30px;
-                                font-size: 14px;
-                            }
-                        
-                            ul.list-unstyled li .circle {
-                                position: absolute;
-                                left: 0;
-                                top: 50%;
-                                transform: translateY(-50%);
-                                width: 12px;
-                                height: 12px;
+                            .circle {
+                                width: 10px;
+                                height: 10px;
                                 border-radius: 50%;
-                            }
-                        
-                            ul.list-unstyled li .line {
+                                display: inline-block;
                                 position: absolute;
-                                left: 5px;
-                                top: 50%;
-                                transform: translateY(-50%);
+                                left: -30px;
+                                top: 5px;
+                            }
+
+                            .line {
                                 width: 2px;
-                                height: 40px;
+                                height: 30px;
+                                display: inline-block;
+                                position: absolute;
+                                left: -25px;
+                                top: 15px;
                             }
-                        
-                            ul.list-unstyled li.text-primary .circle {
+
+                            .text-primary .circle {
                                 background-color: blue;
                             }
-                        
-                            ul.list-unstyled li.text-primary .line {
+
+                            .text-primary .line {
                                 background-color: blue;
                             }
-                        
-                            ul.list-unstyled li.text-muted .circle {
+
+                            .text-muted .circle {
                                 background-color: gray;
                             }
-                        
-                            ul.list-unstyled li.text-muted .line {
+
+                            .text-muted .line {
                                 background-color: gray;
-                            }
-                        
-                            ul.list-unstyled li:last-child .line {
-                                display: none;
                             }
                         </style>
-
 
 
                         <!-- Chat -->
