@@ -10,7 +10,9 @@ class ProductDetails(http.Controller):
         product = request.env['product.product'].sudo().browse(product_id)
 
         # Obtener la marca desde el modelo brand.type
-        brand = product.product_tmpl_id.brand_type_id.name if product.product_tmpl_id.brand_type_id else 'Sin marca'
+        brand = product.product_tmpl_id.brand_type_id
+        brand_name = brand.name if brand else 'Sin marca'
+        brand_image_url = f'/web/image/brand.type/{brand.id}/icon_image' if brand else '/web/static/src/img/placeholder.png'
 
         # Buscar pickings relacionados con el producto y el usuario
         pickings = request.env['stock.picking'].sudo().search([
@@ -21,7 +23,8 @@ class ProductDetails(http.Controller):
         # Preparar datos del producto
         product_info = {
             'name': product.name,
-            'brand': brand,  # Marca obtenida desde brand.type
+            'brand': brand_name,  # Nombre de la marca
+            'brand_image_url': brand_image_url,  # URL de la imagen de la marca
             'image_url': f'/web/image/product.product/{product.id}/image_1920',
         }
 
