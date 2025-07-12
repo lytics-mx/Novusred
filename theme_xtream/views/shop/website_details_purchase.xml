@@ -28,64 +28,17 @@
                         <!-- Seguimiento -->
                         <div class="card mb-4 shadow-sm" style="border: none;">
                             <div class="card-body">
-                                <h5 class="mb-3" style="font-size: 18px;">Llega en uno o dos días</h5>
-                                <div class="d-flex">
-                                    <!-- Timeline -->
-                                    <div style="display: flex; flex-direction: column; align-items: center; margin-right: 16px; margin-top: 5px;">
-                                        <t t-foreach="purchase_details[0]['tracking_states']" t-as="state" t-index="idx">
-                                            <div style="display: flex; flex-direction: column; align-items: center;">
-                                                <div t-if="idx == 0" style="height: 0;"></div>
-                                                <div t-if="idx &gt; 0 and purchase_details[0]['state_index'] is not None and purchase_details[0]['state_index'] &gt;= idx" 
-                                                     style="width: 4px; height: 24px; background: #0057FF; border-radius: 2px;">
-                                                </div>
-                                                <div t-if="idx &gt; 0 and purchase_details[0]['state_index'] is not None and purchase_details[0]['state_index'] &lt; idx" 
-                                                     style="width: 4px; height: 24px; background: #e0e0e0; border-radius: 2px;">
-                                                </div>
-                                                <t t-if="purchase_details[0]['state_index'] is not None and purchase_details[0]['tracking_states'].index(purchase_details[0]['state']) &gt;= idx">
-                                                    <span style="
-                                                        display: inline-block;
-                                                        width: 12px;
-                                                        height: 12px;
-                                                        border-radius: 50%;
-                                                        background: #0057FF;
-                                                        border: 2px solid #fff;
-                                                    "></span>
-                                                </t>
-                                                <t t-else="">
-                                                    <span style="
-                                                        display: inline-block;
-                                                        width: 12px;
-                                                        height: 12px;
-                                                        border-radius: 50%;
-                                                        background: #e0e0e0;
-                                                        border: 2px solid #fff;
-                                                    "></span>
-                                                </t>
-                                            </div>
-                                        </t>
-                                    </div>
-                        
-                                    <!-- States -->
-                                    <div style="display: flex; flex-direction: column; justify-content: flex-start;">
-                                        <t t-foreach="purchase_details[0]['tracking_states']" t-as="state" t-index="idx">
-                                            <t t-if="purchase_details[0]['state_index'] is not None and purchase_details[0]['state_index'] == idx">
-                                                <span style="font-size: 13px; margin-bottom: 16px; color: #222; font-weight: 500;">
-                                                    <t t-esc="state"/>
-                                                </span>
-                                            </t>
-                                            <t t-elif="purchase_details[0]['state_index'] is not None and purchase_details[0]['state_index'] &gt; idx">
-                                                <span style="font-size: 13px; margin-bottom: 16px; color: #222; font-weight: 400;">
-                                                    <t t-esc="state"/>
-                                                </span>
-                                            </t>
-                                            <t t-else="">
-                                                <span style="font-size: 13px; margin-bottom: 16px; color: #bdbdbd; font-weight: 400;">
-                                                    <t t-esc="state"/>
-                                                </span>
-                                            </t>
-                                        </t>
-                                    </div>
-                                </div>
+                                <h5 class="mb-3">Llega en uno o dos días</h5>
+                                <ul class="list-unstyled">
+                                    <t t-foreach="purchase_details[0]['tracking_states']" t-as="state">
+                                        <li t-if="state == purchase_details[0]['state']" class="text-primary">
+                                            <t t-esc="state"/>
+                                        </li>
+                                        <li t-if="state != purchase_details[0]['state']" class="text-muted">
+                                            <t t-esc="state"/>
+                                        </li>
+                                    </t>
+                                </ul>
                             </div>
                         </div>
                         <!-- Chat -->
