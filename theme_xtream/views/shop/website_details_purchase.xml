@@ -33,7 +33,7 @@
                                     <t t-foreach="purchase_details[0]['tracking_states']" t-as="state">
                                         <li t-if="purchase_details[0]['tracking_states'].index(state) &lt;= purchase_details[0]['state_index']" class="text-primary">
                                             <span class="circle"></span>
-                                            <span class="fat-line" t-if="purchase_details[0]['tracking_states'].index(state) != len(purchase_details[0]['tracking_states']) - 1"></span>
+                                            <span class="fat-line"></span>
                                             <t t-esc="state"/>
                                             <t t-if="state == 'Entregado' and purchase_details[0]['state'] == 'done'">
                                                 <span class="badge bg-success ms-2">Entregado</span>
@@ -41,7 +41,7 @@
                                         </li>
                                         <li t-if="purchase_details[0]['tracking_states'].index(state) &gt; purchase_details[0]['state_index']" class="text-muted">
                                             <span class="circle"></span>
-                                            <span class="fat-line" t-if="purchase_details[0]['tracking_states'].index(state) != len(purchase_details[0]['tracking_states']) - 1"></span>
+                                            <span class="fat-line"></span>
                                             <t t-esc="state"/>
                                         </li>
                                     </t>
@@ -62,17 +62,19 @@
                             .tracking-list li .circle {
                                 position: absolute;
                                 left: 0;
-                                top: 18px;
+                                top: 50%;
+                                transform: translateY(-50%);
                                 width: 14px;
                                 height: 14px;
                                 border-radius: 50%;
                             }
                             .tracking-list li .fat-line {
                                 position: absolute;
-                                left: 6px;
-                                top: 25px;
-                                width: 2px;
-                                height: 32px;
+                                left: 3px;
+                                top: 50%;
+                                transform: translateY(-50%);
+                                width: 8px;
+                                height: 40px;
                                 border-radius: 4px;
                             }
                             .tracking-list li.text-primary .circle {
@@ -86,6 +88,9 @@
                             }
                             .tracking-list li.text-muted .fat-line {
                                 background-color: #d3d3d3;
+                            }
+                            .tracking-list li:last-child .fat-line {
+                                display: none;
                             }
                         </style>
 
