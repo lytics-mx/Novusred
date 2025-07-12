@@ -33,7 +33,9 @@
                                     <t t-foreach="purchase_details[0]['tracking_states']" t-as="state">
                                         <li t-if="purchase_details[0]['tracking_states'].index(state) &lt;= purchase_details[0]['state_index']" class="text-primary">
                                             <span class="circle"></span>
-                                            <span class="fat-line"></span>
+                                            <t t-if="purchase_details[0]['tracking_states'].index(state) != 0">
+                                                <span class="fat-line"></span>
+                                            </t>
                                             <t t-esc="state"/>
                                             <t t-if="state == 'Entregado' and purchase_details[0]['state'] == 'done'">
                                                 <span class="badge bg-success ms-2">Entregado</span>
@@ -41,7 +43,9 @@
                                         </li>
                                         <li t-if="purchase_details[0]['tracking_states'].index(state) &gt; purchase_details[0]['state_index']" class="text-muted">
                                             <span class="circle"></span>
-                                            <span class="fat-line"></span>
+                                            <t t-if="purchase_details[0]['tracking_states'].index(state) != 0">
+                                                <span class="fat-line"></span>
+                                            </t>
                                             <t t-esc="state"/>
                                         </li>
                                     </t>
@@ -74,7 +78,7 @@
                                 top: 50%;
                                 transform: translateY(-50%);
                                 width: 8px;
-                                height: 20px;
+                                height: 40px;
                                 border-radius: 4px;
                             }
                             .tracking-list li.text-primary .circle {
