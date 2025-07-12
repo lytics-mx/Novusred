@@ -4,34 +4,19 @@ from odoo.http import request
 from odoo.addons.website_sale.controllers.main import WebsiteSale
 from datetime import datetime
 import logging
-from urllib.parse import unquote
-
 _logger = logging.getLogger(__name__)
-
 
 class ShopController(WebsiteSale):
 
     @http.route([
-        '/shop/product/<int:product_id>/<path:product_name>'
+        '/shop/product/<int:product_id>'
     ], type='http', auth="public", website=True, sitemap=False)
-    def product_page(self, product_id, product_name, **kwargs):
+    def product_page(self, product_id, **kwargs):
         # Obtener el producto template
         product_template = request.env['product.template'].sudo().browse(product_id)
         if not product_template.exists():
             _logger.warning(f"El producto template con ID {product_id} no existe.")
             return request.not_found()
-
-        # Decodificar y limpiar el nombre del producto desde la URL
-        product_name = unquote(product_name).replace('-', ' ').replace('|', '').replace('.', '').replace('%', '').replace('/', '').strip().lower()
-
-        # Validar que el nombre en la URL coincida con el nombre del producto
-        db_name = product_template.name.replace('|', '').replace('.', '').replace('%', '').replace('/', '').strip().lower()
-        if product_name != db_name.replace(' ', '-').lower() and product_name != db_name:
-            _logger.warning(f"El nombre '{product_name}' no coincide con el producto ID {product_id}.")
-            return request.not_found()
-
-
-        # ...existing code...
 
         # Obtener la variante principal del producto (product.product)
         product_variant = product_template.product_variant_id
