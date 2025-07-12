@@ -2,11 +2,7 @@ from odoo import http
 from odoo.http import request
 
 class ProductDetails(http.Controller):
-    @http.route([
-        '/product_details/<int:product_id>/<string:picking_name>/<string:picking_origin>',
-        '/product_details/<int:product_id>/<string:picking_name>',
-        '/product_details/<int:product_id>'
-    ], type='http', auth='user', website=True)
+    @http.route(['/product_details/<int:product_id>', '/product_details/<int:product_id>/<string:origin>'], type='http', auth='user', website=True)
     def product_details(self, product_id):
         user = request.env.user
 
@@ -27,31 +23,39 @@ class ProductDetails(http.Controller):
         # Preparar datos del producto
         product_info = {
             'name': product.name,
-            'brand': brand_name,
-            'brand_image_url': brand_image_url,
+            'brand': brand_name,  # Nombre de la marca
+            'brand_image_url': brand_image_url,  # URL de la imagen de la marca
             'image_url': f'/web/image/product.product/{product.id}/image_1920',
         }
 
         # Preparar detalles de la compra y seguimiento
         purchase_details = []
-        tracking_states = ['waiting', 'assigned', 'done']
+        tracking_states = ['waiting', 'assigned', 'done']  # Estados relevantes
+        processed_pickings = set()  # Para evitar duplicados por picking.name
+
         for picking in pickings:
+            if picking.name in processed_pickings:
+                continue  # Saltar si ya se procesó este picking
+
             for move in picking.move_ids_without_package.filtered(lambda m: m.product_id.id == product_id):
                 state = picking.state or 'waiting'
                 state_index = tracking_states.index(state) if state in tracking_states else -1
 
-                purchase_details.append({
-                    'quantity': move.product_qty,
-                    'purchase_date': picking.date.strftime('%d de %B') if picking.date else '',
-                    'delivery_date': picking.date_done,
-                    'state': state,
-                    'state_index': state_index,
-                    'tracking_states': tracking_states,
-                    'price': move.product_id.list_price,
-                    'total': move.product_qty * move.product_id.list_price,
-                    'picking_origin': picking.origin,
-                    'picking_name': picking.name,
-                })
+                # Solo agregar si el estado es 'done' o si no está duplicado
+                if state == 'done' or picking.name not in processed_pickings:
+                    purchase_details.append({
+                        'quantity': move.product_qty,
+                        'purchase_date': picking.date.strftime('%d de %B') if picking.date else '',
+                        'delivery_date': picking.date_done,
+                        'state': state,
+                        'state_index': state_index,
+                        'tracking_states': tracking_states,
+                        'price': move.product_id.list_price,
+                        'total': move.product_qty * move.product_id.list_price,
+                        'picking_origin': picking.origin,
+                        'picking_name': picking.name,
+                    })
+                    processed_pickings.add(picking.name)  # Marcar como procesado
 
         return request.render('theme_xtream.product_details_template', {
             'product_info': product_info,
