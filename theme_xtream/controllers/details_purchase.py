@@ -30,10 +30,10 @@ class ProductDetails(http.Controller):
 
         # Preparar detalles de la compra y seguimiento
         purchase_details = []
-        tracking_states = ['draft', 'waiting', 'confirmed', 'assigned', 'done', 'cancel']
+        tracking_states = ['waiting', 'assigned', 'done']  # Estados relevantes
         for picking in pickings:
             for move in picking.move_ids_without_package.filtered(lambda m: m.product_id.id == product_id):
-                state = picking.state or 'draft'
+                state = picking.state or 'waiting'
                 state_index = tracking_states.index(state) if state in tracking_states else -1  # Validar estado
 
                 purchase_details.append({

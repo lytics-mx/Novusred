@@ -31,12 +31,12 @@
                                 <h5 class="mb-3">Llega en uno o dos días</h5>
                                 <ul class="list-unstyled" style="position: relative; padding-left: 30px;">
                                     <t t-foreach="purchase_details[0]['tracking_states']" t-as="state">
-                                        <li t-if="state == purchase_details[0]['state']" class="text-primary" style="position: relative; padding-left: 30px;">
+                                        <li t-if="purchase_details[0]['tracking_states'].index(state) <= purchase_details[0]['state_index']" class="text-primary" style="position: relative; padding-left: 30px;">
                                             <span class="circle"></span>
                                             <span class="line"></span>
                                             <t t-esc="state"/>
                                         </li>
-                                        <li t-if="state != purchase_details[0]['state']" class="text-muted" style="position: relative; padding-left: 30px;">
+                                        <li t-if="purchase_details[0]['tracking_states'].index(state) > purchase_details[0]['state_index']" class="text-muted" style="position: relative; padding-left: 30px;">
                                             <span class="circle"></span>
                                             <span class="line"></span>
                                             <t t-esc="state"/>
@@ -52,13 +52,13 @@
                         
                             ul.list-unstyled {
                                 position: relative;
-                                padding-left: 30px; /* Ajusta el espacio para los puntos y líneas */
+                                padding-left: 30px;
                             }
                         
                             ul.list-unstyled li {
                                 position: relative;
-                                padding-left: 30px; /* Espaciado entre el texto y los puntos */
-                                font-size: 14px; /* Tamaño de fuente ajustado */
+                                padding-left: 30px;
+                                font-size: 14px;
                             }
                         
                             ul.list-unstyled li .circle {
@@ -66,8 +66,8 @@
                                 left: 0;
                                 top: 50%;
                                 transform: translateY(-50%);
-                                width: 10px; /* Tamaño del círculo */
-                                height: 10px;
+                                width: 12px;
+                                height: 12px;
                                 border-radius: 50%;
                             }
                         
@@ -76,28 +76,28 @@
                                 left: 5px;
                                 top: 50%;
                                 transform: translateY(-50%);
-                                width: 2px; /* Grosor de la línea */
-                                height: 30px; /* Altura de la línea */
+                                width: 2px;
+                                height: 40px;
                             }
                         
                             ul.list-unstyled li.text-primary .circle {
-                                background-color: blue; /* Color del círculo activo */
+                                background-color: blue;
                             }
                         
                             ul.list-unstyled li.text-primary .line {
-                                background-color: blue; /* Color de la línea activa */
+                                background-color: blue;
                             }
                         
                             ul.list-unstyled li.text-muted .circle {
-                                background-color: gray; /* Color del círculo inactivo */
+                                background-color: gray;
                             }
                         
                             ul.list-unstyled li.text-muted .line {
-                                background-color: gray; /* Color de la línea inactiva */
+                                background-color: gray;
                             }
                         
                             ul.list-unstyled li:last-child .line {
-                                display: none; /* Oculta la línea para el último elemento */
+                                display: none;
                             }
                         </style>
 
