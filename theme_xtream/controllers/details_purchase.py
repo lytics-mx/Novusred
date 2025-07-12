@@ -31,31 +31,24 @@ class ProductDetails(http.Controller):
         # Preparar detalles de la compra y seguimiento
         purchase_details = []
         tracking_states = ['waiting', 'assigned', 'done']  # Estados relevantes
-        processed_pickings = set()  # Para evitar duplicados por picking.name
 
         for picking in pickings:
-            if picking.name in processed_pickings:
-                continue  # Saltar si ya se procesó este picking
-
             for move in picking.move_ids_without_package.filtered(lambda m: m.product_id.id == product_id):
-                state = picking.state or 'waiting'
+                state = move.state or 'waiting'  # Usar el estado del movimiento
                 state_index = tracking_states.index(state) if state in tracking_states else -1
 
-                # Solo agregar si el estado es 'done' o si no está duplicado
-                if state == 'done' or picking.name not in processed_pickings:
-                    purchase_details.append({
-                        'quantity': move.product_qty,
-                        'purchase_date': picking.date.strftime('%d de %B') if picking.date else '',
-                        'delivery_date': picking.date_done,
-                        'state': state,
-                        'state_index': state_index,
-                        'tracking_states': tracking_states,
-                        'price': move.product_id.list_price,
-                        'total': move.product_qty * move.product_id.list_price,
-                        'picking_origin': picking.origin,
-                        'picking_name': picking.name,
-                    })
-                    processed_pickings.add(picking.name)  # Marcar como procesado
+                purchase_details.append({
+                    'quantity': move.product_qty,
+                    'purchase_date': picking.date.strftime('%d de %B') if picking.date else '',
+                    'delivery_date': picking.date_done,
+                    'state': state,  # Estado del movimiento
+                    'state_index': state_index,
+                    'tracking_states': tracking_states,
+                    'price': move.product_id.list_price,
+                    'total': move.product_qty * move.product_id.list_price,
+                    'picking_origin': picking.origin,
+                    'picking_name': picking.name,
+                })
 
         return request.render('theme_xtream.product_details_template', {
             'product_info': product_info,
