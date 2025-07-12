@@ -21,6 +21,7 @@ class WebsiteCheckout(http.Controller):
         for picking in delivered_pickings:
             for move in picking.move_ids_without_package:
                 delivered_products.append({
+                    'product_id': move.product_id.id,  # Agregar product_id
                     'product_name': move.product_id.name,
                     'quantity': move.product_qty,
                     'delivery_date': picking.date_done,
@@ -33,6 +34,7 @@ class WebsiteCheckout(http.Controller):
         for picking in pending_pickings:
             for move in picking.move_ids_without_package:
                 pending_products.append({
+                    'product_id': move.product_id.id,  # Agregar product_id
                     'product_name': move.product_id.name,
                     'quantity': move.product_qty,
                     'scheduled_date': picking.scheduled_date,
