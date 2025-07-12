@@ -2,7 +2,7 @@ from odoo import http
 from odoo.http import request
 
 class ProductDetails(http.Controller):
-    @http.route(['/product_details/<int:product_id>'], type='http', auth='user', website=True)
+    @http.route(['/product_details/<int:product_id>', '/product_details/<int:product_id>/<string:origin>'], type='http', auth='user', website=True)
     def product_details(self, product_id):
         user = request.env.user
 
