@@ -31,22 +31,28 @@
                                 <h5 class="mb-3">Llega en uno o dos días</h5>
                                 <ul class="list-unstyled tracking-list">
                                     <t t-foreach="purchase_details[0]['tracking_states']" t-as="state">
-                                        <li t-if="purchase_details[0]['tracking_states'].index(state) &lt;= purchase_details[0]['state_index']" class="text-primary">
+                                        <li
+                                            t-if="purchase_details[0]['tracking_states'].index(state) &lt;= purchase_details[0]['state_index']"
+                                            t-att-class="'text-primary' if state == 'done' else 'text-assigned' if state == 'assigned' else 'text-waiting'"
+                                        >
                                             <span class="circle"></span>
                                             <t t-if="purchase_details[0]['tracking_states'].index(state) != 0">
                                                 <span class="fat-line"></span>
                                             </t>
-                                            <t t-esc="state"/>
-                                            <t t-if="state == 'Entregado' and purchase_details[0]['state'] == 'done'">
+                                            <t t-esc="state == 'waiting' and 'Alistándose' or state == 'assigned' and 'En camino' or state == 'done' and 'Entregado'"/>
+                                            <t t-if="state == 'done' and purchase_details[0]['state'] == 'done'">
                                                 <span class="badge bg-success ms-2">Entregado</span>
                                             </t>
                                         </li>
-                                        <li t-if="purchase_details[0]['tracking_states'].index(state) &gt; purchase_details[0]['state_index']" class="text-muted">
+                                        <li
+                                            t-if="purchase_details[0]['tracking_states'].index(state) &gt; purchase_details[0]['state_index']"
+                                            class="text-muted"
+                                        >
                                             <span class="circle"></span>
                                             <t t-if="purchase_details[0]['tracking_states'].index(state) != 0">
                                                 <span class="fat-line"></span>
                                             </t>
-                                            <t t-esc="state"/>
+                                            <t t-esc="state == 'waiting' and 'Alistándose' or state == 'assigned' and 'En camino' or state == 'done' and 'Entregado'"/>
                                         </li>
                                     </t>
                                 </ul>
@@ -81,15 +87,21 @@
                                 height: 40px;
                                 border-radius: 4px;
                             }
-                            .tracking-list li.text-primary .circle {
-                                background-color: #2B65FB;
-                            }
+                            .tracking-list li.text-primary .circle,
                             .tracking-list li.text-primary .fat-line {
                                 background-color: #2B65FB;
                             }
-                            .tracking-list li.text-muted .circle {
-                                background-color: #d3d3d3;
+                            .tracking-list li.text-assigned,
+                            .tracking-list li.text-waiting {
+                                color: #777777;
                             }
+                            .tracking-list li.text-assigned .circle,
+                            .tracking-list li.text-assigned .fat-line,
+                            .tracking-list li.text-waiting .circle,
+                            .tracking-list li.text-waiting .fat-line {
+                                background-color: #777777;
+                            }
+                            .tracking-list li.text-muted .circle,
                             .tracking-list li.text-muted .fat-line {
                                 background-color: #d3d3d3;
                             }
