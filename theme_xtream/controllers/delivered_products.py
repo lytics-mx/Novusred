@@ -12,7 +12,7 @@ class WebsiteCheckout(http.Controller):
         ])
         # Filtrar pickings pendientes y relacionados con el usuario actual
         pending_pickings = request.env['stock.picking'].sudo().search([
-            ('state', 'not in', ['done', 'cancel']),
+            ('state', 'not in', ['done', 'cancel', 'draft']),
             ('partner_id', '=', user.partner_id.id)
         ])
         
