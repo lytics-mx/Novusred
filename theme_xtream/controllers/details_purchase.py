@@ -33,11 +33,15 @@ class ProductDetails(http.Controller):
         tracking_states = ['draft', 'waiting', 'confirmed', 'assigned', 'done', 'cancel']
         for picking in pickings:
             for move in picking.move_ids_without_package.filtered(lambda m: m.product_id.id == product_id):
+                state = picking.state or 'draft'
+                state_index = tracking_states.index(state) if state in tracking_states else -1  # Validar estado
+
                 purchase_details.append({
                     'quantity': move.product_qty,
                     'purchase_date': picking.date.strftime('%d de %B') if picking.date else '',
                     'delivery_date': picking.date_done,
-                    'state': picking.state or 'draft',  # Estado actual del picking (por defecto 'draft')
+                    'state': state,  # Estado actual del picking
+                    'state_index': state_index,  # Índice del estado en tracking_states
                     'tracking_states': tracking_states,  # Posibles estados
                     'price': move.product_id.list_price,  # Precio del producto
                     'total': move.product_qty * move.product_id.list_price,  # Total calculado

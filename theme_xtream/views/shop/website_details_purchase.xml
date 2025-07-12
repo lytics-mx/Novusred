@@ -35,13 +35,18 @@
                                         <t t-foreach="purchase_details[0]['tracking_states']" t-as="state" t-index="idx">
                                             <div style="display: flex; flex-direction: column; align-items: center;">
                                                 <div t-if="idx == 0" style="height: 0;"></div>
-                                                <div t-if="idx &gt; 0" style="width: 4px; height: 24px; background: &lt;t t-if='purchase_details[0][&quot;tracking_states&quot;].index(purchase_details[0][&quot;state&quot;]) &gt;= idx'&gt;#0057FF&lt;/t&gt;&lt;t t-if='purchase_details[0][&quot;tracking_states&quot;].index(purchase_details[0][&quot;state&quot;]) &lt; idx'&gt;#e0e0e0&lt;/t&gt;; border-radius: 2px;"></div>
+                                                <div t-if="idx &gt; 0 and purchase_details[0]['state_index'] &gt;= idx" 
+                                                     style="width: 4px; height: 24px; background: #0057FF; border-radius: 2px;">
+                                                </div>
+                                                <div t-if="idx &gt; 0 and purchase_details[0]['state_index'] &lt; idx" 
+                                                     style="width: 4px; height: 24px; background: #e0e0e0; border-radius: 2px;">
+                                                </div>
                                                 <span style="
                                                     display: inline-block;
                                                     width: 12px;
                                                     height: 12px;
                                                     border-radius: 50%;
-                                                    background: &lt;t t-if='purchase_details[0][&quot;tracking_states&quot;].index(purchase_details[0][&quot;state&quot;]) &gt;= idx'&gt;#0057FF&lt;/t&gt;&lt;t t-if='purchase_details[0][&quot;tracking_states&quot;].index(purchase_details[0][&quot;state&quot;]) &lt; idx'&gt;#e0e0e0&lt;/t&gt;;
+                                                    background: <t t-if='purchase_details[0][&quot;tracking_states&quot;].index(purchase_details[0][&quot;state&quot;]) &gt;= idx'>#0057FF</t><t t-if='purchase_details[0][&quot;tracking_states&quot;].index(purchase_details[0][&quot;state&quot;]) &lt; idx'>#e0e0e0</t>;
                                                     border: 2px solid #fff;
                                                 "></span>
                                             </div>
@@ -53,8 +58,8 @@
                                             <span style="
                                                 font-size: 13px;
                                                 margin-bottom: 16px;
-                                                color: &lt;t t-if='purchase_details[0][&quot;tracking_states&quot;].index(purchase_details[0][&quot;state&quot;]) &gt;= idx'&gt;#222&lt;/t&gt;&lt;t t-if='purchase_details[0][&quot;tracking_states&quot;].index(purchase_details[0][&quot;state&quot;]) &lt; idx'&gt;#bdbdbd&lt;/t&gt;;
-                                                font-weight: &lt;t t-if='purchase_details[0][&quot;tracking_states&quot;].index(purchase_details[0][&quot;state&quot;]) == idx'&gt;500&lt;/t&gt;&lt;t t-if='purchase_details[0][&quot;tracking_states&quot;].index(purchase_details[0][&quot;state&quot;]) != idx'&gt;400&lt;/t&gt;;
+                                                color: <t t-if='purchase_details[0][&quot;tracking_states&quot;].index(purchase_details[0][&quot;state&quot;]) &gt;= idx'>#222</t><t t-if='purchase_details[0][&quot;tracking_states&quot;].index(purchase_details[0][&quot;state&quot;]) &lt; idx'>#bdbdbd</t>;
+                                                font-weight: <t t-if='purchase_details[0][&quot;tracking_states&quot;].index(purchase_details[0][&quot;state&quot;]) == idx'>500</t><t t-if='purchase_details[0][&quot;tracking_states&quot;].index(purchase_details[0][&quot;state&quot;]) != idx'>400</t>;
                                             ">
                                                 <t t-esc="state"/>
                                             </span>
