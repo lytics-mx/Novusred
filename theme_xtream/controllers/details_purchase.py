@@ -2,7 +2,7 @@ from odoo import http
 from odoo.http import request
 
 class ProductDetails(http.Controller):
-    @http.route(['/product_details/<int:product_id>', '/product_details/<int:product_id>/<string:origin>'], type='http', auth='user', website=True)
+    @http.route(['/product_details/<int:product_id>/<string:pick_origin>'], type='http', auth='user', website=True)
     def product_details(self, product_id):
         user = request.env.user
 
@@ -31,23 +31,22 @@ class ProductDetails(http.Controller):
         # Preparar detalles de la compra y seguimiento
         purchase_details = []
         tracking_states = ['waiting', 'assigned', 'done']  # Estados relevantes
-
         for picking in pickings:
             for move in picking.move_ids_without_package.filtered(lambda m: m.product_id.id == product_id):
-                state = move.state or 'waiting'  # Usar el estado del movimiento
-                state_index = tracking_states.index(state) if state in tracking_states else -1
+                state = picking.state or 'waiting'
+                state_index = tracking_states.index(state) if state in tracking_states else -1  # Validar estado
 
                 purchase_details.append({
                     'quantity': move.product_qty,
                     'purchase_date': picking.date.strftime('%d de %B') if picking.date else '',
                     'delivery_date': picking.date_done,
-                    'state': state,  # Estado del movimiento
-                    'state_index': state_index,
-                    'tracking_states': tracking_states,
-                    'price': move.product_id.list_price,
-                    'total': move.product_qty * move.product_id.list_price,
-                    'picking_origin': picking.origin,
-                    'picking_name': picking.name,
+                    'state': state,  # Estado actual del picking
+                    'state_index': state_index,  # Índice del estado en tracking_states
+                    'tracking_states': tracking_states,  # Posibles estados
+                    'price': move.product_id.list_price,  # Precio del producto
+                    'total': move.product_qty * move.product_id.list_price,  # Total calculado
+                    'picking_origin': picking.origin,  # Identificador del picking (origin)
+                    'picking_name': picking.name,  # Nombre del picking
                 })
 
         return request.render('theme_xtream.product_details_template', {
