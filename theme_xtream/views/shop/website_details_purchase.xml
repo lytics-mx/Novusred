@@ -29,65 +29,78 @@
                         <div class="card mb-4 shadow-sm" style="border: none;">
                             <div class="card-body">
                                 <h5 class="mb-3">Llega en uno o dos días</h5>
-                                <ul class="list-unstyled" style="position: relative; padding-left: 30px;">
+                                <ul class="list-unstyled tracking-list">
                                     <t t-foreach="purchase_details[0]['tracking_states']" t-as="state">
-                                        <li t-if="purchase_details[0]['tracking_states'].index(state) &lt;= purchase_details[0]['state_index']" class="text-primary" style="position: relative; padding-left: 30px;">
+                                        <li t-if="purchase_details[0]['tracking_states'].index(state) &lt;= purchase_details[0]['state_index']" class="text-primary">
                                             <span class="circle"></span>
                                             <span class="line"></span>
-                                            <t t-if="state == 'waiting'">Alistándose</t>
-                                            <t t-if="state == 'assigned'">En camino</t>
-                                            <t t-if="state == 'done'">Entregado</t>
-                                            <t t-if="state == 'done' and purchase_details[0]['state'] == 'done'">
+                                            <t t-esc="state"/>
+                                            <t t-if="state == 'Entregado' and purchase_details[0]['state'] == 'done'">
                                                 <span class="badge bg-success ms-2">Entregado</span>
                                             </t>
                                         </li>
-                                        <li t-if="purchase_details[0]['tracking_states'].index(state) &gt; purchase_details[0]['state_index']" class="text-muted" style="position: relative; padding-left: 30px;">
+                                        <li t-if="purchase_details[0]['tracking_states'].index(state) &gt; purchase_details[0]['state_index']" class="text-muted">
                                             <span class="circle"></span>
                                             <span class="line"></span>
-                                            <t t-if="state == 'waiting'">Alistándose</t>
-                                            <t t-if="state == 'assigned'">En camino</t>
-                                            <t t-if="state == 'done'">Entregado</t>
+                                            <t t-esc="state"/>
                                         </li>
                                     </t>
                                 </ul>
                             </div>
                         </div>
                         <style>
-                            .circle {
-                                width: 10px;
-                                height: 10px;
+                            .tracking-list {
+                                padding-left: 20px;
+                                margin: 0;
+                            }
+                        
+                            .tracking-list li {
+                                position: relative;
+                                padding-left: 30px;
+                                font-size: 14px;
+                                list-style: none;
+                            }
+                        
+                            .tracking-list li .circle {
+                                position: absolute;
+                                left: 0;
+                                top: 50%;
+                                transform: translateY(-50%);
+                                width: 12px;
+                                height: 12px;
                                 border-radius: 50%;
-                                display: inline-block;
-                                position: absolute;
-                                left: -30px;
-                                top: 5px;
                             }
-
-                            .line {
+                        
+                            .tracking-list li .line {
+                                position: absolute;
+                                left: 5px;
+                                top: 50%;
+                                transform: translateY(-50%);
                                 width: 2px;
-                                height: 30px;
-                                display: inline-block;
-                                position: absolute;
-                                left: -25px;
-                                top: 15px;
+                                height: 40px;
                             }
-
-                            .text-primary .circle {
-                                background-color: blue;
+                        
+                            .tracking-list li.text-primary .circle {
+                                background-color: #2B65FB;
                             }
-
-                            .text-primary .line {
-                                background-color: blue;
+                        
+                            .tracking-list li.text-primary .line {
+                                background-color: #2B65FB;
                             }
-
-                            .text-muted .circle {
-                                background-color: gray;
+                        
+                            .tracking-list li.text-muted .circle {
+                                background-color: #d3d3d3;
                             }
-
-                            .text-muted .line {
-                                background-color: gray;
+                        
+                            .tracking-list li.text-muted .line {
+                                background-color: #d3d3d3;
+                            }
+                        
+                            .tracking-list li:last-child .line {
+                                display: none;
                             }
                         </style>
+
 
 
                         <!-- Chat -->
