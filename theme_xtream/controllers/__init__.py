@@ -17,3 +17,4 @@ from . import wishlist
 from . import discover
 from . import checkout
 from . import delivered_products
+from . import details_purchase
