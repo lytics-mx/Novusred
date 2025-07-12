@@ -28,15 +28,17 @@ class ProductDetails(http.Controller):
             'image_url': f'/web/image/product.product/{product.id}/image_1920',
         }
 
-        # Preparar detalles de la compra
+        # Preparar detalles de la compra y seguimiento
         purchase_details = []
+        tracking_states = ['draft', 'waiting', 'confirmed', 'assigned', 'done', 'cancel']
         for picking in pickings:
             for move in picking.move_ids_without_package.filtered(lambda m: m.product_id.id == product_id):
                 purchase_details.append({
                     'quantity': move.product_qty,
                     'purchase_date': picking.date.strftime('%d de %B') if picking.date else '',
                     'delivery_date': picking.date_done,
-                    'state': picking.state,
+                    'state': picking.state,  # Estado actual del picking
+                    'tracking_states': tracking_states,  # Posibles estados
                     'price': move.product_id.list_price,  # Precio del producto
                     'total': move.product_qty * move.product_id.list_price,  # Total calculado
                 })
