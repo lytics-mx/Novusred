@@ -15,65 +15,134 @@
                     <!-- Izquierda -->
                     <div class="col-md-8">
                         <!-- Producto -->
-                        <t t-foreach="purchase_details" t-as="detail">
-                            <div class="card mb-4 shadow-sm" style="border: none;">
-                                <div class="card-body d-flex align-items-center">
-                                    <img t-att-src="product_info['image_url']" alt="Imagen del producto" class="img-fluid rounded" style="width: 80px; height: 80px; object-fit: cover; margin-right: 16px;"/>
+                        <div class="card mb-4 shadow-sm" style="border: none;">
+                            <div class="card-body d-flex align-items-center">
+                                <img t-att-src="product_info['image_url']" alt="Imagen del producto" class="img-fluid rounded" style="width: 80px; height: 80px; object-fit: cover; margin-right: 16px;"/>
+                                <div>
+                                    <h5 class="mb-1" t-esc="product_info['name']"></h5>
+                                    <p class="text-muted mb-1" t-esc="product_info['brand']"></p>
+                                    <span class="text-muted">1 unidad</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Seguimiento -->
+                        <div class="card mb-4 shadow-sm" style="border: none;">
+                            <div class="card-body">
+                                <h5 class="mb-3">Llega en uno o dos días</h5>
+                                <ul class="list-unstyled" style="position: relative; padding-left: 30px;">
+                                    <t t-foreach="purchase_details[0]['tracking_states']" t-as="state">
+                                        <li t-if="purchase_details[0]['tracking_states'].index(state) &lt;= purchase_details[0]['state_index']" class="text-primary" style="position: relative; padding-left: 30px;">
+                                            <span class="circle"></span>
+                                            <span class="line"></span>
+                                            <t t-esc="state"/>
+                                            <t t-if="state == 'Entregado' and purchase_details[0]['state'] == 'done'">
+                                                <span class="badge bg-success ms-2">Entregado</span>
+                                            </t>
+                                        </li>
+                                        <li t-if="purchase_details[0]['tracking_states'].index(state) &gt; purchase_details[0]['state_index']" class="text-muted" style="position: relative; padding-left: 30px;">
+                                            <span class="circle"></span>
+                                            <span class="line"></span>
+                                            <t t-esc="state"/>
+                                        </li>
+                                    </t>
+                                </ul>
+                            </div>
+                        </div>
+                        <style>
+                            .text-primary {
+                                color: #2B65FB !important;
+                            }
+                        
+                            ul.list-unstyled {
+                                position: relative;
+                                padding-left: 30px;
+                            }
+                        
+                            ul.list-unstyled li {
+                                position: relative;
+                                padding-left: 30px;
+                                font-size: 14px;
+                            }
+                        
+                            ul.list-unstyled li .circle {
+                                position: absolute;
+                                left: 0;
+                                top: 50%;
+                                transform: translateY(-50%);
+                                width: 12px;
+                                height: 12px;
+                                border-radius: 50%;
+                            }
+                        
+                            ul.list-unstyled li .line {
+                                position: absolute;
+                                left: 5px;
+                                top: 50%;
+                                transform: translateY(-50%);
+                                width: 2px;
+                                height: 40px;
+                            }
+                        
+                            ul.list-unstyled li.text-primary .circle {
+                                background-color: blue;
+                            }
+                        
+                            ul.list-unstyled li.text-primary .line {
+                                background-color: blue;
+                            }
+                        
+                            ul.list-unstyled li.text-muted .circle {
+                                background-color: gray;
+                            }
+                        
+                            ul.list-unstyled li.text-muted .line {
+                                background-color: gray;
+                            }
+                        
+                            ul.list-unstyled li:last-child .line {
+                                display: none;
+                            }
+                        </style>
+
+
+
+                        <!-- Chat -->
+                        <div class="card shadow-sm" style="border: none;">
+                            <div class="card-body" style="background-color: #fff;">
+                                <h5 class="mb-3" style="font-size: 16px;">Mensajes</h5>
+                                <hr class="my-2"/>
+                                <div class="d-flex align-items-center">
+                                    <img t-att-src="product_info['brand_image_url']" alt="Marca" class="img-fluid rounded-circle" style="width: 40px; height: 40px; margin-right: 16px;"/>
                                     <div>
-                                        <h5 class="mb-1" t-esc="product_info['name']"></h5>
-                                        <p class="text-muted mb-1" t-esc="product_info['brand']"></p>
-                                        <span class="text-muted"><t t-esc="detail['quantity']"/> unidad</span>
+                                        <span style="font-size: 16px; font-weight: 500;" t-esc="product_info['brand']"></span>
+                                        <br/>
+                                        <a href="#" class="text-primary" style="font-size: 14px;">Enviar mensaje</a>
                                     </div>
                                 </div>
                             </div>
-                            <!-- Seguimiento -->
-                            <div class="card mb-4 shadow-sm" style="border: none;">
-                                <div class="card-body">
-                                    <h5 class="mb-3">Llega en uno o dos días</h5>
-                                    <ul class="list-unstyled" style="position: relative; padding-left: 30px;">
-                                        <t t-foreach="detail['tracking_states']" t-as="state">
-                                            <li t-if="detail['tracking_states'].index(state) &lt;= detail['state_index']" class="text-primary" style="position: relative; padding-left: 30px;">
-                                                <span class="circle"></span>
-                                                <span class="line"></span>
-                                                <t t-esc="state"/>
-                                                <t t-if="state == 'Entregado' and detail['state'] == 'done'">
-                                                    <span class="badge bg-success ms-2">Entregado</span>
-                                                </t>
-                                            </li>
-                                            <li t-if="detail['tracking_states'].index(state) &gt; detail['state_index']" class="text-muted" style="position: relative; padding-left: 30px;">
-                                                <span class="circle"></span>
-                                                <span class="line"></span>
-                                                <t t-esc="state"/>
-                                            </li>
-                                        </t>
-                                    </ul>
-                                </div>
-                            </div>
-                        </t>
+                        </div>
                     </div>
                     <!-- Derecha -->
                     <div class="col-md-4">
                         <div class="card shadow-sm" style="border: none;">
                             <div class="card-body">
                                 <h5 class="mb-3">Detalle de la compra</h5>
-                                <t t-foreach="purchase_details" t-as="detail">
-                                    <p class="text-muted mb-3" t-esc="detail['purchase_date']"></p>
-                                    <hr/>
-                                    <div class="d-flex justify-content-between">
-                                        <span>Producto</span>
-                                        <span class="text-danger" t-esc="detail['price']"></span>
-                                    </div>
-                                    <div class="d-flex justify-content-between">
-                                        <span>Envío</span>
-                                        <span class="text-success">Gratis</span>
-                                    </div>
-                                    <hr/>
-                                    <div class="d-flex justify-content-between fw-bold">
-                                        <span>Total</span>
-                                        <span class="text-danger" t-esc="detail['total']"></span>
-                                    </div>
-                                    <a href="#" class="text-primary mt-3 d-block">Detalles del pago y envío ^</a>
-                                </t>
+                                <p class="text-muted mb-3" t-esc="purchase_details[0]['purchase_date']"></p>
+                                <hr/>
+                                <div class="d-flex justify-content-between">
+                                    <span>Producto</span>
+                                    <span class="text-danger" t-esc="purchase_details[0]['price']"></span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span>Envío</span>
+                                    <span class="text-success">Gratis</span>
+                                </div>
+                                <hr/>
+                                <div class="d-flex justify-content-between fw-bold">
+                                    <span>Total</span>
+                                    <span class="text-danger" t-esc="purchase_details[0]['total']"></span>
+                                </div>
+                                <a href="#" class="text-primary mt-3 d-block">Detalles del pago y envío ^</a>
                             </div>
                         </div>
                     </div>
