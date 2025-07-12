@@ -2,8 +2,8 @@ from odoo import http
 from odoo.http import request
 
 class ProductDetails(http.Controller):
-    @http.route(['/product_details/<int:product_id>/<string:picking_name>'], type='http', auth='user', website=True)
-    def product_details(self, product_id, picking_name):
+    @http.route(['/product_details/<int:product_id>/<string:pick_origin>'], type='http', auth='user', website=True)
+    def product_details(self, product_id):
         user = request.env.user
 
         # Buscar el producto por ID
@@ -14,11 +14,10 @@ class ProductDetails(http.Controller):
         brand_name = brand.name if brand else 'Sin marca'
         brand_image_url = f'/web/image/brand.type/{brand.id}/icon_image' if brand else '/web/static/src/img/placeholder.png'
 
-        # Buscar pickings relacionados con el producto, el usuario y el picking_name
+        # Buscar pickings relacionados con el producto y el usuario
         pickings = request.env['stock.picking'].sudo().search([
             ('partner_id', '=', user.partner_id.id),
-            ('move_ids_without_package.product_id', '=', product_id),
-            ('name', '=', picking_name)  # Filtrar por picking_name
+            ('move_ids_without_package.product_id', '=', product_id)
         ])
 
         # Preparar datos del producto
