@@ -23,19 +23,19 @@ class ProductDetails(http.Controller):
         # Preparar datos del producto
         product_info = {
             'name': product.name,
-            'brand': brand_name,  # Nombre de la marca
-            'brand_image_url': brand_image_url,  # URL de la imagen de la marca
+            'brand': brand_name,
+            'brand_image_url': brand_image_url,
             'image_url': f'/web/image/product.product/{product.id}/image_1920',
         }
 
         # Preparar detalles de la compra y seguimiento
         purchase_details = []
-        tracking_states = ['waiting', 'assigned', 'done']  # Estados relevantes
+        tracking_states = ['waiting', 'assigned', 'done']
         for picking in pickings:
             for move in picking.move_ids_without_package.filtered(lambda m: m.product_id.id == product_id):
                 state = picking.state or 'waiting'
                 state_index = tracking_states.index(state) if state in tracking_states else -1
-        
+
                 purchase_details.append({
                     'quantity': move.product_qty,
                     'purchase_date': picking.date.strftime('%d de %B') if picking.date else '',
