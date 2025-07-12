@@ -28,6 +28,8 @@ class WebsiteCheckout(http.Controller):
                     'purchase_date': picking.date.strftime('%d de %B') if picking.date else '',  # Formato de fecha
                     'image_url': f'/web/image/product.product/{move.product_id.id}/image_1920',
                     'state': picking.state,  # Agregar el estado del stock.picking
+                    'picking_origin': picking.origin,  # Identificador del picking (origin)
+                    'picking_name': picking.name,  # Nombre del picking
                 })
         
         # Obtener todos los productos de los pickings pendientes
@@ -42,6 +44,8 @@ class WebsiteCheckout(http.Controller):
                     'purchase_date': picking.date.strftime('%d de %B') if picking.date else '',  # Formato de fecha
                     'image_url': f'/web/image/product.product/{move.product_id.id}/image_1920',
                     'state': picking.state,  # Agregar el estado del stock.picking
+                    'picking_origin': picking.origin,  # Identificador del picking (origin)
+                    'picking_name': picking.name,  # Nombre del picking
                 })
         
         return request.render('theme_xtream.delivered_template', {

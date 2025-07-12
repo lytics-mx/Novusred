@@ -45,6 +45,8 @@ class ProductDetails(http.Controller):
                     'tracking_states': tracking_states,  # Posibles estados
                     'price': move.product_id.list_price,  # Precio del producto
                     'total': move.product_qty * move.product_id.list_price,  # Total calculado
+                    'picking_origin': picking.origin,  # Identificador del picking (origin)
+                    'picking_name': picking.name,  # Nombre del picking
                 })
 
         return request.render('theme_xtream.product_details_template', {
