@@ -1,32 +1,56 @@
 <odoo>
     <template id="product_details_template" name="Product Details">
         <t t-call="website.layout">
-            <div class="container">
-                <h1>Detalles del Producto</h1>
-                <div class="product-details">
-                    <img t-att-src="product_info['image_url']" alt="Imagen del producto" class="product-image"/>
-                    <h2 t-esc="product_info['name']"></h2>
+            <div class="purchase-page" style="display: flex; gap: 32px;">
+                <!-- Izquierda -->
+                <div class="left-panel" style="flex: 2;">
+                    <!-- Producto -->
+                    <div class="product-card" style="display: flex; align-items: center; background: #f5f5f5; padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+                        <img t-att-src="product_info['image_url']" alt="Imagen del producto" style="width: 80px; height: 80px; object-fit: cover; margin-right: 16px;"/>
+                        <div>
+                            <h2 style="margin: 0;" t-esc="product_info['name']"></h2>
+                            <p style="margin: 0; color: #888;" t-esc="product_info['brand']"></p>
+                            <span style="font-size: 14px; color: #666;">1 unidad</span>
+                        </div>
+                    </div>
+                    <!-- Seguimiento -->
+                    <div class="tracking-card" style="background: #fff; padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+                        <h3 style="margin-top: 0;">Llega en uno o dos días</h3>
+                        <ul style="list-style: none; padding: 0;">
+                            <li style="color: #0057ff;">Alistandose</li>
+                            <li style="color: #888;">En camino</li>
+                            <li style="color: #888;">Entregado</li>
+                        </ul>
+                    </div>
+                    <!-- Chat -->
+                    <div class="chat-card" style="background: #fff; padding: 16px; border-radius: 8px;">
+                        <h3 style="margin-top: 0;">Mensajes</h3>
+                        <div style="display: flex; align-items: center;">
+                            <img src="/path/to/lg_logo.png" alt="LG" style="width: 32px; height: 32px; margin-right: 8px;"/>
+                            <span>LG</span>
+                            <a href="#" style="margin-left: 16px; color: #0057ff;">Enviar mensaje</a>
+                        </div>
+                    </div>
                 </div>
-                <div class="purchase-details">
-                    <h3>Detalles de la Compra</h3>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Cantidad</th>
-                                <th>Fecha de Compra</th>
-                                <th>Fecha de Entrega</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr t-foreach="purchase_details" t-as="detail">
-                                <td t-esc="detail['quantity']"></td>
-                                <td t-esc="detail['purchase_date']"></td>
-                                <td t-esc="detail['delivery_date']"></td>
-                                <td t-esc="detail['state']"></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <!-- Derecha -->
+                <div class="right-panel" style="flex: 1; background: #f5f5f5; padding: 24px; border-radius: 8px;">
+                    <h3>Detalle de la compra</h3>
+                    <p style="color: #888; margin: 0;">21 de Febrero</p>
+                    <hr/>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Producto</span>
+                        <span style="color: #e74c3c;" t-esc="purchase_details[0]['price']"></span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Envío</span>
+                        <span style="color: #27ae60;">Gratis</span>
+                    </div>
+                    <hr/>
+                    <div style="display: flex; justify-content: space-between; font-weight: bold;">
+                        <span>Total</span>
+                        <span style="color: #e74c3c;" t-esc="purchase_details[0]['total']"></span>
+                    </div>
+                    <a href="#" style="color: #0057ff; font-size: 14px;">Detalles del pago y envío ^</a>
                 </div>
             </div>
         </t>
