@@ -206,6 +206,7 @@ class OffersController(http.Controller):
             'name': product.name,
             'list_price': product.list_price,
             'discounted_price': product.discounted_price,
+            'image_url': f"/web/image/product.template/{product.id}/image_1920",
         } for product in products]
 
-        return {'products': product_data, 'has_more': has_more}    
+        return {'products': product_data, 'has_more': has_more} 
