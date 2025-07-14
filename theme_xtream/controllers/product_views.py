@@ -18,8 +18,8 @@ class ShopController(WebsiteSale):
             _logger.warning(f"El producto template con ID {product_id} no existe.")
             return request.not_found()
 
-        # Validar que el nombre en la URL coincida con el nombre del producto
-        if product_name and product_template.name != product_name.replace('-', ' '):
+        # Validar que el nombre en la URL coincida con el nombre real del producto
+        if product_name and product_template.name.replace(' ', '-').lower() != product_name.lower():
             _logger.warning(f"El nombre del producto en la URL no coincide con el nombre real del producto.")
             return request.not_found()
 
