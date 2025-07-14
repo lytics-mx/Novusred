@@ -1,5 +1,6 @@
 from odoo import http
 from odoo.http import request
+from datetime import datetime, timedelta
 
 class ProductDetails(http.Controller):
     @http.route(['/product_details/<int:product_id>/<string:pick_origin>'], type='http', auth='user', website=True)
@@ -37,6 +38,27 @@ class ProductDetails(http.Controller):
                 state = picking.state or 'waiting'
                 state_index = tracking_states.index(state) if state in tracking_states else -1  # Validar estado
 
+                # Calcular días restantes para la fecha límite
+                date_deadline = picking.date_deadline
+                days_remaining = ''
+                if date_deadline:
+                    today = datetime.today()
+                    delta = (date_deadline - today).days
+                    if state == 'done':
+                        days_remaining = f"Entregado el día {picking.date_done.strftime('%d de %B')}" if picking.date_done else "Entregado"
+                    elif delta > 30:
+                        days_remaining = date_deadline.strftime('%d de %B del %Y')  # Mostrar fecha específica si es mayor a un mes
+                    elif delta > 7:
+                        days_remaining = date_deadline.strftime('%d de %B')  # Mostrar fecha específica si es mayor a una semana
+                    elif delta > 1:
+                        days_remaining = f"Llega en {delta} días"
+                    elif delta == 1:
+                        days_remaining = "Llega mañana"
+                    elif delta == 0:
+                        days_remaining = "Llega hoy"
+                    else:
+                        days_remaining = "Fecha límite pasada"
+
                 purchase_details.append({
                     'quantity': move.product_qty,
                     'purchase_date': picking.date.strftime('%d de %B') if picking.date else '',
@@ -48,6 +70,8 @@ class ProductDetails(http.Controller):
                     'total': move.product_qty * move.product_id.list_price,  # Total calculado
                     'picking_origin': picking.origin,  # Identificador del picking (origin)
                     'picking_name': picking.name,  # Nombre del picking
+                    'date_deadline': date_deadline.strftime('%d de %B') if date_deadline else '',
+                    'days_remaining': days_remaining,  # Texto del contador
                 })
 
         return request.render('theme_xtream.product_details_template', {

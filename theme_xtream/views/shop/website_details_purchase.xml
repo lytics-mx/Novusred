@@ -28,7 +28,24 @@
                         <!-- Seguimiento -->
                         <div class="card mb-4 shadow-sm" style="border: none;">
                             <div class="card-body">
-                                <h5 class="mb-3">Llega en uno o dos días</h5>
+                                <!-- Texto dinámico de llegada -->
+                                <h5 class="mb-3">
+                                    <t t-if="purchase_details[0]['days_remaining'] == 'Llega mañana'">
+                                        Llega mañana
+                                    </t>
+                                    <t t-if="purchase_details[0]['days_remaining'] == 'Llega hoy'">
+                                        Llega hoy
+                                    </t>
+                                    <t t-if="purchase_details[0]['days_remaining'] == 'Fecha límite pasada'">
+                                        Fecha límite pasada
+                                    </t>
+                                    <t t-if="purchase_details[0]['days_remaining'] == 'Llega la siguiente semana'">
+                                        Llega la siguiente semana
+                                    </t>
+                                    <t t-if="purchase_details[0]['days_remaining'] not in ['Llega mañana', 'Llega hoy', 'Fecha límite pasada', 'Llega la siguiente semana']">
+                                        <t t-esc="purchase_details[0]['days_remaining']"/>
+                                    </t>
+                                </h5>                              
                                 <ul class="list-unstyled tracking-list">
                                     <t t-foreach="purchase_details[0]['tracking_states']" t-as="state">
                                         <li t-if="purchase_details[0]['tracking_states'].index(state) &lt;= purchase_details[0]['state_index']" class="text-primary">
