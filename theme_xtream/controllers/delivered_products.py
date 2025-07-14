@@ -39,7 +39,7 @@ class WebsiteCheckout(http.Controller):
                 delivered_products.append({
                     'product_id': move.product_id.id,  # ID del product.product
                     'product_name': move.product_id.name,  # Nombre del product.product
-                    'product_tmpl_id': move.product_id.product_tmpl_id.id,  # ID del product.template
+                    'template_id': move.product_id.product_tmpl_id.id,  # ID del product.template
                     'product_tmpl_name': move.product_id.product_tmpl_id.name,  # Nombre del product.template
                     'quantity': move.product_qty,
                     'delivery_date': relative_date,
