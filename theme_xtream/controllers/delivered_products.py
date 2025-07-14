@@ -1,7 +1,7 @@
 from odoo import http
 from odoo.http import request
 from babel.dates import format_date
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class WebsiteCheckout(http.Controller):
     @http.route(['/delivered_products'], type='http', auth='user', website=True)
@@ -20,7 +20,8 @@ class WebsiteCheckout(http.Controller):
 
         for move in stock_moves:
             deadline_date = move.date_deadline.date() if move.date_deadline else None
-            delivery_date = move.date.date() if hasattr(move, 'date') and move.date else None
+            delivery_date = move.date.date() if move.date else None
+            purchase_date = move.date.date() if move.date else None  # Fecha de compra
 
             # Determinar el estado del producto
             if move.state == 'done':  # Entregado
@@ -30,6 +31,7 @@ class WebsiteCheckout(http.Controller):
                     'product_name': move.product_id.name,
                     'quantity': move.product_qty,
                     'delivery_date': relative_date,
+                    'purchase_date': format_date(purchase_date, format='d \'de\' MMMM', locale='es') if purchase_date else '',
                     'image_url': f'/web/image/product.product/{move.product_id.id}/image_1920',
                     'state': move.state,
                     'picking_origin': move.picking_id.origin,
@@ -59,6 +61,7 @@ class WebsiteCheckout(http.Controller):
                     'product_name': move.product_id.name,
                     'quantity': move.product_qty,
                     'deadline_date': relative_date,
+                    'purchase_date': format_date(purchase_date, format='d \'de\' MMMM', locale='es') if purchase_date else '',
                     'image_url': f'/web/image/product.product/{move.product_id.id}/image_1920',
                     'state': move.state,
                     'picking_origin': move.picking_id.origin,
