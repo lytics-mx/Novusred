@@ -27,43 +27,57 @@
                         </div>
                         <!-- Seguimiento -->
                         <div class="card mb-4 shadow-sm" style="border: none;">
-                            <div class="card-body">
+                            <div class="card-body" style="background-color: #fff;">
                                 <!-- Texto dinámico de llegada -->
                                 <h5 class="mb-3">
                                     <t t-if="purchase_details[0]['days_remaining'] == 'Llega mañana'">
-                                        Llega mañana
+                                        <span style="font-size: 22px;">Llega mañana</span>
                                     </t>
                                     <t t-if="purchase_details[0]['days_remaining'] == 'Llega hoy'">
-                                        Llega hoy
+                                        <span style="font-size: 22px;">Llega hoy</span>
                                     </t>
                                     <t t-if="purchase_details[0]['days_remaining'] == 'Fecha límite pasada'">
-                                        Fecha límite pasada
+                                        <span style="font-size: 22px;">Fecha límite pasada</span>
                                     </t>
                                     <t t-if="purchase_details[0]['days_remaining'] == 'Llega la siguiente semana'">
-                                        Llega la siguiente semana
+                                        <span style="font-size: 22px;">Llega la siguiente semana</span>
                                     </t>
                                     <t t-if="purchase_details[0]['days_remaining'] not in ['Llega mañana', 'Llega hoy', 'Fecha límite pasada', 'Llega la siguiente semana']">
-                                        <t t-esc="purchase_details[0]['days_remaining']"/>
+                                        <span style="font-size: 22px;" t-esc="purchase_details[0]['days_remaining']"/>
                                     </t>
                                 </h5>                              
                                 <ul class="list-unstyled tracking-list">
                                     <t t-foreach="purchase_details[0]['tracking_states']" t-as="state">
-                                        <li t-if="purchase_details[0]['tracking_states'].index(state) &lt;= purchase_details[0]['state_index']" class="text-primary">
+                                        <li t-if="purchase_details[0]['tracking_states'].index(state) <= purchase_details[0]['state_index']" class="text-primary">
                                             <span class="circle"></span>
                                             <t t-if="purchase_details[0]['tracking_states'].index(state) != 0">
                                                 <span class="fat-line"></span>
                                             </t>
-                                            <t t-esc="state"/>
-                                            <t t-if="state == 'Entregado' and purchase_details[0]['state'] == 'done'">
+                                            <t t-if="state == 'confirm'">
+                                                Alistándose
+                                            </t>
+                                            <t t-if="state == 'assigned'">
+                                                En camino
+                                            </t>
+                                            <t t-if="state == 'done'">
+                                                Entregado
                                                 <span class="badge bg-success ms-2">Entregado</span>
                                             </t>
                                         </li>
-                                        <li t-if="purchase_details[0]['tracking_states'].index(state) &gt; purchase_details[0]['state_index']" class="text-muted">
+                                        <li t-if="purchase_details[0]['tracking_states'].index(state) > purchase_details[0]['state_index']" class="text-muted">
                                             <span class="circle"></span>
                                             <t t-if="purchase_details[0]['tracking_states'].index(state) != 0">
                                                 <span class="fat-line"></span>
                                             </t>
-                                            <t t-esc="state"/>
+                                            <t t-if="state == 'confirm'">
+                                                Alistándose
+                                            </t>
+                                            <t t-if="state == 'assigned'">
+                                                En camino
+                                            </t>
+                                            <t t-if="state == 'done'">
+                                                Entregado
+                                            </t>
                                         </li>
                                     </t>
                                 </ul>
