@@ -50,13 +50,15 @@
                                     <t t-foreach="purchase_details[0]['tracking_states']" t-as="state">
                                         <li t-if="purchase_details[0]['tracking_states'].index(state) &lt;= purchase_details[0]['state_index']" class="text-primary">
                                             <span class="circle"></span>
-                                            <t t-if="purchase_details[0]['tracking_states'].index(state) != 0 and purchase_details[0]['state'] in ['done', 'confirmed']">
+                                            <!-- Mostrar la línea azul solo si el estado está completado -->
+                                            <t t-if="purchase_details[0]['state'] in ['done', 'confirmed'] and purchase_details[0]['tracking_states'].index(state) != 0">
                                                 <span class="fat-line"></span>
                                             </t>
                                             <t t-esc="state_translation[state]"/>
                                         </li>
                                         <li t-if="purchase_details[0]['tracking_states'].index(state) &gt; purchase_details[0]['state_index']" class="text-muted">
                                             <span class="circle"></span>
+                                            <!-- No mostrar la línea azul para estados incompletos -->
                                             <t t-if="purchase_details[0]['tracking_states'].index(state) != 0">
                                                 <span class="fat-line" style="display: none;"></span>
                                             </t>
