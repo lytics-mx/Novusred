@@ -166,21 +166,25 @@
                   <div class="row align-items-center">
                     <div class="col-md-6 col-12 mb-2 mb-md-0">
                     <t t-if="order.partner_shipping_id">
-                      <div class="text-primary" style="font-size:15px;">
-                      <t t-if="order.partner_shipping_id.contact_address_complete">
-                        <span class="text-primary">Envío:</span>
-                        <span class="d-inline-block text-primary" style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="short-address">
-                          <t t-esc="order.partner_shipping_id.contact_address_complete"/>
-                        </span>
-                        <a class="ms-1" data-bs-toggle="collapse" href="#fullAddressCollapse" role="button" aria-expanded="false" aria-controls="fullAddressCollapse" onclick="document.getElementById('short-address').style.display='none';">
-                          <i class="fa fa-chevron-down small"></i>
-                        </a>
-                        <div class="collapse" id="fullAddressCollapse">
-                          <div class="mt-1">
-                            <span class="text-primary" t-field="order.partner_shipping_id.contact_address_complete" t-options="{}" />
+                      <div class="text-primary" style="font-size:15px; display:flex; align-items:center;">
+                        <t t-if="order.partner_shipping_id.contact_address_complete">
+                          <span class="text-primary me-1">Envío:</span>
+                          <span class="d-inline-block text-primary" style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="short-address">
+                            <t t-esc="order.partner_shipping_id.contact_address_complete"/>
+                          </span>
+                          <a class="ms-1" href="javascript:void(0);" onclick="
+                            document.getElementById('short-address').style.display='none';
+                            document.getElementById('full-address-row').style.display='block';
+                          ">
+                            <i class="fa fa-chevron-down small"></i>
+                          </a>
+                          <div id="full-address-row" style="display:none;">
+                            <div class="mt-2">
+                              <span class="text-primary" t-field="order.partner_shipping_id.contact_address_complete" t-options="{}"/>
+                            </div>
                           </div>
-                        </div>
-                      </t>
+                        </t>
+                      </div>
                       </div>
                     </t>
                     </div>
