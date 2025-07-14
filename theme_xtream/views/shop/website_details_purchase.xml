@@ -154,6 +154,17 @@
                                     <span style="color: #777777; font-size: 16px;">Producto</span>
                                     <span style="color: #777777; font-size: 16px;" t-esc="purchase_details[0]['price']"></span>
                                 </div>
+                                <div class="d-flex justify-content-between">
+                                    <span style="color: #777777; font-size: 16px;">Cantidad</span>
+                                    <span style="color: #777777; font-size: 16px;">
+                                        <t t-if="purchase_details[0]['quantity'] == 1">
+                                            1 unidad
+                                        </t>
+                                        <t t-else="">
+                                            <t t-esc="str(purchase_details[0]['quantity']) + ' unidades'"/>
+                                        </t>
+                                    </span>
+                                </div>
                                 <t t-if="product_info['free_shipping']">
                                     <div class="d-flex justify-content-between">
                                         <span style="color: #777777; font-size: 16px;">Envío</span>
@@ -169,24 +180,32 @@
                                 
                                 <!-- Contenedor oculto para los detalles del envío -->
                                 <div id="shipping-details" style="display: none; margin-top: 15px;">
-                                    <ul style="padding-left: 0; list-style: none;">
-                                        <li style="color: #777777; font-size: 16px;">
-                                            <strong>Domicilio:</strong>
-                                            <span t-esc="shipping_details['partner_address']"/>
-                                        </li>
-                                        <li style="color: #777777; font-size: 16px;">
-                                            <strong>Responsable:</strong>
-                                            <span t-esc="shipping_details['responsible']"/>
-                                        </li>
-                                        <li style="color: #777777; font-size: 16px;">
-                                            <strong>Transportista:</strong>
-                                            <span t-esc="shipping_details['carrier']"/>
-                                        </li>
-                                        <li style="color: #777777; font-size: 16px;">
-                                            <strong>Peso del Paquete:</strong>
-                                            <span t-esc="shipping_details['shipping_weight']"/> kg
-                                        </li>
-                                    </ul>
+                                    <t t-if="shipping_details">
+                                        <ul style="padding-left: 0; list-style: none;">
+                                            <li style="color: #777777; font-size: 16px;">
+                                                <strong>Domicilio:</strong>
+                                                <span t-esc="shipping_details['partner_address']"/>
+                                            </li>
+                                            <t t-if="shipping_details.get('responsible')">
+                                                <li style="color: #777777; font-size: 16px;">
+                                                    <strong>Responsable:</strong>
+                                                    <span t-esc="shipping_details['responsible']"/>
+                                                </li>
+                                            </t>
+                                            <t t-if="shipping_details.get('carrier')">
+                                                <li style="color: #777777; font-size: 16px;">
+                                                    <strong>Transportista:</strong>
+                                                    <span t-esc="shipping_details['carrier']"/>
+                                                </li>
+                                            </t>
+                                            <t t-if="shipping_details.get('shipping_weight')">
+                                                <li style="color: #777777; font-size: 16px;">
+                                                    <strong>Peso del Paquete:</strong>
+                                                    <span t-esc="shipping_details['shipping_weight']"/> kg
+                                                </li>
+                                            </t>
+                                        </ul>
+                                    </t>
                                 </div>
                                 
                                 <script>
