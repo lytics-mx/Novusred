@@ -51,7 +51,7 @@ class WebsiteCheckout(http.Controller):
                     'product_id': move.product_id.id,
                     'product_name': move.product_id.name,
                     'quantity': move.product_qty,
-                    'delivery_date': delivery_date,  # Usar la nueva lógica
+                    'delivery_date': delivery_date,  # Asegurarse de que siempre esté presente
                     'purchase_date': purchase_date,
                     'image_url': f'/web/image/product.product/{move.product_id.id}/image_1920',
                     'state': picking.state,
@@ -77,6 +77,7 @@ class WebsiteCheckout(http.Controller):
                     'quantity': move.product_qty,
                     'scheduled_date': scheduled_date,
                     'purchase_date': purchase_date,
+                    'delivery_date': '',  # Asegurarse de que siempre esté presente
                     'image_url': f'/web/image/product.product/{move.product_id.id}/image_1920',
                     'state': picking.state,
                     'picking_origin': picking.origin,
