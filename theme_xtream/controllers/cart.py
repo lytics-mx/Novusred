@@ -92,7 +92,7 @@ class ShopController(WebsiteSale):
                         request.session.modified = True
                         
                         # Marcar la línea como "guardada" (sin eliminarla)
-                        line.write({'product_uom_qty': 0})  # Opcional: Ajustar cantidad a 0 para ocultarla
+                        line.write({'product_uom_qty': 0})  # Ajustar cantidad a 0 para ocultarla del carrito
         except Exception as e:
             _logger.error(f"Error al guardar producto para después: {str(e)}", exc_info=True)
             
