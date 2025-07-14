@@ -569,8 +569,8 @@
                     
                     <!-- Productos en oferta -->
                     <div class="col-lg-9 col-md-8 col-12">
-                        <div class="row mobile-products-grid">
-                            <t t-foreach="discounted_products" t-as="product">
+                        <div class="row mobile-products-grid" id="products-container">
+                            <t t-foreach="discounted_products[:9]" t-as="product">
                                 <div class="col-6 col-md-6 col-lg-4 mobile-product-col">
                                     <a t-att-href="'/shop/product/' + str(product.id)" style="text-decoration: none; color: inherit;">
                                         <div class="card shadow-sm product-card mobile-product-card">
@@ -649,6 +649,71 @@
                                 </div>
                             </t>
                         </div>
+                        <div id="loading-indicator" class="text-center my-4" style="display: none;">
+                            <span>Cargando más productos...</span>
+                        </div> 
+                        <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            let offset = 9; // Número inicial de productos cargados
+                            const limit = 9; // Número de productos a cargar por solicitud
+                            const productsContainer = document.getElementById('products-container');
+                            const loadingIndicator = document.getElementById('loading-indicator');
+                        
+                            const observer = new IntersectionObserver((entries) => {
+                                if (entries[0].isIntersecting) {
+                                    loadMoreProducts();
+                                }
+                            }, {
+                                root: null,
+                                rootMargin: '0px',
+                                threshold: 1.0
+                            });
+                        
+                            observer.observe(loadingIndicator);
+                        
+                            function loadMoreProducts() {
+                                loadingIndicator.style.display = 'block';
+                        
+                                fetch(`/offers/load_more?offset=${offset}&limit=${limit}`)
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        data.products.forEach(product => {
+                                            const productHTML = `
+                                                <div class="col-6 col-md-6 col-lg-4 mobile-product-col">
+                                                    <a href="/shop/product/${product.id}" style="text-decoration: none; color: inherit;">
+                                                        <div class="card shadow-sm product-card mobile-product-card">
+                                                            <img src="/web/image/product.template/${product.id}/image_1920" class="card-img-top product-image-no-scale" style="height: 300px; object-fit: contain;" />
+                                                            <div class="card-body mobile-card-body">
+                                                                <h6 class="card-title">${product.name}</h6>
+                                                                <div class="d-flex justify-content-between">
+                                                                    <span class="text-dark fw-bold">$${product.discounted_price}</span>
+                                                                    <span class="text-muted"><s>$${product.list_price}</s></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            `;
+                                            productsContainer.insertAdjacentHTML('beforeend', productHTML);
+                                        });
+                        
+                                        offset += limit;
+                                        loadingIndicator.style.display = 'none';
+                        
+                                        if (!data.has_more) {
+                                            observer.unobserve(loadingIndicator);
+                                            loadingIndicator.style.display = 'none';
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error loading more products:', error);
+                                        loadingIndicator.style.display = 'none';
+                                    });
+                            }
+                        });
+                        </script>
+
+                       
                     </div>
                     <style>
                         /* Evita que la imagen del producto se expanda fuera del card */
