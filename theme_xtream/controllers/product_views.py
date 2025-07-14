@@ -4,6 +4,8 @@ from odoo.http import request
 from odoo.addons.website_sale.controllers.main import WebsiteSale
 from datetime import datetime
 import logging
+import unicodedata
+import re
 _logger = logging.getLogger(__name__)
 
 class ShopController(WebsiteSale):
@@ -18,8 +20,17 @@ class ShopController(WebsiteSale):
             _logger.warning(f"El producto template con ID {product_id} no existe.")
             return request.not_found()
 
+        # Formatear el nombre del producto para comparación
+        def format_product_name(name):
+            # Eliminar acentos y caracteres especiales
+            name = unicodedata.normalize('NFKD', name).encode('ASCII', 'ignore').decode('utf-8')
+            # Reemplazar espacios y caracteres no válidos por guiones
+            name = re.sub(r'[^\w\s-]', '', name).strip().replace(' ', '-').lower()
+            return name
+
         # Validar que el nombre en la URL coincida con el nombre real del producto
-        if product_name and product_template.name.replace(' ', '-').lower() != product_name.lower():
+        formatted_name = format_product_name(product_template.name)
+        if product_name and formatted_name != product_name.lower():
             _logger.warning(f"El nombre del producto en la URL no coincide con el nombre real del producto.")
             return request.not_found()
 
@@ -97,4 +108,8 @@ class ShopController(WebsiteSale):
             'general_images': general_images,
             'brand_type_products_count': brand_type_products_count,
         }
-        return request.render("theme_xtream.website_view_product_xtream", context)
+        # Renderizar la página del producto
+        return request.render("theme_xtream.website_view_product_xtream", {
+            'product': product_template,
+            'product_variant': product_variant,
+        })
