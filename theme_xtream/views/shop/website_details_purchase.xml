@@ -21,7 +21,7 @@
                                     <!-- Mostrar el nombre del producto como enlace -->
                                     <h5 class="mb-1" style="font-size: 20px;">
                                         <a t-att-href="'/shop/product/' + str(product_info['template_id'])" class="text-decoration-none" style="color: #000;">
-                                            <t t-esc="product_info['name'][:80] + ('..' if len(product_info['name']) > 45 else '')"/>
+                                            <t t-esc="product_info['name'][:72] + ('..' if len(product_info['name']) > 45 else '')"/>
                                         </a>
                                     </h5>
                                     <!-- <p class="text-muted mb-1" t-esc="product_info['brand']"></p> -->
@@ -156,7 +156,12 @@
                                 </div>
                                 <div class="d-flex justify-content-between">
                                     <span>Envío</span>
-                                    <span class="text-success">Gratis</span>
+                                    <t t-if="product_info['free_shipping']">
+                                        <span class="text-success">Gratis</span>
+                                    </t>
+                                    <t t-else="">
+                                        <span class="text-danger">No disponible</span>
+                                    </t>
                                 </div>
                                 <hr/>
                                 <div class="d-flex justify-content-between fw-bold">
