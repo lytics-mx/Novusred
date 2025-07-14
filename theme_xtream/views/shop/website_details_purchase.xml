@@ -48,36 +48,28 @@
                                 </h5>                              
                                 <ul class="list-unstyled tracking-list">
                                     <t t-foreach="purchase_details[0]['tracking_states']" t-as="state">
-                                        <li t-if="purchase_details[0]['tracking_states'].index(state) <= purchase_details[0]['state_index']" class="text-primary">
+                                        <li t-if="purchase_details[0]['tracking_states'].index(state) &lt;= purchase_details[0]['state_index']" class="text-primary">
                                             <span class="circle"></span>
                                             <t t-if="purchase_details[0]['tracking_states'].index(state) != 0">
                                                 <span class="fat-line"></span>
                                             </t>
-                                            <t t-if="state == 'confirm'">
-                                                Alistándose
+                                            <t t-if="state == 'done'">
+                                                <span t-esc="'Entregado'" class="badge bg-success ms-2"></span>
+                                            </t>
+                                            <t t-if="state == 'confirmed'">
+                                                <span t-esc="'Alistándose'" class="badge bg-warning ms-2"></span>
                                             </t>
                                             <t t-if="state == 'assigned'">
-                                                En camino
+                                                <span t-esc="'En camino'" class="badge bg-info ms-2"></span>
                                             </t>
-                                            <t t-if="state == 'done'">
-                                                Entregado
-                                                <span class="badge bg-success ms-2">Entregado</span>
-                                            </t>
+                                            <t t-esc="state"/>
                                         </li>
-                                        <li t-if="purchase_details[0]['tracking_states'].index(state) > purchase_details[0]['state_index']" class="text-muted">
+                                        <li t-if="purchase_details[0]['tracking_states'].index(state) &gt; purchase_details[0]['state_index']" class="text-muted">
                                             <span class="circle"></span>
                                             <t t-if="purchase_details[0]['tracking_states'].index(state) != 0">
                                                 <span class="fat-line"></span>
                                             </t>
-                                            <t t-if="state == 'confirm'">
-                                                Alistándose
-                                            </t>
-                                            <t t-if="state == 'assigned'">
-                                                En camino
-                                            </t>
-                                            <t t-if="state == 'done'">
-                                                Entregado
-                                            </t>
+                                            <t t-esc="state"/>
                                         </li>
                                     </t>
                                 </ul>
