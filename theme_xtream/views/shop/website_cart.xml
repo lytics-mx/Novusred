@@ -54,7 +54,7 @@
                             style="color:#0009ED;" class="small">Comprar ahora</a>
                             <span class="mx-1 text-muted">|</span>
                             <a t-att-href="'/shop/cart/save_for_later?line_id=%d&amp;product_id=%d' % (line.id, line.product_id.id)"
-                               class="btn btn-sm btn-secondary">Guardar para después</a>                
+                               style="color:#0009ED;" class="small">Guardar para después</a>                 
                           </div>
                         </div>
                         <div class="col-2 text-center">
@@ -130,22 +130,33 @@
                 <!-- Contenido de guardados -->
                 <div id="saved-tab-content" class="tab-content d-none">
                     <t t-if="saved_items and len(saved_items) > 0">
-                        <t t-foreach="saved_items" t-as="item">
-                            <div class="row align-items-center px-4 py-3 border-bottom">
-                                <div class="col-8">
-                                    <t t-esc="item['name']"/>
-                                </div>
-                                <div class="col-4 text-end">
-                                    <span class="text-muted">$<t t-esc="'%.2f' % item['price']"/></span>
-                                </div>
-                            </div>
-                        </t>
-                    </t>
-                    <t t-else="">
-                        <div class="p-5 text-center text-muted">
-                            <p>No tienes productos guardados</p>
-                        </div>
-                    </t>
+                      <t t-foreach="saved_items" t-as="item">
+                          <div class="row align-items-center px-4 py-3 border-bottom">
+                              <div class="col-2">
+                                  <img t-att-src="'/web/image/product.product/%d/image_128' % item['product_id']" class="img-fluid rounded" style="max-width:64px;"/>
+                              </div>
+                              <div class="col-5">
+                                  <div class="fw-semibold" style="font-size:15px;">
+                                      <span class="text-truncate d-block" style="max-width:100%;" t-att-title="item['name']">
+                                          <t t-esc="item['name']"/>
+                                      </span>
+                                  </div>
+                                  <div class="text-muted small mb-1">
+                                      <t t-if="item.get('brand_name')">
+                                          por <t t-esc="item['brand_name']"/>
+                                      </t>
+                                  </div>
+                              </div>
+                          </div>
+                      </t>
+                  </t>
+                  <t t-else="">
+                    <div class="p-5 text-center text-muted">
+                      <i class="fa fa-bookmark fa-3x mb-3"></i>
+                      <p>No tienes productos guardados</p>
+                      <a href="/subcategory" class="btn btn-primary">Ir a la tienda</a>
+                    </div>
+                  </t>
                 </div>
                 
               </div>
@@ -192,59 +203,20 @@
                   </div>
                 </div>
 
-                <div id="saved-footer" class="card-footer bg-white border-0 pt-4 pb-4 d-none" t-if="saved_items and len(saved_items) > 0">
-                  <div class="row align-items-center">
-                    <div class="col-md-6 col-12 mb-2 mb-md-0">
-                    <t t-if="order.partner_shipping_id">
-                      <div class="text-primary" style="font-size:15px;">
-                      <t t-if="order.partner_shipping_id.contact_address_complete">
-                        <span class="text-primary">Envío a:</span>
-                        <span class="d-inline-block text-primary" style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                        <t t-esc="order.partner_shipping_id.contact_address_complete"/>
-                        </span>
-                        <a class="ms-1" data-bs-toggle="collapse" href="#fullAddressCollapseGuardado" role="button" aria-expanded="false" aria-controls="fullAddressCollapseGuardado">
-                        <i class="fa fa-chevron-down small"></i>
-                        </a>
-                        <div class="collapse" id="fullAddressCollapseGuardado">
-                        <div class="mt-1">
-                          <span class="text-primary" t-field="order.partner_shipping_id.contact_address_complete" t-options="{}" />
-                        </div>
-                        </div>
-                      </t>
-                      </div>
-                    </t>
-                    </div>
-                    <div class="col-md-3 col-6 text-end">
-                    <div class="fw-semibold" style="font-size:16px;">
-                      Total guardado: $<span id="saved-total-amount">
-                      <t t-set="saved_subtotal" t-value="sum(item['price'] for item in saved_items)"/>
-                      <t t-esc="'%.2f' % saved_subtotal"/>
-                      </span>
-                    </div>
-                    </div>
-                    <div class="col-md-3 col-6 text-end">
-                    <button type="button" class="btn"
-                        id="shop-checkout-button"
-                        style="width:100%; height:48px; border-radius:6px; background:#4285f4; color:#fff; border:none; font-weight:500; font-size:18px; letter-spacing:0.5px; font-family:'Questrial', sans-serif;"
-                        onclick="window.location.href='/shop/checkout';">
-                      Continuar compra
-                    </button>
-                    </div>
-                  </div>
-                </div>
+
             </div>
           </div>
         </div>
 
         <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function() {
+            // Funcionalidad de pestañas
             const cartTabBtn = document.getElementById('cart-tab-btn');
             const savedTabBtn = document.getElementById('saved-tab-btn');
             const cartContent = document.getElementById('cart-tab-content');
             const savedContent = document.getElementById('saved-tab-content');
             const cartFooter = document.getElementById('cart-footer');
-            const savedFooter = document.getElementById('saved-footer');
-        
+            
             // Mostrar la pestaña activa según el parámetro
             const activeTab = '<t t-esc="active_tab"/>';
             if (activeTab === 'saved') {
@@ -253,17 +225,14 @@
                 savedContent.classList.remove('d-none');
                 cartContent.classList.add('d-none');
                 cartFooter.classList.add('d-none');
-                savedFooter.classList.remove('d-none');
             } else {
                 cartTabBtn.classList.add('active');
                 savedTabBtn.classList.remove('active');
                 cartContent.classList.remove('d-none');
                 savedContent.classList.add('d-none');
                 cartFooter.classList.remove('d-none');
-                savedFooter.classList.add('d-none');
             }
-
-        
+            
             // Cambio entre pestañas
             cartTabBtn.addEventListener('click', function() {
                 cartTabBtn.classList.add('active');
@@ -271,77 +240,88 @@
                 cartContent.classList.remove('d-none');
                 savedContent.classList.add('d-none');
                 cartFooter.classList.remove('d-none');
-                savedFooter.classList.add('d-none');
             });
-        
+            
             savedTabBtn.addEventListener('click', function() {
                 savedTabBtn.classList.add('active');
                 cartTabBtn.classList.remove('active');
                 savedContent.classList.remove('d-none');
                 cartContent.classList.add('d-none');
                 cartFooter.classList.add('d-none');
-                savedFooter.classList.remove('d-none');
             });
-        
-            // Función para actualizar los totales del carrito y guardados
-            function updateCartAndSavedTotals() {
-                let cartSubtotal = 0;
-                let cartTotalItems = 0;
-                let savedSubtotal = 0;
-        
-                // Actualizar totales del carrito
-                document.querySelectorAll('.cart-quantity-input').forEach(function(cartInput) {
-                    const qtyInput = cartInput.querySelector('input[name="set_qty"]');
-                    if (!qtyInput) return;
-                    const pricePerUnit = parseFloat(qtyInput.getAttribute('data-price'));
-                    const qty = parseInt(qtyInput.value) || 1;
-                    cartTotalItems += qty;
-                    const lineTotal = pricePerUnit * qty;
-                    cartSubtotal += lineTotal;
-                });
-        
-                // Actualizar totales de guardados
-                document.querySelectorAll('#saved-tab-content .row').forEach(function(savedRow) {
-                    const priceElement = savedRow.querySelector('.text-muted');
-                    if (!priceElement) return;
-                    const price = parseFloat(priceElement.textContent.replace('$', '')) || 0;
-                    savedSubtotal += price;
-                });
-        
-                // Actualizar subtotal del carrito
-                const cartSubtotalElement = document.getElementById('cart-total-amount');
-                if (cartSubtotalElement) {
-                    cartSubtotalElement.textContent = cartSubtotal.toFixed(2);
-                }
-        
-                // Actualizar subtotal de guardados
-                const savedSubtotalElement = document.getElementById('saved-total-amount');
-                if (savedSubtotalElement) {
-                    savedSubtotalElement.textContent = savedSubtotal.toFixed(2);
-                }
-        
-                // Actualizar contador del carrito
-                const cartCounterElement = document.querySelector('.nav-item .badge, #top_menu .my_cart_quantity');
-                if (cartCounterElement) {
-                    cartCounterElement.textContent = cartTotalItems;
-                }
-        
-                // Actualizar texto del tab de carrito
-                const cartTabText = document.querySelector('.nav-link[data-tab="cart-tab"]');
-                if (cartTabText) {
-                    cartTabText.innerHTML = `Carrito (${cartTotalItems})`;
-                }
+
+          // Función para actualizar el precio por línea y el total
+          function updateCartTotals() {
+            let subtotal = 0;
+            let totalItems = 0;
+            
+            document.querySelectorAll('.cart-quantity-input').forEach(function(cartInput) {
+              const qtyInput = cartInput.querySelector('input[name="set_qty"]');
+              if (!qtyInput) return;
+              const pricePerUnit = parseFloat(qtyInput.getAttribute('data-price'));
+              const qty = parseInt(qtyInput.value) || 1;
+              totalItems += qty;
+              const row = cartInput.closest('.row');
+              const lineTotalSpan = row.querySelector('.col-3 .fw-bold');
+              const lineTotal = pricePerUnit * qty;
+              subtotal += lineTotal;
+              if (lineTotalSpan) {
+                lineTotalSpan.textContent = '$' + lineTotal.toFixed(2);
+              }
+              
+              // Guardar cantidad en localStorage
+              const lineId = qtyInput.form.querySelector('input[name="line_id"]').value;
+              localStorage.setItem('cart_qty_' + lineId, qty);
+            });
+            
+            // Actualiza el subtotal
+            const subtotalElement = document.getElementById('cart-total-amount');
+            if (subtotalElement) {
+              subtotalElement.textContent = subtotal.toFixed(2);
             }
-        
-            // Calcular totales al cargar la página
-            updateCartAndSavedTotals();
-        
-            // Escuchar cambios en los inputs de cantidad del carrito
-            document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
-                input.addEventListener('input', function() {
-                    updateCartAndSavedTotals();
-                });
+            
+            // Actualiza el contador del carrito en el icono
+            const cartCounterElement = document.querySelector('.nav-item .badge, #top_menu .my_cart_quantity');
+            if (cartCounterElement) {
+              cartCounterElement.textContent = totalItems;
+            }
+            
+            // Actualiza también el texto del tab de carrito
+            const cartTabText = document.querySelector('.nav-link.active[data-tab="cart-tab"]');
+            if (cartTabText) {
+              cartTabText.innerHTML = `Carrito (${totalItems})`;
+            }
+          }
+
+          // Cargar cantidades guardadas en localStorage
+          document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
+            const lineId = input.form.querySelector('input[name="line_id"]').value;
+            const savedQty = localStorage.getItem('cart_qty_' + lineId);
+            if (savedQty) {
+              // Solo actualizar visualmente, sin enviar al servidor automáticamente
+              input.value = parseInt(savedQty);
+              input.setAttribute('value', parseInt(savedQty));
+            }
+          });
+          
+          // Calcular totales al cargar la página
+          updateCartTotals();
+          
+          // Escuchar cambios en los inputs de cantidad
+          document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
+            input.addEventListener('input', function() {
+              updateCartTotals();
             });
+            
+            // Evitar enviar el formulario si la cantidad no cambió
+            input.form.addEventListener('submit', function(e) {
+              const currentQty = parseInt(input.getAttribute('value'));
+              const newQty = parseInt(input.value);
+              if (currentQty === newQty) {
+                e.preventDefault();
+              }
+            });
+          });            
         });
         </script>
       </t>
