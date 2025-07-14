@@ -39,18 +39,23 @@ class WebsiteCheckout(http.Controller):
                 })
             else:  # Pendiente
                 if deadline_date:
-                    # Calcular la fecha relativa
                     days_diff = (deadline_date - today).days
                     if days_diff > 30:
                         relative_date = format_date(deadline_date, format='d \'de\' MMMM', locale='es')
                     elif days_diff > 7:
-                        relative_date = 'dentro de una semana'
+                        relative_date = 'Dentro de una semana'
+                    elif days_diff == 4:
+                        relative_date = 'Llega en 4 días'
+                    elif days_diff == 3:
+                        relative_date = 'Llega en 3 días'
+                    elif days_diff == 2:
+                        relative_date = 'Llega en 2 días'
                     elif days_diff == 1:
-                        relative_date = 'mañana'
+                        relative_date = 'Llega el día de mañana'
                     elif days_diff == 0:
-                        relative_date = 'hoy'
+                        relative_date = 'Llega hoy'
                     elif days_diff < 0:
-                        relative_date = 'atrasado'
+                        relative_date = 'Paquete atrasado'
                     else:
                         relative_date = f'en {days_diff} días'
                 else:
