@@ -10,18 +10,13 @@ class ShopController(WebsiteSale):
 
     @http.route('/shop/cart', type='http', auth="public", website=True)
     def cart(self, **post):
-        buy_now = post.get('buy_now') or request.httprequest.args.get('buy_now')
         tab = post.get('tab') or request.httprequest.args.get('tab')
         
         values = {}
-        
-        # Añadir saved_items a los valores
         values['saved_items'] = request.session.get('saved_for_later', [])
         values['active_tab'] = tab or 'cart'
         
-        print("ELEMENTOS GUARDADOS EN SESIÓN:", values['saved_items'])
-        
-        if buy_now:
+        if post.get('buy_now'):
             return request.render('theme_xtream.website_cart_buy_now', self._prepare_cart_values(**values))
         return super().cart(**post)
     
@@ -70,6 +65,7 @@ class ShopController(WebsiteSale):
                     line_id = int(line_id)
                     product_id = int(product_id)
                     
+                    # Filtrar la línea del carrito
                     line = order.order_line.filtered(lambda l: l.id == line_id)
                     if line:
                         # Guardar información del producto antes de eliminar la línea
@@ -88,6 +84,7 @@ class ShopController(WebsiteSale):
                                 'brand_id': line.product_id.product_tmpl_id.brand_type_id.id,
                             })
                         
+                        # Guardar el producto en la sesión
                         saved_items = request.session.get('saved_for_later', [])
                         saved_items.append(product_data)
                         request.session['saved_for_later'] = saved_items
