@@ -93,9 +93,13 @@ class ShopController(WebsiteSale):
                         
                         # Reducir la cantidad del producto en el carrito a 0
                         line.write({'product_uom_qty': 0})
+                        
+                        # Depuración
+                        _logger.info(f"Producto guardado para después: {product_data}")
+                        _logger.info(f"Productos guardados: {request.session['saved_for_later']}")
         except Exception as e:
             _logger.error(f"Error al guardar producto para después: {str(e)}", exc_info=True)
-            
+                
         return request.redirect('/shop/cart?tab=saved')
     
     @http.route('/shop/cart/remove_saved_item', type='http', auth="public", website=True)
