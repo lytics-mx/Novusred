@@ -37,9 +37,10 @@ class WebsiteCheckout(http.Controller):
             if move.state == 'done':
                 relative_date = format_date(delivery_date, format='d \'de\' MMMM', locale='es') if delivery_date else ''
                 delivered_products.append({
-                    'product_id': move.product_id.id,
-                    'product_name': move.product_id.name,
-                    'template_id': move.product_id.product_tmpl_id.id,  # ID del product.template
+                    'product_id': move.product_id.id,  # ID del product.product
+                    'product_tmpl_id': move.product_id.product_tmpl_id.id,  # ID del product.template
+                    'product_name': move.product_id.name,  # Nombre del product.product
+                    'product_tmpl_name': move.product_id.product_tmpl_id.name,  # Nombre del product.template
                     'quantity': move.product_qty,
                     'delivery_date': relative_date,
                     'purchase_date': format_date(purchase_date, format='d \'de\' MMMM', locale='es') if purchase_date else '',
@@ -75,9 +76,10 @@ class WebsiteCheckout(http.Controller):
                     relative_date = 'Sin fecha límite'
 
                 pending_products.append({
-                    'product_id': move.product_id.id,
-                    'product_name': move.product_id.name,
-                    'template_id': move.product_id.product_tmpl_id.id,  # ID del product.template
+                    'product_id': move.product_id.id,  # ID del product.product
+                    'product_tmpl_id': move.product_id.product_tmpl_id.id,  # ID del product.template
+                    'product_name': move.product_id.name,  # Nombre del product.product
+                    'product_tmpl_name': move.product_id.product_tmpl_id.name,  # Nombre del product.template
                     'quantity': move.product_qty,
                     'deadline_date': relative_date,
                     'purchase_date': format_date(purchase_date, format='d \'de\' MMMM', locale='es') if purchase_date else '',
