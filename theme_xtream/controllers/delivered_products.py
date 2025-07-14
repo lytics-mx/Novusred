@@ -5,13 +5,24 @@ from datetime import datetime, timedelta
 
 class WebsiteCheckout(http.Controller):
     @http.route(['/delivered_products'], type='http', auth='user', website=True)
-    def delivered_products(self):
+    def delivered_products(self, search=None, filter_state='all'):
         today = datetime.now().date()
         user = request.env.user
 
-        stock_moves = request.env['stock.move'].sudo().search([
-            ('partner_id', '=', user.partner_id.id)
-        ])
+        # Base domain for stock moves
+        domain = [('partner_id', '=', user.partner_id.id)]
+
+        # Apply search filter
+        if search:
+            domain += ['|',
+                       ('product_id.name', 'ilike', search),
+                       ('product_id.product_tmpl_id.name', 'ilike', search)]
+
+        # Apply state filter
+        if filter_state in ['waiting', 'assigned', 'done']:
+            domain += [('state', '=', filter_state)]
+
+        stock_moves = request.env['stock.move'].sudo().search(domain)
 
         delivered_products = []
         pending_products = []
@@ -75,7 +86,13 @@ class WebsiteCheckout(http.Controller):
                     'free_shipping': free_shipping,
                 })
 
+        # Count total products
+        product_count = len(stock_moves)
+
         return request.render('theme_xtream.delivered_template', {
             'delivered_products': delivered_products,
             'pending_products': pending_products,
+            'product_count': product_count,
+            'search': search,
+            'filter_state': filter_state,
         })
