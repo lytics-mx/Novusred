@@ -50,7 +50,7 @@
                                     <t t-foreach="purchase_details[0]['tracking_states']" t-as="state">
                                         <li t-if="purchase_details[0]['tracking_states'].index(state) &lt;= purchase_details[0]['state_index']" class="text-primary">
                                             <span class="circle"></span>
-                                            <t t-if="purchase_details[0]['tracking_states'].index(state) != 0">
+                                            <t t-if="purchase_details[0]['tracking_states'].index(state) != 0 and purchase_details[0]['state'] in ['done', 'confirmed']">
                                                 <span class="fat-line"></span>
                                             </t>
                                             <t t-esc="state_translation[state]"/>
@@ -58,7 +58,7 @@
                                         <li t-if="purchase_details[0]['tracking_states'].index(state) &gt; purchase_details[0]['state_index']" class="text-muted">
                                             <span class="circle"></span>
                                             <t t-if="purchase_details[0]['tracking_states'].index(state) != 0">
-                                                <span class="fat-line"></span>
+                                                <span class="fat-line" style="display: none;"></span>
                                             </t>
                                             <t t-esc="state_translation[state]"/>
                                         </li>
