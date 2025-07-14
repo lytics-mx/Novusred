@@ -114,13 +114,24 @@ class ProductTemplate(models.Model):
      def _compute_brand_website(self):
           for product in self:
                product.brand_website = product.brand_type_id.name if product.brand_type_id else ''
-               
+
      @api.depends('product_tag_ids', 'discounted_price')
      def _compute_list_price(self):
-          for product in self:
-               if product.discounted_price and product.product_tag_ids:
-                    product.list_price = product.discounted_price
-
+         for product in self:
+             if product.discounted_price and product.product_tag_ids:
+                 product.list_price = product.discounted_price
+     
+     @api.model
+     def create(self, vals):
+         product = super(ProductTemplate, self).create(vals)
+         product._compute_list_price()  # Forzar el cálculo después de crear el producto
+         return product
+     
+     def write(self, vals):
+         res = super(ProductTemplate, self).write(vals)
+         self._compute_list_price()  # Forzar el cálculo después de actualizar el producto
+         return res
+     
      @api.model
      def update_free_shipping_from_model(self):
           """Actualiza el campo free_shipping basado en el modelo free.shipping"""
