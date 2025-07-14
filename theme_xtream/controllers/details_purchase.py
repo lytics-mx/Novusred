@@ -8,6 +8,13 @@ class ProductDetails(http.Controller):
     def product_details(self, product_id, pick_origin):
         user = request.env.user
 
+        # Diccionario de traducción de estados
+        state_translation = {
+            'waiting': 'Alistándose',
+            'assigned': 'En camino',
+            'done': 'Entregado'
+        }
+
         # Buscar el producto por ID
         product = request.env['product.product'].sudo().browse(product_id)
 
@@ -33,13 +40,7 @@ class ProductDetails(http.Controller):
 
         # Preparar detalles de la compra y seguimiento
         purchase_details = []
-        tracking_states = ['waiting', 'confirmed', 'assigned', 'done']  # Estados relevantes
-        state_labels = {
-            'waiting': 'Esperando',
-            'confirmed': 'Alistándose',
-            'assigned': 'En camino',
-            'done': 'Entregado'
-        }
+        tracking_states = ['waiting', 'assigned', 'done']  # Estados relevantes
         for picking in pickings:
             for move in picking.move_ids_without_package.filtered(lambda m: m.product_id.id == product_id):
                 state = picking.state or 'waiting'
@@ -71,7 +72,6 @@ class ProductDetails(http.Controller):
                     'purchase_date': format_date(picking.date, format='d MMMM', locale='es') if picking.date else '',
                     'delivery_date': picking.date_done,
                     'state': state,  # Estado actual del picking
-                    'state_label': state_labels.get(state, state),  # Texto dinámico del estado
                     'state_index': state_index,  # Índice del estado en tracking_states
                     'tracking_states': tracking_states,  # Posibles estados
                     'price': move.product_id.list_price,  # Precio del producto
@@ -85,4 +85,5 @@ class ProductDetails(http.Controller):
         return request.render('theme_xtream.product_details_template', {
             'product_info': product_info,
             'purchase_details': purchase_details,
+            'state_translation': state_translation,  # Traducción de estados
         })
