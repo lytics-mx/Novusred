@@ -50,17 +50,15 @@
                                     <t t-foreach="purchase_details[0]['tracking_states']" t-as="state">
                                         <li t-if="purchase_details[0]['tracking_states'].index(state) &lt;= purchase_details[0]['state_index']" class="text-primary">
                                             <span class="circle"></span>
-                                            <!-- Mostrar la línea azul solo si el estado es 'done' -->
-                                            <t t-if="state == 'done'">
+                                            <t t-if="purchase_details[0]['tracking_states'].index(state) != 0">
                                                 <span class="fat-line"></span>
                                             </t>
                                             <t t-esc="state_translation[state]"/>
                                         </li>
                                         <li t-if="purchase_details[0]['tracking_states'].index(state) &gt; purchase_details[0]['state_index']" class="text-muted">
                                             <span class="circle"></span>
-                                            <!-- No mostrar la línea azul para estados incompletos -->
                                             <t t-if="purchase_details[0]['tracking_states'].index(state) != 0">
-                                                <span class="fat-line" style="display: none;"></span>
+                                                <span class="fat-line"></span>
                                             </t>
                                             <t t-esc="state_translation[state]"/>
                                         </li>
@@ -96,23 +94,21 @@
                                 width: 8px;
                                 height: 40px;
                                 border-radius: 4px;
-                                background-color: #2B65FB; /* Azul para estados completados */
                             }
-                            
                             .tracking-list li.text-primary .circle {
                                 background-color: #2B65FB;
                             }
-                            
                             .tracking-list li.text-primary .fat-line {
                                 background-color: #2B65FB;
                             }
-                            
                             .tracking-list li.text-muted .circle {
                                 background-color: #d3d3d3;
                             }
-                            
                             .tracking-list li.text-muted .fat-line {
                                 background-color: #d3d3d3;
+                            }
+                            .tracking-list li:last-child .fat-line {
+                                display: none;
                             }
                         </style>
 
