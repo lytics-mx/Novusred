@@ -46,8 +46,10 @@ class ShopController(WebsiteSale):
                         request.session['saved_for_later'] = saved_items
                         request.session.modified = True
                         
+                        # Depuración
                         _logger.info(f"Producto guardado para después: {product_data}")
+                        _logger.info(f"Productos guardados: {request.session['saved_for_later']}")
         except Exception as e:
             _logger.error(f"Error al guardar producto para después: {str(e)}", exc_info=True)
-            
+                
         return request.redirect('/shop/cart?tab=saved')
