@@ -1,7 +1,7 @@
 from odoo import http
 from odoo.http import request
 from babel.dates import format_date
-from datetime import datetime, timedelta
+from datetime import datetime
 
 class WebsiteCheckout(http.Controller):
     @http.route(['/delivered_products'], type='http', auth='user', website=True)
@@ -20,7 +20,7 @@ class WebsiteCheckout(http.Controller):
 
         for move in stock_moves:
             deadline_date = move.date_deadline.date() if move.date_deadline else None
-            delivery_date = move.date_done.date() if move.date_done else None
+            delivery_date = move.date.date() if hasattr(move, 'date') and move.date else None
 
             # Determinar el estado del producto
             if move.state == 'done':  # Entregado
