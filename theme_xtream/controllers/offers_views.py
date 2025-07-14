@@ -192,21 +192,3 @@ class OffersController(http.Controller):
             'product_tags': product_tags,
             'all_offer_tags': all_offer_tags,
         })
-    
-
-    @http.route('/offers/load_more', type='json', auth='public', website=True)
-    def load_more_products(self, offset=0, limit=9):
-        offset = int(offset)
-        limit = int(limit)
-        products = request.env['product.template'].search([], offset=offset, limit=limit)
-        has_more = len(products) == limit
-
-        product_data = [{
-            'id': product.id,
-            'name': product.name,
-            'list_price': product.list_price,
-            'discounted_price': product.discounted_price,
-            'image_url': f"/web/image/product.template/{product.id}/image_1920",
-        } for product in products]
-
-        return {'products': product_data, 'has_more': has_more} 
