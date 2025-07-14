@@ -1,6 +1,6 @@
 from odoo import http
 from odoo.http import request
-from datetime import datetime
+from datetime import datetime, timedelta
 from babel.dates import format_date
 
 class ProductDetails(http.Controller):
@@ -27,12 +27,12 @@ class ProductDetails(http.Controller):
         pickings = request.env['stock.picking'].sudo().search([
             ('partner_id', '=', user.partner_id.id),
             ('move_ids_without_package.product_id', '=', product_id),
-            ('origin', '=', pick_origin)
-        ], limit=1)
-
+            ('origin', '=', pick_origin)  # Filtrar por picking_origin
+        ], limit=1)  # Limitar a un registro para evitar múltiples resultados
+        
         # Verificar si se encontró un picking
         if pickings:
-            picking = pickings[0]
+            picking = pickings[0]  # Obtener el primer picking
             # Preparar detalles del envío
             shipping_details = {
                 'partner_name': picking.partner_id.name if picking.partner_id else '',
@@ -54,21 +54,22 @@ class ProductDetails(http.Controller):
         # Preparar datos del producto
         product_info = {
             'id': product.id,
-            'template_id': product.product_tmpl_id.id,
+            'template_id': product.product_tmpl_id.id,  # ID del product.template
             'name': product.name,
             'brand': brand_name,
             'brand_image_url': brand_image_url,
             'image_url': f'/web/image/product.product/{product.id}/image_1920',
-            'free_shipping': product.product_tmpl_id.free_shipping,
+            'free_shipping': product.product_tmpl_id.free_shipping,  # Agregar el atributo free_shipping
+
         }
 
         # Preparar detalles de la compra y seguimiento
         purchase_details = []
-        tracking_states = ['waiting', 'assigned', 'done']
+        tracking_states = ['waiting', 'assigned', 'done']  # Estados relevantes
         for picking in pickings:
             for move in picking.move_ids_without_package.filtered(lambda m: m.product_id.id == product_id):
                 state = picking.state or 'waiting'
-                state_index = tracking_states.index(state) if state in tracking_states else -1
+                state_index = tracking_states.index(state) if state in tracking_states else -1  # Validar estado
 
                 # Calcular días restantes para la fecha límite
                 date_deadline = picking.date_deadline
@@ -77,11 +78,11 @@ class ProductDetails(http.Controller):
                     today = datetime.today()
                     delta = (date_deadline - today).days
                     if state == 'done':
-                        days_remaining = f"Entregado el día {format_date(picking.date_done, format=\"d 'de' MMMM\", locale='es')}" if picking.date_done else "Entregado"
+                        days_remaining = f"Entregado el día {format_date(picking.date_done, format='d MMMM', locale='es')}" if picking.date_done else "Entregado"
                     elif delta > 30:
-                        days_remaining = format_date(date_deadline, format="d 'de' MMMM yyyy", locale='es')
+                        days_remaining = format_date(date_deadline, format='d MMMM yyyy', locale='es')  # Mostrar fecha específica si es mayor a un mes
                     elif delta > 7:
-                        days_remaining = format_date(date_deadline, format="d 'de' MMMM", locale='es')
+                        days_remaining = format_date(date_deadline, format='d MMMM', locale='es')  # Mostrar fecha específica si es mayor a una semana
                     elif delta > 1:
                         days_remaining = f"Llega en {delta} días"
                     elif delta == 1:
@@ -93,22 +94,23 @@ class ProductDetails(http.Controller):
 
                 purchase_details.append({
                     'quantity': move.product_qty,
-                    'purchase_date': format_date(picking.date, format="d 'de' MMMM", locale='es') if picking.date else '',
-                    'delivery_date': format_date(picking.date_done, format="d 'de' MMMM", locale='es') if picking.date_done else '',
-                    'state': state,
-                    'state_index': state_index,
-                    'tracking_states': tracking_states,
-                    'price': move.product_id.list_price,
-                    'total': move.product_qty * move.product_id.list_price,
-                    'picking_origin': picking.origin,
-                    'picking_name': picking.name,
-                    'date_deadline': format_date(date_deadline, format="d 'de' MMMM", locale='es') if date_deadline else '',
-                    'days_remaining': days_remaining,
+                    'purchase_date': format_date(picking.date, format='d MMMM', locale='es') if picking.date else '',
+                    'delivery_date': picking.date_done,
+                    'state': state,  # Estado actual del picking
+                    'state_index': state_index,  # Índice del estado en tracking_states
+                    'tracking_states': tracking_states,  # Posibles estados
+                    'price': move.product_id.list_price,  # Precio del producto
+                    'total': move.product_qty * move.product_id.list_price,  # Total calculado
+                    'picking_origin': picking.origin,  # Identificador del picking (origin)
+                    'picking_name': picking.name,  # Nombre del picking
+                    'date_deadline': format_date(date_deadline, format='d MMMM', locale='es') if date_deadline else '',
+                    'days_remaining': days_remaining,  # Texto del contador
                 })
 
         return request.render('theme_xtream.product_details_template', {
             'product_info': product_info,
             'purchase_details': purchase_details,
-            'state_translation': state_translation,
+            'state_translation': state_translation,  # Traducción de estados
             'shipping_details': shipping_details,
+
         })
