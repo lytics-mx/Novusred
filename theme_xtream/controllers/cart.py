@@ -87,12 +87,11 @@ class ShopController(WebsiteSale):
                         
                         # Guardar el producto en la pestaña "Guardados"
                         saved_items = request.session.get('saved_for_later', [])
-                        saved_items.append(product_data)
+                        # Evitar duplicados en "Guardados"
+                        if not any(item['id'] == line.id for item in saved_items):
+                            saved_items.append(product_data)
                         request.session['saved_for_later'] = saved_items
                         request.session.modified = True
-                        
-                        # Reducir la cantidad del producto en el carrito a 0
-                        line.write({'product_uom_qty': 0})
                         
                         # Depuración
                         _logger.info(f"Producto guardado para después: {product_data}")
