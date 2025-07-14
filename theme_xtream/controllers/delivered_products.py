@@ -26,17 +26,11 @@ class WebsiteCheckout(http.Controller):
             for move in picking.move_ids_without_package:
                 delivery_date = ''
                 if picking.date_done:
-                    delivery_year = picking.date_done.year
-                    delivery_date = format_date(picking.date_done, format='d MMMM', locale='es').capitalize()
-                    if delivery_year != current_year:
-                        delivery_date += f' {delivery_year}'  # Agregar el año si es diferente al actual
+                    delivery_date = format_date(picking.date_done, format='d \'de\' MMMM', locale='es')
 
                 purchase_date = ''
                 if picking.date:
-                    purchase_year = picking.date.year
-                    purchase_date = format_date(picking.date, format='d MMMM', locale='es').capitalize()
-                    if purchase_year != current_year:
-                        purchase_date += f' {purchase_year}'  # Agregar el año si es diferente al actual
+                    purchase_date = format_date(picking.date, format='d \'de\' MMMM', locale='es')
 
                 delivered_products.append({
                     'product_id': move.product_id.id,  # Agregar product_id
@@ -56,17 +50,11 @@ class WebsiteCheckout(http.Controller):
             for move in picking.move_ids_without_package:
                 scheduled_date = ''
                 if picking.scheduled_date:
-                    scheduled_year = picking.scheduled_date.year
-                    scheduled_date = format_date(picking.scheduled_date, format='d MMMM', locale='es').capitalize()
-                    if scheduled_year != current_year:
-                        scheduled_date += f' {scheduled_year}'  # Agregar el año si es diferente al actual
+                    scheduled_date = format_date(picking.scheduled_date, format='d \'de\' MMMM', locale='es')
 
                 purchase_date = ''
                 if picking.date:
-                    purchase_year = picking.date.year
-                    purchase_date = format_date(picking.date, format='d MMMM', locale='es').capitalize()
-                    if purchase_year != current_year:
-                        purchase_date += f' {purchase_year}'  # Agregar el año si es diferente al actual
+                    purchase_date = format_date(picking.date, format='d \'de\' MMMM', locale='es')
 
                 pending_products.append({
                     'product_id': move.product_id.id,  # Agregar product_id
