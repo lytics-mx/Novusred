@@ -72,48 +72,41 @@ class ShopController(WebsiteSale):
        
 
        
-    @http.route('/shop/cart/save_for_later', type='http', auth="public", website=True)
-    def cart_save_for_later(self, line_id=None, product_id=None, **kw):
-        try:
-            if line_id and product_id:
-                order = request.website.sale_get_order()
-                if order:
-                    line_id = int(line_id)
-                    product_id = int(product_id)
-                    
-                    # Filtrar la línea del carrito
-                    line = order.order_line.filtered(lambda l: l.id == line_id)
-                    if line:
-                        # Guardar información del producto en la sesión
-                        product_data = {
-                            'id': int(time.time()),  # ID temporal único
-                            'product_id': product_id,
-                            'template_id': line.product_id.product_tmpl_id.id,
-                            'name': line.product_id.display_name,
-                            'price': getattr(line.product_id, 'discounted_price', line.product_id.list_price),
-                            'quantity_available': line.product_id.qty_available,
-                        }
-                        
-                        if getattr(line.product_id.product_tmpl_id, 'brand_type_id', False):
-                            product_data.update({
-                                'brand_name': line.product_id.product_tmpl_id.brand_type_id.name,
-                                'brand_id': line.product_id.product_tmpl_id.brand_type_id.id,
-                            })
-                        
-                        saved_items = request.session.get('saved_for_later', [])
-                        # Evitar duplicados en la lista de guardados
-                        if not any(item['template_id'] == product_data['template_id'] for item in saved_items):
-                            saved_items.append(product_data)
-                        request.session['saved_for_later'] = saved_items
-                        request.session.modified = True
+    @http.route('/shop/cart/move_to_saved', type='http', auth="public", website=True)
+    def move_to_saved(self, line_id=None, **kw):
+        if line_id:
+            line_id = int(line_id)
+            order = request.website.sale_get_order()
+            if order:
+                # Filtrar la línea del carrito
+                line = order.order_line.filtered(lambda l: l.id == line_id)
+                if line:
+                    # Guardar información del producto en la sesión
+                    product_data = {
+                        'id': int(time.time()),  # ID temporal único
+                        'product_id': line.product_id.id,
+                        'template_id': line.product_id.product_tmpl_id.id,
+                        'name': line.product_id.display_name,
+                        'price': getattr(line.product_id, 'discounted_price', line.product_id.list_price),
+                        'quantity_available': line.product_id.qty_available,
+                    }
     
-                        # Eliminar la línea del carrito
-                        line.unlink()
-                        
-                        _logger.info(f"Producto guardado para después: {product_data}")
-        except Exception as e:
-            _logger.error(f"Error al guardar producto para después: {str(e)}", exc_info=True)
-            
+                    if getattr(line.product_id.product_tmpl_id, 'brand_type_id', False):
+                        product_data.update({
+                            'brand_name': line.product_id.product_tmpl_id.brand_type_id.name,
+                            'brand_id': line.product_id.product_tmpl_id.brand_type_id.id,
+                        })
+    
+                    saved_items = request.session.get('saved_for_later', [])
+                    # Evitar duplicados en la lista de guardados
+                    if not any(item['template_id'] == product_data['template_id'] for item in saved_items):
+                        saved_items.append(product_data)
+                    request.session['saved_for_later'] = saved_items
+                    request.session.modified = True
+    
+                    # Eliminar la línea del carrito
+                    line.unlink()
+    
         return request.redirect('/shop/cart?tab=saved')
        
     @http.route('/shop/cart/remove_saved_item', type='http', auth="public", website=True)
