@@ -80,9 +80,9 @@ class ProductDetails(http.Controller):
                     if state == 'done':
                         days_remaining = f"Entregado el día {format_date(picking.date_done, format='d MMMM', locale='es')}" if picking.date_done else "Entregado"
                     elif delta > 30:
-                        days_remaining = format_date(date_deadline, format='d MMMM yyyy', locale='es')  # Mostrar fecha específica si es mayor a un mes
+                        days_remaining = format_date(date_deadline, format="d 'de' MMMM yyyy", locale='es')  # Mostrar fecha específica si es mayor a un mes
                     elif delta > 7:
-                        days_remaining = format_date(date_deadline, format='d MMMM', locale='es')  # Mostrar fecha específica si es mayor a una semana
+                        days_remaining = format_date(date_deadline, format="d 'de' MMMM", locale='es')  # Mostrar fecha específica si es mayor a una semana
                     elif delta > 1:
                         days_remaining = f"Llega en {delta} días"
                     elif delta == 1:
@@ -94,7 +94,7 @@ class ProductDetails(http.Controller):
 
                 purchase_details.append({
                     'quantity': move.product_qty,
-                    'purchase_date': format_date(picking.date, format='d MMMM', locale='es') if picking.date else '',
+                    'purchase_date': format_date(picking.date, format="d 'de' MMMM", locale='es') if picking.date else '',
                     'delivery_date': picking.date_done,
                     'state': state,  # Estado actual del picking
                     'state_index': state_index,  # Índice del estado en tracking_states
@@ -103,7 +103,7 @@ class ProductDetails(http.Controller):
                     'total': move.product_qty * move.product_id.list_price,  # Total calculado
                     'picking_origin': picking.origin,  # Identificador del picking (origin)
                     'picking_name': picking.name,  # Nombre del picking
-                    'date_deadline': format_date(date_deadline, format='d MMMM', locale='es') if date_deadline else '',
+                    'date_deadline': format_date(date_deadline, format="d 'de' MMMM", locale='es') if date_deadline else '',
                     'days_remaining': days_remaining,  # Texto del contador
                 })
 
