@@ -1,5 +1,5 @@
 <odoo>
-  <template id="website_cart" inherit_id="website_sale.cart">
+  <template id="website_saved_items" inherit_id="website_sale.cart">
     <xpath expr="." position="replace">
       <t t-call="website.layout">
         <div id="wrap" class="oe_website_sale" style="background:#ededed;min-height:100vh;">
@@ -7,26 +7,25 @@
             <div class="card shadow-sm rounded" style="max-width:900px;margin:auto;background:#fff;">
               <div class="card-body p-0" style="background-color:#fff;">
                 <div class="px-4 pt-4 pb-2">
-                  <h3>Carrito</h3>
+                  <h3>Guardados para después</h3>
                 </div>
                 <hr class="my-0"/>
-                <div id="cart-tab-content" class="tab-content">
-                  <t t-if="website_sale_order and website_sale_order.order_line">
-                    <t t-foreach="website_sale_order.order_line" t-as="line">
+                <div id="saved-tab-content" class="tab-content">
+                  <t t-if="saved_items and len(saved_items) > 0">
+                    <t t-foreach="saved_items" t-as="item">
                       <div class="row align-items-center px-4 py-3 border-bottom">
                         <div class="col-8">
-                          <t t-esc="line.product_id.display_name"/>
+                          <t t-esc="item['name']"/>
                         </div>
                         <div class="col-4 text-end">
-                          <a t-att-href="'/shop/cart/save_for_later?line_id=%d&amp;product_id=%d' % (line.id, line.product_id.id)"
-                             class="btn btn-sm btn-secondary">Guardar para después</a>
+                          <span class="text-muted">$<t t-esc="'%.2f' % item['price']"/></span>
                         </div>
                       </div>
                     </t>
                   </t>
                   <t t-else="">
                     <div class="p-5 text-center text-muted">
-                      <p>Tu carrito está vacío</p>
+                      <p>No tienes productos guardados</p>
                     </div>
                   </t>
                 </div>

@@ -8,15 +8,20 @@ _logger = logging.getLogger(__name__)
 class ShopController(WebsiteSale):
 
     @http.route('/shop/cart', type='http', auth="public", website=True)
-    def cart(self, tab=None, **kw):
+    def cart(self, **kw):
         order = request.website.sale_get_order()
-        saved_items = request.session.get('saved_for_later', [])
         values = {
             'website_sale_order': order,
-            'saved_items': saved_items,
-            'active_tab': tab or 'cart',
         }
-        return request.render("theme_xtream.website_cart_buy_now", values)
+        return request.render("theme_xtream.website_cart", values)
+
+    @http.route('/shop/saved_items', type='http', auth="public", website=True)
+    def saved_items(self, **kw):
+        saved_items = request.session.get('saved_for_later', [])
+        values = {
+            'saved_items': saved_items,
+        }
+        return request.render("theme_xtream.website_saved_items", values)
 
     @http.route(['/shop/cart/save_for_later'], type='http', auth="public", website=True)
     def save_for_later(self, line_id=None, product_id=None, **kwargs):
@@ -46,10 +51,11 @@ class ShopController(WebsiteSale):
                         request.session['saved_for_later'] = saved_items
                         request.session.modified = True
                         
-                        # Depuración
+                        # Reducir la cantidad del producto en el carrito a 0
+                        line.write({'product_uom_qty': 0})
+                        
                         _logger.info(f"Producto guardado para después: {product_data}")
-                        _logger.info(f"Productos guardados: {request.session['saved_for_later']}")
         except Exception as e:
             _logger.error(f"Error al guardar producto para después: {str(e)}", exc_info=True)
-                
-        return request.redirect('/shop/cart?tab=saved')
+            
+        return request.redirect('/shop/saved_items')
