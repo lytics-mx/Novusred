@@ -39,7 +39,6 @@ class ProductDetails(http.Controller):
                 'partner_address': picking.partner_id.contact_address if picking.partner_id else '',
                 'responsible': picking.user_id.name if picking.user_id else '',
                 'carrier': picking.carrier_id.name if picking.carrier_id else '',
-                'free_shipping': picking.carrier_id.free_shipping if picking.carrier_id else False,
                 'shipping_weight': picking.shipping_weight or 0.0,
             }
         else:
