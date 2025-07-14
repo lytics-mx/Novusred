@@ -55,8 +55,8 @@ class ShopController(WebsiteSale):
        
 
        
-    @http.route('/shop/cart/save_for_later', type='http', auth="public", website=True)
-    def cart_save_for_later(self, line_id=None, product_id=None, **kw):
+    @http.route(['/shop/cart/save_for_later'], type='http', auth="public", website=True)
+    def save_for_later(self, line_id=None, product_id=None, **kwargs):
         try:
             if line_id and product_id:
                 order = request.website.sale_get_order()
