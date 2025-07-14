@@ -6,25 +6,24 @@ from datetime import datetime, timedelta
 class WebsiteCheckout(http.Controller):
     @http.route(['/delivered_products'], type='http', auth='user', website=True)
     def delivered_products(self):
-        today = datetime.now().date()  # Fecha actual
+        today = datetime.now().date()
         user = request.env.user
 
-        # Filtrar movimientos relacionados con el usuario actual
         stock_moves = request.env['stock.move'].sudo().search([
             ('partner_id', '=', user.partner_id.id)
         ])
 
-        # Clasificar productos entregados y pendientes
         delivered_products = []
         pending_products = []
 
         for move in stock_moves:
             deadline_date = move.date_deadline.date() if move.date_deadline else None
             delivery_date = move.date.date() if move.date else None
-            purchase_date = move.date.date() if move.date else None  # Fecha de compra
+            purchase_date = move.date.date() if move.date else None
 
-            # Determinar el estado del producto
-            if move.state == 'done':  # Entregado
+            free_shipping = move.product_id.product_tmpl_id.free_shipping
+
+            if move.state == 'done':
                 relative_date = format_date(delivery_date, format='d \'de\' MMMM', locale='es') if delivery_date else ''
                 delivered_products.append({
                     'product_id': move.product_id.id,
@@ -36,8 +35,9 @@ class WebsiteCheckout(http.Controller):
                     'state': move.state,
                     'picking_origin': move.picking_id.origin,
                     'picking_name': move.picking_id.name,
+                    'free_shipping': free_shipping,
                 })
-            else:  # Pendiente
+            else:
                 if deadline_date:
                     days_diff = (deadline_date - today).days
                     if days_diff > 30:
@@ -71,6 +71,7 @@ class WebsiteCheckout(http.Controller):
                     'state': move.state,
                     'picking_origin': move.picking_id.origin,
                     'picking_name': move.picking_id.name,
+                    'free_shipping': free_shipping,
                 })
 
         return request.render('theme_xtream.delivered_template', {
