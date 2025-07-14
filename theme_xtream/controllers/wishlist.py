@@ -22,7 +22,8 @@ class WishlistController(http.Controller):
         if selected_ids:
             # Convertir los IDs a enteros y eliminar los productos seleccionados
             wishlist_items = request.env['product.wishlist'].sudo().browse([int(item_id) for item_id in selected_ids])
-            wishlist_items.unlink()
+            if wishlist_items:
+                wishlist_items.unlink()  # Eliminar todos los productos seleccionados de una sola vez
         
         return request.redirect('/shop/wishlist')
     
