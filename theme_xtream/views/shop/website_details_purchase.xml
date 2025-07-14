@@ -146,7 +146,7 @@
                     <!-- Derecha -->
                     <div class="col-md-4">
                         <div class="card shadow-sm" style="border: none;">
-                            <div class="card-body">
+                            <div class="card-body" style="background-color: #fff;">
                                 <h5 class="mb-3">Detalle de la compra</h5>
                                 <p class="text-muted mb-3" style="color: #777777; font-size: 16px;" t-esc="purchase_details[0]['purchase_date']"></p>
                                 <hr/>
@@ -176,8 +176,9 @@
                                     <span style="color: #777777; font-size: 16px;">Total</span>
                                     <span style="color: #777777; font-size: 16px;" t-esc="purchase_details[0]['total']"></span>
                                 </div>
-                                <a href="javascript:void(0);" class="text-primary mt-3 d-block" onclick="toggleShippingDetails()">Detalles del pago y envío ^</a>
-                                
+                                <a href="javascript:void(0);" class="text-primary mt-3 d-block" onclick="toggleShippingDetails()">
+                                    Detalles del pago y envío <span id="toggle-icon">^</span>
+                                </a>                                
                                 <!-- Contenedor oculto para los detalles del envío -->
                                 <div id="shipping-details" style="display: none; margin-top: 15px;">
                                     <t t-if="shipping_details">
@@ -211,13 +212,16 @@
                                 <script>
                                     function toggleShippingDetails() {
                                         const details = document.getElementById('shipping-details');
+                                        const icon = document.getElementById('toggle-icon');
                                         if (details.style.display === 'none') {
                                             details.style.display = 'block';
+                                            icon.textContent = 'v'; // Cambiar a flecha hacia abajo
                                         } else {
                                             details.style.display = 'none';
+                                            icon.textContent = '^'; // Cambiar a flecha hacia arriba
                                         }
                                     }
-                                </script>                                                          
+                                </script>                                                        
                             </div>
                         </div>
                     </div>
