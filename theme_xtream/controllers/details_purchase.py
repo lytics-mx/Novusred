@@ -49,7 +49,6 @@ class ProductDetails(http.Controller):
                 'partner_address': '',
                 'responsible': '',
                 'carrier': '',
-                'free_shipping': False,
                 'shipping_weight': 0.0,
             }
 
@@ -62,7 +61,6 @@ class ProductDetails(http.Controller):
             'brand_image_url': brand_image_url,
             'image_url': f'/web/image/product.product/{product.id}/image_1920',
             'free_shipping': product.product_tmpl_id.free_shipping,  # Agregar el atributo free_shipping
-            'free_shipping': picking.carrier_id.free_shipping if picking.carrier_id else False,
 
         }
 
