@@ -28,13 +28,9 @@ class ShopController(WebsiteSale):
             name = re.sub(r'[^\w\s-]', '', name).strip().replace(' ', '-').lower()
             return name
 
-        # Validar que el nombre en la URL coincida con el nombre real del producto (formateado o igual)
+        # Validar que el nombre en la URL coincida con el nombre real del producto
         formatted_name = format_product_name(product_template.name)
-        real_name = product_template.name.lower().replace(' ', '-')
-        if product_name and not (
-            formatted_name == product_name.lower() or
-            real_name == product_name.lower()
-        ):
+        if product_name and formatted_name != product_name.lower():
             _logger.warning(f"El nombre del producto en la URL no coincide con el nombre real del producto.")
             return request.not_found()
 
