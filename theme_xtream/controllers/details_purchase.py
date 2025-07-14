@@ -28,18 +28,30 @@ class ProductDetails(http.Controller):
             ('partner_id', '=', user.partner_id.id),
             ('move_ids_without_package.product_id', '=', product_id),
             ('origin', '=', pick_origin)  # Filtrar por picking_origin
-        ])
-
-        # Preparar detalles del envío
-        shipping_details = {
-            'partner_name': picking.partner_id.name if picking.partner_id else '',
-            'partner_address': picking.partner_id.contact_address if picking.partner_id else '',
-            'responsible': picking.user_id.name if picking.user_id else '',
-            'carrier': picking.carrier_id.name if picking.carrier_id else '',
-            'free_shipping': picking.carrier_id.free_shipping if picking.carrier_id else False,
-            'shipping_weight': picking.shipping_weight or 0.0,
-        }
-
+        ], limit=1)  # Limitar a un registro para evitar múltiples resultados
+        
+        # Verificar si se encontró un picking
+        if pickings:
+            picking = pickings[0]  # Obtener el primer picking
+            # Preparar detalles del envío
+            shipping_details = {
+                'partner_name': picking.partner_id.name if picking.partner_id else '',
+                'partner_address': picking.partner_id.contact_address if picking.partner_id else '',
+                'responsible': picking.user_id.name if picking.user_id else '',
+                'carrier': picking.carrier_id.name if picking.carrier_id else '',
+                'free_shipping': picking.carrier_id.free_shipping if picking.carrier_id else False,
+                'shipping_weight': picking.shipping_weight or 0.0,
+            }
+        else:
+            # Si no hay pickings, inicializar shipping_details vacío
+            shipping_details = {
+                'partner_name': '',
+                'partner_address': '',
+                'responsible': '',
+                'carrier': '',
+                'free_shipping': False,
+                'shipping_weight': 0.0,
+            }
 
         # Preparar datos del producto
         product_info = {
