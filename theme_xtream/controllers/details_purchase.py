@@ -32,6 +32,7 @@ class ProductDetails(http.Controller):
 
         # Preparar datos del producto
         product_info = {
+            'id': product.id,
             'name': product.name,
             'brand': brand_name,  # Nombre de la marca
             'brand_image_url': brand_image_url,  # URL de la imagen de la marca
