@@ -30,6 +30,17 @@ class ProductDetails(http.Controller):
             ('origin', '=', pick_origin)  # Filtrar por picking_origin
         ])
 
+        # Preparar detalles del envío
+        shipping_details = {
+            'partner_name': picking.partner_id.name if picking.partner_id else '',
+            'partner_address': picking.partner_id.contact_address if picking.partner_id else '',
+            'responsible': picking.user_id.name if picking.user_id else '',
+            'carrier': picking.carrier_id.name if picking.carrier_id else '',
+            'free_shipping': picking.carrier_id.free_shipping if picking.carrier_id else False,
+            'shipping_weight': picking.shipping_weight or 0.0,
+        }
+
+
         # Preparar datos del producto
         product_info = {
             'id': product.id,
@@ -39,6 +50,8 @@ class ProductDetails(http.Controller):
             'brand_image_url': brand_image_url,
             'image_url': f'/web/image/product.product/{product.id}/image_1920',
             'free_shipping': product.product_tmpl_id.free_shipping,  # Agregar el atributo free_shipping
+            'free_shipping': picking.carrier_id.free_shipping if picking.carrier_id else False,
+
         }
 
         # Preparar detalles de la compra y seguimiento
@@ -89,4 +102,6 @@ class ProductDetails(http.Controller):
             'product_info': product_info,
             'purchase_details': purchase_details,
             'state_translation': state_translation,  # Traducción de estados
+            'shipping_details': shipping_details,
+
         })

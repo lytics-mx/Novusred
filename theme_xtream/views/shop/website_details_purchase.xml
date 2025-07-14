@@ -148,9 +148,7 @@
                         <div class="card shadow-sm" style="border: none;">
                             <div class="card-body">
                                 <h5 class="mb-3">Detalle de la compra</h5>
-                                <p class="mb-3" style="color: #777777; font-size: 16px;">
-                                    <t t-esc="purchase_details[0]['purchase_date'].capitalize()"/>
-                                </p>
+                                <p class="text-muted mb-3" style="color: #777777; font-size: 16px;" t-esc="purchase_details[0]['purchase_date']"></p>
                                 <hr/>
                                 <div class="d-flex justify-content-between">
                                     <span style="color: #777777; font-size: 16px;">Producto</span>
@@ -163,11 +161,49 @@
                                     </div>
                                 </t>
                                 <hr/>
-                                <div class="d-flex justify-content-between fw-bold">
+                                <div class="d-flex justify-content-between">
                                     <span style="color: #777777; font-size: 16px;">Total</span>
                                     <span style="color: #777777; font-size: 16px;" t-esc="purchase_details[0]['total']"></span>
                                 </div>
-                                <a href="#" class="text-primary mt-3 d-block">Detalles del pago y envío ^</a>
+                                <a href="javascript:void(0);" class="text-primary mt-3 d-block" onclick="toggleShippingDetails()">Detalles del pago y envío ^</a>
+                                
+                                <!-- Contenedor oculto para los detalles del envío -->
+                                <div id="shipping-details" style="display: none; margin-top: 15px;">
+                                    <div class="d-flex justify-content-between">
+                                        <span style="color: #777777; font-size: 16px;">Domicilio</span>
+                                        <span style="color: #777777; font-size: 16px;" t-esc="shipping_details['partner_address']"/>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span style="color: #777777; font-size: 16px;">Responsable</span>
+                                        <span style="color: #777777; font-size: 16px;" t-esc="shipping_details['responsible']"/>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span style="color: #777777; font-size: 16px;">Transportista</span>
+                                        <span style="color: #777777; font-size: 16px;" t-esc="shipping_details['carrier']"/>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span style="color: #777777; font-size: 16px;">Envío Gratis</span>
+                                        <span style="color: #777777; font-size: 16px;">
+                                            <t t-if="shipping_details['free_shipping']">Sí</t>
+                                            <t t-else="">No</t>
+                                        </span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span style="color: #777777; font-size: 16px;">Peso del Paquete</span>
+                                        <span style="color: #777777; font-size: 16px;" t-esc="shipping_details['shipping_weight']"/> kg
+                                    </div>
+                                </div> 
+                                
+                                <script>
+                                    function toggleShippingDetails() {
+                                        const details = document.getElementById('shipping-details');
+                                        if (details.style.display === 'none') {
+                                            details.style.display = 'block';
+                                        } else {
+                                            details.style.display = 'none';
+                                        }
+                                    }
+                                </script>                                                          
                             </div>
                         </div>
                     </div>
