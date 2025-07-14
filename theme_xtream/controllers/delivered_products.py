@@ -55,7 +55,7 @@ class WebsiteCheckout(http.Controller):
                     elif days_diff == 0:
                         relative_date = 'Llega hoy'
                     elif days_diff < 0:
-                        relative_date = format_date(deadline_date, format='d \'de\' MMMM', locale='es')
+                        relative_date = f'Se entregará el {format_date(deadline_date, format="d \'de\' MMMM", locale="es")}'
                     else:
                         relative_date = f'en {days_diff} días'
                 else:
