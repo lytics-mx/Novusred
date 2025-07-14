@@ -17,7 +17,7 @@ class WishlistController(http.Controller):
     @http.route('/shop/wishlist/clear', type='http', auth='public', methods=['POST'], website=True)
     def clear_wishlist(self):
         # Obtener los IDs de los productos seleccionados desde el formulario
-        selected_ids = request.httprequest.form.getlist('wishlist_select')
+        selected_ids = request.httprequest.form.getlist('wishlist_select[]')  # Asegúrate de usar el nombre correcto
         
         if selected_ids:
             # Convertir los IDs a enteros y eliminar los productos seleccionados
