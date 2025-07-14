@@ -37,19 +37,48 @@
                         <t t-if="product['state'] == 'done'">
                             <div class="col-12 mb-3">
                                 <div class="card p-3 shadow-sm" style="background-color:rgb(255, 255, 255); border: none;">
-                                    <div class="d-flex flex-row align-items-center">
+                                    <!-- Fecha de compra -->
+                                    <div class="d-flex flex-column align-items-start">
+                                        <p class="mb-0" style="font-size: 16px; color: #000;">
+                                            <t t-esc="product['purchase_date']"/>
+                                        </p>
+                                    </div>
+                                    <!-- Imagen del producto -->
+                                    <div class="d-flex flex-row align-items-center mt-1">
                                         <div class="me-3" style="flex: 0 0 100px;">
                                             <img t-att-src="product['image_url']" alt="Imagen producto" class="img-fluid rounded" style="width: 100px; height: auto;" />
                                         </div>
-                                        <div class="flex-grow-1">
-                                            <h5 class="mb-1"><t t-esc="product['product_name']"/></h5>
-                                            <p class="mb-1">Entregado el <t t-esc="product['delivery_date']"/></p>
-                                            <p class="mb-1">Cantidad: <t t-esc="product['quantity']"/> unidad(es)</p>
+                                        <!-- Detalles del producto -->
+                                        <div class="flex-grow-1 me-3">
+                                            <p class="mb-1" style="color: #FF5207; font-size: 16px;">
+                                                <t t-esc="product['purchase_date']"/>
+                                            </p>
+                                            
+                                            <p class="mb-1" style="color: #000; font-size: 16px;">Entregado el <t t-esc="product['delivery_date']"/></p>
+                                            <!-- Envío gratis -->
                                             <t t-if="product.get('free_shipping')">
                                                 <p class="mb-1" style="color: #FF5207; font-size: 18px; font-style: italic; font-weight: bold;">
                                                     Envío gratis
                                                 </p>
-                                            </t>
+                                            </t>                                            
+                                            
+                                            <p class="text-muted mb-1">
+                                                <t t-esc="product['product_name'][:100] + ('...' if len(product['product_name']) > 113 else '')"/>
+                                            </p>
+
+                                            <p class="text-muted"><t t-esc="product['quantity']"/> Unidad</p>                                
+                                        </div>
+                                        <!-- Enviar mensaje -->
+                                        <div class="me-3">
+                                            <a href="#" class="btn btn-link text-primary" style="font-size:16px; font-family:'Questrial', sans-serif;">Enviar mensaje</a>
+                                        </div>
+                                        <!-- Botones -->
+                                        <div class="d-flex flex-column" style="min-width: 150px;">
+                                            <a t-att-href="'/product_details/%d/%s' % (product['product_id'], product['picking_origin'])"
+                                               class="btn mb-2"
+                                               style="background-color: #3483FA; border: none; color: #fff; font-size: 16px; font-family: 'Questrial', sans-serif; border-radius: 8px; padding: 10px 24px; box-shadow: 0 2px 8px rgba(52,131,250,0.15); text-align: center;">
+                                                Ingresar
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -59,23 +88,53 @@
 
                     <!-- Productos pendientes -->
                     <t t-foreach="pending_products" t-as="product">
-                        <t t-if="product['state'] != 'done'">
+                        <t t-if="product['state'] != 'done' and product['state'] != 'draft'">
                             <div class="col-12 mb-3">
                                 <div class="card p-3 shadow-sm" style="background-color:rgb(255, 255, 255); border: none;">
-                                    <div class="d-flex flex-row align-items-center">
+                                    <!-- Fecha de compra -->
+                                    <div class="d-flex flex-column align-items-start">
+                                        <p class="mb-0" style="font-size: 16px; color: #000;">
+                                            <t t-esc="product['purchase_date']"/>
+                                        </p>
+                                    </div>
+                                    <!-- Imagen del producto -->
+                                    <div class="d-flex flex-row align-items-center mt-1">
                                         <div class="me-3" style="flex: 0 0 100px;">
                                             <img t-att-src="product['image_url']" alt="Imagen producto" class="img-fluid rounded" style="width: 100px; height: auto;" />
                                         </div>
-                                        <div class="flex-grow-1">
-                                            <h5 class="mb-1"><t t-esc="product['product_name']"/></h5>
-                                            <p class="mb-1">Estado: <t t-esc="product['state']"/></p>
-                                            <p class="mb-1">Fecha límite: <t t-esc="product['deadline_date']"/></p>
-                                            <p class="mb-1">Cantidad: <t t-esc="product['quantity']"/> unidad(es)</p>
+                                        <!-- Detalles del producto -->
+                                        <div class="flex-grow-1 me-3">
+                                            <p class="mb-1" style="color: #FF5207; font-size: 16px;">En camino</p>
+                                    
+                                        <!-- Estado de fecha estimada de entrega -->
+                                            <p class="mb-1" style="color: #000; font-size: 16px;">
+                                                <t t-esc="product['deadline_date']"/>
+                                            </p>
+                                        <!-- Envío gratis -->
                                             <t t-if="product.get('free_shipping')">
                                                 <p class="mb-1" style="color: #FF5207; font-size: 18px; font-style: italic; font-weight: bold;">
                                                     Envío gratis
                                                 </p>
                                             </t>
+                                            <p class="text-muted mb-1">
+                                                <t t-esc="product['product_name'][:100] + ('...' if len(product['product_name']) > 113 else '')"/>
+                                            </p>
+                                            <p class="text-muted"><t t-esc="product['quantity']"/> Unidad</p>                                
+                                        </div>
+                                        <!-- Enviar mensaje -->
+                                        <div class="me-3">
+                                            <a href="#" class="btn btn-link text-primary" style="font-size:16px; font-family:'Questrial', sans-serif;">Enviar mensaje</a>
+                                        </div>
+                                        <!-- Botones -->
+                                        <div class="d-flex flex-column" style="min-width: 150px;">
+                                            <a t-att-href="'/product_details/%d/%s' % (product['product_id'], product['picking_origin'])"
+                                               class="btn mb-2"
+                                               style="background-color: #3483FA; border: none; color: #fff; font-size: 16px; font-family: 'Questrial', sans-serif; border-radius: 8px; padding: 10px 24px; box-shadow: 0 2px 8px rgba(52,131,250,0.15); text-align: center;">
+                                                Ingresar
+                                            </a>                                            
+                                            <button type="button" class="btn" id="bundle-buy-now" style="width:100%; height:48px; border-radius:6px; background:#a8ccff; color:#1757e6; border:none; font-weight:500; font-size:18px; letter-spacing:0.5px; font-family:'Questrial', sans-serif; margin-top: 10px;">
+                                                Volver a comprar
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
