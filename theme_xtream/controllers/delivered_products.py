@@ -1,5 +1,6 @@
 from odoo import http
 from odoo.http import request
+from babel.dates import format_date  # Importar babel para formatear fechas
 
 class WebsiteCheckout(http.Controller):
     @http.route(['/delivered_products'], type='http', auth='user', website=True)
@@ -24,8 +25,8 @@ class WebsiteCheckout(http.Controller):
                     'product_id': move.product_id.id,  # Agregar product_id
                     'product_name': move.product_id.name,
                     'quantity': move.product_qty,
-                    'delivery_date': picking.date_done,
-                    'purchase_date': picking.date.strftime('%d de %B') if picking.date else '',  # Formato de fecha
+                    'delivery_date': format_date(picking.date_done, format='d MMMM yyyy', locale='es') if picking.date_done else '',
+                    'purchase_date': format_date(picking.date, format='d MMMM yyyy', locale='es') if picking.date else '',  # Formato de fecha en español
                     'image_url': f'/web/image/product.product/{move.product_id.id}/image_1920',
                     'state': picking.state,  # Agregar el estado del stock.picking
                     'picking_origin': picking.origin,  # Identificador del picking (origin)
@@ -40,8 +41,8 @@ class WebsiteCheckout(http.Controller):
                     'product_id': move.product_id.id,  # Agregar product_id
                     'product_name': move.product_id.name,
                     'quantity': move.product_qty,
-                    'scheduled_date': picking.scheduled_date,
-                    'purchase_date': picking.date.strftime('%d de %B') if picking.date else '',  # Formato de fecha
+                    'scheduled_date': format_date(picking.scheduled_date, format='d MMMM yyyy', locale='es') if picking.scheduled_date else '',
+                    'purchase_date': format_date(picking.date, format='d MMMM yyyy', locale='es') if picking.date else '',  # Formato de fecha en español
                     'image_url': f'/web/image/product.product/{move.product_id.id}/image_1920',
                     'state': picking.state,  # Agregar el estado del stock.picking
                     'picking_origin': picking.origin,  # Identificador del picking (origin)
