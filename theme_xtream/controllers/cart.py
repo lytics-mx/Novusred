@@ -106,12 +106,15 @@ class ShopController(WebsiteSale):
                         request.session['saved_for_later'] = saved_items
                         request.session.modified = True
     
-                        # Nota: No eliminamos la línea del carrito
+                        # Eliminar la línea del carrito
+                        line.unlink()
+                        
                         _logger.info(f"Producto guardado para después: {product_data}")
         except Exception as e:
             _logger.error(f"Error al guardar producto para después: {str(e)}", exc_info=True)
             
-        return request.redirect('/shop/cart?tab=saved')    
+        return request.redirect('/shop/cart?tab=saved')
+       
     @http.route('/shop/cart/remove_saved_item', type='http', auth="public", website=True)
     def remove_saved_item(self, item_id=None, **kw):
         if item_id:
