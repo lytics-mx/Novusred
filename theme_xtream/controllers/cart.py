@@ -69,15 +69,16 @@ class ShopController(WebsiteSale):
                     if line:
                         # Guardar información del producto en la sesión
                         product_data = {
-                            'id': line.id,  # Usar el ID real de la línea
-                            'product_id': product_id,
-                            'template_id': line.product_id.product_tmpl_id.id,
-                            'name': line.product_id.display_name,
-                            'price': getattr(line.product_id, 'discounted_price', line.product_id.list_price),
-                            'quantity': line.product_uom_qty,
-                            'quantity_available': line.product_id.qty_available,
+                            'id': line.id,  # ID de la línea del carrito
+                            'product_id': product_id,  # ID del producto
+                            'template_id': line.product_id.product_tmpl_id.id,  # ID del template
+                            'name': line.product_id.display_name,  # Nombre del producto
+                            'price': getattr(line.product_id, 'discounted_price', line.product_id.list_price),  # Precio
+                            'quantity': line.product_uom_qty,  # Cantidad en el carrito
+                            'quantity_available': line.product_id.qty_available,  # Cantidad disponible
                         }
                         
+                        # Agregar información de la marca si existe
                         if getattr(line.product_id.product_tmpl_id, 'brand_type_id', False):
                             product_data.update({
                                 'brand_name': line.product_id.product_tmpl_id.brand_type_id.name,
@@ -90,8 +91,8 @@ class ShopController(WebsiteSale):
                         request.session['saved_for_later'] = saved_items
                         request.session.modified = True
                         
-                        # Marcar la línea como "guardada" (sin eliminarla)
-                        line.write({'product_uom_qty': 0})  # Ajustar cantidad a 0 para ocultarla del carrito
+                        # Reducir la cantidad del producto en el carrito a 0
+                        line.write({'product_uom_qty': 0})
         except Exception as e:
             _logger.error(f"Error al guardar producto para después: {str(e)}", exc_info=True)
             
