@@ -39,7 +39,7 @@ class WebsiteCheckout(http.Controller):
                 delivered_products.append({
                     'product_id': move.product_id.id,
                     'product_name': move.product_id.name,
-                    'product_tmpl_name': move.product_id.product_tmpl_id.name,  # Nombre del producto template
+                    'template_id': move.product_id.product_tmpl_id.id,  # ID del product.template
                     'quantity': move.product_qty,
                     'delivery_date': relative_date,
                     'purchase_date': format_date(purchase_date, format='d \'de\' MMMM', locale='es') if purchase_date else '',
@@ -77,7 +77,7 @@ class WebsiteCheckout(http.Controller):
                 pending_products.append({
                     'product_id': move.product_id.id,
                     'product_name': move.product_id.name,
-                    'product_tmpl_name': move.product_id.product_tmpl_id.name,  # Nombre del producto template
+                    'template_id': move.product_id.product_tmpl_id.id,  # ID del product.template
                     'quantity': move.product_qty,
                     'deadline_date': relative_date,
                     'purchase_date': format_date(purchase_date, format='d \'de\' MMMM', locale='es') if purchase_date else '',
