@@ -81,6 +81,7 @@ class ShopController(WebsiteSale):
                     line_id = int(line_id)
                     product_id = int(product_id)
                     
+                    # Filtrar la línea del carrito
                     line = order.order_line.filtered(lambda l: l.id == line_id)
                     if line:
                         # Guardar información del producto en la sesión
