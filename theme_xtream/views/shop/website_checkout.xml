@@ -3,21 +3,32 @@
     <template id="delivered_template" name="Delivered and Pending Products">
         <t t-call="website.layout">
             <div class="container mt-5">
-                <h2 class="mb-4">Mis Compras</h2>
+                <h2 class="mb-4" style="font-size:22px;">Compras</h2>
 
                 <!-- Buscador y filtrado -->
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <form method="get" action="/delivered_products" class="d-flex">
-                        <input type="text" name="search" t-att-value="search" placeholder="Buscar por nombre o modelo..." class="form-control me-2" style="width: 300px;" />
-                        <select name="filter_state" class="form-select me-2" style="width: 150px;">
-                            <option value="all" t-att-selected="filter_state == 'all'">Todos</option>
-                            <!-- <option value="waiting" t-att-selected="filter_state == 'waiting'">Alistándose</option> -->
-                            <option value="assigned" t-att-selected="filter_state == 'assigned'">En camino</option>
-                            <option value="done" t-att-selected="filter_state == 'done'">Entregado</option>
-                        </select>
-                        <button type="submit" class="btn btn-primary">Filtrar</button>
+                <div class="d-flex align-items-center mb-4" style="gap: 24px;">
+                    <form method="get" action="/delivered_products" class="d-flex align-items-center" style="gap: 12px;">
+                        <div class="input-group" style="background: #d3d3d3; border-radius: 20px; padding: 0 12px; height: 40px; align-items: center;">
+                            <span class="input-group-text bg-transparent border-0" style="padding-right: 0;">
+                                <i class="fa fa-search" style="color: #222;"></i>
+                            </span>
+                            <input type="text" name="search" t-att-value="search" placeholder="Buscar..." class="form-control border-0 bg-transparent" style="box-shadow: none; font-family: 'Questrial', sans-serif; font-size: 15px; width: 200px;" />
+                        </div>
+                        <div class="input-group" style="background: #d3d3d3; border-radius: 20px; padding: 0 12px; height: 40px; align-items: center;">
+                            <span class="input-group-text bg-transparent border-0" style="padding-right: 0;">
+                                <i class="fa fa-filter" style="color: #222;"></i>
+                            </span>
+                            <select name="filter_state" class="form-select border-0 bg-transparent" style="box-shadow: none; font-family: 'Questrial', sans-serif; font-size: 15px; width: 120px;">
+                                <option value="all" t-att-selected="filter_state == 'all'">Todas</option>
+                                <option value="assigned" t-att-selected="filter_state == 'assigned'">En camino</option>
+                                <option value="done" t-att-selected="filter_state == 'done'">Entregado</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn" style="background: #3483FA; color: #fff; font-family: 'Questrial', sans-serif; font-size: 15px; border-radius: 20px; padding: 0 24px; height: 40px; border: none;">
+                            Filtrar
+                        </button>
                     </form>
-                    <p class="mb-0">Total de compras: <strong><t t-esc="product_count"/></strong></p>
+                    <p class="mb-0" style="font-family: 'Questrial', sans-serif; font-size: 15px; color: #222;"> <strong><t t-esc="product_count"/></strong> Compras</p>
                 </div>
 
                 <div class="row">
