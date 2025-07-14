@@ -83,7 +83,7 @@ class ShopController(WebsiteSale):
                     
                     line = order.order_line.filtered(lambda l: l.id == line_id)
                     if line:
-                        # Guardar información del producto antes de eliminar la línea
+                        # Guardar información del producto en la sesión
                         product_data = {
                             'id': int(time.time()),  # ID temporal único
                             'product_id': product_id,
@@ -100,18 +100,18 @@ class ShopController(WebsiteSale):
                             })
                         
                         saved_items = request.session.get('saved_for_later', [])
-                        # Eliminar productos guardados con la misma template_id
-                        saved_items = [
-                            item for item in saved_items
-                            if item.get('template_id') != product_data['template_id']
-                        ]
-                        saved_items.append(product_data)
+                        # Evitar duplicados en la lista de guardados
+                        if not any(item['template_id'] == product_data['template_id'] for item in saved_items):
+                            saved_items.append(product_data)
                         request.session['saved_for_later'] = saved_items
                         request.session.modified = True
-
-                        # Eliminar solo la línea seleccionada del carrito
-                        line.unlink()
     
+                        # Nota: No eliminamos la línea del carrito
+                        _logger.info(f"Producto guardado para después: {product_data}")
+        except Exception as e:
+            _logger.error(f"Error al guardar producto para después: {str(e)}", exc_info=True)
+            
+        return request.redirect('/shop/cart?tab=saved')    
     @http.route('/shop/cart/remove_saved_item', type='http', auth="public", website=True)
     def remove_saved_item(self, item_id=None, **kw):
         if item_id:
