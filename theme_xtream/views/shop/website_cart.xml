@@ -142,49 +142,18 @@
                 </div>
                         <script type="text/javascript">
                             document.addEventListener('DOMContentLoaded', function () {
-                                const cartTabBtn = document.getElementById('cart-tab-btn');
-                                const savedTabBtn = document.getElementById('saved-tab-btn');
-                                const cartContent = document.getElementById('cart-tab-content');
-                                const savedContent = document.getElementById('saved-tab-content');
-                                const cartFooter = document.getElementById('cart-footer');
+                                const tabs = document.querySelectorAll('[data-tab]');
+                                const tabContents = document.querySelectorAll('.tab-content');
                             
-                                // Verificar que los elementos existen antes de manipularlos
-                                if (cartTabBtn && savedTabBtn && cartContent && savedContent && cartFooter) {
-                                    // Mostrar la pestaña activa según el parámetro
-                                    const activeTab = '<t t-esc="active_tab"/>';
-                                    if (activeTab === 'saved') {
-                                        savedTabBtn.classList.add('active');
-                                        cartTabBtn.classList.remove('active');
-                                        savedContent.classList.remove('d-none');
-                                        cartContent.classList.add('d-none');
-                                        cartFooter.classList.add('d-none');
-                                    } else {
-                                        cartTabBtn.classList.add('active');
-                                        savedTabBtn.classList.remove('active');
-                                        cartContent.classList.remove('d-none');
-                                        savedContent.classList.add('d-none');
-                                        cartFooter.classList.remove('d-none');
-                                    }
-                            
-                                    // Cambio entre pestañas
-                                    cartTabBtn.addEventListener('click', function () {
-                                        cartTabBtn.classList.add('active');
-                                        savedTabBtn.classList.remove('active');
-                                        cartContent.classList.remove('d-none');
-                                        savedContent.classList.add('d-none');
-                                        cartFooter.classList.remove('d-none');
+                                tabs.forEach(tab => {
+                                    tab.addEventListener('click', function () {
+                                        const targetTab = this.getAttribute('data-tab');
+                                        tabContents.forEach(content => {
+                                            content.classList.add('d-none');
+                                        });
+                                        document.getElementById(targetTab).classList.remove('d-none');
                                     });
-                            
-                                    savedTabBtn.addEventListener('click', function () {
-                                        savedTabBtn.classList.add('active');
-                                        cartTabBtn.classList.remove('active');
-                                        savedContent.classList.remove('d-none');
-                                        cartContent.classList.add('d-none');
-                                        cartFooter.classList.add('d-none');
-                                    });
-                                } else {
-                                    console.error('Uno o más elementos no existen en el DOM.');
-                                }
+                                });
                             });
                         </script>                
               </div>
