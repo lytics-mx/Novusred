@@ -19,9 +19,6 @@ class ShopController(WebsiteSale):
         }
         if tab == 'saved':
             values['active_tab'] = 'saved'
-        else:
-            values['active_tab'] = 'cart'
-        _logger.info(f"Pestaña activa: {values['active_tab']}")
         return request.render("theme_xtream.website_cart_buy_now", values)
     
 

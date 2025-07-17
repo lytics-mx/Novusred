@@ -9,9 +9,9 @@
                 <div class="px-4 pt-4 pb-2">
                   <ul class="nav nav-tabs border-0">
                   <li class="nav-item">
-                      <button class="nav-link" id="saved-tab-btn" data-tab="saved-tab">
-                          Guardados (<t t-esc="len(saved_items or [])"/>)
-                      </button>
+                    <button class="nav-link active" id="cart-tab-btn" data-tab="cart-tab">
+                    Carrito (<t t-esc="len(website_sale_order.order_line)"/>)
+                    </button>
                   </li>
                   <li class="nav-item">
                     <button class="nav-link" id="saved-tab-btn" data-tab="saved-tab">
@@ -128,34 +128,48 @@
                 <!-- Contenido de guardados -->
                 <div id="saved-tab-content" class="tab-content d-none">
                     <t t-if="saved_items and len(saved_items) > 0">
-                        <t t-foreach="saved_items" t-as="item">
-                            <!-- Mostrar los productos guardados -->
-                        </t>
-                    </t>
-                    <t t-else="">
-                        <div class="p-5 text-center text-muted">
-                            <i class="fa fa-bookmark fa-3x mb-3"></i>
-                            <p>No tienes productos guardados</p>
-                            <a href="/subcategory" class="btn btn-primary">Ir a la tienda</a>
-                        </div>
-                    </t>
+                      <t t-foreach="saved_items" t-as="item">
+                          <div class="row align-items-center px-4 py-3 border-bottom">
+                              <div class="col-2">
+                                  <img t-att-src="'/web/image/product.product/%d/image_128' % item['product_id']" class="img-fluid rounded" style="max-width:64px;"/>
+                              </div>
+                              <div class="col-5">
+                                  <div class="fw-semibold" style="font-size:15px;">
+                                      <span class="text-truncate d-block" style="max-width:100%;" t-att-title="item['name']">
+                                          <t t-esc="item['name']"/>
+                                      </span>
+                                  </div>
+                                  <div class="text-muted small mb-1">
+                                      <t t-if="item.get('brand_name')">
+                                          por <t t-esc="item['brand_name']"/>
+                                      </t>
+                                  </div>
+                                  <div style="font-size:14px;">
+                                    <a t-att-href="'/shop/cart/remove?line_id=%d' % line.id"
+                                    style="color:#0009ED;" class="small">Eliminar</a>
+                                    <span class="mx-1 text-muted">|</span>
+                                    <a t-att-href="'/subcategory?brand_id=%s' % (line.product_id.product_tmpl_id.brand_type_id.id if line.product_id.product_tmpl_id.brand_type_id else '')"
+                                    style="color:#0009ED;" class="small">Más productos de la marca</a>
+                                    <span class="mx-1 text-muted">|</span>
+                                    <a t-att-href="'/shop/checkout'" 
+                                    style="color:#0009ED;" class="small">Comprar ahora</a>
+                                    <span class="mx-1 text-muted">|</span>
+                                    <a t-att-href="'/shop/cart/move_to_cart?item_id=%d' % item['id']"
+                                       style="color:#0009ED;" class="small">Agregar al carrito</a>
+                                  </div>                                  
+                              </div>
+                          </div>
+                      </t>
+                  </t>
+                  <t t-else="">
+                    <div class="p-5 text-center text-muted">
+                      <i class="fa fa-bookmark fa-3x mb-3"></i>
+                      <p>No tienes productos guardados</p>
+                      <a href="/subcategory" class="btn btn-primary">Ir a la tienda</a>
+                    </div>
+                  </t>
                 </div>
-                        <script type="text/javascript">
-                            document.addEventListener('DOMContentLoaded', function () {
-                                const tabs = document.querySelectorAll('[data-tab]');
-                                const tabContents = document.querySelectorAll('.tab-content');
-                            
-                                tabs.forEach(tab => {
-                                    tab.addEventListener('click', function () {
-                                        const targetTab = this.getAttribute('data-tab');
-                                        tabContents.forEach(content => {
-                                            content.classList.add('d-none');
-                                        });
-                                        document.getElementById(targetTab).classList.remove('d-none');
-                                    });
-                                });
-                            });
-                        </script>                
+                
               </div>
               
               <!-- Pie: envío, total y botón (solo visible en tab de carrito) -->
