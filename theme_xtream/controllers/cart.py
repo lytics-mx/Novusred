@@ -72,16 +72,14 @@ class ShopController(WebsiteSale):
        
 
        
-    @http.route('/shop/cart/move_to_saved', type='http', auth="public", website=True)
+    @http.route('/shop/cart/move_to_saved', type='json', auth="public", website=True)
     def move_to_saved(self, line_id=None, **kw):
         if line_id:
             line_id = int(line_id)
             order = request.website.sale_get_order()
             if order:
-                # Filtrar la línea del carrito
                 line = order.order_line.filtered(lambda l: l.id == line_id)
                 if line:
-                    # Guardar información del producto en la sesión
                     product_data = {
                         'id': int(time.time()),  # ID temporal único
                         'product_id': line.product_id.id,
@@ -91,23 +89,19 @@ class ShopController(WebsiteSale):
                         'quantity_available': line.product_id.qty_available,
                     }
     
-                    if getattr(line.product_id.product_tmpl_id, 'brand_type_id', False):
-                        product_data.update({
-                            'brand_name': line.product_id.product_tmpl_id.brand_type_id.name,
-                            'brand_id': line.product_id.product_tmpl_id.brand_type_id.id,
-                        })
-    
                     saved_items = request.session.get('saved_for_later', [])
-                    # Evitar duplicados en la lista de guardados
                     if not any(item['template_id'] == product_data['template_id'] for item in saved_items):
                         saved_items.append(product_data)
-                    request.session['saved_for_later'] = saved_items
-                    request.session.modified = True
+                        request.session['saved_for_later'] = saved_items
+                        request.session.modified = True
     
-                    # Eliminar la línea del carrito
-                    line.unlink()
+                    try:
+                        line.unlink()  # Eliminar la línea del carrito
+                    except Exception as e:
+                        return {'success': False, 'error': str(e)}
     
-        return request.redirect('/shop/cart?tab=saved')
+                    return {'success': True, 'saved_items': saved_items}
+        return {'success': False}
        
     @http.route('/shop/cart/remove_saved_item', type='http', auth="public", website=True)
     def remove_saved_item(self, item_id=None, **kw):
