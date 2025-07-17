@@ -110,7 +110,8 @@ class ShopController(WebsiteSale):
     
                     # Eliminar la línea del carrito
                     try:
-                        line.unlink()
+                        order.order_line = order.order_line - line  # Actualizar la relación de líneas del pedido
+                        line.unlink()  # Eliminar la línea del carrito
                         _logger.info(f"Línea del carrito eliminada: {line_id}")
                     except Exception as e:
                         _logger.error(f"Error al eliminar la línea del carrito: {e}")
