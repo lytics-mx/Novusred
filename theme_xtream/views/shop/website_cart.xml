@@ -168,6 +168,64 @@
                       <a href="/subcategory" class="btn btn-primary">Ir a la tienda</a>
                     </div>
                   </t>
+
+                  <script type="text/javascript">
+                document.addEventListener('DOMContentLoaded', function() {
+                    const savedTabBtn = document.getElementById('saved-tab-btn');
+                    const cartTabBtn = document.getElementById('cart-tab-btn');
+                    const cartContent = document.getElementById('cart-tab-content');
+                    const savedContent = document.getElementById('saved-tab-content');
+                
+                    // Función para mover un producto a "Guardados"
+                    document.querySelectorAll('a[href*="/shop/cart/move_to_saved"]').forEach(function(link) {
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            const lineId = this.getAttribute('href').split('line_id=')[1];
+                
+                            // Actualizar dinámicamente el contenido de "Guardados"
+                            fetch(`/shop/cart/move_to_saved?line_id=${lineId}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        // Actualizar la pestaña de "Guardados"
+                                        const savedItemsContainer = savedContent.querySelector('.tab-content');
+                                        savedItemsContainer.innerHTML = ''; // Limpia el contenido actual
+                                        data.saved_items.forEach(item => {
+                                            const itemHtml = `
+                                                <div class="row align-items-center px-4 py-3 border-bottom">
+                                                    <div class="col-2">
+                                                        <img src="/web/image/product.product/${item.product_id}/image_128" class="img-fluid rounded" style="max-width:64px;"/>
+                                                    </div>
+                                                    <div class="col-5">
+                                                        <div class="fw-semibold" style="font-size:15px;">
+                                                            <span class="text-truncate d-block" style="max-width:100%;" title="${item.name}">
+                                                                ${item.name}
+                                                            </span>
+                                                        </div>
+                                                        <div class="text-muted small mb-1">
+                                                            ${item.brand_name ? `por ${item.brand_name}` : ''}
+                                                        </div>
+                                                        <div style="font-size:14px;">
+                                                            <a href="/shop/cart/remove_saved_item?item_id=${item.id}" style="color:#0009ED;" class="small">Eliminar</a>
+                                                            <span class="mx-1 text-muted">|</span>
+                                                            <a href="/shop/cart/move_to_cart?item_id=${item.id}" style="color:#0009ED;" class="small">Agregar al carrito</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            `;
+                                            savedItemsContainer.insertAdjacentHTML('beforeend', itemHtml);
+                                        });
+                
+                                        // Cambiar a la pestaña de "Guardados"
+                                        savedTabBtn.click();
+                                    }
+                                })
+                                .catch(error => console.error('Error al mover a guardados:', error));
+                        });
+                    });
+                });
+                </script>                 
+
                 </div>
                 
               </div>
@@ -281,31 +339,6 @@
                 cartFooter.classList.add('d-none');
             });
 
-            // Función para mover un producto a "Guardados"
-            document.querySelectorAll('a[href*="/shop/cart/move_to_saved"]').forEach(function(link) {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const lineId = this.getAttribute('href').split('line_id=')[1];
-                    const row = this.closest('.row');
-                    
-                    // Eliminar la fila del carrito
-                    if (row) {
-                        row.remove();
-                    }
-
-                    // Actualizar dinámicamente el contenido de "Guardados"
-                    fetch(`/shop/cart/move_to_saved?line_id=${lineId}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                // Recargar la pestaña "Guardados" o actualizar dinámicamente
-                                savedTabBtn.click();
-                            }
-                        })
-                        .catch(error => console.error('Error al mover a guardados:', error));
-                });
-            });
-            
           // Función para actualizar el precio por línea y el total
           function updateCartTotals() {
             let subtotal = 0;

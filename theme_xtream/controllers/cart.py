@@ -81,7 +81,7 @@ class ShopController(WebsiteSale):
                 line = order.order_line.filtered(lambda l: l.id == line_id)
                 if line:
                     product_data = {
-                        'id': int(time.time()),
+                        'id': int(time.time()),  # ID temporal único
                         'product_id': line.product_id.id,
                         'template_id': line.product_id.product_tmpl_id.id,
                         'name': line.product_id.display_name,
@@ -96,7 +96,7 @@ class ShopController(WebsiteSale):
                         request.session.modified = True
     
                     try:
-                        line.unlink()
+                        line.unlink()  # Eliminar la línea del carrito
                     except Exception as e:
                         return {'success': False, 'error': str(e)}
     
