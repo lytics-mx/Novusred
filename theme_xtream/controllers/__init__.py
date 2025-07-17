@@ -11,7 +11,7 @@ from . import product_views
 # from . import img_banner
 
 from . import search
-# from . import cart
+from . import cart
 from . import login
 from . import wishlist
 from . import discover
