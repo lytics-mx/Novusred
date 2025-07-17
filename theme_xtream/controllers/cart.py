@@ -54,21 +54,21 @@ class ShopController(WebsiteSale):
     
     @http.route('/shop/cart/update_badge', type='json', auth="public", website=True)
     def update_cart_badge(self, total_items=None, **post):
-        if total_items is not None:
-            request.session['website_sale_cart_quantity'] = int(total_items)
-            
-            # También actualiza el contador en la orden actual
-            order = request.website.sale_get_order(force_create=0)
-            if order:
-                # Recalcular la cantidad total de productos en la orden
-                # (Esto es opcional, ya que la cantidad visual se actualizará con total_items)
-                quantity = sum(line.product_uom_qty for line in order.order_line)
-                if quantity != total_items:
-                    # Solo registrar la diferencia, no es necesario hacer nada más
-                    _logger.info(f"Diferencia entre cantidad visual ({total_items}) y real ({quantity})")
-            
-            return {'success': True, 'cart_quantity': total_items}
-        return {'success': False}
+        try:
+            if total_items is not None:
+                request.session['website_sale_cart_quantity'] = int(total_items)
+                
+                order = request.website.sale_get_order(force_create=0)
+                if order:
+                    quantity = sum(line.product_uom_qty for line in order.order_line)
+                    if quantity != total_items:
+                        _logger.info(f"Diferencia entre cantidad visual ({total_items}) y real ({quantity})")
+                
+                return {'success': True, 'cart_quantity': total_items}
+            return {'success': False}
+        except Exception as e:
+            _logger.error(f"Error en update_cart_badge: {str(e)}")
+            return {'success': False, 'error': str(e)}
        
 
        
