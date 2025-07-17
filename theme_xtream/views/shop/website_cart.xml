@@ -241,35 +241,143 @@
         </style>
         <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function() {
-          const savedTabBtn = document.getElementById('saved-tab-btn');
-          const cartTabBtn = document.getElementById('cart-tab-btn');
-          const cartContent = document.getElementById('cart-tab-content');
-          const savedContent = document.getElementById('saved-tab-content');
-
-          // Función para mover un producto a "Guardados"
-          document.querySelectorAll('a[href*="/shop/cart/move_to_saved"]').forEach(function(link) {
-            link.addEventListener('click', function(e) {
-              e.preventDefault();
-              const lineId = this.getAttribute('href').split('line_id=')[1];
-              const row = this.closest('.row');
-              
-              // Eliminar la fila del carrito
-              if (row) {
-                row.remove();
-              }
-
-              // Actualizar dinámicamente el contenido de "Guardados"
-              fetch(`/shop/cart/move_to_saved?line_id=${lineId}`)
-                .then(response => response.json())
-                .then(data => {
-                  if (data.success) {
-                    // Recargar la pestaña "Guardados" o actualizar dinámicamente
-                    savedTabBtn.click();
-                  }
-                })
-                .catch(error => console.error('Error al mover a guardados:', error));
+            // Funcionalidad de pestañas
+            const cartTabBtn = document.getElementById('cart-tab-btn');
+            const savedTabBtn = document.getElementById('saved-tab-btn');
+            const cartContent = document.getElementById('cart-tab-content');
+            const savedContent = document.getElementById('saved-tab-content');
+            const cartFooter = document.getElementById('cart-footer');
+            
+            // Mostrar la pestaña activa según el parámetro
+            const activeTab = '<t t-esc="active_tab"/>';
+            if (activeTab === 'saved') {
+                savedTabBtn.classList.add('active');
+                cartTabBtn.classList.remove('active');
+                savedContent.classList.remove('d-none');
+                cartContent.classList.add('d-none');
+                cartFooter.classList.add('d-none');
+            } else {
+                cartTabBtn.classList.add('active');
+                savedTabBtn.classList.remove('active');
+                cartContent.classList.remove('d-none');
+                savedContent.classList.add('d-none');
+                cartFooter.classList.remove('d-none');
+            }
+            
+            // Cambio entre pestañas
+            cartTabBtn.addEventListener('click', function() {
+                cartTabBtn.classList.add('active');
+                savedTabBtn.classList.remove('active');
+                cartContent.classList.remove('d-none');
+                savedContent.classList.add('d-none');
+                cartFooter.classList.remove('d-none');
             });
+            
+            savedTabBtn.addEventListener('click', function() {
+                savedTabBtn.classList.add('active');
+                cartTabBtn.classList.remove('active');
+                savedContent.classList.remove('d-none');
+                cartContent.classList.add('d-none');
+                cartFooter.classList.add('d-none');
+            });
+
+            // Función para mover un producto a "Guardados"
+            document.querySelectorAll('a[href*="/shop/cart/move_to_saved"]').forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const lineId = this.getAttribute('href').split('line_id=')[1];
+                    const row = this.closest('.row');
+                    
+                    // Eliminar la fila del carrito
+                    if (row) {
+                        row.remove();
+                    }
+
+                    // Actualizar dinámicamente el contenido de "Guardados"
+                    fetch(`/shop/cart/move_to_saved?line_id=${lineId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Recargar la pestaña "Guardados" o actualizar dinámicamente
+                                savedTabBtn.click();
+                            }
+                        })
+                        .catch(error => console.error('Error al mover a guardados:', error));
+                });
+            });
+            
+          // Función para actualizar el precio por línea y el total
+          function updateCartTotals() {
+            let subtotal = 0;
+            let totalItems = 0;
+            
+            document.querySelectorAll('.cart-quantity-input').forEach(function(cartInput) {
+              const qtyInput = cartInput.querySelector('input[name="set_qty"]');
+              if (!qtyInput) return;
+              const pricePerUnit = parseFloat(qtyInput.getAttribute('data-price'));
+              const qty = parseInt(qtyInput.value) || 1;
+              totalItems += qty;
+              const row = cartInput.closest('.row');
+              const lineTotalSpan = row.querySelector('.col-3 .fw-bold');
+              const lineTotal = pricePerUnit * qty;
+              subtotal += lineTotal;
+              if (lineTotalSpan) {
+                lineTotalSpan.textContent = '$' + lineTotal.toFixed(2);
+              }
+              
+              // Guardar cantidad en localStorage
+              const lineId = qtyInput.form.querySelector('input[name="line_id"]').value;
+              localStorage.setItem('cart_qty_' + lineId, qty);
+            });
+            
+            // Actualiza el subtotal
+            const subtotalElement = document.getElementById('cart-total-amount');
+            if (subtotalElement) {
+              subtotalElement.textContent = subtotal.toFixed(2);
+            }
+            
+            // Actualiza el contador del carrito en el icono
+            const cartCounterElement = document.querySelector('.nav-item .badge, #top_menu .my_cart_quantity');
+            if (cartCounterElement) {
+              cartCounterElement.textContent = totalItems;
+            }
+            
+            // Actualiza también el texto del tab de carrito
+            const cartTabText = document.querySelector('.nav-link.active[data-tab="cart-tab"]');
+            if (cartTabText) {
+              cartTabText.innerHTML = `Carrito (${totalItems})`;
+            }
+          }
+
+          // Cargar cantidades guardadas en localStorage
+          document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
+            const lineId = input.form.querySelector('input[name="line_id"]').value;
+            const savedQty = localStorage.getItem('cart_qty_' + lineId);
+            if (savedQty) {
+              // Solo actualizar visualmente, sin enviar al servidor automáticamente
+              input.value = parseInt(savedQty);
+              input.setAttribute('value', parseInt(savedQty));
+            }
           });
+          
+          // Calcular totales al cargar la página
+          updateCartTotals();
+          
+          // Escuchar cambios en los inputs de cantidad
+          document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
+            input.addEventListener('input', function() {
+              updateCartTotals();
+            });
+            
+            // Evitar enviar el formulario si la cantidad no cambió
+            input.form.addEventListener('submit', function(e) {
+              const currentQty = parseInt(input.getAttribute('value'));
+              const newQty = parseInt(input.value);
+              if (currentQty === newQty) {
+                e.preventDefault();
+              }
+            });
+          });            
         });
         </script>
       </t>
