@@ -1,63 +1,39 @@
 <odoo>
-  <template id="website_saved_items" name="Guardados">
-    <t t-call="website.layout">
-      <div id="wrap" class="oe_website_sale" style="background:#ededed;min-height:100vh;">
-        <div class="container py-5">
-          <div class="card shadow-sm rounded" style="max-width:900px;margin:auto;background:#fff;">
-            <div class="card-body p-0" style="background-color:#fff;">
-              <div class="px-4 pt-4 pb-2">
-                <h2 class="text-center">Productos Guardados</h2>
-              </div>
-              <hr class="my-0"/>
-              
-              <!-- Contenido de guardados -->
-              <div id="saved-tab-content" class="tab-content">
-                <t t-if="saved_items and len(saved_items) > 0">
-                  <t t-foreach="saved_items" t-as="item">
-                    <div class="row align-items-center px-4 py-3 border-bottom">
-                      <div class="col-2">
-                        <img t-att-src="'/web/image/product.product/%d/image_128' % item['product_id']" class="img-fluid rounded" style="max-width:64px;"/>
-                      </div>
-                      <div class="col-5">
-                        <div class="fw-semibold" style="font-size:15px;">
-                          <span class="text-truncate d-block" style="max-width:100%;" t-att-title="item['name']">
-                            <t t-esc="item['name']"/>
-                          </span>
+  <template id="website_saved_items" inherit_id="website_sale.cart">
+    <xpath expr="." position="replace">
+      <t t-call="website.layout">
+        <div id="wrap" class="oe_website_sale" style="background:#ededed;min-height:100vh;">
+          <div class="container py-5">
+            <div class="card shadow-sm rounded" style="max-width:900px;margin:auto;background:#fff;">
+              <div class="card-body p-0" style="background-color:#fff;">
+                <div class="px-4 pt-4 pb-2">
+                  <h3>Guardados para después</h3>
+                </div>
+                <hr class="my-0"/>
+                <div id="saved-tab-content" class="tab-content">
+                  <t t-if="saved_items and len(saved_items) > 0">
+                    <t t-foreach="saved_items" t-as="item">
+                      <div class="row align-items-center px-4 py-3 border-bottom">
+                        <div class="col-8">
+                          <t t-esc="item['name']"/>
                         </div>
-                        <div class="text-muted small mb-1">
-                          <t t-if="item.get('brand_name')">
-                            por <t t-esc="item['brand_name']"/>
-                          </t>
-                        </div>
-                        <div style="font-size:14px;">
-                          <a t-att-href="'/shop/cart/remove_saved_item?item_id=%d' % item['id']"
-                             style="color:#0009ED;" class="small">Eliminar</a>
-                          <span class="mx-1 text-muted">|</span>
-                          <a t-att-href="'/subcategory?brand_id=%s' % (item['brand_id'] if item.get('brand_id') else '')"
-                             style="color:#0009ED;" class="small">Más productos de la marca</a>
-                          <span class="mx-1 text-muted">|</span>
-                          <a t-att-href="'/shop/checkout'" 
-                             style="color:#0009ED;" class="small">Comprar ahora</a>
-                          <span class="mx-1 text-muted">|</span>
-                          <a t-att-href="'/shop/cart/move_to_cart?item_id=%d' % item['id']"
-                             style="color:#0009ED;" class="small">Agregar al carrito</a>
+                        <div class="col-4 text-end">
+                          <span class="text-muted">$<t t-esc="'%.2f' % item['price']"/></span>
                         </div>
                       </div>
+                    </t>
+                  </t>
+                  <t t-else="">
+                    <div class="p-5 text-center text-muted">
+                      <p>No tienes productos guardados</p>
                     </div>
                   </t>
-                </t>
-                <t t-else="">
-                  <div class="p-5 text-center text-muted">
-                    <i class="fa fa-bookmark fa-3x mb-3"></i>
-                    <p>No tienes productos guardados</p>
-                    <a href="/subcategory" class="btn btn-primary">Ir a la tienda</a>
-                  </div>
-                </t>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </t>
+      </t>
+    </xpath>
   </template>
 </odoo>
