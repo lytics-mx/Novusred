@@ -41,6 +41,14 @@ class ShopController(WebsiteSale):
         values['saved_items'] = saved_items
         return values
 
+    @http.route('/shop/saved', type='http', auth="public", website=True)
+    def saved_items(self, **kw):
+        saved_items = request.session.get('saved_for_later', [])
+        values = {
+            'saved_items': saved_items,
+        }
+        return request.render("theme_xtream.website_saved_items", values)
+
 
     @http.route('/shop/cart/remove', type='http', auth="public", website=True)
     def cart_remove(self, line_id=None, **kw):
@@ -107,7 +115,7 @@ class ShopController(WebsiteSale):
                     # Eliminar la línea del carrito
                     line.unlink()
     
-        return request.redirect('/shop/cart?tab=saved')
+        return request.redirect('/shop/saved')
        
     @http.route('/shop/cart/remove_saved_item', type='http', auth="public", website=True)
     def remove_saved_item(self, item_id=None, **kw):
