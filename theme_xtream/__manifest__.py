@@ -85,7 +85,7 @@
         'views/shop/website_cart.xml',
         'views/shop/website_purchase.xml',
         'views/shop/website_details_purchase.xml',
-        # 'views/shop/website_guardado.xml',
+        'views/shop/website_guardado.xml',
 
         'views/csrf_token.xml',
 
