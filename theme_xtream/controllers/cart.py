@@ -101,11 +101,20 @@ class ShopController(WebsiteSale):
                     # Evitar duplicados en la lista de guardados
                     if not any(item['template_id'] == product_data['template_id'] for item in saved_items):
                         saved_items.append(product_data)
+                        _logger.info(f"Producto guardado: {product_data}")
+                    else:
+                        _logger.warning(f"Producto ya está en guardados: {product_data['template_id']}")
+    
                     request.session['saved_for_later'] = saved_items
                     request.session.modified = True
     
                     # Eliminar la línea del carrito
-                    line.unlink()
+                    try:
+                        line.unlink()
+                        _logger.info(f"Línea del carrito eliminada: {line_id}")
+                    except Exception as e:
+                        _logger.error(f"Error al eliminar la línea del carrito: {e}")
+                        return request.redirect('/shop/cart?tab=cart')
     
         return request.redirect('/shop/cart?tab=saved')
        
