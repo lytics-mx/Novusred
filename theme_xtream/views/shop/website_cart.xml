@@ -152,7 +152,7 @@
                                         <a t-att-href="'/shop/cart/remove_saved_item?item_id=%d' % item.id"
                                            style="color:#0009ED;" class="small">Eliminar</a>
                                         <span class="mx-1 text-muted">|</span>
-                                        <a t-att-href="'/shop/cart/move_to_cart?item_id=%d' % item.id"
+                                        <a t-att-href="'/shop/cart/move_to_cart?item_id=%d&set_qty=%d' % (item.id, item.quantity_available)"
                                            style="color:#0009ED;" class="small">Agregar al carrito</a>
                                     </div>
                                 </div>
@@ -186,25 +186,7 @@
                                                         t-att-disabled="item.quantity_available &lt;= 1"
                                                         onclick="var qtyInput=this.parentNode.querySelector('[name=\'set_qty\']'); qtyInput.value=Math.min(parseInt(qtyInput.getAttribute('max')),parseInt(qtyInput.value)+1); qtyInput.dispatchEvent(new Event('input'));">+</button>
                                             </span>
-                                            <style>
-                                                /* Oculta las flechas de los inputs type number en todos los navegadores */
-                                                input[type=number]::-webkit-inner-spin-button, 
-                                                input[type=number]::-webkit-outer-spin-button { 
-                                                    -webkit-appearance: none; 
-                                                    margin: 0; 
-                                                }
-                                                input[type=number] {
-                                                    -moz-appearance: textfield;
-                                                }
-                                                /* Ajusta el ancho del input según el número de dígitos */
-                                                #qty-input {
-                                                    width: 2.5em !important;
-                                                    min-width: 32px !important;
-                                                    max-width: 3em !important;
-                                                    text-align: center;
-                                                }
-                                            </style>                                            
-                                            <button type="submit" class="btn btn-primary ms-2">Mover al carrito</button>
+                                            <!-- <button type="submit" class="btn btn-primary ms-2">Agregar al carrito</button> -->
                                         </form>
                                     </div>
                                     <div class="small text-muted mt-1"><t t-esc="int(item.quantity_available)"/> disponibles</div>
@@ -321,7 +303,17 @@
                     cartFooter.classList.remove('d-none');
                 }
             }
-        
+            document.querySelectorAll('.move-to-cart-link').forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    const row = link.closest('.row');
+                    const qtyInput = row.querySelector('input[name="set_qty"]');
+                    const itemId = link.getAttribute('data-item-id');
+                    const setQty = qtyInput ? qtyInput.value : 1;
+
+                    // Actualizar el enlace con la cantidad seleccionada
+                    link.href = `/shop/cart/move_to_cart?item_id=${itemId}&set_qty=${setQty}`;
+                });
+            });        
             // Cambio entre pestañas
             cartTabBtn.addEventListener('click', function() {
                 cartTabBtn.classList.add('active');

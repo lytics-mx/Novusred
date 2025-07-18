@@ -133,8 +133,8 @@ class ShopController(WebsiteSale):
 
     
     @http.route('/shop/cart/move_to_cart', type='http', auth="public", website=True)
-    def move_to_cart(self, item_id=None, set_qty=None, **kw):
-        if item_id and set_qty:
+    def move_to_cart(self, item_id=None, set_qty=1, **kw):
+        if item_id:
             item_id = int(item_id)
             set_qty = int(set_qty)
             saved_item = request.env['saved.items'].search([('id', '=', item_id), ('user_id', '=', request.env.user.id)])
