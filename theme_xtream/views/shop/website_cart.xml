@@ -203,13 +203,13 @@
                                     
                                             document.querySelectorAll('.cart-quantity-input').forEach(function(cartInput) {
                                                 const qtyInput = cartInput.querySelector('input[name="set_qty"]');
-                                                if (!qtyInput) return;
+                                                if (!qtyInput) return; // Validar que el input exista
                                     
-                                                const pricePerUnit = parseFloat(qtyInput.getAttribute('data-price'));
-                                                const qty = parseInt(qtyInput.value) || 1;
+                                                const pricePerUnit = parseFloat(qtyInput.getAttribute('data-price')) || 0; // Validar precio
+                                                const qty = parseInt(qtyInput.value) || 1; // Validar cantidad
                                     
                                                 const row = cartInput.closest('.row');
-                                                const lineTotalSpan = row.querySelector('.col-3 .fw-bold');
+                                                const lineTotalSpan = row ? row.querySelector('.col-3 .fw-bold') : null; // Validar fila
                                                 const lineTotal = pricePerUnit * qty;
                                                 subtotal += lineTotal;
                                     
@@ -218,8 +218,11 @@
                                                 }
                                     
                                                 // Guardar cantidad en localStorage
-                                                const itemId = qtyInput.form.querySelector('input[name="item_id"]').value;
-                                                localStorage.setItem('saved_qty_' + itemId, qty);
+                                                const itemIdInput = qtyInput.form ? qtyInput.form.querySelector('input[name="item_id"]') : null;
+                                                const itemId = itemIdInput ? itemIdInput.value : null;
+                                                if (itemId) {
+                                                    localStorage.setItem('saved_qty_' + itemId, qty);
+                                                }
                                             });
                                     
                                             // Actualiza el subtotal (si es necesario mostrarlo en "Guardados")
@@ -229,61 +232,24 @@
                                             }
                                         }
                                     
-                                        // Función para actualizar el precio por línea y el total en el carrito
-                                        function updateCartTotals() {
-                                            let subtotal = 0;
-                                            let totalItems = 0;
-                                    
-                                            document.querySelectorAll('.cart-quantity-input').forEach(function(cartInput) {
-                                                const qtyInput = cartInput.querySelector('input[name="set_qty"]');
-                                                if (!qtyInput) return;
-                                    
-                                                const pricePerUnit = parseFloat(qtyInput.getAttribute('data-price'));
-                                                const qty = parseInt(qtyInput.value) || 1;
-                                                totalItems += qty;
-                                    
-                                                const row = cartInput.closest('.row');
-                                                const lineTotalSpan = row.querySelector('.col-3 .fw-bold');
-                                                const lineTotal = pricePerUnit * qty;
-                                                subtotal += lineTotal;
-                                    
-                                                if (lineTotalSpan) {
-                                                    lineTotalSpan.textContent = '$' + lineTotal.toFixed(2);
-                                                }
-                                    
-                                                // Guardar cantidad en localStorage
-                                                const lineId = qtyInput.form.querySelector('input[name="line_id"]').value;
-                                                localStorage.setItem('cart_qty_' + lineId, qty);
-                                            });
-                                    
-                                            // Actualiza el subtotal
-                                            const subtotalElement = document.getElementById('cart-total-amount');
-                                            if (subtotalElement) {
-                                                subtotalElement.textContent = subtotal.toFixed(2);
-                                            }
-                                    
-                                            // Actualiza también el texto del tab de carrito
-                                            const cartTabText = document.querySelector('.nav-link.active[data-tab="cart-tab"]');
-                                            if (cartTabText) {
-                                                cartTabText.innerHTML = `Carrito (${totalItems})`;
-                                            }
-                                        }
-                                    
                                         // Escuchar cambios en los inputs de cantidad
                                         document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
                                             input.addEventListener('input', function() {
-                                                const tab = document.querySelector('.nav-link.active').getAttribute('data-tab');
-                                                if (tab === 'saved-tab') {
-                                                    updateSavedTotals();
-                                                } else {
-                                                    updateCartTotals();
+                                                updateSavedTotals();
+                                            });
+                                    
+                                            // Evitar enviar el formulario si la cantidad no cambió
+                                            input.form.addEventListener('submit', function(e) {
+                                                const currentQty = parseInt(input.getAttribute('value')) || 1;
+                                                const newQty = parseInt(input.value) || 1;
+                                                if (currentQty === newQty) {
+                                                    e.preventDefault();
                                                 }
                                             });
                                         });
                                     
                                         // Calcular totales al cargar la página
                                         updateSavedTotals();
-                                        updateCartTotals();
                                     });
                                     </script>                                    
                                 </div>                                
