@@ -57,33 +57,34 @@
                         <div class="col-2 text-center">
                           <div class="cart-quantity-input">
                             <form t-att-action="'/shop/cart/update'" method="post" class="d-inline-flex align-items-center">
-                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                                <input type="hidden" name="line_id" t-att-value="line.id"/>
-                                <input type="hidden" name="product_id" t-att-value="line.product_id.id"/>
-                            
-                                <span class="input-group border rounded overflow-hidden" style="width:auto; display:inline-flex; vertical-align:middle;">
-                                    <button type="button" class="btn btn-light border-0"
-                                        style="min-width:32px; font-size:16px; padding:4px 0; background:#f8f8f8;"
-                                        t-att-disabled="line.product_id.qty_available &lt;= 1"
-                                        onclick="var qtyInput=this.parentNode.querySelector('[name=\'set_qty\']; qtyInput.value=Math.max(1,parseInt(qtyInput.value)-1); qtyInput.dispatchEvent(new Event('input')); qtyInput.form.submit();">-</button>
-                            
-                                    <input type="number" name="set_qty"
-                                        class="form-control text-center"
-                                        t-att-value="int(line.product_uom_qty)" 
-                                        min="1"
-                                        t-att-max="int(line.product_id.qty_available)"
-                                        t-att-data-price="line.product_id.discounted_price if line.product_id.discounted_price else line.product_id.list_price"
-                                        style="width:40px; border:none; box-shadow:none; background:transparent; 
+                              <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                              <input type="hidden" name="line_id" t-att-value="line.id"/>
+                              <input type="hidden" name="product_id" t-att-value="line.product_id.id"/>
+                              
+                              <span class="input-group border rounded overflow-hidden" style="width:auto; display:inline-flex; vertical-align:middle;">
+                                <button type="button" class="btn btn-light border-0"
+                                    style="min-width:32px; font-size:16px; padding:4px 0; background:#f8f8f8;"
+                                    t-att-disabled="line.product_uom_qty &lt;= 1"                                    
+                                    onclick="var qtyInput=this.parentNode.querySelector('[name=\'set_qty\']'); qtyInput.value=Math.max(1,parseInt(qtyInput.value)-1); qtyInput.dispatchEvent(new Event('input'));">-</button>
+                                        
+                                <input type="number" name="set_qty"
+                                       class="form-control text-center"
+                                       t-att-value="int(line.product_uom_qty)"
+                                       min="1"
+                                       t-att-max="int(line.product_id.qty_available)"
+                                       t-att-data-price="(line.product_id.discounted_price or line.product_id.list_price)"
+                                       style="width:40px; border:none; box-shadow:none; background:transparent; 
                                               -webkit-appearance: none; -moz-appearance: textfield; margin:0;"
-                                        onwheel="return false;"
-                                        inputmode="numeric"
-                                        maxlength="2"/>
-                            
-                                    <button type="button" class="btn btn-light border-0"
+                                       onwheel="return false;"
+                                       inputmode="numeric"
+                                       maxlength="2"/>
+                                       
+                                <button type="button" class="btn btn-light border-0"
                                         style="min-width:32px; font-size:16px; padding:4px 0; background:#f8f8f8;"
-                                        t-att-disabled="line.product_id.qty_available &lt;= 1"
-                                        onclick="var qtyInput=this.parentNode.querySelector('[name=\'set_qty\']; qtyInput.value=Math.min(parseInt(qtyInput.getAttribute('max')),parseInt(qtyInput.value)+1); qtyInput.dispatchEvent(new Event('input')); qtyInput.form.submit();">+</button>
-                                </span>
+                                        t-att-disabled="line.product_uom_qty >= line.product_id.qty_available"
+                                        onclick="var qtyInput=this.parentNode.querySelector('[name=\'set_qty\']'); qtyInput.value=Math.min(parseInt(qtyInput.getAttribute('max')),parseInt(qtyInput.value)+1); qtyInput.dispatchEvent(new Event('input'));">+</button>
+                              
+                              </span>
                                   <style>
                                       /* Oculta las flechas de los inputs type number en todos los navegadores */
                                       input[type=number]::-webkit-inner-spin-button, 
@@ -126,142 +127,47 @@
                 
                 <!-- Contenido de guardados -->
                 <div id="saved-tab-content" class="tab-content d-none">
-                    <t t-set="saved_items" t-value="request.env['saved.items'].search([('user_id', '=', request.env.user.id)])"/>
-                    <t t-if="saved_items">
-                        <t t-foreach="saved_items" t-as="item">
-                            <div class="row align-items-center px-4 py-3 border-bottom">
-                                <div class="col-2">
-                                    <img t-att-src="'/web/image/product.product/%d/image_128' % item.product_id.id" class="img-fluid rounded" style="max-width:64px;"/>
-                                </div>
-                                <div class="col-5">
-                                    <div class="fw-semibold" style="font-size:15px;">
-                                        <span class="text-truncate d-block" style="max-width:100%;" t-att-title="item.name">
-                                            <t t-esc="item.name"/>
-                                        </span>
-                                    </div>
-                                    <div class="text-muted small mb-1">
-                                        <t t-if="item.brand_name">
-                                            por <t t-esc="item.brand_name"/>
-                                        </t>
-                                    </div>
-                                    <div style="font-size:14px;">
-                                        <a t-att-href="'/subcategory?brand_id=%s' % (item.brand_id.id if item.brand_id else '')"
-                                           style="color:#0009ED;" class="small">Más productos de la marca</a>
-                                        <span class="mx-1 text-muted">|</span>
-                                        <a t-att-href="'/shop/cart/remove_saved_item?item_id=%d' % item.id"
-                                           style="color:#0009ED;" class="small">Eliminar</a>
-                                        <span class="mx-1 text-muted">|</span>
-                                        <a t-att-href="'/shop/cart/move_to_cart?item_id=%d' % item.id"
-                                           style="color:#0009ED;" class="small">Agregar al carrito</a>
-                                    </div>
-                                </div>
-                                <div class="col-2 text-center">
-                                    <div class="cart-quantity-input">
-                                        <form t-att-action="'/shop/cart/move_to_cart'" method="post" class="d-inline-flex align-items-center">
-                                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                                            <input type="hidden" name="item_id" t-att-value="item.id"/>
-                                            <input type="hidden" name="product_id" t-att-value="item.product_id.id"/>
-                                            
-                                            <span class="input-group border rounded overflow-hidden" style="width:auto; display:inline-flex; vertical-align:middle;">
-                                                <button type="button" class="btn btn-light border-0"
-                                                    style="min-width:32px; font-size:16px; padding:4px 0; background:#f8f8f8;"
-                                                    t-att-disabled="item.quantity_available &lt;= 1"
-                                                    onclick="var qtyInput=this.parentNode.querySelector('[name=\'set_qty\']'); qtyInput.value=Math.max(1,parseInt(qtyInput.value)-1); qtyInput.dispatchEvent(new Event('input'));">-</button>
-                                                    
-                                                <input type="number" name="set_qty"
-                                                       class="form-control text-center"
-                                                       t-att-value="1" 
-                                                       min="1"
-                                                       t-att-max="int(item.quantity_available)"
-                                                       t-att-data-price="item.price"
-                                                       style="width:40px; border:none; box-shadow:none; background:transparent; 
-                                                              -webkit-appearance: none; -moz-appearance: textfield; margin:0;"
-                                                       onwheel="return false;"
-                                                       inputmode="numeric"
-                                                       maxlength="2"/>
-                                                       
-                                                <button type="button" class="btn btn-light border-0"
-                                                        style="min-width:32px; font-size:16px; padding:4px 0; background:#f8f8f8;"
-                                                        t-att-disabled="item.quantity_available &lt;= 1"
-                                                        onclick="var qtyInput=this.parentNode.querySelector('[name=\'set_qty\']'); qtyInput.value=Math.min(parseInt(qtyInput.getAttribute('max')),parseInt(qtyInput.value)+1); qtyInput.dispatchEvent(new Event('input'));">+</button>
-                                            </span>
-                                            <!-- <button type="submit" class="btn btn-primary ms-2">Agregar al carrito</button> -->
-                                        </form>
-                                    </div>
-                                    <div class="small text-muted mt-1"><t t-esc="int(item.quantity_available)"/> disponibles</div>
-                                </div>
-                                <div class="col-3 text-end">
-                                    <span class="fw-bold" style="font-size:18px;">
-                                        $<t t-esc="'%.2f' % (item.price)"/>
-                                    </span>
-                                    <script type="text/javascript">
-                                    document.addEventListener('DOMContentLoaded', function() {
-                                        // Función para actualizar el precio por línea y el total en "Guardados"
-                                        function updateSavedTotals() {
-                                            let subtotal = 0;
-                                    
-                                            document.querySelectorAll('.cart-quantity-input').forEach(function(cartInput) {
-                                                const qtyInput = cartInput.querySelector('input[name="set_qty"]');
-                                                if (!qtyInput) return; // Validar que el input exista
-                                    
-                                                const pricePerUnit = parseFloat(qtyInput.getAttribute('data-price')) || 0; // Validar precio
-                                                const qty = parseInt(qtyInput.value) || 1; // Validar cantidad
-                                    
-                                                const row = cartInput.closest('.row');
-                                                const lineTotalSpan = row ? row.querySelector('.col-3 .fw-bold') : null; // Validar fila
-                                                const lineTotal = pricePerUnit * qty;
-                                                subtotal += lineTotal;
-                                    
-                                                if (lineTotalSpan) {
-                                                    lineTotalSpan.textContent = '$' + lineTotal.toFixed(2);
-                                                }
-                                    
-                                                // Guardar cantidad en localStorage
-                                                const itemIdInput = qtyInput.form ? qtyInput.form.querySelector('input[name="item_id"]') : null;
-                                                const itemId = itemIdInput ? itemIdInput.value : null;
-                                                if (itemId) {
-                                                    localStorage.setItem('saved_qty_' + itemId, qty);
-                                                }
-                                            });
-                                    
-                                            // Actualiza el subtotal (si es necesario mostrarlo en "Guardados")
-                                            const subtotalElement = document.getElementById('saved-total-amount');
-                                            if (subtotalElement) {
-                                                subtotalElement.textContent = subtotal.toFixed(2);
-                                            }
-                                        }
-                                    
-                                        // Escuchar cambios en los inputs de cantidad
-                                        document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
-                                            input.addEventListener('input', function() {
-                                                updateSavedTotals();
-                                            });
-                                    
-                                            // Evitar enviar el formulario si la cantidad no cambió
-                                            input.form.addEventListener('submit', function(e) {
-                                                const currentQty = parseInt(input.getAttribute('value')) || 1;
-                                                const newQty = parseInt(input.value) || 1;
-                                                if (currentQty === newQty) {
-                                                    e.preventDefault();
-                                                }
-                                            });
-                                        });
-                                    
-                                        // Calcular totales al cargar la página
-                                        updateSavedTotals();
-                                    });
-                                    </script>                                    
-                                </div>                                
-                            </div>
-                        </t>
-                    </t>
-                    <t t-else="">
-                        <div class="p-5 text-center text-muted">
-                            <i class="fa fa-bookmark fa-3x mb-3"></i>
-                            <p>No tienes productos guardados</p>
-                            <a href="/subcategory" class="btn btn-primary">Ir a la tienda</a>
-                        </div>
-                    </t>
+                    <t t-if="saved_items and len(saved_items) > 0">
+                      <t t-foreach="saved_items" t-as="item">
+                          <div class="row align-items-center px-4 py-3 border-bottom">
+                              <div class="col-2">
+                                  <img t-att-src="'/web/image/product.product/%d/image_128' % item['product_id']" class="img-fluid rounded" style="max-width:64px;"/>
+                              </div>
+                              <div class="col-5">
+                                  <div class="fw-semibold" style="font-size:15px;">
+                                      <span class="text-truncate d-block" style="max-width:100%;" t-att-title="item['name']">
+                                          <t t-esc="item['name']"/>
+                                      </span>
+                                  </div>
+                                  <div class="text-muted small mb-1">
+                                      <t t-if="item.get('brand_name')">
+                                          por <t t-esc="item['brand_name']"/>
+                                      </t>
+                                  </div>
+                                  <div style="font-size:14px;">
+                                    <a t-att-href="'/shop/cart/remove?line_id=%d' % line.id"
+                                    style="color:#0009ED;" class="small">Eliminar</a>
+                                    <span class="mx-1 text-muted">|</span>
+                                    <a t-att-href="'/subcategory?brand_id=%s' % (line.product_id.product_tmpl_id.brand_type_id.id if line.product_id.product_tmpl_id.brand_type_id else '')"
+                                    style="color:#0009ED;" class="small">Más productos de la marca</a>
+                                    <span class="mx-1 text-muted">|</span>
+                                    <a t-att-href="'/shop/checkout'" 
+                                    style="color:#0009ED;" class="small">Comprar ahora</a>
+                                    <span class="mx-1 text-muted">|</span>
+                                    <a t-att-href="'/shop/cart/move_to_cart?item_id=%d' % item['id']"
+                                       style="color:#0009ED;" class="small">Agregar al carrito</a>
+                                  </div>                                  
+                              </div>
+                          </div>
+                      </t>
+                  </t>
+                  <t t-else="">
+                    <div class="p-5 text-center text-muted">
+                      <i class="fa fa-bookmark fa-3x mb-3"></i>
+                      <p>No tienes productos guardados</p>
+                      <a href="/subcategory" class="btn btn-primary">Ir a la tienda</a>
+                    </div>
+                  </t>
                 </div>
                 
               </div>
@@ -307,7 +213,10 @@
                     </div>
                     <div class="col-md-3 col-6 text-end">
                     <div class="fw-semibold" style="font-size:16px;">
-                        Total: $<span id="cart-total-amount">0.00</span>
+                      Total: $<span id="cart-total-amount">
+                      <t t-set="subtotal" t-value="sum((line.product_id.discounted_price if line.product_id.discounted_price else line.product_id.list_price) * line.product_uom_qty for line in order.order_line)"/>
+                      <t t-esc="'%.2f' % subtotal"/>
+                      </span>
                     </div>
                     </div>
                     <div class="col-md-3 col-6 text-end">
@@ -332,147 +241,118 @@
         </style>
         <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function() {
-            const activeTab = '<t t-esc="active_tab"/>';
-            const savedTabBtn = document.getElementById('saved-tab-btn');
+            // Funcionalidad de pestañas
             const cartTabBtn = document.getElementById('cart-tab-btn');
-            const savedContent = document.getElementById('saved-tab-content');
+            const savedTabBtn = document.getElementById('saved-tab-btn');
             const cartContent = document.getElementById('cart-tab-content');
-            const cartFooter = document.getElementById('cart-footer'); // Validar existencia
-        
+            const savedContent = document.getElementById('saved-tab-content');
+            const cartFooter = document.getElementById('cart-footer');
+            
+            // Mostrar la pestaña activa según el parámetro
+            const activeTab = '<t t-esc="active_tab"/>';
             if (activeTab === 'saved') {
                 savedTabBtn.classList.add('active');
                 cartTabBtn.classList.remove('active');
                 savedContent.classList.remove('d-none');
                 cartContent.classList.add('d-none');
-                if (cartFooter) {
-                    cartFooter.classList.add('d-none');
-                }
+                cartFooter.classList.add('d-none');
             } else {
                 cartTabBtn.classList.add('active');
                 savedTabBtn.classList.remove('active');
                 cartContent.classList.remove('d-none');
                 savedContent.classList.add('d-none');
-                if (cartFooter) {
-                    cartFooter.classList.remove('d-none');
-                }
+                cartFooter.classList.remove('d-none');
             }
-        
+            
             // Cambio entre pestañas
             cartTabBtn.addEventListener('click', function() {
                 cartTabBtn.classList.add('active');
                 savedTabBtn.classList.remove('active');
                 cartContent.classList.remove('d-none');
                 savedContent.classList.add('d-none');
-                if (cartFooter) {
-                    cartFooter.classList.remove('d-none');
-                }
+                cartFooter.classList.remove('d-none');
             });
-        
+            
             savedTabBtn.addEventListener('click', function() {
                 savedTabBtn.classList.add('active');
                 cartTabBtn.classList.remove('active');
                 savedContent.classList.remove('d-none');
                 cartContent.classList.add('d-none');
-                if (cartFooter) {
-                    cartFooter.classList.add('d-none');
-                }
+                cartFooter.classList.add('d-none');
             });
 
-
-
-            function updateTotals(contextSelector, totalElementId, storagePrefix) {
-                let subtotal = 0;
+          // Función para actualizar el precio por línea y el total
+          function updateCartTotals() {
+            let subtotal = 0;
+            let totalItems = 0;
             
-                // Iterar sobre cada línea dentro del contexto (carrito o guardados)
-                document.querySelectorAll(`${contextSelector} .cart-quantity-input`).forEach(function (cartInput) {
-                    const qtyInput = cartInput.querySelector('input[name="set_qty"]');
-                    if (!qtyInput) return;
+            document.querySelectorAll('.cart-quantity-input').forEach(function(cartInput) {
+              const qtyInput = cartInput.querySelector('input[name="set_qty"]');
+              if (!qtyInput) return;
+              const pricePerUnit = parseFloat(qtyInput.getAttribute('data-price'));
+              const qty = parseInt(qtyInput.value) || 1;
+              totalItems += qty;
+              const row = cartInput.closest('.row');
+              const lineTotalSpan = row.querySelector('.col-3 .fw-bold');
+              const lineTotal = pricePerUnit * qty;
+              subtotal += lineTotal;
+              if (lineTotalSpan) {
+                lineTotalSpan.textContent = '$' + lineTotal.toFixed(2);
+              }
+              
+              // Guardar cantidad en localStorage
+              const lineId = qtyInput.form.querySelector('input[name="line_id"]').value;
+              localStorage.setItem('cart_qty_' + lineId, qty);
+            });
             
-                    // Obtener precio y cantidad
-                    const pricePerUnit = parseFloat(qtyInput.getAttribute('data-price')) || 0; // Validar precio
-                    const qty = parseInt(qtyInput.value) || 1; // Validar cantidad
-            
-                    // Calcular el total por línea
-                    const lineTotal = pricePerUnit * qty;
-                    subtotal += lineTotal;
-            
-                    // Actualizar el total por línea en el HTML
-                    const row = cartInput.closest('.row');
-                    const lineTotalSpan = row.querySelector('.col-3 .fw-bold');
-                    if (lineTotalSpan) {
-                        lineTotalSpan.textContent = '$' + lineTotal.toFixed(2);
-                    }
-            
-                    // Guardar cantidad en localStorage
-                    const itemIdInput = qtyInput.form.querySelector('input[name="line_id"], input[name="item_id"]');
-                    const itemId = itemIdInput ? itemIdInput.value : null;
-                    if (itemId) {
-                        localStorage.setItem(`${storagePrefix}_${itemId}`, qty);
-                    }
-                });
-            
-                // Actualizar el subtotal en el HTML
-                const subtotalElement = document.getElementById(totalElementId);
-                if (subtotalElement) {
-                    subtotalElement.textContent = subtotal.toFixed(2);
-                }
+            // Actualiza el subtotal
+            const subtotalElement = document.getElementById('cart-total-amount');
+            if (subtotalElement) {
+              subtotalElement.textContent = subtotal.toFixed(2);
             }
+            
+            // Actualiza el contador del carrito en el icono
+            const cartCounterElement = document.querySelector('.nav-item .badge, #top_menu .my_cart_quantity');
+            if (cartCounterElement) {
+              cartCounterElement.textContent = totalItems;
+            }
+            
+            // Actualiza también el texto del tab de carrito
+            const cartTabText = document.querySelector('.nav-link.active[data-tab="cart-tab"]');
+            if (cartTabText) {
+              cartTabText.innerHTML = `Carrito (${totalItems})`;
+            }
+          }
 
-            // Escuchar cambios en los inputs de cantidad para carrito
-            document.querySelectorAll('#cart-tab-content .cart-quantity-input input[name="set_qty"]').forEach(function (input) {
-                input.addEventListener('input', function () {
-                    updateTotals('#cart-tab-content', 'cart-total-amount', 'cart_qty');
-                });
-
-                // Evitar enviar el formulario si la cantidad no cambió
-                input.form.addEventListener('submit', function (e) {
-                    const currentQty = parseInt(input.getAttribute('value')) || 1;
-                    const newQty = parseInt(input.value) || 1;
-                    if (currentQty === newQty) {
-                        e.preventDefault();
-                    }
-                });
+          // Cargar cantidades guardadas en localStorage
+          document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
+            const lineId = input.form.querySelector('input[name="line_id"]').value;
+            const savedQty = localStorage.getItem('cart_qty_' + lineId);
+            if (savedQty) {
+              // Solo actualizar visualmente, sin enviar al servidor automáticamente
+              input.value = parseInt(savedQty);
+              input.setAttribute('value', parseInt(savedQty));
+            }
+          });
+          
+          // Calcular totales al cargar la página
+          updateCartTotals();
+          
+          // Escuchar cambios en los inputs de cantidad
+          document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
+            input.addEventListener('input', function() {
+              updateCartTotals();
             });
-
-            // Escuchar cambios en los inputs de cantidad para guardados
-            document.querySelectorAll('#saved-tab-content .cart-quantity-input input[name="set_qty"]').forEach(function (input) {
-                input.addEventListener('input', function () {
-                    updateTotals('#saved-tab-content', 'saved-total-amount', 'saved_qty');
-                });
-
-                // Evitar enviar el formulario si la cantidad no cambió
-                input.form.addEventListener('submit', function (e) {
-                    const currentQty = parseInt(input.getAttribute('value')) || 1;
-                    const newQty = parseInt(input.value) || 1;
-                    if (currentQty === newQty) {
-                        e.preventDefault();
-                    }
-                });
+            
+            // Evitar enviar el formulario si la cantidad no cambió
+            input.form.addEventListener('submit', function(e) {
+              const currentQty = parseInt(input.getAttribute('value'));
+              const newQty = parseInt(input.value);
+              if (currentQty === newQty) {
+                e.preventDefault();
+              }
             });
-
-            // Cargar cantidades guardadas en localStorage para carrito
-            document.querySelectorAll('#cart-tab-content .cart-quantity-input input[name="set_qty"]').forEach(function (input) {
-                const lineId = input.form.querySelector('input[name="line_id"]').value;
-                const savedQty = localStorage.getItem('cart_qty_' + lineId);
-                if (savedQty) {
-                    input.value = parseInt(savedQty);
-                    input.setAttribute('value', parseInt(savedQty));
-                }
-            });
-
-            // Cargar cantidades guardadas en localStorage para guardados
-            document.querySelectorAll('#saved-tab-content .cart-quantity-input input[name="set_qty"]').forEach(function (input) {
-                const itemId = input.form.querySelector('input[name="item_id"]').value;
-                const savedQty = localStorage.getItem('saved_qty_' + itemId);
-                if (savedQty) {
-                    input.value = parseInt(savedQty);
-                    input.setAttribute('value', parseInt(savedQty));
-                }
-            });
-
-            // Calcular totales al cargar la página
-            updateTotals('#cart-tab-content', 'cart-total-amount', 'cart_qty');
-            updateTotals('#saved-tab-content', 'saved-total-amount', 'saved_qty');
+          });            
         });
         </script>
       </t>
