@@ -78,7 +78,7 @@
                                         onwheel="return false;"
                                         inputmode="numeric"
                                         maxlength="2"/>
-                                        
+
                                     <button type="button" class="btn btn-light border-0"
                                             style="min-width:32px; font-size:16px; padding:4px 0; background:#f8f8f8;"
                                             t-att-disabled="line.product_id.qty_available &lt;= 1"
@@ -307,10 +307,7 @@
                     </div>
                     <div class="col-md-3 col-6 text-end">
                     <div class="fw-semibold" style="font-size:16px;">
-                      Total: $<span id="cart-total-amount">
-                      <t t-set="subtotal" t-value="sum((line.product_id.discounted_price if line.product_id.discounted_price else line.product_id.list_price) * line.product_uom_qty for line in order.order_line)"/>
-                      <t t-esc="'%.2f' % subtotal"/>
-                      </span>
+                        Total: $<span id="cart-total-amount">0.00</span>
                     </div>
                     </div>
                     <div class="col-md-3 col-6 text-end">
@@ -447,45 +444,48 @@
 
           // Función para actualizar el precio por línea y el total
           function updateCartTotals() {
-            let subtotal = 0;
-            let totalItems = 0;
-            
-            document.querySelectorAll('.cart-quantity-input').forEach(function(cartInput) {
-              const qtyInput = cartInput.querySelector('input[name="set_qty"]');
-              if (!qtyInput) return;
-              const pricePerUnit = parseFloat(qtyInput.getAttribute('data-price'));
-              const qty = parseInt(qtyInput.value) || 1;
-              totalItems += qty;
-              const row = cartInput.closest('.row');
-              const lineTotalSpan = row.querySelector('.col-3 .fw-bold');
-              const lineTotal = pricePerUnit * qty;
-              subtotal += lineTotal;
-              if (lineTotalSpan) {
-                lineTotalSpan.textContent = '$' + lineTotal.toFixed(2);
+              let subtotal = 0;
+              let totalItems = 0;
+          
+              // Iterar sobre cada línea del carrito
+              document.querySelectorAll('.cart-quantity-input').forEach(function(cartInput) {
+                  const qtyInput = cartInput.querySelector('input[name="set_qty"]');
+                  if (!qtyInput) return;
+          
+                  // Obtener precio y cantidad
+                  const pricePerUnit = parseFloat(qtyInput.getAttribute('data-price')) || 0; // Validar precio
+                  const qty = parseInt(qtyInput.value) || 1; // Validar cantidad
+          
+                  // Actualizar subtotal y total de artículos
+                  totalItems += qty;
+                  const lineTotal = pricePerUnit * qty;
+                  subtotal += lineTotal;
+          
+                  // Actualizar el total por línea
+                  const row = cartInput.closest('.row');
+                  const lineTotalSpan = row.querySelector('.col-3 .fw-bold');
+                  if (lineTotalSpan) {
+                      lineTotalSpan.textContent = '$' + lineTotal.toFixed(2);
+                  }
+              });
+          
+              // Actualizar el subtotal en el carrito
+              const subtotalElement = document.getElementById('cart-total-amount');
+              if (subtotalElement) {
+                  subtotalElement.textContent = subtotal.toFixed(2);
               }
-              
-              // Guardar cantidad en localStorage
-              const lineId = qtyInput.form.querySelector('input[name="line_id"]').value;
-              localStorage.setItem('cart_qty_' + lineId, qty);
-            });
-            
-            // Actualiza el subtotal
-            const subtotalElement = document.getElementById('cart-total-amount');
-            if (subtotalElement) {
-              subtotalElement.textContent = subtotal.toFixed(2);
-            }
-            
-            // Actualiza el contador del carrito en el icono
-            const cartCounterElement = document.querySelector('.nav-item .badge, #top_menu .my_cart_quantity');
-            if (cartCounterElement) {
-              cartCounterElement.textContent = totalItems;
-            }
-            
-            // Actualiza también el texto del tab de carrito
-            const cartTabText = document.querySelector('.nav-link.active[data-tab="cart-tab"]');
-            if (cartTabText) {
-              cartTabText.innerHTML = `Carrito (${totalItems})`;
-            }
+          
+              // Actualizar el contador del carrito en el icono
+              const cartCounterElement = document.querySelector('.nav-item .badge, #top_menu .my_cart_quantity');
+              if (cartCounterElement) {
+                  cartCounterElement.textContent = totalItems;
+              }
+          
+              // Actualizar el texto del tab de carrito
+              const cartTabText = document.querySelector('.nav-link.active[data-tab="cart-tab"]');
+              if (cartTabText) {
+                  cartTabText.innerHTML = `Carrito (${totalItems})`;
+              }
           }
 
           // Cargar cantidades guardadas en localStorage
