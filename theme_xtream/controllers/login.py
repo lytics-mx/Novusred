@@ -108,11 +108,8 @@ class WebsiteAuth(Home):
 
                 _logger.info("Portal user created successfully: %s (ID: %s)", login, user_sudo.id)
 
-                # Render the signup page with a success message
-                return request.render('theme_xtream.website_signup', {
-                    'success': _("Your account has been created successfully."),
-                    'redirect': redirect,
-                })
+                # Redirect to success page
+                return request.render('theme_xtream.website_signup_success')
             except Exception as e:
                 _logger.error("Signup error: %s (Exception type: %s)", str(e), type(e).__name__)
                 return request.render('theme_xtream.website_signup', {
@@ -122,7 +119,8 @@ class WebsiteAuth(Home):
 
         return request.render('theme_xtream.website_signup', {
             'redirect': redirect,
-        }) 
+        })
+    
     # @http.route(['/shop/reset_password'], type='http', auth="public", website=True)
     # def shop_reset_password(self, redirect=None, **post):
     #     """Custom password reset for website users"""
