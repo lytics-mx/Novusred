@@ -43,7 +43,19 @@ class ShopController(WebsiteSale):
                 # Actualizar la cantidad en "Guardados"
                 saved_item.write({'quantity_available': set_qty})
         return request.redirect('/shop/cart?tab=saved')
-    
+
+    @http.route('/shop/cart/update_saved', type='http', auth="public", website=True)
+    def update_saved(self, item_id=None, set_qty=None, **kw):
+        if item_id and set_qty:
+            item_id = int(item_id)
+            set_qty = int(set_qty)
+            saved_item = request.env['saved.items'].search([('id', '=', item_id), ('user_id', '=', request.env.user.id)])
+            if saved_item:
+                # Actualizar la cantidad en "Guardados"
+                saved_item.write({'quantity_available': set_qty})
+        return request.redirect('/shop/cart?tab=saved')
+
+
     @http.route('/shop/cart/remove', type='http', auth="public", website=True)
     def cart_remove(self, line_id=None, **kw):
         if line_id:
