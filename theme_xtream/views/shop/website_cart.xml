@@ -156,6 +156,65 @@
                                            style="color:#0009ED;" class="small">Agregar al carrito</a>
                                     </div>
                                 </div>
+                                <div class="col-2 text-center">
+                                  <div class="cart-quantity-input">
+                                    <form t-att-action="'/shop/cart/update'" method="post" class="d-inline-flex align-items-center">
+                                      <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                      <input type="hidden" name="line_id" t-att-value="line.id"/>
+                                      <input type="hidden" name="product_id" t-att-value="line.product_id.id"/>
+                                      
+                                      <span class="input-group border rounded overflow-hidden" style="width:auto; display:inline-flex; vertical-align:middle;">
+                                        <button type="button" class="btn btn-light border-0"
+                                            style="min-width:32px; font-size:16px; padding:4px 0; background:#f8f8f8;"
+                                            t-att-disabled="line.product_uom_qty &lt;= 1"                                    
+                                            onclick="var qtyInput=this.parentNode.querySelector('[name=\'set_qty\']'); qtyInput.value=Math.max(1,parseInt(qtyInput.value)-1); qtyInput.dispatchEvent(new Event('input'));">-</button>
+                                                
+                                        <input type="number" name="set_qty"
+                                              class="form-control text-center"
+                                              t-att-value="int(line.product_uom_qty)"
+                                              min="1"
+                                              t-att-max="int(line.product_id.qty_available)"
+                                              t-att-data-price="(line.product_id.discounted_price or line.product_id.list_price)"
+                                              style="width:40px; border:none; box-shadow:none; background:transparent; 
+                                                      -webkit-appearance: none; -moz-appearance: textfield; margin:0;"
+                                              onwheel="return false;"
+                                              inputmode="numeric"
+                                              maxlength="2"/>
+                                              
+                                        <button type="button" class="btn btn-light border-0"
+                                                style="min-width:32px; font-size:16px; padding:4px 0; background:#f8f8f8;"
+                                                t-att-disabled="line.product_uom_qty >= line.product_id.qty_available"
+                                                onclick="var qtyInput=this.parentNode.querySelector('[name=\'set_qty\']'); qtyInput.value=Math.min(parseInt(qtyInput.getAttribute('max')),parseInt(qtyInput.value)+1); qtyInput.dispatchEvent(new Event('input'));">+</button>
+                                      
+                                      </span>
+                                          <style>
+                                              /* Oculta las flechas de los inputs type number en todos los navegadores */
+                                              input[type=number]::-webkit-inner-spin-button, 
+                                              input[type=number]::-webkit-outer-spin-button { 
+                                                  -webkit-appearance: none; 
+                                                  margin: 0; 
+                                              }
+                                              input[type=number] {
+                                                  -moz-appearance: textfield;
+                                              }
+                                              /* Ajusta el ancho del input según el número de dígitos */
+                                              #qty-input {
+                                                  width: 2.5em !important;
+                                                  min-width: 32px !important;
+                                                  max-width: 3em !important;
+                                                  text-align: center;
+                                              }
+                                          </style>
+
+                                    </form>
+                                  </div>
+                                  <div class="small text-muted mt-1"><t t-esc="int(line.product_id.qty_available)"/> disponibles</div>
+                                </div>
+                                <div class="col-3 text-end">
+                                  <span class="fw-bold" style="font-size:18px;">
+                                    $<t t-esc="'%.2f' % ((line.product_id.discounted_price or line.product_id.list_price) * line.product_uom_qty)"/>
+                                  </span>
+                                </div>                                
                             </div>
                         </t>
                     </t>
