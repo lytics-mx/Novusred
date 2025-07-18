@@ -15,7 +15,7 @@ class ShopController(WebsiteSale):
     ], type='http', auth="public", website=True, sitemap=False)
     def product_page(self, product_id, product_name=None, **kwargs):
         # Obtener el producto template
-        product_template = request.env['product.template'].sudo().browse(product_id)        
+        product_template = request.env['product.template'].sudo().browse(product_id)
         if not product_template.exists():
             _logger.warning(f"El producto template con ID {product_id} no existe.")
             return request.not_found()
