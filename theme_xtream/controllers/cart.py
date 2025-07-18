@@ -124,13 +124,13 @@ class ShopController(WebsiteSale):
         if item_id:
             item_id = int(item_id)
             # Buscar el producto en "Guardados"
-            saved_item = request.env['saved.items'].search([('id', '=', item_id), ('user_id', '=', request.env.user.id)])
+            saved_item = request.env['saved.items'].sudo().search([('id', '=', item_id), ('user_id', '=', request.env.user.id)])
             if saved_item:
                 # Obtener el pedido actual
                 order = request.website.sale_get_order(force_create=True)
                 if order:
                     # Agregar el producto al carrito
-                    request.env['sale.order.line'].create({
+                    request.env['sale.order.line'].sudo().create({
                         'order_id': order.id,
                         'product_id': saved_item.product_id.id,
                         'product_uom_qty': 1,  # Cantidad predeterminada
