@@ -380,11 +380,11 @@
 
 
 
-            function updateCartTotals() {
+            function updateTotals(contextSelector, totalElementId, storagePrefix) {
                 let subtotal = 0;
 
-                // Iterar sobre cada línea del carrito
-                document.querySelectorAll('.cart-quantity-input').forEach(function (cartInput) {
+                // Iterar sobre cada línea dentro del contexto (carrito o guardados)
+                document.querySelectorAll(`${contextSelector} .cart-quantity-input`).forEach(function (cartInput) {
                     const qtyInput = cartInput.querySelector('input[name="set_qty"]');
                     if (!qtyInput) return;
 
@@ -402,115 +402,78 @@
                     if (lineTotalSpan) {
                         lineTotalSpan.textContent = '$' + lineTotal.toFixed(2);
                     }
+
+                    // Guardar cantidad en localStorage
+                    const itemIdInput = qtyInput.form.querySelector('input[name="line_id"], input[name="item_id"]');
+                    const itemId = itemIdInput ? itemIdInput.value : null;
+                    if (itemId) {
+                        localStorage.setItem(`${storagePrefix}_${itemId}`, qty);
+                    }
                 });
 
                 // Actualizar el subtotal en el HTML
-                const subtotalElement = document.getElementById('cart-total-amount');
+                const subtotalElement = document.getElementById(totalElementId);
                 if (subtotalElement) {
                     subtotalElement.textContent = subtotal.toFixed(2);
                 }
             }
 
-            // Escuchar cambios en los inputs de cantidad
-            document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function (input) {
+            // Escuchar cambios en los inputs de cantidad para carrito
+            document.querySelectorAll('#cart-tab-content .cart-quantity-input input[name="set_qty"]').forEach(function (input) {
                 input.addEventListener('input', function () {
-                    updateCartTotals();
-                });
-            });
-
-            // Calcular totales al cargar la página
-            updateCartTotals();
-        });
-
-            // Escuchar cambios en los inputs de cantidad
-            document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
-                input.addEventListener('input', function() {
-                    updateSavedTotals();
+                    updateTotals('#cart-tab-content', 'cart-total-amount', 'cart_qty');
                 });
 
                 // Evitar enviar el formulario si la cantidad no cambió
-                input.form.addEventListener('submit', function(e) {
-                    const currentQty = parseInt(input.getAttribute('value'));
-                    const newQty = parseInt(input.value);
+                input.form.addEventListener('submit', function (e) {
+                    const currentQty = parseInt(input.getAttribute('value')) || 1;
+                    const newQty = parseInt(input.value) || 1;
                     if (currentQty === newQty) {
                         e.preventDefault();
                     }
                 });
             });
 
-          // Función para actualizar el precio por línea y el total
-          function updateCartTotals() {
-            let subtotal = 0;
-            let totalItems = 0;
-            
-            document.querySelectorAll('.cart-quantity-input').forEach(function(cartInput) {
-              const qtyInput = cartInput.querySelector('input[name="set_qty"]');
-              if (!qtyInput) return;
-              const pricePerUnit = parseFloat(qtyInput.getAttribute('data-price'));
-              const qty = parseInt(qtyInput.value) || 1;
-              totalItems += qty;
-              const row = cartInput.closest('.row');
-              const lineTotalSpan = row.querySelector('.col-3 .fw-bold');
-              const lineTotal = pricePerUnit * qty;
-              subtotal += lineTotal;
-              if (lineTotalSpan) {
-                lineTotalSpan.textContent = '$' + lineTotal.toFixed(2);
-              }
-              
-              // Guardar cantidad en localStorage
-              const lineId = qtyInput.form.querySelector('input[name="line_id"]').value;
-              localStorage.setItem('cart_qty_' + lineId, qty);
-            });
-            
-            // Actualiza el subtotal
-            const subtotalElement = document.getElementById('cart-total-amount');
-            if (subtotalElement) {
-              subtotalElement.textContent = subtotal.toFixed(2);
-            }
-            
-            // Actualiza el contador del carrito en el icono
-            const cartCounterElement = document.querySelector('.nav-item .badge, #top_menu .my_cart_quantity');
-            if (cartCounterElement) {
-              cartCounterElement.textContent = totalItems;
-            }
-            
-            // Actualiza también el texto del tab de carrito
-            const cartTabText = document.querySelector('.nav-link.active[data-tab="cart-tab"]');
-            if (cartTabText) {
-              cartTabText.innerHTML = `Carrito (${totalItems})`;
-            }
-          }
+            // Escuchar cambios en los inputs de cantidad para guardados
+            document.querySelectorAll('#saved-tab-content .cart-quantity-input input[name="set_qty"]').forEach(function (input) {
+                input.addEventListener('input', function () {
+                    updateTotals('#saved-tab-content', 'saved-total-amount', 'saved_qty');
+                });
 
-          // Cargar cantidades guardadas en localStorage
-          document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
-            const lineId = input.form.querySelector('input[name="line_id"]').value;
-            const savedQty = localStorage.getItem('cart_qty_' + lineId);
-            if (savedQty) {
-              // Solo actualizar visualmente, sin enviar al servidor automáticamente
-              input.value = parseInt(savedQty);
-              input.setAttribute('value', parseInt(savedQty));
-            }
-          });
-          
-          // Calcular totales al cargar la página
-          updateCartTotals();
-          
-          // Escuchar cambios en los inputs de cantidad
-          document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
-            input.addEventListener('input', function() {
-              updateCartTotals();
+                // Evitar enviar el formulario si la cantidad no cambió
+                input.form.addEventListener('submit', function (e) {
+                    const currentQty = parseInt(input.getAttribute('value')) || 1;
+                    const newQty = parseInt(input.value) || 1;
+                    if (currentQty === newQty) {
+                        e.preventDefault();
+                    }
+                });
             });
-            
-            // Evitar enviar el formulario si la cantidad no cambió
-            input.form.addEventListener('submit', function(e) {
-              const currentQty = parseInt(input.getAttribute('value'));
-              const newQty = parseInt(input.value);
-              if (currentQty === newQty) {
-                e.preventDefault();
-              }
-            });
-          });            
 
+            // Cargar cantidades guardadas en localStorage para carrito
+            document.querySelectorAll('#cart-tab-content .cart-quantity-input input[name="set_qty"]').forEach(function (input) {
+                const lineId = input.form.querySelector('input[name="line_id"]').value;
+                const savedQty = localStorage.getItem('cart_qty_' + lineId);
+                if (savedQty) {
+                    input.value = parseInt(savedQty);
+                    input.setAttribute('value', parseInt(savedQty));
+                }
+            });
+
+            // Cargar cantidades guardadas en localStorage para guardados
+            document.querySelectorAll('#saved-tab-content .cart-quantity-input input[name="set_qty"]').forEach(function (input) {
+                const itemId = input.form.querySelector('input[name="item_id"]').value;
+                const savedQty = localStorage.getItem('saved_qty_' + itemId);
+                if (savedQty) {
+                    input.value = parseInt(savedQty);
+                    input.setAttribute('value', parseInt(savedQty));
+                }
+            });
+
+            // Calcular totales al cargar la página
+            updateTotals('#cart-tab-content', 'cart-total-amount', 'cart_qty');
+            updateTotals('#saved-tab-content', 'saved-total-amount', 'saved_qty');
+        });
         </script>
       </t>
     </xpath>
