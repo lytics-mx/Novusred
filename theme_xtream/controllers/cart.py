@@ -11,6 +11,8 @@ class ShopController(WebsiteSale):
     @http.route('/shop/cart', type='http', auth="public", website=True)
     def cart(self, tab=None, **kw):
         order = request.website.sale_get_order()
+        saved_items = request.env['saved.items'].sudo().search([('user_id', '=', request.env.user.id)])        
+
         # Filtrar los productos guardados para después que pertenecen a este pedido
         saved_items = []
         if order:
@@ -51,24 +53,43 @@ class ShopController(WebsiteSale):
                 if line:
                     line.unlink()
         return request.redirect('/shop/cart')
+
+
+
+    @http.route('/shop/cart/update', type='http', auth="public", website=True)
+    def cart_update(self, line_id=None, set_qty=None, **kw):
+        if line_id and set_qty:
+            try:
+                order = request.website.sale_get_order()
+                if order:
+                    # Filtrar la línea del pedido por su ID
+                    line = order.order_line.filtered(lambda l: l.id == int(line_id))
+                    if line:
+                        # Actualizar la cantidad en la línea del pedido
+                        line.product_uom_qty = int(set_qty)
+                        line._compute_amount()  # Recalcular los totales
+            except Exception as e:
+                _logger.error(f"Error al actualizar la cantidad en el carrito: {str(e)}")
+        return request.redirect('/shop/cart')
     
+
     @http.route('/shop/cart/update_badge', type='json', auth="public", website=True)
     def update_cart_badge(self, total_items=None, **post):
-        if total_items is not None:
-            request.session['website_sale_cart_quantity'] = int(total_items)
-            
-            # También actualiza el contador en la orden actual
-            order = request.website.sale_get_order(force_create=0)
-            if order:
-                # Recalcular la cantidad total de productos en la orden
-                # (Esto es opcional, ya que la cantidad visual se actualizará con total_items)
-                quantity = sum(line.product_uom_qty for line in order.order_line)
-                if quantity != total_items:
-                    # Solo registrar la diferencia, no es necesario hacer nada más
-                    _logger.info(f"Diferencia entre cantidad visual ({total_items}) y real ({quantity})")
-            
-            return {'success': True, 'cart_quantity': total_items}
-        return {'success': False}
+        try:
+            if total_items is not None:
+                request.session['website_sale_cart_quantity'] = int(total_items)
+                
+                order = request.website.sale_get_order(force_create=0)
+                if order:
+                    quantity = sum(line.product_uom_qty for line in order.order_line)
+                    if quantity != total_items:
+                        _logger.info(f"Diferencia entre cantidad visual ({total_items}) y real ({quantity})")
+                
+                return {'success': True, 'cart_quantity': total_items}
+            return {'success': False}
+        except Exception as e:
+            _logger.error(f"Error en update_cart_badge: {str(e)}")
+            return {'success': False, 'error': str(e)}
        
 
        
@@ -123,25 +144,22 @@ class ShopController(WebsiteSale):
     def move_to_cart(self, item_id=None, **kw):
         if item_id:
             item_id = int(item_id)
-            saved_items = request.session.get('saved_for_later', [])
-            item_to_move = None
-            new_saved_items = []
-            
-            for item in saved_items:
-                if item['id'] == item_id:
-                    item_to_move = item
-                else:
-                    new_saved_items.append(item)
-                    
-            if item_to_move:
-                request.session['saved_for_later'] = new_saved_items
-                request.session.modified = True
-                
-                # Añadir al carrito
-                order = request.website.sale_get_order(force_create=1)
-                order._cart_update(product_id=item_to_move['product_id'], add_qty=1)
-                
-        return request.redirect('/shop/cart')    
+            # Buscar el producto en "Guardados"
+            saved_item = request.env['saved.items'].search([('id', '=', item_id), ('user_id', '=', request.env.user.id)])
+            if saved_item:
+                # Obtener el pedido actual
+                order = request.website.sale_get_order(force_create=True)
+                if order:
+                    # Agregar el producto al carrito
+                    request.env['sale.order.line'].create({
+                        'order_id': order.id,
+                        'product_id': saved_item.product_id.id,
+                        'product_uom_qty': 1,  # Cantidad predeterminada
+                        'price_unit': saved_item.price,
+                    })
+                    # Eliminar el producto de "Guardados"
+                    saved_item.unlink()
+        return request.redirect('/shop/cart')  
     
     @http.route('/shop/cart/update_bundle', type='http', auth="public", website=True)
     def update_bundle_cart(self, **post):
