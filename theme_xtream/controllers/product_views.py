@@ -11,7 +11,7 @@ _logger = logging.getLogger(__name__)
 class ShopController(WebsiteSale):
 
     @http.route([
-        '/shop/product/<int:product_id>'
+        '/shop/product/<int:product_id>/<string:product_name>'
     ], type='http', auth="public", website=True, sitemap=False)
     def product_page(self, product_id, product_name=None, **kwargs):
         # Obtener el producto template
