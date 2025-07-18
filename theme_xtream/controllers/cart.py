@@ -40,10 +40,12 @@ class ShopController(WebsiteSale):
             try:
                 order = request.website.sale_get_order()
                 if order:
+                    # Filtrar la línea del pedido por su ID
                     line = order.order_line.filtered(lambda l: l.id == int(line_id))
                     if line:
                         # Actualizar la cantidad en la línea del pedido
                         line.product_uom_qty = int(set_qty)
+                        line._compute_amount()  # Recalcular los totales
             except Exception as e:
                 _logger.error(f"Error al actualizar la cantidad en el carrito: {str(e)}")
         return request.redirect('/shop/cart')
