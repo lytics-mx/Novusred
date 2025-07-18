@@ -65,39 +65,29 @@ class ShopController(WebsiteSale):
 
        
     @http.route('/shop/cart/move_to_saved', type='http', auth="public", website=True)
-    def move_to_saved(self, line_id=None, **kw):
+    def move_to_saved(self, line_id=None, set_qty=1, **kw):
         if line_id:
             line_id = int(line_id)
             order = request.website.sale_get_order()
             if order:
-                # Filtrar la línea del carrito
                 line = order.order_line.filtered(lambda l: l.id == line_id)
                 if line:
-                    # Determinar el precio basado en etiquetas
                     price = line.product_id.discounted_price if line.product_id.discounted_price else line.product_id.list_price
-    
-                    # Guardar información del producto en el modelo
                     product_data = {
                         'user_id': request.env.user.id,
                         'product_id': line.product_id.id,
                         'name': line.product_id.display_name,
                         'price': price,
                         'quantity_available': line.product_id.qty_available,
+                        'quantity_saved': set_qty,  # Nueva cantidad guardada
                     }
-    
-                    # Agregar información de la marca si está disponible
                     if getattr(line.product_id.product_tmpl_id, 'brand_type_id', False):
                         product_data.update({
                             'brand_name': line.product_id.product_tmpl_id.brand_type_id.name,
                             'brand_id': line.product_id.product_tmpl_id.brand_type_id.id,
                         })
-    
-                    # Crear el registro en la base de datos
                     request.env['saved.items'].create(product_data)
-    
-                    # Eliminar la línea del carrito
                     line.unlink()
-    
         return request.redirect('/shop/cart?tab=saved')
        
     @http.route('/shop/cart/remove_saved_item', type='http', auth="public", website=True)
@@ -111,7 +101,7 @@ class ShopController(WebsiteSale):
 
     
     @http.route('/shop/cart/move_to_cart', type='http', auth="public", website=True)
-    def move_to_cart(self, item_id=None, **kw):
+    def move_to_cart(self, item_id=None, set_qty=1, **kw):
         if item_id:
             item_id = int(item_id)
             # Buscar el producto en "Guardados"
@@ -120,11 +110,11 @@ class ShopController(WebsiteSale):
                 # Obtener el pedido actual
                 order = request.website.sale_get_order(force_create=True)
                 if order:
-                    # Agregar el producto al carrito
+                    # Agregar el producto al carrito con la cantidad especificada
                     request.env['sale.order.line'].create({
                         'order_id': order.id,
                         'product_id': saved_item.product_id.id,
-                        'product_uom_qty': 1,  # Cantidad predeterminada
+                        'product_uom_qty': set_qty,  # Usar la cantidad especificada
                         'price_unit': saved_item.price,
                     })
                     # Eliminar el producto de "Guardados"
