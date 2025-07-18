@@ -81,28 +81,27 @@ class ShopController(WebsiteSale):
                 # Filtrar la línea del carrito
                 line = order.order_line.filtered(lambda l: l.id == line_id)
                 if line:
-                    # Guardar información del producto en la sesión
+                    # Determinar el precio basado en etiquetas
+                    price = line.product_id.discounted_price if line.product_id.discounted_price else line.product_id.list_price
+    
+                    # Guardar información del producto en el modelo
                     product_data = {
-                        'id': int(time.time()),  # ID temporal único
+                        'user_id': request.env.user.id,
                         'product_id': line.product_id.id,
-                        'template_id': line.product_id.product_tmpl_id.id,
                         'name': line.product_id.display_name,
-                        'price': getattr(line.product_id, 'discounted_price', line.product_id.list_price),
+                        'price': price,
                         'quantity_available': line.product_id.qty_available,
                     }
     
+                    # Agregar información de la marca si está disponible
                     if getattr(line.product_id.product_tmpl_id, 'brand_type_id', False):
                         product_data.update({
                             'brand_name': line.product_id.product_tmpl_id.brand_type_id.name,
                             'brand_id': line.product_id.product_tmpl_id.brand_type_id.id,
                         })
     
-                    saved_items = request.session.get('saved_for_later', [])
-                    # Evitar duplicados en la lista de guardados
-                    if not any(item['template_id'] == product_data['template_id'] for item in saved_items):
-                        saved_items.append(product_data)
-                    request.session['saved_for_later'] = saved_items
-                    request.session.modified = True
+                    # Crear el registro en la base de datos
+                    request.env['saved.items'].create(product_data)
     
                     # Eliminar la línea del carrito
                     line.unlink()
