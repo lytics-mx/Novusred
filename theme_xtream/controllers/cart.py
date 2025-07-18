@@ -11,7 +11,7 @@ class ShopController(WebsiteSale):
     @http.route('/shop/cart', type='http', auth="public", website=True)
     def cart(self, tab=None, **kw):
         order = request.website.sale_get_order()
-        saved_items = request.env['saved.items'].sudo().search([('user_id', '=', request.env.user.id)])
+        saved_items = request.env['saved.items'].sudo().search([('user_id', '=', request.env.user.id)])        
         values = {
             'website_sale_order': order,
             'saved_items': saved_items,
