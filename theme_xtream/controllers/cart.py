@@ -34,6 +34,20 @@ class ShopController(WebsiteSale):
         return values
 
 
+    @http.route('/shop/cart/update', type='http', auth="public", website=True)
+    def cart_update(self, line_id=None, set_qty=None, **kw):
+        if line_id and set_qty:
+            try:
+                order = request.website.sale_get_order()
+                if order:
+                    line = order.order_line.filtered(lambda l: l.id == int(line_id))
+                    if line:
+                        # Actualizar la cantidad en la línea del pedido
+                        line.product_uom_qty = int(set_qty)
+            except Exception as e:
+                _logger.error(f"Error al actualizar la cantidad en el carrito: {str(e)}")
+        return request.redirect('/shop/cart')
+
     @http.route('/shop/cart/remove', type='http', auth="public", website=True)
     def cart_remove(self, line_id=None, **kw):
         if line_id:
