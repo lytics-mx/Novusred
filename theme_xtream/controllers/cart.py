@@ -11,11 +11,19 @@ class ShopController(WebsiteSale):
     @http.route('/shop/cart', type='http', auth="public", website=True)
     def cart(self, tab=None, **kw):
         order = request.website.sale_get_order()
-        saved_items = request.env['saved.items'].search([('user_id', '=', request.env.user.id)])
+        # Filtrar los productos guardados para después que pertenecen a este pedido
+        saved_items = []
+        if order:
+            order_product_ids = set(line.product_id.id for line in order.order_line)
+            session_saved_items = request.session.get('saved_for_later', [])
+            saved_items = [
+                item for item in session_saved_items
+                if item.get('product_id') not in order_product_ids
+            ]
         values = {
             'website_sale_order': order,
             'saved_items': saved_items,
-            'active_tab': tab or 'cart',  # Determinar la pestaña activa
+            'active_tab': tab or 'cart',
         }
         return request.render("theme_xtream.website_cart_buy_now", values)
 
@@ -34,20 +42,6 @@ class ShopController(WebsiteSale):
         return values
 
 
-    @http.route('/shop/cart/update', type='http', auth="public", website=True)
-    def cart_update(self, line_id=None, set_qty=None, **kw):
-        if line_id and set_qty:
-            try:
-                order = request.website.sale_get_order()
-                if order:
-                    line = order.order_line.filtered(lambda l: l.id == int(line_id))
-                    if line:
-                        # Actualizar la cantidad en la línea del pedido
-                        line.product_uom_qty = int(set_qty)
-            except Exception as e:
-                _logger.error(f"Error al actualizar la cantidad en el carrito: {str(e)}")
-        return request.redirect('/shop/cart')
-
     @http.route('/shop/cart/remove', type='http', auth="public", website=True)
     def cart_remove(self, line_id=None, **kw):
         if line_id:
@@ -60,21 +54,22 @@ class ShopController(WebsiteSale):
     
     @http.route('/shop/cart/update_badge', type='json', auth="public", website=True)
     def update_cart_badge(self, total_items=None, **post):
-        try:
-            if total_items is not None:
-                request.session['website_sale_cart_quantity'] = int(total_items)
-                
-                order = request.website.sale_get_order(force_create=0)
-                if order:
-                    quantity = sum(line.product_uom_qty for line in order.order_line)
-                    if quantity != total_items:
-                        _logger.info(f"Diferencia entre cantidad visual ({total_items}) y real ({quantity})")
-                
-                return {'success': True, 'cart_quantity': total_items}
-            return {'success': False}
-        except Exception as e:
-            _logger.error(f"Error en update_cart_badge: {str(e)}")
-            return {'success': False, 'error': str(e)}
+        if total_items is not None:
+            request.session['website_sale_cart_quantity'] = int(total_items)
+            
+            # También actualiza el contador en la orden actual
+            order = request.website.sale_get_order(force_create=0)
+            if order:
+                # Recalcular la cantidad total de productos en la orden
+                # (Esto es opcional, ya que la cantidad visual se actualizará con total_items)
+                quantity = sum(line.product_uom_qty for line in order.order_line)
+                if quantity != total_items:
+                    # Solo registrar la diferencia, no es necesario hacer nada más
+                    _logger.info(f"Diferencia entre cantidad visual ({total_items}) y real ({quantity})")
+            
+            return {'success': True, 'cart_quantity': total_items}
+        return {'success': False}
+       
        
 
        
