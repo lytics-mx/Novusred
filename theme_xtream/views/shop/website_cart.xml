@@ -61,30 +61,29 @@
                               <input type="hidden" name="line_id" t-att-value="line.id"/>
                               <input type="hidden" name="product_id" t-att-value="line.product_id.id"/>
                               
-                              <span class="input-group border rounded overflow-hidden" style="width:auto; display:inline-flex; vertical-align:middle;">
-                                <button type="button" class="btn btn-light border-0"
-                                    style="min-width:32px; font-size:16px; padding:4px 0; background:#f8f8f8;"
-                                    t-att-disabled="line.product_uom_qty &lt;= 1"
-                                    onclick="var qtyInput=this.parentNode.querySelector('[name=\'set_qty\']'); qtyInput.value=Math.max(1,parseInt(qtyInput.value)-1); qtyInput.setAttribute('value', qtyInput.value); qtyInput.dispatchEvent(new Event('input'));">-</button>
-                               
-                                <input type="number" name="set_qty"
-                                       class="form-control text-center"
-                                       t-att-value="int(line.product_uom_qty)"
-                                       min="1"
-                                       t-att-max="int(line.product_id.qty_available)"
-                                       t-att-data-price="(line.product_id.discounted_price or line.product_id.list_price)"
-                                       style="width:40px; border:none; box-shadow:none; background:transparent; 
-                                              -webkit-appearance: none; -moz-appearance: textfield; margin:0;"
-                                       onwheel="return false;"
-                                       inputmode="numeric"
-                                       maxlength="2"/>
-                                       
-                                <button type="button" class="btn btn-light border-0"
+                                <span class="input-group border rounded overflow-hidden" style="width:auto; display:inline-flex; vertical-align:middle;">
+                                    <button type="button" class="btn btn-light border-0"
                                         style="min-width:32px; font-size:16px; padding:4px 0; background:#f8f8f8;"
-                                        t-att-disabled="line.product_uom_qty >= line.product_id.qty_available"
-                                        onclick="var qtyInput=this.parentNode.querySelector('[name=\'set_qty\']'); qtyInput.value=Math.min(parseInt(qtyInput.getAttribute('max')),parseInt(qtyInput.value)+1); qtyInput.dispatchEvent(new Event('input'));">+</button>
-                              
-                              </span>
+                                        t-att-disabled="line.product_id.qty_available &lt;= 1"
+                                        onclick="var qtyInput=this.parentNode.querySelector('[name=\'set_qty\']'); qtyInput.value=Math.max(1,parseInt(qtyInput.value)-1); qtyInput.dispatchEvent(new Event('input'));">-</button>
+                                        
+                                    <input type="number" name="set_qty"
+                                        class="form-control text-center"
+                                        t-att-value="int(line.product_uom_qty)" 
+                                        min="1"
+                                        t-att-max="int(line.product_id.qty_available)"
+                                        t-att-data-price="line.product_id.list_price"
+                                        style="width:40px; border:none; box-shadow:none; background:transparent; 
+                                            -webkit-appearance: none; -moz-appearance: textfield; margin:0;"
+                                        onwheel="return false;"
+                                        inputmode="numeric"
+                                        maxlength="2"/>
+                                        
+                                    <button type="button" class="btn btn-light border-0"
+                                            style="min-width:32px; font-size:16px; padding:4px 0; background:#f8f8f8;"
+                                            t-att-disabled="line.product_id.qty_available &lt;= 1"
+                                            onclick="var qtyInput=this.parentNode.querySelector('[name=\'set_qty\']'); qtyInput.value=Math.min(parseInt(qtyInput.getAttribute('max')),parseInt(qtyInput.value)+1); qtyInput.dispatchEvent(new Event('input'));">+</button>
+                                </span>
                                   <style>
                                       /* Oculta las flechas de los inputs type number en todos los navegadores */
                                       input[type=number]::-webkit-inner-spin-button, 
