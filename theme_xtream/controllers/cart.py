@@ -33,28 +33,6 @@ class ShopController(WebsiteSale):
         values['saved_items'] = saved_items
         return values
 
-    @http.route('/shop/cart/update', type='http', auth="public", website=True)
-    def update_cart(self, item_id=None, set_qty=None, **kw):
-        if item_id and set_qty:
-            item_id = int(item_id)
-            set_qty = int(set_qty)
-            saved_item = request.env['saved.items'].search([('id', '=', item_id), ('user_id', '=', request.env.user.id)])
-            if saved_item:
-                # Actualizar la cantidad en "Guardados"
-                saved_item.write({'quantity_available': set_qty})
-        return request.redirect('/shop/cart?tab=saved')
-
-    @http.route('/shop/cart/update_saved', type='http', auth="public", website=True)
-    def update_saved(self, item_id=None, set_qty=None, **kw):
-        if item_id and set_qty:
-            item_id = int(item_id)
-            set_qty = int(set_qty)
-            saved_item = request.env['saved.items'].search([('id', '=', item_id), ('user_id', '=', request.env.user.id)])
-            if saved_item:
-                # Actualizar la cantidad en "Guardados"
-                saved_item.write({'quantity_available': set_qty})
-        return request.redirect('/shop/cart?tab=saved')
-
 
     @http.route('/shop/cart/remove', type='http', auth="public", website=True)
     def cart_remove(self, line_id=None, **kw):
@@ -133,20 +111,20 @@ class ShopController(WebsiteSale):
 
     
     @http.route('/shop/cart/move_to_cart', type='http', auth="public", website=True)
-    def move_to_cart(self, item_id=None, set_qty=None, **kw):
-        if item_id and set_qty:
+    def move_to_cart(self, item_id=None, **kw):
+        if item_id:
             item_id = int(item_id)
-            set_qty = int(set_qty)
+            # Buscar el producto en "Guardados"
             saved_item = request.env['saved.items'].search([('id', '=', item_id), ('user_id', '=', request.env.user.id)])
             if saved_item:
                 # Obtener el pedido actual
                 order = request.website.sale_get_order(force_create=True)
                 if order:
-                    # Agregar el producto al carrito con la cantidad seleccionada
+                    # Agregar el producto al carrito
                     request.env['sale.order.line'].create({
                         'order_id': order.id,
                         'product_id': saved_item.product_id.id,
-                        'product_uom_qty': set_qty,
+                        'product_uom_qty': 1,  # Cantidad predeterminada
                         'price_unit': saved_item.price,
                     })
                     # Eliminar el producto de "Guardados"
