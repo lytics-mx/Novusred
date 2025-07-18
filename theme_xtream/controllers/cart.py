@@ -11,19 +11,11 @@ class ShopController(WebsiteSale):
     @http.route('/shop/cart', type='http', auth="public", website=True)
     def cart(self, tab=None, **kw):
         order = request.website.sale_get_order()
-        # Filtrar los productos guardados para después que pertenecen a este pedido
-        saved_items = []
-        if order:
-            order_product_ids = set(line.product_id.id for line in order.order_line)
-            session_saved_items = request.session.get('saved_for_later', [])
-            saved_items = [
-                item for item in session_saved_items
-                if item.get('product_id') not in order_product_ids
-            ]
+        saved_items = request.env['saved.items'].search([('user_id', '=', request.env.user.id)])
         values = {
             'website_sale_order': order,
             'saved_items': saved_items,
-            'active_tab': tab or 'cart',
+            'active_tab': tab or 'cart',  # Determinar la pestaña activa
         }
         return request.render("theme_xtream.website_cart_buy_now", values)
 
