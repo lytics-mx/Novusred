@@ -103,7 +103,22 @@
                                           text-align: center;
                                       }
                                   </style>
-
+                              <script
+                                  type="text/javascript">
+                                  document.addEventListener('DOMContentLoaded', function() {
+                                      document.querySelectorAll('.cart-quantity-input input[name="set_qty"]').forEach(function(input) {
+                                          input.addEventListener('input', function() {
+                                              const qty = parseInt(input.value) || 1;
+                                              const minusButton = input.parentNode.querySelector('button:first-child');
+                                              const plusButton = input.parentNode.querySelector('button:last-child');
+                                              
+                                              // Actualizar estado de los botones
+                                              minusButton.disabled = qty <= 1;
+                                              plusButton.disabled = qty >= parseInt(input.getAttribute('max'));
+                                          });
+                                      });
+                                  });
+                              </script>
                             </form>
                           </div>
                           <div class="small text-muted mt-1"><t t-esc="int(line.product_id.qty_available)"/> disponibles</div>
