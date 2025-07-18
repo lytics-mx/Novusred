@@ -149,11 +149,11 @@
                                         <a t-att-href="'/subcategory?brand_id=%s' % (item.brand_id.id if item.brand_id else '')"
                                            style="color:#0009ED;" class="small">Más productos de la marca</a>
                                         <span class="mx-1 text-muted">|</span>
+                                        <a href="#" class="move-to-cart-link" data-item-id="<t t-esc="item.id"/>"
+                                           style="color:#0009ED;" class="small">Agregar al carrito</a>
+                                        <span class="mx-1 text-muted">|</span>
                                         <a t-att-href="'/shop/cart/remove_saved_item?item_id=%d' % item.id"
                                            style="color:#0009ED;" class="small">Eliminar</a>
-                                        <span class="mx-1 text-muted">|</span>
-                                        <a t-att-href="'/shop/cart/move_to_cart?item_id=%d' % item.id"
-                                           style="color:#0009ED;" class="small">Agregar al carrito</a>
                                     </div>
                                 </div>
                                 <div class="col-2 text-center">
@@ -186,7 +186,26 @@
                                                         t-att-disabled="item.quantity_available &lt;= 1"
                                                         onclick="var qtyInput=this.parentNode.querySelector('[name=\'set_qty\']'); qtyInput.value=Math.min(parseInt(qtyInput.getAttribute('max')),parseInt(qtyInput.value)+1); qtyInput.dispatchEvent(new Event('input'));">+</button>
                                             </span>
-                                            <button type="submit" class="btn btn-primary ms-2">Agregar al carrito</button>
+                                            <!-- <button type="submit" class="btn btn-primary ms-2">Agregar al carrito</button> -->
+                                        <script type="text/javascript">
+                                                document.addEventListener('DOMContentLoaded', function() {
+                                                    // Seleccionar todos los enlaces "Agregar al carrito"
+                                                    document.querySelectorAll('.move-to-cart-link').forEach(function(link) {
+                                                        link.addEventListener('click', function(e) {
+                                                            e.preventDefault(); // Evitar la navegación predeterminada
+                                                
+                                                            const row = link.closest('.row'); // Buscar la fila del producto
+                                                            const qtyInput = row.querySelector('input[name="set_qty"]'); // Buscar el input de cantidad
+                                                            const itemId = link.getAttribute('data-item-id'); // Obtener el ID del producto
+                                                            const setQty = qtyInput ? qtyInput.value : 1; // Obtener la cantidad seleccionada o usar 1 por defecto
+                                                
+                                                            // Redirigir al controlador con los parámetros necesarios
+                                                            window.location.href = `/shop/cart/move_to_cart?item_id=${itemId}&set_qty=${setQty}`;
+                                                        });
+                                                    });
+                                                });
+                                            </script>                                       
+                                       
                                         </form>
                                     </div>
                                     <div class="small text-muted mt-1"><t t-esc="int(item.quantity_available)"/> disponibles</div>
