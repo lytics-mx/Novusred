@@ -72,9 +72,9 @@
                                         t-att-value="int(line.product_uom_qty)" 
                                         min="1"
                                         t-att-max="int(line.product_id.qty_available)"
-                                        t-att-data-price="line.product_id.list_price"
+                                        t-att-data-price="line.product_id.discounted_price if line.product_id.discounted_price else line.product_id.list_price"
                                         style="width:40px; border:none; box-shadow:none; background:transparent; 
-                                            -webkit-appearance: none; -moz-appearance: textfield; margin:0;"
+                                              -webkit-appearance: none; -moz-appearance: textfield; margin:0;"
                                         onwheel="return false;"
                                         inputmode="numeric"
                                         maxlength="2"/>
@@ -382,27 +382,27 @@
 
             function updateTotals(contextSelector, totalElementId, storagePrefix) {
                 let subtotal = 0;
-
+            
                 // Iterar sobre cada línea dentro del contexto (carrito o guardados)
                 document.querySelectorAll(`${contextSelector} .cart-quantity-input`).forEach(function (cartInput) {
                     const qtyInput = cartInput.querySelector('input[name="set_qty"]');
                     if (!qtyInput) return;
-
+            
                     // Obtener precio y cantidad
                     const pricePerUnit = parseFloat(qtyInput.getAttribute('data-price')) || 0; // Validar precio
                     const qty = parseInt(qtyInput.value) || 1; // Validar cantidad
-
+            
                     // Calcular el total por línea
                     const lineTotal = pricePerUnit * qty;
                     subtotal += lineTotal;
-
+            
                     // Actualizar el total por línea en el HTML
                     const row = cartInput.closest('.row');
                     const lineTotalSpan = row.querySelector('.col-3 .fw-bold');
                     if (lineTotalSpan) {
                         lineTotalSpan.textContent = '$' + lineTotal.toFixed(2);
                     }
-
+            
                     // Guardar cantidad en localStorage
                     const itemIdInput = qtyInput.form.querySelector('input[name="line_id"], input[name="item_id"]');
                     const itemId = itemIdInput ? itemIdInput.value : null;
@@ -410,7 +410,7 @@
                         localStorage.setItem(`${storagePrefix}_${itemId}`, qty);
                     }
                 });
-
+            
                 // Actualizar el subtotal en el HTML
                 const subtotalElement = document.getElementById(totalElementId);
                 if (subtotalElement) {
