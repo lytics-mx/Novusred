@@ -81,15 +81,19 @@ class ShopController(WebsiteSale):
                 # Filtrar la línea del carrito
                 line = order.order_line.filtered(lambda l: l.id == line_id)
                 if line:
+                    # Determinar el precio basado en etiquetas
+                    price = line.product_id.discounted_price if line.product_id.discounted_price else line.product_id.list_price
+    
                     # Guardar información del producto en el modelo
                     product_data = {
                         'user_id': request.env.user.id,
                         'product_id': line.product_id.id,
                         'name': line.product_id.display_name,
-                        'price': getattr(line.product_id, 'discounted_price', line.product_id.list_price),
+                        'price': price,
                         'quantity_available': line.product_id.qty_available,
                     }
     
+                    # Agregar información de la marca si está disponible
                     if getattr(line.product_id.product_tmpl_id, 'brand_type_id', False):
                         product_data.update({
                             'brand_name': line.product_id.product_tmpl_id.brand_type_id.name,

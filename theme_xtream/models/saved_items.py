@@ -9,5 +9,5 @@ class SavedItems(models.Model):
     name = fields.Char(string='Nombre del Producto')
     price = fields.Float(string='Precio')
     brand_name = fields.Char(string='Marca')
-    brand_id = fields.Many2one('product.brand', string='ID de Marca')
+    brand_id = fields.Many2one('brand.type', string='Tipo de Marca')  # Cambiado a brand.type
     quantity_available = fields.Float(string='Cantidad Disponible')
