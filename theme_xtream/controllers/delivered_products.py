@@ -32,15 +32,18 @@ class WebsiteCheckout(http.Controller):
             delivery_date = move.date.date() if move.date else None
             purchase_date = move.date.date() if move.date else None
 
-            free_shipping = move.product_id.product_tmpl_id.free_shipping
+            free_shipping = move.product_id.product_tmpl_id.free_shipping if move.product_id.product_tmpl_id else False
+
+            # Garantizar que siempre se pase el template_id
+            template_id = move.product_id.product_tmpl_id.id if move.product_id.product_tmpl_id else None
 
             if move.state == 'done':
                 relative_date = format_date(delivery_date, format='d \'de\' MMMM', locale='es') if delivery_date else ''
                 delivered_products.append({
                     'product_id': move.product_id.id,  # ID del product.product
                     'product_name': move.product_id.name,  # Nombre del product.product
-                    'template_id': move.product_id.product_tmpl_id.id,  # ID del product.template
-                    'product_tmpl_name': move.product_id.product_tmpl_id.name,  # Nombre del product.template
+                    'template_id': template_id,  # ID del product.template
+                    'product_tmpl_name': move.product_id.product_tmpl_id.name if move.product_id.product_tmpl_id else '',  # Nombre del product.template
                     'quantity': move.product_qty,
                     'delivery_date': relative_date,
                     'purchase_date': format_date(purchase_date, format='d \'de\' MMMM', locale='es') if purchase_date else '',
@@ -78,7 +81,7 @@ class WebsiteCheckout(http.Controller):
                 pending_products.append({
                     'product_id': move.product_id.id,
                     'product_name': move.product_id.name,
-                    'template_id': move.product_id.product_tmpl_id.id,  # ID del product.template
+                    'template_id': template_id,  # ID del product.template
                     'quantity': move.product_qty,
                     'deadline_date': relative_date,
                     'purchase_date': format_date(purchase_date, format='d \'de\' MMMM', locale='es') if purchase_date else '',
