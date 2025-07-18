@@ -29,7 +29,7 @@
     'company': 'Cybrosys Techno Solutions',
     'maintainer': 'Cybrosys Techno Solutions',
     'website': "https://www.cybrosys.com",
-    'depends': ['product', 'stock', 'base', 'website','website_sale', 'website_sale_wishlist', 'website_mass_mailing'],
+    'depends': ['product', 'stock', 'base','inventory_control', 'website','website_sale', 'website_sale_wishlist', 'website_mass_mailing'],
     'data': [
         'security/ir.model.access.csv',
         'views/xtream_testimonials_views.xml',
