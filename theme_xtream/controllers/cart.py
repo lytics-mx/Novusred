@@ -114,25 +114,22 @@ class ShopController(WebsiteSale):
     def move_to_cart(self, item_id=None, **kw):
         if item_id:
             item_id = int(item_id)
-            saved_items = request.session.get('saved_for_later', [])
-            item_to_move = None
-            new_saved_items = []
-            
-            for item in saved_items:
-                if item['id'] == item_id:
-                    item_to_move = item
-                else:
-                    new_saved_items.append(item)
-                    
-            if item_to_move:
-                request.session['saved_for_later'] = new_saved_items
-                request.session.modified = True
-                
-                # Añadir al carrito
-                order = request.website.sale_get_order(force_create=1)
-                order._cart_update(product_id=item_to_move['product_id'], add_qty=1)
-                
-        return request.redirect('/shop/cart')    
+            # Buscar el producto en "Guardados"
+            saved_item = request.env['saved.items'].search([('id', '=', item_id), ('user_id', '=', request.env.user.id)])
+            if saved_item:
+                # Obtener el pedido actual
+                order = request.website.sale_get_order(force_create=True)
+                if order:
+                    # Agregar el producto al carrito
+                    request.env['sale.order.line'].create({
+                        'order_id': order.id,
+                        'product_id': saved_item.product_id.id,
+                        'product_uom_qty': 1,  # Cantidad predeterminada
+                        'price_unit': saved_item.price,
+                    })
+                    # Eliminar el producto de "Guardados"
+                    saved_item.unlink()
+        return request.redirect('/shop/cart')
     
     @http.route('/shop/cart/update_bundle', type='http', auth="public", website=True)
     def update_bundle_cart(self, **post):
