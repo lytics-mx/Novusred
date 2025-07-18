@@ -11,7 +11,3 @@ class SavedItems(models.Model):
     brand_name = fields.Char(string='Marca')
     brand_id = fields.Many2one('brand.type', string='Tipo de Marca')  # Cambiado a brand.type
     quantity_available = fields.Float(string='Cantidad Disponible')
-
-    # Define a permissive rule for public users
-    def _compute_access_rule(self):
-        return [('user_id', '=', self.env.user.id)]    
