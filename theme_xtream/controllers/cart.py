@@ -11,19 +11,11 @@ class ShopController(WebsiteSale):
     @http.route('/shop/cart', type='http', auth="public", website=True)
     def cart(self, tab=None, **kw):
         order = request.website.sale_get_order()
-        # Filtrar los productos guardados para después que pertenecen a este pedido
-        saved_items = []
-        if order:
-            order_product_ids = set(line.product_id.id for line in order.order_line)
-            session_saved_items = request.session.get('saved_for_later', [])
-            saved_items = [
-                item for item in session_saved_items
-                if item.get('product_id') not in order_product_ids
-            ]
+        saved_items = request.env['saved.items'].sudo().search([('user_id', '=', request.env.user.id)])        
         values = {
             'website_sale_order': order,
             'saved_items': saved_items,
-            'active_tab': tab or 'cart',
+            'active_tab': tab or 'cart',  # Determinar la pestaña activa
         }
         return request.render("theme_xtream.website_cart_buy_now", values)
 
@@ -42,6 +34,22 @@ class ShopController(WebsiteSale):
         return values
 
 
+    @http.route('/shop/cart/update', type='http', auth="public", website=True)
+    def cart_update(self, line_id=None, set_qty=None, **kw):
+        if line_id and set_qty:
+            try:
+                order = request.website.sale_get_order()
+                if order:
+                    # Filtrar la línea del pedido por su ID
+                    line = order.order_line.filtered(lambda l: l.id == int(line_id))
+                    if line:
+                        # Actualizar la cantidad en la línea del pedido
+                        line.product_uom_qty = int(set_qty)
+                        line._compute_amount()  # Recalcular los totales
+            except Exception as e:
+                _logger.error(f"Error al actualizar la cantidad en el carrito: {str(e)}")
+        return request.redirect('/shop/cart')
+
     @http.route('/shop/cart/remove', type='http', auth="public", website=True)
     def cart_remove(self, line_id=None, **kw):
         if line_id:
@@ -54,21 +62,21 @@ class ShopController(WebsiteSale):
     
     @http.route('/shop/cart/update_badge', type='json', auth="public", website=True)
     def update_cart_badge(self, total_items=None, **post):
-        if total_items is not None:
-            request.session['website_sale_cart_quantity'] = int(total_items)
-            
-            # También actualiza el contador en la orden actual
-            order = request.website.sale_get_order(force_create=0)
-            if order:
-                # Recalcular la cantidad total de productos en la orden
-                # (Esto es opcional, ya que la cantidad visual se actualizará con total_items)
-                quantity = sum(line.product_uom_qty for line in order.order_line)
-                if quantity != total_items:
-                    # Solo registrar la diferencia, no es necesario hacer nada más
-                    _logger.info(f"Diferencia entre cantidad visual ({total_items}) y real ({quantity})")
-            
-            return {'success': True, 'cart_quantity': total_items}
-        return {'success': False}
+        try:
+            if total_items is not None:
+                request.session['website_sale_cart_quantity'] = int(total_items)
+                
+                order = request.website.sale_get_order(force_create=0)
+                if order:
+                    quantity = sum(line.product_uom_qty for line in order.order_line)
+                    if quantity != total_items:
+                        _logger.info(f"Diferencia entre cantidad visual ({total_items}) y real ({quantity})")
+                
+                return {'success': True, 'cart_quantity': total_items}
+            return {'success': False}
+        except Exception as e:
+            _logger.error(f"Error en update_cart_badge: {str(e)}")
+            return {'success': False, 'error': str(e)}
        
 
        
@@ -81,28 +89,27 @@ class ShopController(WebsiteSale):
                 # Filtrar la línea del carrito
                 line = order.order_line.filtered(lambda l: l.id == line_id)
                 if line:
-                    # Guardar información del producto en la sesión
+                    # Determinar el precio basado en etiquetas
+                    price = line.product_id.discounted_price if line.product_id.discounted_price else line.product_id.list_price
+    
+                    # Guardar información del producto en el modelo
                     product_data = {
-                        'id': int(time.time()),  # ID temporal único
+                        'user_id': request.env.user.id,
                         'product_id': line.product_id.id,
-                        'template_id': line.product_id.product_tmpl_id.id,
                         'name': line.product_id.display_name,
-                        'price': getattr(line.product_id, 'discounted_price', line.product_id.list_price),
+                        'price': price,
                         'quantity_available': line.product_id.qty_available,
                     }
     
+                    # Agregar información de la marca si está disponible
                     if getattr(line.product_id.product_tmpl_id, 'brand_type_id', False):
                         product_data.update({
                             'brand_name': line.product_id.product_tmpl_id.brand_type_id.name,
                             'brand_id': line.product_id.product_tmpl_id.brand_type_id.id,
                         })
     
-                    saved_items = request.session.get('saved_for_later', [])
-                    # Evitar duplicados en la lista de guardados
-                    if not any(item['template_id'] == product_data['template_id'] for item in saved_items):
-                        saved_items.append(product_data)
-                    request.session['saved_for_later'] = saved_items
-                    request.session.modified = True
+                    # Crear el registro en la base de datos
+                    request.env['saved.items'].create(product_data)
     
                     # Eliminar la línea del carrito
                     line.unlink()
@@ -123,25 +130,22 @@ class ShopController(WebsiteSale):
     def move_to_cart(self, item_id=None, **kw):
         if item_id:
             item_id = int(item_id)
-            saved_items = request.session.get('saved_for_later', [])
-            item_to_move = None
-            new_saved_items = []
-            
-            for item in saved_items:
-                if item['id'] == item_id:
-                    item_to_move = item
-                else:
-                    new_saved_items.append(item)
-                    
-            if item_to_move:
-                request.session['saved_for_later'] = new_saved_items
-                request.session.modified = True
-                
-                # Añadir al carrito
-                order = request.website.sale_get_order(force_create=1)
-                order._cart_update(product_id=item_to_move['product_id'], add_qty=1)
-                
-        return request.redirect('/shop/cart')    
+            # Buscar el producto en "Guardados"
+            saved_item = request.env['saved.items'].search([('id', '=', item_id), ('user_id', '=', request.env.user.id)])
+            if saved_item:
+                # Obtener el pedido actual
+                order = request.website.sale_get_order(force_create=True)
+                if order:
+                    # Agregar el producto al carrito
+                    request.env['sale.order.line'].create({
+                        'order_id': order.id,
+                        'product_id': saved_item.product_id.id,
+                        'product_uom_qty': 1,  # Cantidad predeterminada
+                        'price_unit': saved_item.price,
+                    })
+                    # Eliminar el producto de "Guardados"
+                    saved_item.unlink()
+        return request.redirect('/shop/cart')
     
     @http.route('/shop/cart/update_bundle', type='http', auth="public", website=True)
     def update_bundle_cart(self, **post):
