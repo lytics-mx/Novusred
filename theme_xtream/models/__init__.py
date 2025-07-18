@@ -31,3 +31,4 @@ from . import banner_img
 from . import websites_track
 # from . import sale_order_line
 from . import stock_picking
+from . import saved_items
