@@ -102,7 +102,37 @@
                                           text-align: center;
                                       }
                                   </style>
+                                <script type="text/javascript">
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    // Escuchar cambios en los inputs de cantidad para carrito
+                                    document.querySelectorAll('#cart-tab-content .cart-quantity-input input[name="set_qty"]').forEach(function (input) {
+                                        input.addEventListener('input', function () {
+                                            updateTotals('#cart-tab-content', 'cart-total-amount', 'cart_qty');
+                                        });
 
+                                        // Evitar enviar el formulario si la cantidad no cambió
+                                        input.form.addEventListener('submit', function (e) {
+                                            const currentQty = parseInt(input.getAttribute('value')) || 1;
+                                            const newQty = parseInt(input.value) || 1;
+
+                                            // Solo enviar el formulario si la cantidad cambió
+                                            if (currentQty === newQty) {
+                                                e.preventDefault();
+                                            } else {
+                                                // Actualizar el atributo 'value' para reflejar el nuevo valor
+                                                input.setAttribute('value', newQty);
+                                            }
+                                        });
+
+                                        // Prevenir duplicación al presionar Enter
+                                        input.addEventListener('keydown', function (e) {
+                                            if (e.key === 'Enter') {
+                                                e.preventDefault(); // Evitar que el Enter envíe el formulario
+                                            }
+                                        });
+                                    });
+                                });
+                                </script>
                             </form>
                           </div>
                           <div class="small text-muted mt-1"><t t-esc="int(line.product_id.qty_available)"/> disponibles</div>
