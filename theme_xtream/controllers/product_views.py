@@ -35,6 +35,11 @@ class ShopController(WebsiteSale):
             _logger.warning(f"El nombre del producto en la URL no coincide con el nombre real del producto.")
             return request.not_found()
 
+        # Redirigir a la URL limpia si hay parámetros adicionales
+        if request.httprequest.query_string:
+            clean_url = f"/shop/{product_id}/{formatted_name}"
+            return request.redirect(clean_url)
+
         # Obtener la variante principal del producto (product.product)
         product_variant = product_template.product_variant_id
         if not product_variant.exists():
