@@ -8,6 +8,8 @@ import unicodedata
 import re
 _logger = logging.getLogger(__name__)
 
+class ShopController(WebsiteSale):
+
     @http.route([
         '/shop/<int:product_id>/<string:product_name>'
     ], type='http', auth="public", website=True, sitemap=False)
