@@ -11,19 +11,28 @@ _logger = logging.getLogger(__name__)
 class ShopController(WebsiteSale):
 
     @http.route([
-        '/shop/<int:product_id>'
+        '/shop/product/<int:product_id>/<string:product_name>'
     ], type='http', auth="public", website=True, sitemap=False)
-    def product_page(self, product_id, **kwargs):
+    def product_page(self, product_id, product_name=None, **kwargs):
         # Obtener el producto template
         product_template = request.env['product.template'].sudo().browse(product_id)
         if not product_template.exists():
             _logger.warning(f"El producto template con ID {product_id} no existe.")
             return request.not_found()
 
-        # Si la URL no es exactamente /shop/<id>, redirigir a la limpia
-        if request.httprequest.path != f"/shop/{product_id}" or request.httprequest.query_string:
-            clean_url = f"/shop/{product_id}"
-            return request.redirect(clean_url)
+        # Formatear el nombre del producto para comparación
+        def format_product_name(name):
+            # Eliminar acentos y caracteres especiales
+            name = unicodedata.normalize('NFKD', name).encode('ASCII', 'ignore').decode('utf-8')
+            # Reemplazar espacios y caracteres no válidos por guiones
+            name = re.sub(r'[^\w\s-]', '', name).strip().replace(' ', '-').lower()
+            return name
+
+        # Validar que el nombre en la URL coincida con el nombre real del producto
+        formatted_name = format_product_name(product_template.name)
+        if product_name and formatted_name != product_name.lower():
+            _logger.warning(f"El nombre del producto en la URL no coincide con el nombre real del producto.")
+            return request.not_found()
 
         # Obtener la variante principal del producto (product.product)
         product_variant = product_template.product_variant_id
@@ -38,7 +47,7 @@ class ShopController(WebsiteSale):
                 try:
                     request.env['website.track'].sudo().create({
                         'visitor_id': visitor.id,
-                        'product_id': product_variant.id,
+                        'product_id': product_variant.id,  # Usar el ID de la variante
                         'visit_datetime': datetime.now()
                     })
                 except Exception as e:
@@ -89,7 +98,7 @@ class ShopController(WebsiteSale):
             ])
 
         context = {
-            'product': product_sudo,
+            'product': product_sudo,  # Usar product_sudo en lugar de product
             'categories': categories,
             'referer': referer,
             'discounted_price': discounted_price,
