@@ -67,7 +67,7 @@ class ShopController(WebsiteSale):
        
 
        
-    @http.route('/shop/cart/move_to_saved', type='json', auth="public", website=True)
+    @http.route('/shop/cart/move_to_saved', type='http', auth="public", website=True)
     def move_to_saved(self, line_id=None, **kw):
         if line_id:
             line_id = int(line_id)
@@ -101,12 +101,7 @@ class ShopController(WebsiteSale):
                     # Eliminar la línea del carrito
                     line.unlink()
     
-                    # Retornar respuesta JSON
-                    return {
-                        'success': True,
-                        'message': f"El producto '{line.product_id.display_name}' se ha movido a guardados.",
-                    }
-        return {'success': False, 'message': 'No se pudo mover el producto a guardados.'}
+        return request.redirect('/shop/cart?tab=saved')
        
     @http.route('/shop/cart/remove_saved_item', type='http', auth="public", website=True)
     def remove_saved_item(self, item_id=None, **kw):

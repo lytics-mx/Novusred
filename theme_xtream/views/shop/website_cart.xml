@@ -500,55 +500,6 @@
             updateTotals('#cart-tab-content', 'cart-total-amount', 'cart_qty');
             updateTotals('#saved-tab-content', 'saved-total-amount', 'saved_qty');
         });
-
-        // Manejar clic en "Guardar para después"
-        document.querySelectorAll('a[href*="/shop/cart/move_to_saved"]').forEach(function (link) {
-            link.addEventListener('click', function (event) {
-                event.preventDefault(); // Prevenir redirección
-
-                const url = link.getAttribute('href');
-                fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Mostrar notificación
-                        const notification = document.createElement('div');
-                        notification.className = 'alert alert-success';
-                        notification.textContent = data.message;
-                        notification.style.position = 'fixed';
-                        notification.style.top = '20px';
-                        notification.style.right = '20px';
-                        notification.style.zIndex = '1000';
-                        notification.style.padding = '10px';
-                        notification.style.borderRadius = '5px';
-                        notification.style.backgroundColor = '#d4edda';
-                        notification.style.color = '#155724';
-                        document.body.appendChild(notification);
-
-                        // Ocultar notificación después de 3 segundos
-                        setTimeout(() => {
-                            notification.remove();
-                        }, 3000);
-
-                        // Opcional: Eliminar el producto del carrito sin recargar la página
-                        link.closest('.row').remove();
-                    } else {
-                        alert(data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Ocurrió un error al mover el producto a guardados.');
-                });
-            });
-        });
-
-
         </script>
       </t>
     </xpath>
