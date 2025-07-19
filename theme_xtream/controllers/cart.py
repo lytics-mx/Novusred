@@ -107,9 +107,11 @@ class ShopController(WebsiteSale):
     def remove_saved_item(self, item_id=None, **kw):
         if item_id:
             item_id = int(item_id)
-            saved_items = request.session.get('saved_for_later', [])
-            request.session['saved_for_later'] = [item for item in saved_items if item['id'] != item_id]
-            request.session.modified = True
+            # Buscar el producto guardado en el modelo 'saved.items'
+            saved_item = request.env['saved.items'].sudo().search([('id', '=', item_id), ('user_id', '=', request.env.user.id)])
+            if saved_item:
+                # Eliminar el producto guardado
+                saved_item.unlink()
         return request.redirect('/shop/cart?tab=saved')
 
     
