@@ -20,8 +20,8 @@ class ShopController(WebsiteSale):
             _logger.warning(f"El producto template con ID {product_id} no existe.")
             return request.not_found()
 
-        # Redirigir a la URL limpia si hay parámetros adicionales
-        if request.httprequest.query_string:
+        # Si la URL no es exactamente /shop/<id>, redirigir a la limpia
+        if request.httprequest.path != f"/shop/{product_id}" or request.httprequest.query_string:
             clean_url = f"/shop/{product_id}"
             return request.redirect(clean_url)
 
@@ -38,7 +38,7 @@ class ShopController(WebsiteSale):
                 try:
                     request.env['website.track'].sudo().create({
                         'visitor_id': visitor.id,
-                        'product_id': product_variant.id,  # Usar el ID de la variante
+                        'product_id': product_variant.id,
                         'visit_datetime': datetime.now()
                     })
                 except Exception as e:
@@ -89,7 +89,7 @@ class ShopController(WebsiteSale):
             ])
 
         context = {
-            'product': product_sudo,  # Usar product_sudo en lugar de product
+            'product': product_sudo,
             'categories': categories,
             'referer': referer,
             'discounted_price': discounted_price,
