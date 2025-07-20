@@ -162,14 +162,16 @@
                                                     <a class="dropdown-item main-category" t-att-href="'/subcategory?category_id=' + str(category.id)">
                                                         <t t-esc="category.name"/>
                                                     </a>
-                                                    <t t-if="category.child_id">
-                                                        <ul class="subcategory-menu">
-                                                            <t t-call="theme_xtream.recursive_subcategories">
-                                                                <t t-set="subcategories" t-value="category.child_id"/>
-                                                                <t t-set="level" t-value="1"/>
-                                                            </t>
-                                                        </ul>
-                                                    </t>
+                                                    <ul class="subcategory-menu">
+                                                        <t t-set="subcategories" t-value="category.child_id" />
+                                                        <t t-foreach="subcategories" t-as="subcat">
+                                                            <li class="child-category">
+                                                                <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + str(subcat.id)">
+                                                                    <t t-esc="subcat.name"/>
+                                                                </a>
+                                                            </li>
+                                                        </t>
+                                                    </ul>
                                                 </li>
                                             </t>
                                         </ul>
@@ -254,7 +256,7 @@
                         .subcategory-menu {
                             display: none;
                             position: absolute;
-                            left: 100%; /* Posiciona la subcategoría fuera de la ventana del nivel anterior */
+                            left: 100%; /* Posiciona la subcategoría fuera de la primera ventana */
                             top: 0;
                             min-width: 220px;
                             background: #fff;
@@ -264,13 +266,20 @@
                             z-index: 1050; /* Asegura que esté encima de otros elementos */
                         }
                         
-                        .parent-category:hover > .subcategory-menu,
-                        .child-category:hover > .subcategory-menu {
+                        .parent-category:hover > .subcategory-menu {
                             display: block;
                         }
                         
-                        .child-category {
+                        .parent-category {
                             position: relative; /* Asegura que las subcategorías se posicionen correctamente */
+                        }
+                        
+                        .child-category {
+                            position: relative;
+                        }
+                        
+                        .child-category:hover > .subcategory-menu {
+                            display: block;
                         }
                         .nav-link {
                             color: #fff !important;
@@ -394,46 +403,51 @@
                 </nav>
                                 <script>
                                 document.addEventListener('DOMContentLoaded', function() {
-                                    const categories = document.querySelectorAll('.parent-category, .child-category');
+                                    const parentCategories = document.querySelectorAll('.parent-category');
                                 
-                                    categories.forEach(category => {
-                                        category.addEventListener('mouseenter', function() {
-                                            const subMenu = category.querySelector('.subcategory-menu');
+                                    parentCategories.forEach(parent => {
+                                        parent.addEventListener('mouseenter', function() {
+                                            const subMenu = parent.querySelector('.subcategory-menu');
                                             if (subMenu) {
                                                 subMenu.style.display = 'block';
                                             }
                                         });
                                 
-                                        category.addEventListener('mouseleave', function() {
-                                            const subMenu = category.querySelector('.subcategory-menu');
+                                        parent.addEventListener('mouseleave', function() {
+                                            const subMenu = parent.querySelector('.subcategory-menu');
                                             if (subMenu) {
                                                 subMenu.style.display = 'none';
                                             }
                                         });
                                     });
                                 });
-                                </script>                    
+                                </script>                      
             </div>
         </xpath>
     </template>
 
     <template id="recursive_subcategories" name="Recursive Subcategories">
         <t t-if="subcategories">
-            <ul t-attf-class="subcategory-menu level-#{level}">
+            <ul t-attf-class="subcategory-list level-#{level}">
+                <t t-set="subcounter" t-value="'a'" />
                 <t t-foreach="subcategories" t-as="subcat">
-                    <li class="child-category position-relative">
+                    <li t-attf-class="child-category level-#{level}-item">
                         <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + str(subcat.id)">
+                            <t t-if="level == 1">
+                                <span class="subcategory-letter"><t t-esc="subcounter"/>. </span>
+                            </t>
                             <t t-esc="subcat.name"/>
                         </a>
                         <t t-if="subcat.child_id">
-                            <ul class="subcategory-menu">
-                                <t t-call="theme_xtream.recursive_subcategories">
-                                    <t t-set="subcategories" t-value="subcat.child_id"/>
-                                    <t t-set="level" t-value="level + 1"/>
-                                </t>
-                            </ul>
+                            <t t-call="theme_xtream.recursive_subcategories">
+                                <t t-set="subcategories" t-value="subcat.child_id"/>
+                                <t t-set="level" t-value="level + 1"/>
+                            </t>
                         </t>
                     </li>
+                    <t t-if="level == 1">
+                        <t t-set="subcounter" t-value="chr(ord(subcounter) + 1)" />
+                    </t>
                 </t>
             </ul>
         </t>
