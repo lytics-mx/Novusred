@@ -173,6 +173,21 @@
                                             </t>
                                         </ul>
                                     </li>
+                                    <script>
+                                        document.addEventListener('DOMContentLoaded', function () {
+                                            const dropdownItems = document.querySelectorAll('.dropdown-item[data-bs-toggle="collapse"]');
+                                            dropdownItems.forEach(item => {
+                                                item.addEventListener('click', function (e) {
+                                                    e.preventDefault();
+                                                    const target = document.querySelector(this.dataset.bsTarget);
+                                                    if (target) {
+                                                        target.classList.toggle('show');
+                                                    }
+                                                });
+                                            });
+                                        });
+                                    </script>
+
                                     <li class="nav-item">
                                         <a class="nav-link text-white" href="/offers">Ofertas</a>
                                     </li>
@@ -295,72 +310,34 @@
                             min-width: 300px;
                             padding: 10px;
                         }
-
-                        .main-category {
-                            font-weight: bold;
-                        }
-
+                        
                         .subcategory-list {
                             list-style: none;
                             padding-left: 20px;
                             margin-bottom: 5px;
                         }
-
-                        .grandchild-list {
-                            list-style: none;
-                            padding-left: 20px;
-                        }
-
-                        .child-category, .grandchild-category {
-                            margin: 5px 0;
-                        }
-
-                        .category-number {
-                            font-weight: bold;
-                            margin-right: 5px;
-                        }
-
-                        .subcategory-letter {
-                            font-weight: normal;
-                            margin-right: 5px;
-                        }
-
-                        .sub-category {
-                            font-weight: normal;
-                        }
-
-                        .dropdown-menu li {
-                            position: relative;
-                        }
-
-                        .dropdown-menu .dropdown-item {
-                            padding: .25rem 1rem;
-                        }
-                        /* Estilos para niveles adicionales */
-                        .level-1 {
-                            padding-left: 20px;
-                        }
                         
-                        .level-2 {
-                            padding-left: 20px;
-                        }
-                        
-                        .level-3, .level-4, .level-5 {
-                            padding-left: 20px;
-                        }
-                        
-                        .level-1-item, .level-2-item, .level-3-item, .level-4-item, .level-5-item {
+                        .child-category {
                             margin: 5px 0;
                         }
                         
-                        .level-1 .dropdown-item {
-                            font-weight: normal;
+                        .dropdown-item {
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                            padding: 10px;
+                            border-bottom: 1px solid #eee;
                         }
                         
-                        .level-2 .dropdown-item, .level-3 .dropdown-item, .level-4 .dropdown-item, .level-5 .dropdown-item {
-                            font-size: 0.95em;
+                        .dropdown-item i {
+                            font-size: 1rem;
                             color: #555;
-                        } 
+                        }
+                        
+                        .collapse {
+                            padding-left: 20px;
+                            border-left: 1px solid #ddd;
+                        }
 
                         #searchResults {
                             display: none;
@@ -413,28 +390,31 @@
         </xpath>
     </template>
 
+    <!-- Template para subcategorías -->
     <template id="recursive_subcategories" name="Recursive Subcategories">
         <t t-if="subcategories">
             <ul t-attf-class="subcategory-list level-#{level}">
-                <t t-set="subcounter" t-value="'a'" />
                 <t t-foreach="subcategories" t-as="subcat">
                     <li t-attf-class="child-category level-#{level}-item">
-                        <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + str(subcat.id)">
-                            <t t-if="level == 1">
-                                <span class="subcategory-letter"><t t-esc="subcounter"/>. </span>
+                        <a class="dropdown-item sub-category d-flex align-items-center justify-content-between" 
+                           t-att-href="'/subcategory?category_id=' + str(subcat.id)" 
+                           t-att-data-bs-toggle="'collapse'" 
+                           t-att-data-bs-target="'#subcategory-#{subcat.id}'">
+                            <i class="fa fa-folder me-2"></i>
+                            <span><t t-esc="subcat.name"/></span>
+                            <t t-if="subcat.child_id">
+                                <i class="fa fa-chevron-right ms-auto"></i>
                             </t>
-                            <t t-esc="subcat.name"/>
                         </a>
                         <t t-if="subcat.child_id">
-                            <t t-call="theme_xtream.recursive_subcategories">
-                                <t t-set="subcategories" t-value="subcat.child_id"/>
-                                <t t-set="level" t-value="level + 1"/>
-                            </t>
+                            <div t-attf-id="subcategory-#{subcat.id}" class="collapse">
+                                <t t-call="theme_xtream.recursive_subcategories">
+                                    <t t-set="subcategories" t-value="subcat.child_id"/>
+                                    <t t-set="level" t-value="level + 1"/>
+                                </t>
+                            </div>
                         </t>
                     </li>
-                    <t t-if="level == 1">
-                        <t t-set="subcounter" t-value="chr(ord(subcounter) + 1)" />
-                    </t>
                 </t>
             </ul>
         </t>
