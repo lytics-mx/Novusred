@@ -173,31 +173,6 @@
                                             </t>
                                         </ul>
                                     </li>
-                                    <script>
-                                        document.addEventListener('DOMContentLoaded', function () {
-                                            const dropdownItems = document.querySelectorAll('.dropdown-item[data-bs-toggle="dropdown"]');
-                                            dropdownItems.forEach(item => {
-                                                item.addEventListener('click', function (e) {
-                                                    e.preventDefault();
-                                                    const target = document.querySelector(this.dataset.bsTarget);
-                                                    if (target) {
-                                                        // Ocultar otros cuadros emergentes
-                                                        document.querySelectorAll('.subcategory-popup').forEach(popup => popup.classList.remove('show'));
-                                                        // Mostrar el cuadro emergente actual
-                                                        target.classList.toggle('show');
-                                                    }
-                                                });
-                                            });
-                                    
-                                            // Cerrar cuadros emergentes al hacer clic fuera
-                                            document.addEventListener('click', function (event) {
-                                                if (!event.target.closest('.dropdown-item') &amp;&amp; !event.target.closest('.subcategory-popup')) {
-                                                    document.querySelectorAll('.subcategory-popup').forEach(popup =&gt; popup.classList.remove('show'));
-                                                }
-                                            });
-                                        });
-                                    </script>
-
                                     <li class="nav-item">
                                         <a class="nav-link text-white" href="/offers">Ofertas</a>
                                     </li>
@@ -256,193 +231,198 @@
                         </div>
                     </div>
                         <style>
-
-                         .navbar {
-                            display: flex;
-                            flex-wrap: nowrap; /* Evita que los elementos se desplacen a otra línea */
-                            align-items: center;
-                            justify-content: space-between;
+                        /* Navbar principal */
+                        .navbar {
+                            background: #fff;
+                            border-radius: 8px;
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+                            padding: 0.5rem 0;
                         }
-                        
-                        .nav-pills {
-                            display: flex;
-                            flex-wrap: nowrap; /* Mantiene los elementos en una sola fila */
-                            gap: 16px; /* Espaciado uniforme entre los elementos */
+                        /* Segunda barra azul */
+                        .navbar-light[style*="background-color: #5081FF;"] {
+                            background: linear-gradient(90deg, #5081FF 0%, #3B5ED7 100%) !important;
+                            border-radius: 0 0 8px 8px;
+                            box-shadow: 0 4px 16px rgba(80,129,255,0.10);
                         }
-                        
-                        .nav-item {
-                            white-space: nowrap; /* Evita que el texto se divida en varias líneas */
-                        }
-                        
-                        .nav-link {
-                            font-size: 1rem; /* Tamaño de fuente base */
-                            padding: 0.5rem 1rem; /* Espaciado interno */
-                            text-align: center;
-                        }
-                        
-                        /* Ajustes para pantallas pequeñas */
-                        @media (max-width: 767.98px) {
-                            .nav-link {
-                                font-size: 0.85rem; /* Reduce el tamaño de la fuente */
-                                padding: 0.4rem 0.8rem; /* Ajusta el espaciado interno */
-                            }
-                        
-                            .nav-pills {
-                                gap: 8px; /* Reduce el espacio entre los elementos */
-                            }
-                        }
-                        
-                        /* Ajustes para pantallas medianas */
-                        @media (max-width: 991.98px) {
-                            .nav-link {
-                                font-size: 0.9rem; /* Tamaño de fuente ligeramente más pequeño */
-                                padding: 0.45rem 0.9rem; /* Ajusta el espaciado interno */
-                            }
-                        
-                            .nav-pills {
-                                gap: 12px; /* Espaciado moderado entre los elementos */
-                            }
-                        }
-                        
-                        /* Ajustes para pantallas grandes */
-                        @media (min-width: 992px) {
-                            .nav-link {
-                                font-size: 1rem; /* Tamaño de fuente estándar */
-                                padding: 0.5rem 1rem; /* Espaciado interno estándar */
-                            }
-                        
-                            .nav-pills {
-                                gap: 16px; /* Espaciado amplio entre los elementos */
-                            }
-                        }
-                                               
-                        /* Estilo para categorías padre e hijo */
+                        /* Categorías */
                         .category-menu {
-                            min-width: 300px;
-                            padding: 10px;
-                            background-color: white;
-                            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+                            min-width: 320px;
+                            padding: 16px 0;
+                            border-radius: 8px;
+                            border: none;
+                            box-shadow: 0 8px 32px rgba(80,129,255,0.10);
                         }
-                        
-                        .subcategory-popup {
-                            position: absolute;
-                            top: 0;
-                            left: 100%;
-                            min-width: 300px;
-                            padding: 10px;
-                            background-color: #f8f8f8;
-                            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-                            display: none; /* Oculto por defecto */
+                        .main-category {
+                            font-weight: 600;
+                            color: #3B5ED7;
+                            font-size: 1.05rem;
                         }
-                        
                         .subcategory-list {
                             list-style: none;
-                            padding-left: 0;
+                            padding-left: 24px;
                             margin-bottom: 0;
                         }
-                        
-                        .child-category {
-                            margin: 5px 0;
+                        .child-category, .grandchild-category {
+                            margin: 4px 0;
                         }
-                        
-                        .dropdown-item {
-                            display: flex;
-                            align-items: center;
-                            justify-content: space-between;
-                            padding: 10px;
-                            border-bottom: 1px solid #eee;
-                            cursor: pointer;
+                        .category-number, .subcategory-letter {
+                            font-weight: 500;
+                            margin-right: 6px;
+                            color: #5081FF;
                         }
-                        
-                        .dropdown-item i {
+                        .sub-category {
+                            font-weight: 400;
+                            color: #222;
+                        }
+                        /* Menú horizontal */
+                        .nav-pills {
+                            gap: 18px;
+                        }
+                        .nav-link {
+                            color: #fff !important;
                             font-size: 1rem;
-                            color: #555;
+                            font-weight: 500;
+                            border-radius: 20px;
+                            transition: background 0.2s;
                         }
-                        
-                        .dropdown-item:hover {
-                            background-color: #eaeaea;
+                        .nav-link:hover, .nav-link.active {
+                            background: rgba(255,255,255,0.12) !important;
+                            color: #fff !important;
                         }
-                        
-                        .dropdown-menu.show {
-                            display: block; /* Mostrar cuando se despliega */
+                        /* Botón de usuario y carrito */
+                        .fa-user, .fa-shopping-cart, .fa-bell {
+                            font-size: 1.2rem;
                         }
-
+                        /* Search bar */
+                        .form-control {
+                            border-radius: 20px !important;
+                            font-size: 15px;
+                            height: 38px;
+                            border: 1px solid #e0e0e0;
+                        }
+                        .input-group .btn {
+                            border-radius: 20px !important;
+                            height: 38px;
+                            background: #5081FF;
+                            color: #fff;
+                            border: none;
+                        }
+                        .input-group .btn:hover {
+                            background: #3B5ED7;
+                        }
+                        /* Dropdown search results */
                         #searchResults {
                             display: none;
                             position: absolute;
-                            top: 100%; /* Posiciona debajo del input */
+                            top: 100%;
                             left: 0;
                             z-index: 1000;
-                            background-color: white;
-                            border: 1px solid #ccc;
+                            background: #fff;
+                            border: 1px solid #e0e0e0;
+                            border-radius: 8px;
                             width: 100%;
-                            max-height: 300px;
+                            max-height: 340px;
                             overflow-y: auto;
-                            padding: 10px;
+                            padding: 0;
+                            box-shadow: 0 8px 32px rgba(80,129,255,0.10);
                         }
-                        
                         .dropdown-item {
                             display: flex;
-                            align-items: start;
-                            padding: 10px;
-                            border-bottom: 1px solid #eee;
+                            align-items: center;
+                            padding: 10px 16px;
+                            border-bottom: 1px solid #f2f2f2;
+                            font-size: 15px;
+                            color: #222;
+                            background: none;
                         }
-                        
+                        .dropdown-item:last-child {
+                            border-bottom: none;
+                        }
                         .dropdown-item img {
-                            margin-right: 10px;
+                            margin-right: 12px;
                             width: 40px;
                             height: 40px;
                             object-fit: contain;
+                            border-radius: 6px;
+                            background: #f7f7f7;
                         }
-                        
-                        .dropdown-item div {
-                            display: flex;
-                            flex-direction: column;
+                        .dropdown-item span {
+                            display: inline-block;
+                            vertical-align: middle;
+                            max-width: 1000px;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
                         }
-                        
-                        .dropdown-item span:first-child {
-                            font-size: 14px;
-                            font-weight: normal;
-                            color: #333;
+                        .dropdown-item.text-center {
+                            justify-content: center;
+                            color: #5081FF;
+                            font-weight: 600;
+                            background: #f7faff;
                         }
-                        
-                        .dropdown-item span:last-child {
-                            font-size: 16px;
-                            font-weight: bold;
-                            color: #000;
-                        }                      
-
-                        </style>                     
+                        /* Responsive */
+                        @media (max-width: 991.98px) {
+                            .nav-link {
+                                font-size: 0.95rem;
+                                padding: 0.4rem 0.8rem;
+                            }
+                            .nav-pills {
+                                gap: 10px;
+                            }
+                            .category-menu {
+                                min-width: 220px;
+                                font-size: 0.97rem;
+                            }
+                        }
+                        @media (max-width: 767.98px) {
+                            .navbar, .navbar-light[style*="background-color: #5081FF;"] {
+                                border-radius: 0;
+                                box-shadow: none;
+                            }
+                            .nav-link {
+                                font-size: 0.9rem;
+                                padding: 0.3rem 0.6rem;
+                            }
+                            .nav-pills {
+                                gap: 6px;
+                            }
+                            .category-menu {
+                                min-width: 160px;
+                                font-size: 0.93rem;
+                            }
+                            .form-control, .input-group .btn {
+                                height: 32px;
+                                font-size: 0.95rem;
+                            }
+                        }
+                        </style>
                 </nav>                
             </div>
         </xpath>
     </template>
 
-    <!-- Template para subcategorías -->
     <template id="recursive_subcategories" name="Recursive Subcategories">
         <t t-if="subcategories">
             <ul t-attf-class="subcategory-list level-#{level}">
+                <t t-set="subcounter" t-value="'a'" />
                 <t t-foreach="subcategories" t-as="subcat">
                     <li t-attf-class="child-category level-#{level}-item">
-                        <a class="dropdown-item sub-category d-flex align-items-center justify-content-between" 
-                           t-att-href="'/subcategory?category_id=' + str(subcat.id)" 
-                           t-att-data-bs-toggle="'dropdown'" 
-                           t-att-data-bs-target="'#subcategory-' + str(subcat.id)">
-                            <i class="fa fa-folder me-2"></i>
-                            <span><t t-esc="subcat.name"/></span>
-                            <t t-if="subcat.child_id">
-                                <i class="fa fa-chevron-right ms-auto"></i>
+                        <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + str(subcat.id)">
+                            <t t-if="level == 1">
+                                <span class="subcategory-letter"><t t-esc="subcounter"/>. </span>
                             </t>
+                            <t t-esc="subcat.name"/>
                         </a>
                         <t t-if="subcat.child_id">
-                            <div t-attf-id="subcategory-#{subcat.id}" class="dropdown-menu subcategory-popup shadow">
-                                <t t-call="theme_xtream.recursive_subcategories">
-                                    <t t-set="subcategories" t-value="subcat.child_id"/>
-                                    <t t-set="level" t-value="level + 1"/>
-                                </t>
-                            </div>
+                            <t t-call="theme_xtream.recursive_subcategories">
+                                <t t-set="subcategories" t-value="subcat.child_id"/>
+                                <t t-set="level" t-value="level + 1"/>
+                            </t>
                         </t>
                     </li>
+                    <t t-if="level == 1">
+                        <t t-set="subcounter" t-value="chr(ord(subcounter) + 1)" />
+                    </t>
                 </t>
             </ul>
         </t>
