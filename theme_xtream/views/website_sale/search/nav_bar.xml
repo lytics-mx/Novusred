@@ -155,24 +155,109 @@
                                         <a class="nav-link dropdown-toggle text-white" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                             Categorías
                                         </a>
-                                        <ul class="dropdown-menu category-menu shadow" aria-labelledby="categoriesDropdown" style="box-shadow: 0 4px 16px rgba(0,0,0,0.15) !important;">
-                                            <t t-set="second_level_categories" t-value="request.env['product.category'].search([('parent_id.parent_id', '=', False), ('parent_id', '!=', False)])" />
-                                            <t t-set="counter" t-value="1" />
-                                            <t t-foreach="second_level_categories" t-as="category">
-                                                <li class="parent-category">
-                                                    <a class="dropdown-item main-category" t-att-href="'/subcategory?category_id=' + str(category.id)">
-                                                        <span class="category-number"><t t-esc="counter"/>. </span>
-                                                        <t t-esc="category.name"/>
-                                                    </a>
-                                                    <t t-call="theme_xtream.recursive_subcategories">
-                                                        <t t-set="subcategories" t-value="category.child_id"/>
-                                                        <t t-set="level" t-value="1"/>
-                                                    </t>
-                                                </li>
-                                                <t t-set="counter" t-value="counter + 1" />
-                                            </t>
-                                        </ul>
+                                        <div id="categoryPanel" class="category-panel">
+                                            <!-- Parent categories -->
+                                            <ul class="category-list">
+                                                <t t-set="parent_categories" t-value="request.env['product.category'].search([('parent_id', '=', False)])" />
+                                                <t t-foreach="parent_categories" t-as="parent">
+                                                    <li class="category-item">
+                                                        <a href="#" class="category-link" data-category-id="<t t-esc="parent.id"/>">
+                                                            <i class="fa fa-folder me-2"></i>
+                                                            <t t-esc="parent.name"/>
+                                                            <i class="fa fa-chevron-right ms-auto"></i>
+                                                        </a>
+                                                    </li>
+                                                </t>
+                                            </ul>
+                                        </div>
                                     </li>
+                                    
+                                    <script>
+                                    <![CDATA[
+                                    document.addEventListener('DOMContentLoaded', function () {
+                                        const categoryPanel = document.getElementById('categoryPanel');
+                                    
+                                        if (!categoryPanel) {
+                                            console.error('Category panel not found.');
+                                            return;
+                                        }
+                                    
+                                        categoryPanel.addEventListener('click', function (event) {
+                                            const target = event.target.closest('.category-link');
+                                            if (target) {
+                                                const categoryId = target.getAttribute('data-category-id');
+                                                fetch(`/get_subcategories?category_id=${categoryId}`)
+                                                    .then(response => response.json())
+                                                    .then(data => {
+                                                        if (data.subcategories.length > 0) {
+                                                            const subcategoryPanel = document.createElement('div');
+                                                            subcategoryPanel.className = 'subcategory-panel';
+                                                            subcategoryPanel.innerHTML = `
+                                                                <ul class="subcategory-list">
+                                                                    ${data.subcategories.map(subcat => `
+                                                                        <li class="subcategory-item">
+                                                                            <a href="#" class="subcategory-link" data-category-id="${subcat.id}">
+                                                                                <i class="fa fa-folder me-2"></i>
+                                                                                ${subcat.name}
+                                                                                <i class="fa fa-chevron-right ms-auto"></i>
+                                                                            </a>
+                                                                        </li>
+                                                                    `).join('')}
+                                                                </ul>
+                                                            `;
+                                                            categoryPanel.appendChild(subcategoryPanel);
+                                                        }
+                                                    })
+                                                    .catch(error => console.error('Error fetching subcategories:', error));
+                                            }
+                                        });
+                                    });
+                                    ]]>
+                                    </script>
+                                    
+                                    <style>
+                                    /* Panel de categorías */
+                                    .category-panel {
+                                        position: relative;
+                                        background: #fff;
+                                        border: 1px solid #ccc;
+                                        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+                                        padding: 10px;
+                                        width: 300px;
+                                        max-height: 400px;
+                                        overflow-y: auto;
+                                    }
+                                    
+                                    .category-list, .subcategory-list {
+                                        list-style: none;
+                                        padding: 0;
+                                        margin: 0;
+                                    }
+                                    
+                                    .category-item, .subcategory-item {
+                                        display: flex;
+                                        align-items: center;
+                                        padding: 10px;
+                                        border-bottom: 1px solid #f2f2f2;
+                                    }
+                                    
+                                    .category-link, .subcategory-link {
+                                        display: flex;
+                                        align-items: center;
+                                        width: 100%;
+                                        text-decoration: none;
+                                        color: #222;
+                                    }
+                                    
+                                    .category-link:hover, .subcategory-link:hover {
+                                        background: #f7f7f7;
+                                    }
+                                    
+                                    .fa-chevron-right {
+                                        margin-left: auto;
+                                        color: #5081FF;
+                                    }
+                                    </style>
                                     <li class="nav-item">
                                         <a class="nav-link text-white" href="/offers">Ofertas</a>
                                     </li>
