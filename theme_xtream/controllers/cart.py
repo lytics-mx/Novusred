@@ -172,13 +172,13 @@ class ShopController(WebsiteSale):
         if order:
             line_ids = post.get('line_id', [])
             set_qtys = post.get('set_qty', [])
-
+    
             # Convertir los valores en listas si no lo son
             if not isinstance(line_ids, list):
                 line_ids = [line_ids]
             if not isinstance(set_qtys, list):
                 set_qtys = [set_qtys]
-
+    
             for line_id, set_qty in zip(line_ids, set_qtys):
                 try:
                     line = order.order_line.filtered(lambda l: l.id == int(line_id))
