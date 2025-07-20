@@ -175,15 +175,25 @@
                                     </li>
                                     <script>
                                         document.addEventListener('DOMContentLoaded', function () {
-                                            const dropdownItems = document.querySelectorAll('.dropdown-item[data-bs-toggle="collapse"]');
+                                            const dropdownItems = document.querySelectorAll('.dropdown-item[data-bs-toggle="dropdown"]');
                                             dropdownItems.forEach(item => {
                                                 item.addEventListener('click', function (e) {
                                                     e.preventDefault();
                                                     const target = document.querySelector(this.dataset.bsTarget);
                                                     if (target) {
+                                                        // Ocultar otros cuadros emergentes
+                                                        document.querySelectorAll('.subcategory-popup').forEach(popup => popup.classList.remove('show'));
+                                                        // Mostrar el cuadro emergente actual
                                                         target.classList.toggle('show');
                                                     }
                                                 });
+                                            });
+                                    
+                                            // Cerrar cuadros emergentes al hacer clic fuera
+                                            document.addEventListener('click', function (event) {
+                                                if (!event.target.closest('.dropdown-item') && !event.target.closest('.subcategory-popup')) {
+                                                    document.querySelectorAll('.subcategory-popup').forEach(popup => popup.classList.remove('show'));
+                                                }
                                             });
                                         });
                                     </script>
@@ -310,12 +320,25 @@
                         .category-menu {
                             min-width: 300px;
                             padding: 10px;
+                            background-color: white;
+                            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+                        }
+                        
+                        .subcategory-popup {
+                            position: absolute;
+                            top: 0;
+                            left: 100%;
+                            min-width: 300px;
+                            padding: 10px;
+                            background-color: #f8f8f8;
+                            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+                            display: none; /* Oculto por defecto */
                         }
                         
                         .subcategory-list {
                             list-style: none;
-                            padding-left: 20px;
-                            margin-bottom: 5px;
+                            padding-left: 0;
+                            margin-bottom: 0;
                         }
                         
                         .child-category {
@@ -328,6 +351,7 @@
                             justify-content: space-between;
                             padding: 10px;
                             border-bottom: 1px solid #eee;
+                            cursor: pointer;
                         }
                         
                         .dropdown-item i {
@@ -335,9 +359,12 @@
                             color: #555;
                         }
                         
-                        .collapse {
-                            padding-left: 20px;
-                            border-left: 1px solid #ddd;
+                        .dropdown-item:hover {
+                            background-color: #eaeaea;
+                        }
+                        
+                        .dropdown-menu.show {
+                            display: block; /* Mostrar cuando se despliega */
                         }
 
                         #searchResults {
@@ -399,7 +426,7 @@
                     <li t-attf-class="child-category level-#{level}-item">
                         <a class="dropdown-item sub-category d-flex align-items-center justify-content-between" 
                            t-att-href="'/subcategory?category_id=' + str(subcat.id)" 
-                           t-att-data-bs-toggle="'collapse'" 
+                           t-att-data-bs-toggle="'dropdown'" 
                            t-att-data-bs-target="'#subcategory-' + str(subcat.id)">
                             <i class="fa fa-folder me-2"></i>
                             <span><t t-esc="subcat.name"/></span>
@@ -408,7 +435,7 @@
                             </t>
                         </a>
                         <t t-if="subcat.child_id">
-                            <div t-attf-id="subcategory-#{subcat.id}" class="collapse">
+                            <div t-attf-id="subcategory-#{subcat.id}" class="dropdown-menu subcategory-popup shadow">
                                 <t t-call="theme_xtream.recursive_subcategories">
                                     <t t-set="subcategories" t-value="subcat.child_id"/>
                                     <t t-set="level" t-value="level + 1"/>
