@@ -408,7 +408,7 @@
                                     parentCategories.forEach(parent => {
                                         parent.addEventListener('mouseenter', function() {
                                             const subMenu = parent.querySelector('.subcategory-menu');
-                                            if (subMenu) {
+                                            if (subMenu &amp;&amp; subMenu.children.length &gt; 0) {
                                                 subMenu.style.display = 'block';
                                             }
                                         });
@@ -420,8 +420,26 @@
                                             }
                                         });
                                     });
+                                
+                                    const childCategories = document.querySelectorAll('.child-category');
+                                
+                                    childCategories.forEach(child => {
+                                        child.addEventListener('mouseenter', function() {
+                                            const subMenu = child.querySelector('.subcategory-menu');
+                                            if (subMenu &amp;&amp; subMenu.children.length &gt; 0) {
+                                                subMenu.style.display = 'block';
+                                            }
+                                        });
+                                
+                                        child.addEventListener('mouseleave', function() {
+                                            const subMenu = child.querySelector('.subcategory-menu');
+                                            if (subMenu) {
+                                                subMenu.style.display = 'none';
+                                            }
+                                        });
+                                    });
                                 });
-                                </script>                      
+                                </script>                   
             </div>
         </xpath>
     </template>
