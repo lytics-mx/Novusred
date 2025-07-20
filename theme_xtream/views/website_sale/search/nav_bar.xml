@@ -162,16 +162,39 @@
                                                     <a class="dropdown-item main-category" t-att-href="'/subcategory?category_id=' + str(category.id)">
                                                         <t t-esc="category.name"/>
                                                     </a>
-                                                    <ul class="subcategory-menu">
-                                                        <t t-set="subcategories" t-value="category.child_id" />
-                                                        <t t-foreach="subcategories" t-as="subcat">
-                                                            <li class="child-category">
-                                                                <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + str(subcat.id)">
-                                                                    <t t-esc="subcat.name"/>
-                                                                </a>
-                                                            </li>
-                                                        </t>
-                                                    </ul>
+                                                    <t t-if="category.child_id">
+                                                        <ul class="subcategory-menu">
+                                                            <t t-foreach="category.child_id" t-as="subcat">
+                                                                <li class="child-category">
+                                                                    <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + str(subcat.id)">
+                                                                        <t t-esc="subcat.name"/>
+                                                                    </a>
+                                                                    <t t-if="subcat.child_id">
+                                                                        <ul class="subcategory-menu">
+                                                                            <t t-foreach="subcat.child_id" t-as="subsubcat">
+                                                                                <li class="child-category">
+                                                                                    <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + str(subsubcat.id)">
+                                                                                        <t t-esc="subsubcat.name"/>
+                                                                                    </a>
+                                                                                    <t t-if="subsubcat.child_id">
+                                                                                        <ul class="subcategory-menu">
+                                                                                            <t t-foreach="subsubcat.child_id" t-as="subsubsubcat">
+                                                                                                <li class="child-category">
+                                                                                                    <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + str(subsubsubcat.id)">
+                                                                                                        <t t-esc="subsubsubcat.name"/>
+                                                                                                    </a>
+                                                                                                </li>
+                                                                                            </t>
+                                                                                        </ul>
+                                                                                    </t>
+                                                                                </li>
+                                                                            </t>
+                                                                        </ul>
+                                                                    </t>
+                                                                </li>
+                                                            </t>
+                                                        </ul>
+                                                    </t>
                                                 </li>
                                             </t>
                                         </ul>
@@ -256,7 +279,7 @@
                         .subcategory-menu {
                             display: none;
                             position: absolute;
-                            left: 100%; /* Posiciona la subcategoría fuera de la primera ventana */
+                            left: 100%; /* Posiciona la subcategoría fuera de la ventana del nivel anterior */
                             top: 0;
                             min-width: 220px;
                             background: #fff;
@@ -266,6 +289,14 @@
                             z-index: 1050; /* Asegura que esté encima de otros elementos */
                         }
                         
+                        .parent-category:hover > .subcategory-menu,
+                        .child-category:hover > .subcategory-menu {
+                            display: block;
+                        }
+                        
+                        .child-category {
+                            position: relative; /* Asegura que las subcategorías se posicionen correctamente */
+                        }
                         .parent-category:hover > .subcategory-menu {
                             display: block;
                         }
@@ -274,9 +305,7 @@
                             position: relative; /* Asegura que las subcategorías se posicionen correctamente */
                         }
                         
-                        .child-category {
-                            position: relative;
-                        }
+
                         
                         .child-category:hover > .subcategory-menu {
                             display: block;
@@ -404,11 +433,13 @@
                                 <script>
                                 document.addEventListener('DOMContentLoaded', function() {
                                     const parentCategories = document.querySelectorAll('.parent-category');
+                                    const childCategories = document.querySelectorAll('.child-category');
                                 
                                     parentCategories.forEach(parent => {
                                         parent.addEventListener('mouseenter', function() {
                                             const subMenu = parent.querySelector('.subcategory-menu');
-                                            if (subMenu &amp;&amp; subMenu.children.length &gt; 0) {
+                                            if (subMenu) {
+                                                if (subMenu.children.length > 0) {
                                                 subMenu.style.display = 'block';
                                             }
                                         });
@@ -421,12 +452,11 @@
                                         });
                                     });
                                 
-                                    const childCategories = document.querySelectorAll('.child-category');
-                                
                                     childCategories.forEach(child => {
                                         child.addEventListener('mouseenter', function() {
                                             const subMenu = child.querySelector('.subcategory-menu');
-                                            if (subMenu &amp;&amp; subMenu.children.length &gt; 0) {
+                                            if (subMenu) {
+                                                if (subMenu.children.length > 0) {
                                                 subMenu.style.display = 'block';
                                             }
                                         });
@@ -438,10 +468,6 @@
                                             }
                                         });
                                     });
-                                    // Helper function to check if an element has children
-                                    function hasChildren(element) {
-                                        return element.children.length > 0;
-                                    }                                    
                                 });
                                 </script>                   
             </div>
