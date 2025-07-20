@@ -288,71 +288,66 @@
               
               <!-- Pie: envío, total y botón (solo visible en tab de carrito) -->
                 <div id="cart-footer" class="card-footer bg-white border-0 pt-4 pb-4" t-if="order and order.order_line">
-                    <div class="row align-items-center">
-                        <div class="col-md-6 col-12 mb-2 mb-md-0">
-                            <t t-if="order.partner_shipping_id">
-                                <div class="text-primary" style="font-size:15px;">
-                                    <t t-if="order.partner_shipping_id.contact_address_complete">
-                                        <span class="text-primary">Envío a:</span>
-                                        <span class="d-inline-block text-primary" id="shipping-address">
-                                            <t t-esc="order.partner_shipping_id.contact_address_complete"/>
-                                        </span>
-                                            <script type="text/javascript">
-                                                document.addEventListener('DOMContentLoaded', function() {
-                                                    const shippingAddress = document.getElementById('shipping-address');
-                                                    const fullAddress = '<t t-esc="order.partner_shipping_id.contact_address_complete"/>';
-                                                    
-                                                    shippingAddress.addEventListener('click', function() {
-                                                        if (shippingAddress.style.whiteSpace === 'nowrap') {
-                                                            // Mostrar dirección completa en la misma línea
-                                                            shippingAddress.style.maxWidth = 'none';
-                                                            shippingAddress.style.whiteSpace = 'normal';
-                                                            shippingAddress.style.overflow = 'visible';
-                                                            shippingAddress.style.textOverflow = 'unset';
-                                                            shippingAddress.textContent = fullAddress;
-                                                        } else {
-                                                            // Volver a truncar la dirección
-                                                            shippingAddress.style.maxWidth = '150px';
-                                                            shippingAddress.style.whiteSpace = 'nowrap';
-                                                            shippingAddress.style.overflow = 'hidden';
-                                                            shippingAddress.style.textOverflow = 'ellipsis';
-                                                            shippingAddress.textContent = fullAddress;
-                                                        }
-                                                    });
-                                                });
-                                            </script>
-                                        </t>
-                                        </div>
-                                        </t>
-                                    </div>
+                  <div class="row align-items-center">
+                    <div class="col-md-6 col-12 mb-2 mb-md-0">
+                    <t t-if="order.partner_shipping_id">
+                      <div class="text-primary" style="font-size:15px;">
+                      <t t-if="order.partner_shipping_id.contact_address_complete">
+                        <span class="text-primary" style="display: inline-block; vertical-align: middle;">Envío a:</span>
+                        <span class="d-inline-block text-primary" id="shipping-address" style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; cursor: pointer;">
+                            <t t-esc="order.partner_shipping_id.contact_address_complete"/>
+                        </span>
+                        <script type="text/javascript">
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const shippingAddress = document.getElementById('shipping-address');
+                                const fullAddress = '<t t-esc="order.partner_shipping_id.contact_address_complete"/>';
+                                
+                                shippingAddress.addEventListener('click', function() {
+                                    if (shippingAddress.style.whiteSpace === 'nowrap') {
+                                        // Mostrar dirección completa en la misma línea
+                                        shippingAddress.style.maxWidth = 'none';
+                                        shippingAddress.style.whiteSpace = 'normal';
+                                        shippingAddress.style.overflow = 'visible';
+                                        shippingAddress.style.textOverflow = 'unset';
+                                        shippingAddress.textContent = fullAddress;
+                                    } else {
+                                        // Volver a truncar la dirección
+                                        shippingAddress.style.maxWidth = '150px';
+                                        shippingAddress.style.whiteSpace = 'nowrap';
+                                        shippingAddress.style.overflow = 'hidden';
+                                        shippingAddress.style.textOverflow = 'ellipsis';
+                                        shippingAddress.textContent = fullAddress;
+                                    }
+                                });
+                            });
+                        </script>
+                      </t>
+                      </div>
+                    </t>
+                    </div>
                     <div class="col-md-3 col-6 text-end">
-                        <div class="fw-semibold" style="font-size:16px;">
-                            Total: $<span id="cart-total-amount">0.00</span>
-                        </div>
+                    <div class="fw-semibold" style="font-size:16px;">
+                        Total: $<span id="cart-total-amount">0.00</span>
                     </div>
-                        <div class="col-md-3 col-6 text-end">
-                            <form t-att-action="'/shop/cart/update'" method="post">
-                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                                <t t-foreach="order.order_line" t-as="line">
-                                    <input type="hidden" name="line_id" t-att-value="line.id"/>
-                                    <input type="number" name="set_qty" 
-                                           class="form-control text-center"
-                                           t-att-value="int(line.product_uom_qty)" 
-                                           min="1"
-                                           t-att-max="int(line.product_id.qty_available)"
-                                           style="width:40px; border:none; box-shadow:none; background:transparent; 
-                                                  -webkit-appearance: none; -moz-appearance: textfield; margin:0;"
-                                           onwheel="return false;"
-                                           inputmode="numeric"
-                                           maxlength="2"/>
-                                </t>
-                                <button type="submit" class="btn"
-                                    style="width:100%; height:48px; border-radius:6px; background:#4285f4; color:#fff; border:none; font-weight:500; font-size:18px;">
-                                    Continuar compra
-                                </button>
-                            </form>
-                        </div>
                     </div>
+                    <div class="col-md-3 col-6 text-end">
+                        <button type="button" class="btn"
+                            id="shop-checkout-button"
+                            style="width:100%; height:48px; border-radius:6px; background:#4285f4; color:#fff; border:none; font-weight:500; font-size:18px; letter-spacing:0.5px; font-family:'Questrial', sans-serif;"
+                            onclick="submitCartQuantitiesAndRedirect();">
+                          Continuar compra
+                        </button>
+                    </div>
+                    <script>
+                        function submitCartQuantitiesAndRedirect() {
+                            const forms = document.querySelectorAll('#cart-tab-content form');
+                            forms.forEach(form => form.submit());
+                            setTimeout(() => {
+                                window.location.href = '/shop/checkout';
+                            }, 500); // Delay to ensure forms are submitted
+                        }
+                    </script>
+                  </div>
                 </div>
 
 

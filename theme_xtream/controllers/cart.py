@@ -161,31 +161,3 @@ class ShopController(WebsiteSale):
     
         _logger.info(f"Productos añadidos al carrito: {bundle_product_ids}")
         return request.redirect('/shop/cart')
-    
-
-    @http.route('/shop/cart/update', type='http', auth="public", website=True)
-    def cart_update(self, **post):
-        """
-        Update the quantities in the cart and redirect to checkout.
-        """
-        order = request.website.sale_get_order()
-        if order:
-            line_ids = post.get('line_id', [])
-            set_qtys = post.get('set_qty', [])
-    
-            # Convertir los valores en listas si no lo son
-            if not isinstance(line_ids, list):
-                line_ids = [line_ids]
-            if not isinstance(set_qtys, list):
-                set_qtys = [set_qtys]
-    
-            for line_id, set_qty in zip(line_ids, set_qtys):
-                try:
-                    line = order.order_line.filtered(lambda l: l.id == int(line_id))
-                    if line:
-                        line.product_uom_qty = int(set_qty)
-                        _logger.info(f"Updated line {line_id} with quantity {set_qty}")
-                except Exception as e:
-                    _logger.error(f"Error updating cart line: {e}")
-        
-        return request.redirect('/shop/checkout')
