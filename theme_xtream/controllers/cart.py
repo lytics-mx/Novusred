@@ -170,4 +170,4 @@ class ShopController(WebsiteSale):
                 line = order.order_line.filtered(lambda l: l.id == int(line_id))
                 if line:
                     line.product_uom_qty = int(set_qty)  # Actualiza la cantidad en la línea del pedido
-        return request.redirect('/shop/cart')    
+        return request.redirect('/shop/cart')

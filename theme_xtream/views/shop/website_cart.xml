@@ -349,10 +349,24 @@
                     <script>
                         function submitCartQuantitiesAndRedirect() {
                             const forms = document.querySelectorAll('#cart-tab-content form');
-                            forms.forEach(form => form.submit());
-                            setTimeout(() => {
-                                window.location.href = '/shop/checkout';
-                            }, 500); // Delay para asegurar que los formularios se envíen
+                            let allFormsSubmitted = true;
+                        
+                            forms.forEach(form => {
+                                const qtyInput = form.querySelector('input[name="set_qty"]');
+                                if (qtyInput && qtyInput.value) {
+                                    form.submit(); // Enviar el formulario
+                                } else {
+                                    allFormsSubmitted = false; // Si falta algún dato, marcar como no enviado
+                                }
+                            });
+                        
+                            if (allFormsSubmitted) {
+                                setTimeout(() => {
+                                    window.location.href = '/shop/checkout';
+                                }, 500); // Delay para asegurar que los formularios se envíen
+                            } else {
+                                alert('Por favor, verifica las cantidades antes de continuar.');
+                            }
                         }
                     </script>
                     </div>
