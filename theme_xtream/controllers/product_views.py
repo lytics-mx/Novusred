@@ -20,13 +20,15 @@ class ShopController(WebsiteSale):
             _logger.warning(f"El producto template con ID {product_id} no existe.")
             return request.not_found()
 
-        # Formatear el nombre del producto para comparación
+        # Formatear el nombre del producto para comparación y URL
         def format_product_name(name):
             # Eliminar acentos y caracteres especiales
             name = unicodedata.normalize('NFKD', name).encode('ASCII', 'ignore').decode('utf-8')
-            # Reemplazar espacios y caracteres no válidos por guiones
-            name = re.sub(r'[^\w\s-]', '', name).strip().replace(' ', '-').lower()
-            return name
+            # Reemplazar espacios por guiones
+            name = re.sub(r'\s+', '-', name)
+            # Eliminar caracteres no válidos excepto guiones
+            name = re.sub(r'[^\w-]', '', name)
+            return name.lower()
 
         # Validar que el nombre en la URL coincida con el nombre real del producto
         formatted_name = format_product_name(product_template.name)
@@ -98,7 +100,7 @@ class ShopController(WebsiteSale):
             ])
 
         context = {
-            'product': product_sudo,  # Usar product_sudo en lugar de product
+            'product': product_sudo,
             'categories': categories,
             'referer': referer,
             'discounted_price': discounted_price,
