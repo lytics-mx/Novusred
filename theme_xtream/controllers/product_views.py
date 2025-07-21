@@ -9,7 +9,7 @@ import re
 _logger = logging.getLogger(__name__)
 
 class ShopController(WebsiteSale):
-
+    
     @http.route([
             '/shop/<string:product_slug>'
         ], type='http', auth="public", website=True, sitemap=False)
