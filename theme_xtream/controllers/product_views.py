@@ -9,21 +9,15 @@ import re
 _logger = logging.getLogger(__name__)
 
 class ShopController(WebsiteSale):
-    
+
     @http.route([
-            '/shop/<string:product_slug>'
+            '/shop/product/<int:product_id>'
         ], type='http', auth="public", website=True, sitemap=False)
-    def product_page_simple(self, product_slug, **kwargs):
-        # Redirigir si hay parámetros adicionales en la URL
-        if 'product' in kwargs:
-            return request.redirect(f'/shop/{product_slug}')
-        
-        # Buscar el producto por slug
-        product_template = request.env['product.template'].sudo().search([
-            ('website_slug', '=', product_slug)
-        ], limit=1)
+    def product_page_simple(self, product_id, **kwargs):
+        # Buscar el producto por ID
+        product_template = request.env['product.template'].sudo().browse(product_id)
         if not product_template.exists():
-            _logger.warning(f"El producto template con slug '{product_slug}' no existe.")
+            _logger.warning(f"El producto template con ID {product_id} no existe.")
             return request.not_found()
     
         # Obtener la variante principal del producto (product.product)
