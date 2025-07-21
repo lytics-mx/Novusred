@@ -172,6 +172,7 @@ class ShopController(WebsiteSale):
                     try:
                         # Actualizar la cantidad del producto en el carrito
                         line.product_uom_qty = int(set_qty)
+                        order._compute_amount_total()  # Recalcular el total del pedido
                     except ValueError:
                         _logger.error(f"Cantidad inválida: {set_qty}")
         return request.redirect('/shop/cart')
