@@ -161,18 +161,3 @@ class ShopController(WebsiteSale):
     
         _logger.info(f"Productos añadidos al carrito: {bundle_product_ids}")
         return request.redirect('/shop/cart')
-    
-    @http.route('/shop/cart/update', type='http', auth="public", website=True)
-    def cart_update(self, line_id=None, set_qty=None, **kw):
-        if line_id and set_qty:
-            order = request.website.sale_get_order()
-            if order:
-                line = order.order_line.filtered(lambda l: l.id == int(line_id))
-                if line:
-                    try:
-                        # Actualizar la cantidad del producto en el carrito
-                        line.product_uom_qty = int(set_qty)
-                        order._compute_amount_total()  # Recalcular el total del pedido
-                    except ValueError:
-                        _logger.error(f"Cantidad inválida: {set_qty}")
-        return request.redirect('/shop/cart')
