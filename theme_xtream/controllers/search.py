@@ -8,30 +8,29 @@ class WebsiteSearch(http.Controller):
     @http.route('/search_redirect', auth='public', website=True)
     def search_redirect(self, search='', search_type='all', **kw):
         if search_type == 'brand':
-            return request.redirect('/brand_search_redirect?search=%s' % search)
+            return request.redirect('/brand_search_redirect?search=%s' % search.replace(' ', '-'))        
         elif search_type == 'category':
             return request.redirect('/category_search?search=%s' % search.replace(' ', '-'))        
         elif search_type == 'model':
             Product = request.env['product.template'].sudo()
-            product = Product.search([('product_model', '=', search)], limit=1)
+            product = Product.search([('product_model', '=', search.replace(' ', '-'))], limit=1)            
             if product:
-                return request.redirect('/shop/%s?product=product.template(%s,)' % (product.slug(), product.id))
+                return request.redirect('/shop/%s?product=product.template(%s,)' % (product.slug().replace(' ', '-'), product.id))           
             else:
-                return request.redirect('/subcategory?search=%s' % search)
+                return request.redirect('/subcategory?search=%s' % search.replace(' ', '-'))       
         else:
             # Buscar si el texto coincide con una marca activa
             Brand = request.env['brand.type'].sudo()
             brand = Brand.search([('name', 'ilike', search), ('active', '=', True)], limit=1)
             if brand:
-                return request.redirect('/subcategory?brand_id=%s' % brand.id)
+                return request.redirect('/subcategory?brand_id=%s' % brand.id)            
             # Si no es marca, buscar si coincide con una categoría
             Category = request.env['product.category'].sudo()
             category = Category.search([('name', 'ilike', search)], limit=1)
             if category:
-                return request.redirect('/subcategory?category_id=%s' % category.id)
+                return request.redirect('/subcategory?category_id=%s' % category.id)            
             # Si no es marca ni categoría, redirigir a subcategory con search
-            return request.redirect('/subcategory?search=%s' % search)
-        
+            return request.redirect('/subcategory?search=%s' % search.replace(' ', '-'))        
 
     @http.route('/search_live', type='http', auth='public', website=True)
     def search_live(self, query):
