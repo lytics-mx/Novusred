@@ -10,7 +10,7 @@ class WebsiteSearch(http.Controller):
         if search_type == 'brand':
             return request.redirect('/brand_search_redirect?search=%s' % search)
         elif search_type == 'category':
-            return request.redirect('/category_search?search=%s' % search)
+            return request.redirect('/category_search?search=%s' % search.replace(' ', '-'))        
         elif search_type == 'model':
             Product = request.env['product.template'].sudo()
             product = Product.search([('product_model', '=', search)], limit=1)
