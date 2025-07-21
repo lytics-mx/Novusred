@@ -379,10 +379,6 @@ class CategoryController(http.Controller):
         
     @http.route('/category_search', auth='public', website=True)
     def category_search(self, search=None, **kwargs):
-        # Reemplazar guiones con espacios en el parámetro de búsqueda
-        if search:
-            search = search.replace('-', ' ')
-        
         # Mostrar siempre todas las categorías visibles en menú
         categories = request.env['product.category'].sudo().search([
             ('is_visible_in_menu', '=', True)
@@ -392,7 +388,7 @@ class CategoryController(http.Controller):
         category = None
         brands = []
         product_tags = []
-
+    
         if search:
             # Buscar productos por nombre o modelo
             products = request.env['product.template'].sudo().search([
@@ -424,7 +420,7 @@ class CategoryController(http.Controller):
             product_tags = request.env['product.tag'].sudo().search([
                 ('is_active', '=', True)
             ])
-
+    
         values = {
             'search': search,
             'categories': categories,
@@ -434,7 +430,6 @@ class CategoryController(http.Controller):
             'product_tags': product_tags,
         }
         return request.render('theme_xtream.category_search', values)
-        
     
     @http.route('/category/<string:slug>', auth='public', website=True)
     def category_by_slug(self, slug, **kwargs):
