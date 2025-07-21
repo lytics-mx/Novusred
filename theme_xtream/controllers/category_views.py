@@ -379,6 +379,10 @@ class CategoryController(http.Controller):
         
     @http.route('/category_search', auth='public', website=True)
     def category_search(self, search=None, **kwargs):
+        # Reemplazar guiones con espacios en el parámetro de búsqueda
+        if search:
+            search = search.replace('-', ' ')
+        
         # Mostrar siempre todas las categorías visibles en menú
         categories = request.env['product.category'].sudo().search([
             ('is_visible_in_menu', '=', True)
