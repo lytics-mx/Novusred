@@ -61,9 +61,13 @@
 
 
 
+# Vistas de la pagina web
+        'views/website_sale/website_home.xml',
 
 
-
+# Búsqueda de productos en la web (incluye marcas y categorías)
+        'views/website_sale/search/nav_bar.xml',
+        
 
 # Plantillas para redireccionamiento de productos
         'views/csrf_token.xml',
