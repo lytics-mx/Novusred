@@ -6,6 +6,7 @@ from datetime import datetime
 import logging
 import unicodedata
 import re
+from urllib.parse import unquote
 _logger = logging.getLogger(__name__)
 
 class ShopController(WebsiteSale):
@@ -28,17 +29,15 @@ class ShopController(WebsiteSale):
             name = re.sub(r'[^\w\s-]', '', name).strip().replace(' ', '-').lower()
             return name
 
+        # Decodificar el nombre del producto de la URL
+        decoded_product_name = unquote(product_name or '')
+
         # Validar que el nombre en la URL coincida con el nombre real del producto
         formatted_name = format_product_name(product_template.name)
-        # Solo aceptar guiones como separador, rechazar %20 y +
-        if product_name and (
-            formatted_name != product_name.lower() or
-            '%' in product_name or
-            '20' in product_name or
-            '+' in product_name or
-            ' ' in product_name
-        ):
-            _logger.warning(f"El nombre del producto en la URL no coincide con el nombre real del producto o contiene separadores inválidos.")
+        formatted_url_name = format_product_name(decoded_product_name)
+        # Solo aceptar guiones como separador, rechazar espacios sin guión
+        if formatted_name != formatted_url_name:
+            _logger.warning(f"El nombre del producto en la URL no coincide con el nombre real del producto.")
             return request.not_found()
 
         # Obtener la variante principal del producto (product.product)
