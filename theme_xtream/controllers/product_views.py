@@ -14,12 +14,16 @@ class ShopController(WebsiteSale):
             '/shop/product/<int:product_id>'
         ], type='http', auth="public", website=True, sitemap=False)
     def product_page_simple(self, product_id, **kwargs):
+        # Redirigir si hay parámetros adicionales en la URL
+        if 'product' in kwargs:
+            return request.redirect(f'/shop/product/{product_id}')
+        
         # Obtener el producto template
         product_template = request.env['product.template'].sudo().browse(product_id)
         if not product_template.exists():
             _logger.warning(f"El producto template con ID {product_id} no existe.")
             return request.not_found()
-    
+        
         # Obtener la variante principal del producto (product.product)
         product_variant = product_template.product_variant_id
         if not product_variant.exists():
