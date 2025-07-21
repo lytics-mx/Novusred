@@ -11,25 +11,30 @@ _logger = logging.getLogger(__name__)
 class ShopController(WebsiteSale):
 
     @http.route([
-            '/shop/product/<int:product_id>'
+            '/shop/product/<int:product_id>/<string:product_name>'
         ], type='http', auth="public", website=True, sitemap=False)
-    def product_page_simple(self, product_id, **kwargs):
+    def product_page_simple(self, product_id, product_name=None, **kwargs):
         # Redirigir si hay parámetros adicionales en la URL
         if 'product' in kwargs:
-            return request.redirect(f'/shop/product/{product_id}')
+            return request.redirect(f'/shop/product/{product_id}/{product_name}')
         
         # Obtener el producto template
         product_template = request.env['product.template'].sudo().browse(product_id)
         if not product_template.exists():
             _logger.warning(f"El producto template con ID {product_id} no existe.")
             return request.not_found()
-            
+
+        # Validar que el nombre en la URL coincida con el nombre del producto
+        expected_name = product_template.name.replace(" ", "-").lower()
+        if product_name != expected_name:
+            return request.redirect(f'/shop/product/{product_id}/{expected_name}')
+        
         # Obtener la variante principal del producto (product.product)
         product_variant = product_template.product_variant_id
         if not product_variant.exists():
             _logger.warning(f"No se encontró una variante para el producto template con ID {product_id}.")
             return request.not_found()
-    
+
         # Registrar el producto en el historial
         if request.env.user.id:
             visitor = request.env['website.visitor']._get_visitor_from_request()
@@ -42,10 +47,11 @@ class ShopController(WebsiteSale):
                     })
                 except Exception as e:
                     _logger.error(f"Error al registrar el producto visto: {e}")
-    
+
         # Obtener el producto con sudo para evitar problemas de permisos
         product_sudo = product_template.sudo()
         _logger.info("Producto cargado: %s", product_sudo)
+
     
         # Obtener la jerarquía de categorías
         categories = []
