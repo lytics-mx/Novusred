@@ -159,28 +159,28 @@
                                             <t t-set="second_level_categories" t-value="request.env['product.category'].search([('parent_id.parent_id', '=', False), ('parent_id', '!=', False)])" />
                                             <t t-foreach="second_level_categories" t-as="category">
                                                 <li class="parent-category position-relative">
-                                                    <a class="dropdown-item main-category" t-att-href="'/category_search?search=' + category.name">
+                                                    <a class="dropdown-item main-category" t-att-href="'/category_search?search=' + category.name.replace(' ', '-')">
                                                         <t t-esc="category.name"/>
                                                     </a>
                                                     <t t-if="category.child_id">
                                                         <ul class="subcategory-menu">
                                                             <t t-foreach="category.child_id" t-as="subcat">
                                                                 <li class="child-category">
-                                                                    <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + str(subcat.id)">
+                                                                    <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + str(subcat.id).replace(' ', '-')">
                                                                         <t t-esc="subcat.name"/>
                                                                     </a>
                                                                     <t t-if="subcat.child_id">
                                                                         <ul class="subcategory-menu">
                                                                             <t t-foreach="subcat.child_id" t-as="subsubcat">
                                                                                 <li class="child-category">
-                                                                                    <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + str(subsubcat.id)">
+                                                                                    <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + subsubcat.name.replace(' ', '-')">
                                                                                         <t t-esc="subsubcat.name"/>
                                                                                     </a>
                                                                                     <t t-if="subsubcat.child_id">
                                                                                         <ul class="subcategory-menu">
                                                                                             <t t-foreach="subsubcat.child_id" t-as="subsubsubcat">
                                                                                                 <li class="child-category">
-                                                                                                    <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + str(subsubsubcat.id)">
+                                                                                                    <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + subsubsubcat.name.replace(' ', '-')">
                                                                                                         <t t-esc="subsubsubcat.name"/>
                                                                                                     </a>
                                                                                                 </li>
