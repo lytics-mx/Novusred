@@ -159,28 +159,28 @@
                                             <t t-set="second_level_categories" t-value="request.env['product.category'].search([('parent_id.parent_id', '=', False), ('parent_id', '!=', False)])" />
                                             <t t-foreach="second_level_categories" t-as="category">
                                                 <li class="parent-category position-relative">
-                                                    <a class="dropdown-item main-category" t-att-href="'/category_search?search=' + category.name.replace(' ', '-')">
+                                                    <a class="dropdown-item main-category" t-att-href="'/category_search?search=' + category.name">
                                                         <t t-esc="category.name"/>
                                                     </a>
                                                     <t t-if="category.child_id">
                                                         <ul class="subcategory-menu">
                                                             <t t-foreach="category.child_id" t-as="subcat">
                                                                 <li class="child-category">
-                                                                    <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + str(subcat.id).replace(' ', '-')">
+                                                                    <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + str(subcat.id)">
                                                                         <t t-esc="subcat.name"/>
                                                                     </a>
                                                                     <t t-if="subcat.child_id">
                                                                         <ul class="subcategory-menu">
                                                                             <t t-foreach="subcat.child_id" t-as="subsubcat">
                                                                                 <li class="child-category">
-                                                                                    <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + subsubcat.name.replace(' ', '-')">
+                                                                                    <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + str(subsubcat.id)">
                                                                                         <t t-esc="subsubcat.name"/>
                                                                                     </a>
                                                                                     <t t-if="subsubcat.child_id">
                                                                                         <ul class="subcategory-menu">
                                                                                             <t t-foreach="subsubcat.child_id" t-as="subsubsubcat">
                                                                                                 <li class="child-category">
-                                                                                                    <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + subsubsubcat.name.replace(' ', '-')">
+                                                                                                    <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + str(subsubsubcat.id)">
                                                                                                         <t t-esc="subsubsubcat.name"/>
                                                                                                     </a>
                                                                                                 </li>
@@ -259,27 +259,15 @@
                         <style>
 
                         /* Navbar principal */
-                         .navbar {
-                            display: flex;
-                            flex-wrap: nowrap; /* Evita que los elementos se desplacen a otra línea */
-                            align-items: center;
-                            justify-content: space-between;
+                        .navbar {
+                            background: #fff;
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+                            padding: 0.5rem 0;
                         }
-                        
-                        .nav-pills {
-                            display: flex;
-                            flex-wrap: nowrap; /* Mantiene los elementos en una sola fila */
-                            gap: 16px; /* Espaciado uniforme entre los elementos */
-                        }
-                        
-                        .nav-item {
-                            white-space: nowrap; /* Evita que el texto se divida en varias líneas */
-                        }
-                        
-                        .nav-link {
-                            font-size: 1rem; /* Tamaño de fuente base */
-                            padding: 0.5rem 1rem; /* Espaciado interno */
-                            text-align: center;
+                        /* Segunda barra azul */
+                        .navbar-light[style*="background-color: #5081FF;"] {
+                            background: linear-gradient(90deg, #5081FF 0%, #3B5ED7 100%) !important;
+                            box-shadow: 0 4px 16px rgba(80,129,255,0.10);
                         }
 
                         /* Categorías */
@@ -327,53 +315,116 @@
                         .child-category:hover > .subcategory-menu {
                             display: block;
                         }
+                        .nav-link {
+                            font-size: 1rem;
+                            font-weight: 500;
+                            border-radius: 20px;
+                            transition: background 0.2s;
+                        }
 
+                        /* Botón de usuario y carrito */
+                        .fa-user, .fa-shopping-cart, .fa-bell {
+                            font-size: 1.2rem;
+                        }
+                        /* Search bar */
+                        .form-control {
+                            border-radius: 20px !important;
+                            font-size: 15px;
+                            height: 38px;
+                            border: 1px solid #e0e0e0;
+                        }
+                        .input-group .btn {
+                            border-radius: 20px !important;
+                            height: 38px;
+                            background: #5081FF;
+                            color: #fff;
+                            border: none;
+                        }
 
-                       /* Dropdown search results */
+                        /* Dropdown search results */
                         #searchResults {
                             display: none;
                             position: absolute;
-                            top: 100%; /* Posiciona debajo del input */
+                            top: 100%;
                             left: 0;
                             z-index: 1000;
-                            background-color: white;
-                            border: 1px solid #ccc;
+                            background: #fff;
+                            border: 1px solid #e0e0e0;
+                            border-radius: 8px;
                             width: 100%;
-                            max-height: 300px;
+                            max-height: 340px;
                             overflow-y: auto;
-                            padding: 10px;
+                            padding: 0;
+                            box-shadow: 0 8px 32px rgba(80,129,255,0.10);
                         }
-                        
                         .dropdown-item {
                             display: flex;
-                            align-items: start;
-                            padding: 10px;
-                            border-bottom: 1px solid #eee;
+                            align-items: center;
+                            padding: 10px 16px;
+                            border-bottom: 1px solid #f2f2f2;
+                            font-size: 15px;
+                            color: #222;
+                            background: none;
                         }
-                        
+                        .dropdown-item:last-child {
+                            border-bottom: none;
+                        }
                         .dropdown-item img {
-                            margin-right: 10px;
+                            margin-right: 12px;
                             width: 40px;
                             height: 40px;
                             object-fit: contain;
+                            border-radius: 6px;
+                            background: #f7f7f7;
                         }
-                        
-                        .dropdown-item div {
-                            display: flex;
-                            flex-direction: column;
+                        .dropdown-item span {
+                            display: inline-block;
+                            vertical-align: middle;
+                            max-width: 1000px;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
                         }
-                        
-                        .dropdown-item span:first-child {
-                            font-size: 14px;
-                            font-weight: normal;
-                            color: #333;
+                        .dropdown-item.text-center {
+                            justify-content: center;
+                            color: #5081FF;
+                            font-weight: 600;
+                            background: #f7faff;
                         }
-                        
-                        /* Dropdown search results */
-                        .dropdown-item span:last-child {
-                            font-size: 16px;
-                            font-weight: normal; /* Cambiado de bold a normal */
-                            color: #000;
+                        /* Responsive */
+                        @media (max-width: 991.98px) {
+                            .nav-link {
+                                font-size: 0.95rem;
+                                padding: 0.4rem 0.8rem;
+                            }
+                            .nav-pills {
+                                gap: 10px;
+                            }
+                            .category-menu {
+                                min-width: 220px;
+                                font-size: 0.97rem;
+                            }
+                        }
+                        @media (max-width: 767.98px) {
+                            .navbar, .navbar-light[style*="background-color: #5081FF;"] {
+                                border-radius: 0;
+                                box-shadow: none;
+                            }
+                            .nav-link {
+                                font-size: 0.9rem;
+                                padding: 0.3rem 0.6rem;
+                            }
+                            .nav-pills {
+                                gap: 6px;
+                            }
+                            .category-menu {
+                                min-width: 160px;
+                                font-size: 0.93rem;
+                            }
+                            .form-control, .input-group .btn {
+                                height: 32px;
+                                font-size: 0.95rem;
+                            }
                         }
                         </style>                    
 
