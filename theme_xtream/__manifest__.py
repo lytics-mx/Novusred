@@ -66,7 +66,7 @@
 
 
 # Búsqueda de productos en la web (incluye marcas y categorías)
-        'views/search/nav_bar.xml',
+        'views/website_sale/search/nav_bar.xml',
         
 
 # Plantillas para redireccionamiento de productos
