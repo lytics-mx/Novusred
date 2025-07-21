@@ -30,8 +30,15 @@ class ShopController(WebsiteSale):
 
         # Validar que el nombre en la URL coincida con el nombre real del producto
         formatted_name = format_product_name(product_template.name)
-        if product_name and formatted_name != product_name.lower():
-            _logger.warning(f"El nombre del producto en la URL no coincide con el nombre real del producto.")
+        # Solo aceptar guiones como separador, rechazar %20 y +
+        if product_name and (
+            formatted_name != product_name.lower() or
+            '%' in product_name or
+            '20' in product_name or
+            '+' in product_name or
+            ' ' in product_name
+        ):
+            _logger.warning(f"El nombre del producto en la URL no coincide con el nombre real del producto o contiene separadores inválidos.")
             return request.not_found()
 
         # Obtener la variante principal del producto (product.product)
