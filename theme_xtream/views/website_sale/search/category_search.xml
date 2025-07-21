@@ -730,222 +730,63 @@
                                                             <div class="col-12">
                                                                 <h3 style="font-family: 'Questrial', sans-serif; font-size: 20px; text-align: center; margin-bottom: 30px;">
                                                                     <a href="/category" class="text-decoration-none text-dark">
-                                                                        Computadoras Y Accesorios
+                                                                        <t t-esc="category.name if category else 'Categoría'"/>
                                                                     </a>
                                                                 </h3>
-                                                                <div class="d-flex justify-content-center" style="gap: 60px;">
-                                                                    <!-- Columna 1 -->
-                                                                    <div>
-                                                                        <ul style="list-style: none; padding-left: 0; font-size: 14px;">
-                                                                            <t t-set="control_acceso" t-value="request.env['product.category'].sudo().search([('name','=','Control de Acceso')], limit=1)"/>
-                                                                            <li style="font-weight: bold; margin-bottom: 8px;">
-                                                                                <a t-att-href="'/category_search?search=' + control_acceso.name" class="text-decoration-none text-dark">
-                                                                                    <t t-esc="control_acceso.name"/>
-                                                                                </a>
-                                                                            </li>
-                                                                            
-                                                                            <t t-set="control_acceso" t-value="request.env['product.category'].sudo().search([('name','=','Control de Acceso')], limit=1)"/>
-                                                                            <t t-if="control_acceso">
-                                                                                <t t-foreach="control_acceso.child_id" t-as="subcat">
-                                                                                    <t t-foreach="subcat.child_id" t-as="subsubcat">
-                                                                                        <li>
-                                                                                            <a t-att-href="'/subcategory?category_id=' + str(control_acceso.id) + '&amp;subcategory_id=' + str(subsubcat.id)" class="text-decoration-none text-dark">
-                                                                                                <t t-esc="subsubcat.name"/>
-                                                                                            </a>
-                                                                                        </li>
-                                                                                    </t>
-                                                                                </t>
-                                                                            </t>
-                                                                            <t t-set="video_porteros" t-value="request.env['product.category'].sudo().search([('name','=','Video Porteros')], limit=1)"/>
-                                                                            <t t-if="video_porteros">
-                                                                                <li style="font-weight: bold; margin-top: 10px;">
-                                                                                    <a t-att-href="'/category_search?search=' + video_porteros.name" class="text-decoration-none text-dark">
-                                                                                        <t t-esc="video_porteros.name"/>
-                                                                                    </a>
-                                                                                </li>
-                                                                                <t t-foreach="video_porteros.child_id" t-as="subcat">
+                                                                <div class="row">
+                                                                    <t t-if="category and category.child_id">
+                                                                        <t t-set="subcats" t-value="category.child_id"/>
+                                                                        <t t-set="col1" t-value="subcats[0:12]"/>
+                                                                        <t t-set="col2" t-value="subcats[12:24]"/>
+                                                                        <t t-set="col3" t-value="subcats[24:36]"/>
+                                                                        <!-- Columna 1 -->
+                                                                        <div class="col-md-4">
+                                                                            <ul style="list-style: none; padding-left: 0; font-size: 14px;">
+                                                                                <t t-foreach="col1" t-as="subcat">
                                                                                     <li>
-                                                                                        <a t-att-href="'/subcategory?category_id=' + str(video_porteros.id) + '&amp;subcategory_id=' + str(subcat.id)" class="text-decoration-none text-dark">
+                                                                                        <a t-att-href="'/subcategory?category_id=' + str(category.id) + '&amp;subcategory_id=' + str(subcat.id)" class="text-decoration-none text-dark">
                                                                                             <t t-esc="subcat.name"/>
                                                                                         </a>
                                                                                     </li>
                                                                                 </t>
-                                                                            </t>                                                                        
-                                                                        </ul>
-                                                                    </div>
-                                                                    <!-- Columna 2 -->
-                                                                    <div>
-                                                                        <ul style="list-style: none; padding-left: 0; font-size: 14px;">
-                                                                            <t t-set="saleable" t-value="request.env['product.category'].sudo().search([('name','=','Saleable')], limit=1)"/>
-                                                                            <t t-if="saleable">
-                                                                                <li style="font-weight: bold; margin-bottom: 8px;">
-                                                                                    <a t-att-href="'/category_search?search=' + saleable.name" class="text-decoration-none text-dark">
-                                                                                        <t t-esc="saleable.name"/>
-                                                                                    </a>
-                                                                                </li>
-                                                                                <t t-foreach="saleable.child_id" t-as="subcat">
-                                                                                    <t t-foreach="subcat.child_id" t-as="subsubcat">
-                                                                                        <li>
-                                                                                            <a t-att-href="'/subcategory?category_id=' + str(saleable.id) + '&amp;subcategory_id=' + str(subsubcat.id)" class="text-decoration-none text-dark">
-                                                                                                <t t-esc="subsubcat.name"/>
-                                                                                            </a>
-                                                                                        </li>
-                                                                                    </t>
-                                                                                </t>
-                                                                            </t>
-                                                                            <t t-set="videovigilancia" t-value="request.env['product.category'].sudo().search([('name','=','Videovigilancia')], limit=1)"/>
-                                                                            <t t-if="videovigilancia">
-                                                                                <li style="font-weight: bold; margin-bottom: 8px;">
-                                                                                    <a t-att-href="'/category_search?search=' + videovigilancia.name" class="text-decoration-none text-dark">
-                                                                                        <t t-esc="videovigilancia.name"/>
-                                                                                    </a>
-                                                                                </li>
-                                                                                <t t-foreach="videovigilancia.child_id" t-as="subcat">
-                                                                                    <t t-foreach="subcat.child_id" t-as="subsubcat">
-                                                                                        <li>
-                                                                                            <a t-att-href="'/subcategory?category_id=' + str(videovigilancia.id) + '&amp;subcategory_id=' + str(subsubcat.id)" class="text-decoration-none text-dark">
-                                                                                                <t t-esc="subsubcat.name"/>
-                                                                                            </a>
-                                                                                        </li>
-                                                                                    </t>
-                                                                                </t>
-                                                                            </t>
-                                                                            <t t-set="camaras_seguridad" t-value="request.env['product.category'].sudo().search([('name','=','Cámaras de Seguridad')], limit=1)"/>
-                                                                            <t t-if="camaras_seguridad">
-                                                                                <li style="font-weight: bold; margin-top: 10px;">
-                                                                                    <a t-att-href="'/category_search?search=' + camaras_seguridad.name" class="text-decoration-none text-dark">
-                                                                                        <t t-esc="camaras_seguridad.name"/>
-                                                                                    </a>
-                                                                                </li>
-                                                                                <t t-foreach="camaras_seguridad.child_id" t-as="subcat">
+                                                                            </ul>
+                                                                        </div>
+                                                                        <!-- Columna 2 -->
+                                                                        <div class="col-md-4">
+                                                                            <ul style="list-style: none; padding-left: 0; font-size: 14px;">
+                                                                                <t t-foreach="col2" t-as="subcat">
                                                                                     <li>
-                                                                                        <a t-att-href="'/subcategory?category_id=' + str(camaras_seguridad.id) + '&amp;subcategory_id=' + str(subcat.id)" class="text-decoration-none text-dark">
+                                                                                        <a t-att-href="'/subcategory?category_id=' + str(category.id) + '&amp;subcategory_id=' + str(subcat.id)" class="text-decoration-none text-dark">
                                                                                             <t t-esc="subcat.name"/>
                                                                                         </a>
                                                                                     </li>
                                                                                 </t>
-                                                                            </t>
-                                                                            <t t-set="drones" t-value="request.env['product.category'].sudo().search([('name','=','Drones')], limit=1)"/>
-                                                                            <t t-if="drones">
-                                                                                <li style="font-weight: bold; margin-top: 10px;">
-                                                                                    <a t-att-href="'/category_search?search=' + drones.name" class="text-decoration-none text-dark">
-                                                                                        <t t-esc="drones.name"/>
-                                                                                    </a>
-                                                                                </li>
-                                                                                <t t-foreach="drones.child_id" t-as="subcat">
+                                                                            </ul>
+                                                                        </div>
+                                                                        <!-- Columna 3 -->
+                                                                        <div class="col-md-4">
+                                                                            <ul style="list-style: none; padding-left: 0; font-size: 14px;">
+                                                                                <t t-foreach="col3" t-as="subcat">
                                                                                     <li>
-                                                                                        <a t-att-href="'/subcategory?category_id=' + str(drones.id) + '&amp;subcategory_id=' + str(subcat.id)" class="text-decoration-none text-dark">
+                                                                                        <a t-att-href="'/subcategory?category_id=' + str(category.id) + '&amp;subcategory_id=' + str(subcat.id)" class="text-decoration-none text-dark">
                                                                                             <t t-esc="subcat.name"/>
                                                                                         </a>
                                                                                     </li>
                                                                                 </t>
-                                                                            </t>
-
-                                                                            <t t-set="detectores_metal" t-value="request.env['product.category'].sudo().search([('name','=','Detectores de Metal y Otros')], limit=1)"/>
-                                                                            <t t-if="detectores_metal">
-                                                                                <li style="font-weight: bold; margin-top: 10px;">
-                                                                                    <a t-att-href="'/category_search?search=' + detectores_metal.name" class="text-decoration-none text-dark">
-                                                                                        <t t-esc="detectores_metal.name"/>
-                                                                                    </a>
-                                                                                </li>
-                                                                                <t t-foreach="detectores_metal.child_id" t-as="subcat">
-                                                                                    <li>
-                                                                                        <a t-att-href="'/subcategory?category_id=' + str(detectores_metal.id) + '&amp;subcategory_id=' + str(subcat.id)" class="text-decoration-none text-dark">
-                                                                                            <t t-esc="subcat.name"/>
-                                                                                        </a>
-                                                                                    </li>
-                                                                                </t>
-                                                                            </t>                                                                           
-                                                                        </ul>
-                                                                    </div>
-                                                                    <!-- Columna 3 -->
-                                                                    <div>
-                                                                        <ul style="list-style: none; padding-left: 0; font-size: 14px;">
-                                                                            <t t-set="kit_camaras" t-value="request.env['product.category'].sudo().search([('name','=','Kit de Camaras')], limit=1)"/>
-                                                                            <t t-if="kit_camaras">
-                                                                                <li style="font-weight: bold; margin-top: 10px;">
-                                                                                    <a t-att-href="'/category_search?search=' + kit_camaras.name" class="text-decoration-none text-dark">
-                                                                                        <t t-esc="kit_camaras.name"/>
-                                                                                    </a>
-                                                                                </li>
-                                                                                <t t-foreach="kit_camaras.child_id" t-as="subcat">
-                                                                                    <li>
-                                                                                        <a t-att-href="'/subcategory?category_id=' + str(kit_camaras.id) + '&amp;subcategory_id=' + str(subcat.id)" class="text-decoration-none text-dark">
-                                                                                            <t t-esc="subcat.name"/>
-                                                                                        </a>
-                                                                                    </li>
-                                                                                </t>
-                                                                            </t>
-                                                                            <t t-set="cerraduras_chapas" t-value="request.env['product.category'].sudo().search([('name','=','Cerraduras y Chapas')], limit=1)"/>
-                                                                            <t t-if="cerraduras_chapas">
-                                                                                <li style="font-weight: bold; margin-top: 10px;">
-                                                                                    <a t-att-href="'/category_search?search=' + cerraduras_chapas.name" class="text-decoration-none text-dark">
-                                                                                        <t t-esc="cerraduras_chapas.name"/>
-                                                                                    </a>
-                                                                                </li>
-                                                                                <t t-foreach="cerraduras_chapas.child_id" t-as="subcat">
-                                                                                    <li>
-                                                                                        <a t-att-href="'/subcategory?category_id=' + str(cerraduras_chapas.id) + '&amp;subcategory_id=' + str(subcat.id)" class="text-decoration-none text-dark">
-                                                                                            <t t-esc="subcat.name"/>
-                                                                                        </a>
-                                                                                    </li>
-                                                                                </t>
-                                                                            </t>
-
-                                                                            <t t-set="motores_portones" t-value="request.env['product.category'].sudo().search([('name','=','Motores para Portones')], limit=1)"/>
-                                                                            <t t-if="motores_portones">
-                                                                                <li style="font-weight: bold; margin-top: 10px;">
-                                                                                    <a t-att-href="'/category_search?search=' + motores_portones.name" class="text-decoration-none text-dark">
-                                                                                        <t t-esc="motores_portones.name"/>
-                                                                                    </a>
-                                                                                </li>
-                                                                                <t t-foreach="motores_portones.child_id" t-as="subcat">
-                                                                                    <li>
-                                                                                        <a t-att-href="'/subcategory?category_id=' + str(motores_portones.id) + '&amp;subcategory_id=' + str(subcat.id)" class="text-decoration-none text-dark">
-                                                                                            <t t-esc="subcat.name"/>
-                                                                                        </a>
-                                                                                    </li>
-                                                                                </t>
-                                                                            </t>
-                                                                            <t t-set="torniquetes" t-value="request.env['product.category'].sudo().search([('name','=','Torniquetes')], limit=1)"/>
-                                                                            <t t-if="torniquetes">
-                                                                                <li style="font-weight: bold; margin-top: 10px;">
-                                                                                    <a t-att-href="'/category_search?search=' + torniquetes.name" class="text-decoration-none text-dark">
-                                                                                        <t t-esc="torniquetes.name"/>
-                                                                                    </a>
-                                                                                </li>
-                                                                                <t t-foreach="torniquetes.child_id" t-as="subcat">
-                                                                                    <li>
-                                                                                        <a t-att-href="'/subcategory?category_id=' + str(torniquetes.id) + '&amp;subcategory_id=' + str(subcat.id)" class="text-decoration-none text-dark">
-                                                                                            <t t-esc="subcat.name"/>
-                                                                                        </a>
-                                                                                    </li>
-                                                                                </t>
-                                                                            </t>
-                                                                            <t t-set="lectores_biometricos" t-value="request.env['product.category'].sudo().search([('name','=','Lectores de Huella y Biometricos')], limit=1)"/>
-                                                                            <t t-if="lectores_biometricos">
-                                                                                <li style="font-weight: bold; margin-top: 10px;">
-                                                                                    <a t-att-href="'/category_search?search=' + lectores_biometricos.name" class="text-decoration-none text-dark">
-                                                                                        <t t-esc="lectores_biometricos.name"/>
-                                                                                    </a>
-                                                                                </li>
-                                                                                <t t-foreach="lectores_biometricos.child_id" t-as="subcat">
-                                                                                    <li>
-                                                                                        <a t-att-href="'/subcategory?category_id=' + str(lectores_biometricos.id) + '&amp;subcategory_id=' + str(subcat.id)" class="text-decoration-none text-dark">
-                                                                                            <t t-esc="subcat.name"/>
-                                                                                        </a>
-                                                                                    </li>
-                                                                                </t>
-                                                                            </t>
-                                                                            
-
-
-                                                                        </ul>
-                                                                    </div>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </t>
+                                                                    <t t-else="">
+                                                                        <div class="col-12 text-center" style="color: #666; font-size: 16px;">
+                                                                            No hay subcategorías disponibles.
+                                                                        </div>
+                                                                    </t>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
+                                                </div>
+                                            </section>
 
                                                     <!-- Mobile View with Accordion -->
                                                     <div class="d-block d-md-none">
