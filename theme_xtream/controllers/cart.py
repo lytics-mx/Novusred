@@ -169,6 +169,9 @@ class ShopController(WebsiteSale):
             if order:
                 line = order.order_line.filtered(lambda l: l.id == int(line_id))
                 if line:
-                    # Actualizar la cantidad del producto en el carrito
-                    line.product_uom_qty = int(set_qty)
-        return request.redirect('/shop/cart')    
+                    try:
+                        # Actualizar la cantidad del producto en el carrito
+                        line.product_uom_qty = int(set_qty)
+                    except ValueError:
+                        _logger.error(f"Cantidad inválida: {set_qty}")
+        return request.redirect('/shop/cart')
