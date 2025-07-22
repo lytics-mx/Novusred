@@ -32,8 +32,7 @@ class ProductProduct(models.Model):
 
     def name_get(self):
         result = []
-        for product in self:
-            model = product.product_tmpl_id.product_model or ''
-            name = f"{model} - {product.name}"
-            result.append((product.id, name))
+        for record in self:
+            name = f"[{record.product_model}] {record.name}" if record.product_model else record.name
+            result.append((record.id, name))
         return result
