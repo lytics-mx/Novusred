@@ -29,3 +29,11 @@ class ProductProduct(models.Model):
         if 'product_model' in vals and not self.env.context.get('template_update'):
             self.product_tmpl_id.with_context(product_variant_update=True).write({'product_model': vals['product_model']})
         return res
+
+    def name_get(self):
+        result = []
+        for product in self:
+            model = product.product_tmpl_id.product_model or ''
+            name = f"{model} - {product.name}"
+            result.append((product.id, name))
+        return result
