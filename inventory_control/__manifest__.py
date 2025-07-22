@@ -15,6 +15,7 @@
         'base',
         'stock',
         'product',
+        'sale',
     ],
     'data': [
         # Security
