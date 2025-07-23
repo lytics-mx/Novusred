@@ -253,3 +253,14 @@ class ProductTemplate(models.Model):
          if 'product_model' in vals and not self.env.context.get('product_variant_update'):
              self.with_context(template_update=True).product_variant_ids.write({'product_model': vals['product_model']})
          return res         
+     
+
+     def name_get(self):
+          result = []
+          for template in self:
+               modelo = template.product_model or ''
+               name = template.name
+               if modelo:
+                    name = f"[{modelo}] {name}"
+               result.append((template.id, name))
+          return result     
