@@ -33,3 +33,10 @@ class SaleOrderLine(models.Model):
             product_name = product.name or ''
             vals['name'] = f"{product_model or ''} {product_name}"
         return super(SaleOrderLine, self).write(vals)
+    
+    def name_get(self):
+        result = []
+        for product in self.product_id:
+            name = f"{product.product_model or ''} - {product.name or ''}"
+            result.append((product.id, name))
+        return result
