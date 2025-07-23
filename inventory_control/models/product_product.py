@@ -34,8 +34,8 @@ class ProductProduct(models.Model):
         result = []
         for product in self:
             model = product.product_model or ''
-            # Eliminar el prefijo "N4-" si existe
-            if model.startswith("N4-"):
+            # Si empieza con "N4-", lo quitamos
+            if model.startswith('N4-'):
                 model = model[3:]
             name = product.name or ''
             display_name = f"[{model}] {name}" if model else name
