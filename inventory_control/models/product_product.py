@@ -33,13 +33,7 @@ class ProductProduct(models.Model):
     def name_get(self):
         result = []
         for product in self:
-            model = product.product_model or ''
             name = product.name or ''
-            # Proteger de errores: si no hay modelo ni nombre, mostrar el ID
-            if not model and not name:
-                display_name = f"Producto {product.id}"
-            else:
-                display_name = f"[{model}] {name}" if model else name
-            result.append((product.id, display_name))
+            # Aquí evitamos que se anteponga el default_code
+            result.append((product.id, name))
         return result
-
