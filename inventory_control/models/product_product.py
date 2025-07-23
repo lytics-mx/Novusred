@@ -33,10 +33,11 @@ class ProductProduct(models.Model):
     def name_get(self):
         result = []
         for product in self:
-            # Usar el campo "Modelo de producto"
             model = product.product_model or ''
+            # Eliminar el prefijo "N4-" si existe
+            if model.startswith("N4-"):
+                model = model[3:]
             name = product.name or ''
-            # Eliminar default_code completamente
             display_name = f"[{model}] {name}" if model else name
             result.append((product.id, display_name))
         return result
