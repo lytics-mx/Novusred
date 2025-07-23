@@ -257,7 +257,8 @@ class ProductTemplate(models.Model):
 
      def name_get(self):
           result = []
-          for product in self:
-               name = product.product_model or ''
-               result.append((product.id, name))
+          for template in self:
+               # Mostrar primero el modelo y luego el nombre del producto
+               name = f"{template.product_model or ''} - {template.name or ''}"
+               result.append((template.id, name))
           return result
