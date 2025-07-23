@@ -30,12 +30,13 @@ class ProductProduct(models.Model):
             self.product_tmpl_id.with_context(product_variant_update=True).write({'product_model': vals['product_model']})
         return res
 
-
     def name_get(self):
         result = []
         for product in self:
-            modelo = product.product_model or ''
+            # Usar el campo "Modelo de producto"
+            model = product.product_model or ''
             name = product.name or ''
-            display_name = f"[{modelo}] {name}" if modelo else name
+            # Eliminar default_code completamente
+            display_name = f"[{model}] {name}" if model else name
             result.append((product.id, display_name))
         return result
