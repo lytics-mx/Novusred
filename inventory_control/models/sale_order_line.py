@@ -14,7 +14,14 @@ class SaleOrderLine(models.Model):
     def _onchange_product_id(self):
         for line in self:
             if line.product_id:
-                # Solo asignar el nombre sin código
-                line.name = line.product_id.name
+                # Supongamos que 'product_model' es un campo en product.product
+                product_model = getattr(line.product_id, 'product_model', False)
+                product_name = line.product_id.name or ''
+
+                # Asignar: primero product_model + espacio + product_name (sin default_code)
+                if product_model:
+                    line.name = f"{product_model} {product_name}"
+                else:
+                    line.name = product_name
             else:
                 line.name = ''
