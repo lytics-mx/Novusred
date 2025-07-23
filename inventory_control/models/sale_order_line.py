@@ -21,17 +21,15 @@ class SaleOrderLine(models.Model):
     def create(self, vals):
         if 'product_id' in vals:
             product = self.env['product.product'].browse(vals['product_id'])
-            product_model = getattr(product, 'product_model', False)
-            product_name = product.name or ''
-            vals['name'] = f"{product_model or ''} {product_name}"
+            # Ignorar la descripción de venta del producto
+            vals['name'] = product.name or ''
         return super(SaleOrderLine, self).create(vals)
-
+    
     def write(self, vals):
         if 'product_id' in vals:
             product = self.env['product.product'].browse(vals['product_id'])
-            product_model = getattr(product, 'product_model', False)
-            product_name = product.name or ''
-            vals['name'] = f"{product_model or ''} {product_name}"
+            # Mostrar solo el nombre del producto en el campo 'name'
+            vals['name'] = product.name or ''
         return super(SaleOrderLine, self).write(vals)
     
     def name_get(self):
