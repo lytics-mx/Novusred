@@ -4,7 +4,9 @@ from datetime import datetime, timezone  # Importar datetime
 
 class ProductTemplate(models.Model):
      _inherit = 'product.template'
-#Elimninar el campo de la marca el de brand_id     
+
+     product_model = fields.Char('Modelo de producto')
+
      brand_ids = fields.Many2many(
           'product.brand',
           'product_template_brand_rel',  # Relación con las marcas
@@ -32,7 +34,10 @@ class ProductTemplate(models.Model):
           help='Imágenes adicionales del producto. Puedes arrastrar para ordenar.'
      )
 
-     product_model = fields.Char('Modelo de producto')
+
+
+
+
 
      brand_type_id = fields.Many2one(
           comodel_name='brand.type',
@@ -56,12 +61,61 @@ class ProductTemplate(models.Model):
 
      free_shipping = fields.Boolean('Envío Gratis', default=False, tracking=True)
 
-     is_discount_tag_visible = fields.Boolean(
-          string="Etiqueta de descuento visible",
-          default=True,
-          help="Controla si la etiqueta de descuento es visible en el sitio web"
+     fixed_discount = fields.Float(
+          string="Monto Fijo",
+          compute="_compute_discount_percentage_from_tags",
+          store=True,
+          help="Cantidad fija de descuento aplicada al producto."
      )
-        
+     remaining_time_text = fields.Char(
+          string="Tiempo restante",
+          compute="_compute_remaining_time_text",
+          store=False,
+          help="Tiempo restante para finalizar la oferta"
+     )
+
+     offer_end_time = fields.Datetime(
+          string="Fecha de fin de la oferta",
+          compute="_compute_offer_end_time",
+          store=True,
+          help="Fecha y hora en que termina la oferta más cercana para este producto."
+     )
+
+     brand_website = fields.Char(
+          string='Marca en el sitio web',
+          compute='_compute_brand_website',
+          store=True,
+          help='Displays the brand type on the website'
+     )
+
+
+
+     # is_discount_tag_visible = fields.Boolean(
+     #      string="Etiqueta de descuento visible",
+     #      default=True,
+     #      help="Controla si la etiqueta de descuento es visible en el sitio web"
+     # )
+     # last_viewed_date = fields.Datetime(string="Última fecha vista")
+
+     # type = fields.Selection(
+     # selection_add=[
+     #      ('product', 'Almacenable')
+     # ],
+     # ondelete={'product': 'set default'},
+     # )
+
+     # product_model_id = fields.Many2one(
+     #     comodel_name='product.model',
+     #     string='Modelo',
+     #     help='Selecciona o registra un modelo previamente usado.'
+     # )
+
+     @api.depends('brand_type_id')
+     def _compute_brand_website(self):
+          for product in self:
+               product.brand_website = product.brand_type_id.name if product.brand_type_id else ''
+
+
      @api.model
      def update_free_shipping_from_model(self):
           """Actualiza el campo free_shipping basado en el modelo free.shipping"""
@@ -104,38 +158,11 @@ class ProductTemplate(models.Model):
                     price -= product.fixed_discount
                product.discounted_price = max(price, 0)  # Evita precios negativos
 
-     fixed_discount = fields.Float(
-          string="Monto Fijo",
-          compute="_compute_discount_percentage_from_tags",
-          store=True,
-          help="Cantidad fija de descuento aplicada al producto."
-     )
-
-     @api.depends('brand_type_id')
-     def _compute_brand_website(self):
-          for product in self:
-               product.brand_website = product.brand_type_id.name if product.brand_type_id else ''
-
-     brand_website = fields.Char(
-          string='Marca en el sitio web',
-          compute='_compute_brand_website',
-          store=True,
-          help='Displays the brand type on the website'
-     )
-
-     @api.depends('public_categ_ids')
-     def _compute_categ_id(self):
-         """Sincroniza categ_id con public_categ_ids."""
-         for product in self:
-             product.categ_id = product.public_categ_ids[:1].id if product.public_categ_ids else False
 
 
-     offer_end_time = fields.Datetime(
-          string="Fecha de fin de la oferta",
-          compute="_compute_offer_end_time",
-          store=True,
-          help="Fecha y hora en que termina la oferta más cercana para este producto."
-     )
+
+
+
 
      @api.depends('product_tag_ids.end_date')
      def _compute_offer_end_time(self):
@@ -167,12 +194,7 @@ class ProductTemplate(models.Model):
                  time_remaining[product.id] = "Sin fecha"
          return time_remaining
      
-     remaining_time_text = fields.Char(
-          string="Tiempo restante",
-          compute="_compute_remaining_time_text",
-          store=False,
-          help="Tiempo restante para finalizar la oferta"
-     )
+
      
      def _compute_remaining_time_text(self):
           """Calcula el tiempo restante hasta la finalización de la oferta."""
@@ -198,3 +220,50 @@ class ProductTemplate(models.Model):
                                    remaining_minutes = int((remaining_time.total_seconds() % 3600) / 60)
                                    product.remaining_time_text = f"{remaining_hours}h {remaining_minutes}m"
                                    break  # Solo usar la primera etiqueta con fecha de fin válida     
+
+
+     # @api.model
+     # def create(self, vals):
+     #     """Asegura que el nombre del modelo se registre en el modelo product.model."""
+     #     if 'product_model_id' in vals:
+     #         product_model = self.env['product.model'].browse(vals['product_model_id'])
+     #         if not product_model.exists():
+     #             self.env['product.model'].create({'name': product_model.name})
+     #     return super(ProductTemplate, self).create(vals)
+
+
+     @api.onchange('product_model')
+     def _onchange_product_model(self):
+         """Actualiza el campo product_model en todas las variantes del producto"""
+         if self.product_variant_ids:
+             for variant in self.product_variant_ids:
+                 variant.product_model = self.product_model
+     
+     @api.model
+     def create(self, vals):
+         res = super(ProductTemplate, self).create(vals)
+         # Asegurar que todas las variantes tengan el mismo product_model
+         if 'product_model' in vals and res.product_variant_ids:
+             res.product_variant_ids.write({'product_model': vals['product_model']})
+         return res
+     
+     def write(self, vals):
+         res = super(ProductTemplate, self).write(vals)
+         # Actualizar las variantes solo si el cambio no vino de una variante
+         if 'product_model' in vals and not self.env.context.get('product_variant_update'):
+             self.with_context(template_update=True).product_variant_ids.write({'product_model': vals['product_model']})
+         return res         
+     
+
+     def name_get(self):
+          result = []
+          for template in self:
+               # Mostrar primero el modelo y luego el nombre del producto
+               name = f"{template.product_model or ''} - {template.name or ''}"
+               result.append((template.id, name))
+          return result
+     
+     @property
+     def display_name(self):
+          # Mostrar primero el modelo y luego el nombre del producto
+          return f"{self.product_model or ''} - {self.name or ''}"     

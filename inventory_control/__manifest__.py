@@ -15,6 +15,7 @@
         'base',
         'stock',
         'product',
+        'sale',
     ],
     'data': [
         # Security
@@ -25,6 +26,10 @@
         'views/product_template_odoo.xml',
         'views/product_category.xml',
         'views/product_tag.xml',
+
+        #Vista de cotización del módulo CRM
+        'views/product_product.xml',
+        'views/sale_order.xml',
         
      
     ],
