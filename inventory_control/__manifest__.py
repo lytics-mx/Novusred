@@ -25,10 +25,6 @@
         'views/product_template_odoo.xml',
         'views/product_category.xml',
         'views/product_tag.xml',
-
-        # Modulo de cotización
-        'views/product_product.xml',
-        'views/sale_order.xml',
         
      
     ],
