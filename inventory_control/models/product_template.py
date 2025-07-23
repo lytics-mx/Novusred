@@ -34,6 +34,11 @@ class ProductTemplate(models.Model):
           help='Imágenes adicionales del producto. Puedes arrastrar para ordenar.'
      )
 
+
+
+
+
+
      brand_type_id = fields.Many2one(
           comodel_name='brand.type',
           string='Marca',
@@ -84,6 +89,27 @@ class ProductTemplate(models.Model):
      )
 
 
+
+     # is_discount_tag_visible = fields.Boolean(
+     #      string="Etiqueta de descuento visible",
+     #      default=True,
+     #      help="Controla si la etiqueta de descuento es visible en el sitio web"
+     # )
+     # last_viewed_date = fields.Datetime(string="Última fecha vista")
+
+     # type = fields.Selection(
+     # selection_add=[
+     #      ('product', 'Almacenable')
+     # ],
+     # ondelete={'product': 'set default'},
+     # )
+
+     # product_model_id = fields.Many2one(
+     #     comodel_name='product.model',
+     #     string='Modelo',
+     #     help='Selecciona o registra un modelo previamente usado.'
+     # )
+
      @api.depends('brand_type_id')
      def _compute_brand_website(self):
           for product in self:
@@ -133,6 +159,11 @@ class ProductTemplate(models.Model):
                product.discounted_price = max(price, 0)  # Evita precios negativos
 
 
+
+
+
+
+
      @api.depends('product_tag_ids.end_date')
      def _compute_offer_end_time(self):
           for product in self:
@@ -163,6 +194,7 @@ class ProductTemplate(models.Model):
                  time_remaining[product.id] = "Sin fecha"
          return time_remaining
      
+
      
      def _compute_remaining_time_text(self):
           """Calcula el tiempo restante hasta la finalización de la oferta."""
@@ -190,6 +222,15 @@ class ProductTemplate(models.Model):
                                    break  # Solo usar la primera etiqueta con fecha de fin válida     
 
 
+     # @api.model
+     # def create(self, vals):
+     #     """Asegura que el nombre del modelo se registre en el modelo product.model."""
+     #     if 'product_model_id' in vals:
+     #         product_model = self.env['product.model'].browse(vals['product_model_id'])
+     #         if not product_model.exists():
+     #             self.env['product.model'].create({'name': product_model.name})
+     #     return super(ProductTemplate, self).create(vals)
+
 
      @api.onchange('product_model')
      def _onchange_product_model(self):
@@ -213,7 +254,6 @@ class ProductTemplate(models.Model):
              self.with_context(template_update=True).product_variant_ids.write({'product_model': vals['product_model']})
          return res         
      
-
      def name_get(self):
           result = []
           for template in self:
@@ -226,3 +266,4 @@ class ProductTemplate(models.Model):
      def display_name(self):
           # Mostrar primero el modelo y luego el nombre del producto
           return f"{self.product_model or ''} - {self.name or ''}"     
+
