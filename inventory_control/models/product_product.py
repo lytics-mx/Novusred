@@ -33,9 +33,6 @@ class ProductProduct(models.Model):
     def name_get(self):
         result = []
         for product in self:
-            # Tomamos el modelo desde un campo personalizado (ajusta el nombre si es otro)
-            model = product.product_model or ''
-            name = product.name or ''
-            display_name = f"{model} {name}" if model else name
-            result.append((product.id, display_name))
+            # Aquí eliminamos el uso del default_code
+            result.append((product.id, product.name or ''))
         return result
