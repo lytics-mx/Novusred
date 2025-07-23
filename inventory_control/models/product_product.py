@@ -1,9 +1,9 @@
-from odoo import models, api, fields
+from odoo import models, api, fields 
 
 class ProductProduct(models.Model):
     _inherit = 'product.product'
     
-    product_model = fields.Char('Modelo de producto')
+    product_model = fields.Char('Modelo de producto', related='product_tmpl_id.product_model', store=True)
 
     @api.onchange('product_tmpl_id')
     def _onchange_product_tmpl_id(self):
@@ -29,3 +29,16 @@ class ProductProduct(models.Model):
         if 'product_model' in vals and not self.env.context.get('template_update'):
             self.product_tmpl_id.with_context(product_variant_update=True).write({'product_model': vals['product_model']})
         return res
+
+    def name_get(self):
+        result = []
+        for template in self:
+            # Mostrar primero el modelo y luego el nombre del producto
+            name = f"{template.product_model or ''} - {template.name or ''}"
+            result.append((template.id, name))
+        return result
+    
+    @property
+    def display_name(self):
+        # Mostrar primero el modelo y luego el nombre del producto
+        return f"{self.product_model or ''} - {self.name or ''}"   
