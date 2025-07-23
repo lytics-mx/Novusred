@@ -10,18 +10,26 @@ class SaleOrderLine(models.Model):
         readonly=True
     )
 
-    @api.onchange('product_id')
-    def _onchange_product_id(self):
-        for line in self:
-            if line.product_id:
-                # Supongamos que 'product_model' es un campo en product.product
-                product_model = getattr(line.product_id, 'product_model', False)
-                product_name = line.product_id.name or ''
+    product_id = fields.Many2one(
+        'product.product',
+        string='Producto',
+        domain=[('sale_ok', '=', True)],
+        required=True
+    )
 
-                # Asignar: primero product_model + espacio + product_name (sin default_code)
-                if product_model:
-                    line.name = f"{product_model} {product_name}"
-                else:
-                    line.name = product_name
-            else:
-                line.name = ''
+    @api.model
+    def create(self, vals):
+        if 'product_id' in vals:
+            product = self.env['product.product'].browse(vals['product_id'])
+            product_model = getattr(product, 'product_model', False)
+            product_name = product.name or ''
+            vals['name'] = f"{product_model or ''} {product_name}"
+        return super(SaleOrderLine, self).create(vals)
+
+    def write(self, vals):
+        if 'product_id' in vals:
+            product = self.env['product.product'].browse(vals['product_id'])
+            product_model = getattr(product, 'product_model', False)
+            product_name = product.name or ''
+            vals['name'] = f"{product_model or ''} {product_name}"
+        return super(SaleOrderLine, self).write(vals)

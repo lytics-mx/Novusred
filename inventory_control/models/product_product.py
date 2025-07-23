@@ -1,4 +1,4 @@
-from odoo import models, api, fields
+from odoo import models, api, fields 
 
 class ProductProduct(models.Model):
     _inherit = 'product.product'
@@ -37,3 +37,8 @@ class ProductProduct(models.Model):
             name = f"{product.product_model or ''} - {product.name or ''}"
             result.append((product.id, name))
         return result
+    
+    @property
+    def display_name(self):
+        # Mostrar primero el modelo y luego el nombre del producto
+        return f"{self.product_model or ''} - {self.name or ''}"   
