@@ -33,6 +33,6 @@ class ProductProduct(models.Model):
     def name_get(self):
         result = []
         for product in self:
-            # Aquí eliminamos el uso del default_code
-            result.append((product.id, product.name or ''))
+            name = product.name or ''
+            result.append((product.id, name))
         return result

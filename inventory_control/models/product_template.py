@@ -258,8 +258,6 @@ class ProductTemplate(models.Model):
      def name_get(self):
           result = []
           for template in self:
-               model = template.product_model or ''
                name = template.name or ''
-               display_name = f"[{model}] {name}" if model else name
-               result.append((template.id, display_name))
-          return result     
+               result.append((template.id, name))
+          return result 
