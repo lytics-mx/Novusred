@@ -258,12 +258,8 @@ class ProductTemplate(models.Model):
      def name_get(self):
           result = []
           for template in self:
-               # Mostrar primero el modelo y luego el nombre del producto
+               # Personalizar el nombre mostrado: modelo + nombre del producto
                name = f"{template.product_model or ''} - {template.name or ''}"
                result.append((template.id, name))
           return result
      
-     @property
-     def display_name(self):
-          # Mostrar primero el modelo y luego el nombre del producto
-          return f"{self.product_model or ''} - {self.name or ''}"     
