@@ -3,7 +3,7 @@ from odoo import models, api, fields
 class ProductProduct(models.Model):
     _inherit = 'product.product'
     
-    product_model = fields.Char('Modelo de producto')
+    product_model = fields.Char('Modelo de producto', related='product_tmpl_id.product_model', store=True)
 
     @api.onchange('product_tmpl_id')
     def _onchange_product_tmpl_id(self):
@@ -30,3 +30,12 @@ class ProductProduct(models.Model):
             self.product_tmpl_id.with_context(product_variant_update=True).write({'product_model': vals['product_model']})
         return res
 
+
+    def name_get(self):
+        result = []
+        for product in self:
+            modelo = product.product_model or ''
+            name = product.name or ''
+            display_name = f"[{modelo}] {name}" if modelo else name
+            result.append((product.id, display_name))
+        return result
