@@ -1,4 +1,4 @@
-from odoo import models, api
+from odoo import models, api, fields
 
 class UpdateSaleOrderSequence(models.Model):
     _inherit = 'sale.order'
@@ -13,3 +13,7 @@ class UpdateSaleOrderSequence(models.Model):
                 'prefix': 'S',
                 'number_next': 23500
             })
+
+    def action_update_sequence(self):
+        # Llamar al método para actualizar la secuencia
+        self.update_sale_order_sequence()
