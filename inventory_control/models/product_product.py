@@ -33,6 +33,6 @@ class ProductProduct(models.Model):
     def name_get(self):
         result = []
         for product in self:
-            name = product.name or ''
+            name = product.product_model or ''
             result.append((product.id, name))
         return result
