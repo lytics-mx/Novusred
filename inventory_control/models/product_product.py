@@ -30,9 +30,14 @@ class ProductProduct(models.Model):
             self.product_tmpl_id.with_context(product_variant_update=True).write({'product_model': vals['product_model']})
         return res
 
+
     def name_get(self):
         result = []
-        for record in self:
-            name = f"[{record.product_model}] {record.name}" if record.product_model else record.name
-            result.append((record.id, name))
+        for product in self:
+            # Usamos el modelo si está disponible
+            modelo = product.product_tmpl_id.product_model or ''
+            name = product.name
+            if modelo:
+                name = f"[{modelo}] {name}"
+            result.append((product.id, name))
         return result
