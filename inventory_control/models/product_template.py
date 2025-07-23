@@ -263,3 +263,7 @@ class ProductTemplate(models.Model):
                result.append((template.id, name))
           return result
      
+     @property
+     def display_name(self):
+          # Mostrar primero el modelo y luego el nombre del producto
+          return f"{self.product_model or ''} - {self.name or ''}"     
