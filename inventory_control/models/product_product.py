@@ -34,10 +34,12 @@ class ProductProduct(models.Model):
         result = []
         for product in self:
             model = product.product_model or ''
-            # Si empieza con "N4-", lo quitamos
-            if model.startswith('N4-'):
-                model = model[3:]
             name = product.name or ''
-            display_name = f"[{model}] {name}" if model else name
+            # Proteger de errores: si no hay modelo ni nombre, mostrar el ID
+            if not model and not name:
+                display_name = f"Producto {product.id}"
+            else:
+                display_name = f"[{model}] {name}" if model else name
             result.append((product.id, display_name))
         return result
+
