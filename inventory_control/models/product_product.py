@@ -41,7 +41,7 @@ class ProductProduct(models.Model):
     def _search(self, args, offset=0, limit=None, order=None, count=False):
         # Priorizar búsqueda por modelo y nombre
         order = order or 'product_model, name'
-        return super(ProductProduct, self)._search(args, offset=offset, limit=limit, order=order, count=count)
+        return super(ProductProduct, self)._search(args, offset=offset, limit=limit, order=order)
 
     @property
     def display_name(self):
