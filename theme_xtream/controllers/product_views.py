@@ -28,7 +28,7 @@ class ShopController(WebsiteSale):
         expected_name = product_template.name.replace(' ', '-').lower()
         if product_name != expected_name:
             return request.redirect(f'/product/{expected_name}/{product_id}')
-                        
+                
         # Obtener la variante principal del producto (product.product)
         product_variant = product_template.product_variant_id
         if not product_variant.exists():
