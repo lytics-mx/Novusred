@@ -11,31 +11,20 @@ _logger = logging.getLogger(__name__)
 class ShopController(WebsiteSale):
 
     @http.route([
-            '/product/<string:model>/<string:name>/<int:product_id>'
+            '/product/<string:product_name>/<int:product_id>'
         ], type='http', auth="public", website=True, sitemap=False)
-    def product_page_simple(self, model, name, product_id, **kwargs):
-        # Redirigir si hay parámetros adicionales en la URL
-        if kwargs:
-            return request.redirect(f'/shop/product/{model}/{name}/{product_id}')
-    
+    def product_page_simple(self, product_name, product_id, **kwargs):
         # Obtener el producto template
         product_template = request.env['product.template'].sudo().browse(product_id)
         if not product_template.exists():
             _logger.warning(f"El producto template con ID {product_id} no existe.")
             return request.not_found()
-    
-        # Validar que el modelo y nombre en la URL coincidan con el producto
-        url_model = (product_template.product_model or '').replace(' ', '-').lower()
-        url_name = (product_template.name or '').replace(' ', '-').lower()
-        if model != url_model or name != url_name:
-            return request.redirect(f'/shop/product/{url_model}/{url_name}/{product_id}')
-    
-        # Obtener el producto template
-        product_template = request.env['product.template'].sudo().browse(product_id)
-        if not product_template.exists():
-            _logger.warning(f"El producto template con ID {product_id} no existe.")
-            return request.not_found()
-            
+
+        # Validar que el nombre del producto en la URL coincida con el nombre real
+        expected_name = product_template.name.replace(' ', '-').lower()
+        if product_name != expected_name:
+            return request.redirect(f'/product/{expected_name}/{product_id}')
+        
         # Obtener la variante principal del producto (product.product)
         product_variant = product_template.product_variant_id
         if not product_variant.exists():
