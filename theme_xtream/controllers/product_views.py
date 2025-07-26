@@ -15,21 +15,21 @@ class ShopController(WebsiteSale):
         ], type='http', auth="public", website=True, sitemap=False)
     def product_page_simple(self, model, name, product_id, **kwargs):
         # Redirigir si hay parámetros adicionales en la URL
-        if kwargs:
+        if 'product' in kwargs:
             return request.redirect(f'/shop/product/{model}/{name}/{product_id}')
-    
+
         # Obtener el producto template
         product_template = request.env['product.template'].sudo().browse(product_id)
         if not product_template.exists():
             _logger.warning(f"El producto template con ID {product_id} no existe.")
             return request.not_found()
-    
+
         # Validar que el modelo y nombre en la URL coincidan con el producto
         url_model = (product_template.product_model or '').replace(' ', '-').lower()
         url_name = (product_template.name or '').replace(' ', '-').lower()
         if model != url_model or name != url_name:
             return request.redirect(f'/shop/product/{url_model}/{url_name}/{product_id}')
-    
+
         # Obtener el producto template
         product_template = request.env['product.template'].sudo().browse(product_id)
         if not product_template.exists():
