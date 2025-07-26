@@ -11,7 +11,7 @@ _logger = logging.getLogger(__name__)
 class ShopController(WebsiteSale):
 
     @http.route([
-            '/product/<string:model>/<string:name>/<int:product_id>'
+            '/shop/product/<string:model>/<string:name>/<int:product_id>'
         ], type='http', auth="public", website=True, sitemap=False)
     def product_page_simple(self, model, name, product_id, **kwargs):
         # Redirigir si hay parámetros adicionales en la URL
