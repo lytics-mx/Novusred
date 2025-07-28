@@ -29,7 +29,7 @@
         'views/product_product.xml',
         # 'views/sale_order.xml',
         # 'views/product_model.xml',
-        'views/sale_order_note.xml',
+        # 'views/sale_order_note.xml',
         
      
     ],
