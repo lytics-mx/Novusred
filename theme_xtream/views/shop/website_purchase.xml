@@ -3,13 +3,13 @@
     <template id="delivered_template" name="Compras">
         <t t-call="website.layout">
             <div class="container mt-5">
-                <t t-if="compras or pending_products">
+                <t t-if="delivered_products or pending_products">
                     <h2 class="mb-4" style="font-size:22px;">Compras</h2>
                 </t>
 
                 <!-- Buscador y filtrado -->
                 <div class="d-flex align-items-center mb-4" style="gap: 24px;">
-                    <form method="get" action="/compras" class="d-flex align-items-center" style="gap: 12px;">
+                    <form method="get" action="/delivered_products" class="d-flex align-items-center" style="gap: 12px;">
                         <div class="input-group" style="background: #d3d3d3; border-radius: 20px; padding: 0 12px; height: 40px; align-items: center;">
                             <span class="input-group-text bg-transparent border-0" style="padding-right: 0;">
                                 <i class="fa fa-search" style="color: #222;"></i>
@@ -33,7 +33,7 @@
 
                 <div class="row">
                     <!-- Mensaje si no hay productos -->
-                    <t t-if="not compras and not pending_products">
+                    <t t-if="not delivered_products and not pending_products">
                         <t t-if="filter_state != 'all'">
                             <div class="col-12 text-center">
  
@@ -67,7 +67,7 @@
                     </t>
 
                     <!-- Productos entregados -->
-                    <t t-foreach="compras" t-as="product">
+                    <t t-foreach="delivered_products" t-as="product">
                         <t t-if="product['state'] == 'done'">
                             <div class="col-12 mb-3">
                                 <div class="card p-3 shadow-sm" style="background-color:rgb(255, 255, 255); border: none;">
