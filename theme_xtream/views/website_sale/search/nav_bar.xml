@@ -83,7 +83,7 @@
                                                                 const truncatedName = result.name.length > 160 ? result.name.substring(0, 160) + '...' : result.name;
                                                                 const item = document.createElement('a');
                                                                 item.className = 'dropdown-item';
-                                                                item.href = `/tienda/product/${result.id}`;
+                                                                item.href = `/shop/product/${result.id}`;
                                                                 item.innerHTML = `
                                                                     <img src="/web/image/product.template/${result.id}/image_1024" alt="${truncatedName}" style="width: 40px; height: 40px; object-fit: contain; margin-right: 10px;" />
                                                                     <span style="display: inline-block; vertical-align: middle; max-width: 1000px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${truncatedName}</span>
@@ -92,7 +92,7 @@
                                                             });
                                                             const allResultsLink = document.createElement('a');
                                                             allResultsLink.className = 'dropdown-item text-center';
-                                                            allResultsLink.href = `/subcategoria?category_id=${encodeURIComponent(query)}`;
+                                                            allResultsLink.href = `/subcategory?category_id=${encodeURIComponent(query)}`;
                                                             allResultsLink.innerHTML = 'Ver todos los resultados';
                                                             searchResults.appendChild(allResultsLink);
                                                         } else {
@@ -159,28 +159,28 @@
                                             <t t-set="second_level_categories" t-value="request.env['product.category'].search([('parent_id.parent_id', '=', False), ('parent_id', '!=', False)])" />
                                             <t t-foreach="second_level_categories" t-as="category">
                                                 <li class="parent-category position-relative">
-                                                    <a class="dropdown-item main-category" t-att-href="'/categoria_search?search=' + category.name.replace(' ', '-')">
+                                                    <a class="dropdown-item main-category" t-att-href="'/category_search?search=' + category.name.replace(' ', '-')">
                                                         <t t-esc="category.name"/>
                                                     </a>
                                                     <t t-if="category.child_id">
                                                         <ul class="subcategory-menu">
                                                             <t t-foreach="category.child_id" t-as="subcat">
                                                                 <li class="child-category">
-                                                                    <a class="dropdown-item sub-category" t-att-href="'/subcategoria?category_id=' + str(subcat.id).replace(' ', '-')">
+                                                                    <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + str(subcat.id).replace(' ', '-')">
                                                                         <t t-esc="subcat.name"/>
                                                                     </a>
                                                                     <t t-if="subcat.child_id">
                                                                         <ul class="subcategory-menu">
                                                                             <t t-foreach="subcat.child_id" t-as="subsubcat">
                                                                                 <li class="child-category">
-                                                                                    <a class="dropdown-item sub-category" t-att-href="'/subcategoria?category_id=' + subsubcat.name.replace(' ', '-')">
+                                                                                    <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + subsubcat.name.replace(' ', '-')">
                                                                                         <t t-esc="subsubcat.name"/>
                                                                                     </a>
                                                                                     <t t-if="subsubcat.child_id">
                                                                                         <ul class="subcategory-menu">
                                                                                             <t t-foreach="subsubcat.child_id" t-as="subsubsubcat">
                                                                                                 <li class="child-category">
-                                                                                                    <a class="dropdown-item sub-category" t-att-href="'/subcategoria?category_id=' + subsubsubcat.name.replace(' ', '-')">
+                                                                                                    <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + subsubsubcat.name.replace(' ', '-')">
                                                                                                         <t t-esc="subsubsubcat.name"/>
                                                                                                     </a>
                                                                                                 </li>
@@ -206,7 +206,7 @@
                                         <a class="nav-link text-white" href="/brand">Marcas</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link text-white" href="/tienda/history">Historial</a>
+                                        <a class="nav-link text-white" href="/shop/history">Historial</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link text-white" href="/about">Sobre Nosotros</a>
@@ -243,12 +243,12 @@
                                         </t>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link text-white" href="/tienda/cart">
+                                        <a class="nav-link text-white" href="/shop/cart">
                                             <i class="fa fa-shopping-cart"></i>
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link text-white" href="/delivered_products">
+                                        <a class="nav-link text-white" href="/compras">
                                             <i class="fa fa-bell"></i>
                                         </a>
                                     </li>
@@ -428,7 +428,7 @@
                 <t t-set="subcounter" t-value="'a'" />
                 <t t-foreach="subcategories" t-as="subcat">
                     <li t-attf-class="child-category level-#{level}-item">
-                        <a class="dropdown-item sub-category" t-att-href="'/subcategoria?category_id=' + str(subcat.id)">
+                        <a class="dropdown-item sub-category" t-att-href="'/subcategory?category_id=' + str(subcat.id)">
                             <t t-if="level == 1">
                                 <span class="subcategory-letter"><t t-esc="subcounter"/>. </span>
                             </t>

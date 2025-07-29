@@ -11,12 +11,12 @@ _logger = logging.getLogger(__name__)
 class ShopController(WebsiteSale):
 
     @http.route([
-            '/tienda/product/<int:product_id>'
+            '/shop/product/<int:product_id>'
         ], type='http', auth="public", website=True, sitemap=False)
     def product_page_simple(self, product_id, **kwargs):
         # Redirigir si hay parámetros adicionales en la URL
         if 'product' in kwargs:
-            return request.redirect(f'/tienda/product/{product_id}')
+            return request.redirect(f'/shop/product/{product_id}')
         
         # Obtener el producto template
         product_template = request.env['product.template'].sudo().browse(product_id)
@@ -57,7 +57,7 @@ class ShopController(WebsiteSale):
         # Obtener la URL de referencia (página anterior)
         referer = request.httprequest.headers.get('Referer')
         if not referer or referer == request.httprequest.url:
-            referer = '/subcategoria'
+            referer = '/subcategory'
     
         # Cálculo de descuentos (ejemplo)
         list_price = product_sudo.list_price if product_sudo.list_price is not None else 0

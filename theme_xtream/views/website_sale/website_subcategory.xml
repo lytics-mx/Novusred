@@ -13,11 +13,11 @@
                                         <nav aria-label="breadcrumb">
                                             <ol class="breadcrumb mb-0" style="--bs-breadcrumb-divider: '>'; background: transparent;">
                                                 <li class="breadcrumb-item">
-                                                    <a href="/subcategoria" style="color: #6c757d;">Todas las categorías</a>
+                                                    <a href="/subcategory" style="color: #6c757d;">Todas las categorías</a>
                                                 </li>
                                                 <t t-if="selected_category">
                                                     <li class="breadcrumb-item">
-                                                        <a t-att-href="'/subcategoria?category_id=' + str(selected_category.id)" style="color: #6c757d;">
+                                                        <a t-att-href="'/subcategory?category_id=' + str(selected_category.id)" style="color: #6c757d;">
                                                             <t t-esc="selected_category.name"/>
                                                         </a>
                                                     </li>
@@ -82,7 +82,7 @@
                                     <div>
                                         <t t-if="selected_category">
                                             <div class="mb-1">
-                                                <a t-att-href="'/subcategoria?category_id=' + str(selected_category.id)"
+                                                <a t-att-href="'/subcategory?category_id=' + str(selected_category.id)"
                                                    class="fw-bold"
                                                    t-att-style="'color: #007bff;'">
                                                     <t t-esc="selected_category.name"/>
@@ -90,7 +90,7 @@
                                             </div>
                                             <t t-if="selected_subcategory">
                                                 <div class="ms-3 mb-1">
-                                                    <a t-att-href="'/subcategoria?category_id=' + str(selected_category.id) + '&amp;subcategory_id=' + str(selected_subcategory.id)"
+                                                    <a t-att-href="'/subcategory?category_id=' + str(selected_category.id) + '&amp;subcategory_id=' + str(selected_subcategory.id)"
                                                        class="fw-bold"
                                                        t-att-style="'color: #FF5207;'">
                                                         <t t-esc="selected_subcategory.name"/>
@@ -100,7 +100,7 @@
                                                     <div class="ms-4">
                                                         <t t-foreach="selected_subcategory_children" t-as="child" t-key="child.id">
                                                             <div class="mb-1">
-                                                                <a t-att-href="'/subcategoria?category_id=' + str(selected_category.id) + '&amp;subcategory_id=' + str(child.id)"
+                                                                <a t-att-href="'/subcategory?category_id=' + str(selected_category.id) + '&amp;subcategory_id=' + str(child.id)"
                                                                    t-att-style="'color: #6c757d;'">
                                                                     <t t-esc="child.name"/>
                                                                 </a>
@@ -139,7 +139,7 @@
                                             var urlParams = new URLSearchParams(window.location.search);
                                             
                                             // Mantener todos los filtros existentes
-                                            var newUrl = '/subcategoria?';
+                                            var newUrl = '/subcategory?';
                                             var params = [];
                                             
                                             // Mantener categoría
@@ -186,7 +186,7 @@
                                             if (params.length > 0) {
                                                 newUrl += params.join('&amp;');
                                             } else {
-                                                newUrl = '/subcategoria';
+                                                newUrl = '/subcategory';
                                             }
                                             
                                             console.log('Redirecting to:', newUrl);
@@ -204,7 +204,7 @@
                                         <!-- Mostrar primero las 5 marcas forzadas -->
                                         <t t-foreach="forced_brands" t-as="brand_data" t-key="brand_data.id">
                                             <div class="mb-1 brand-item">
-                                                <a t-att-href="'/subcategoria?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'brand_id=' + str(brand_data.id)" 
+                                                <a t-att-href="'/subcategory?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'brand_id=' + str(brand_data.id)" 
                                                    class="text-decoration-none small"
                                                    t-att-style="'color: #007bff; font-weight: bold;' if current_filters.get('brand_id') == brand_data.id else 'color: #6c757d;'">
                                                     <t t-esc="brand_data.name"/>
@@ -215,7 +215,7 @@
                                         <!-- Mostrar el resto de marcas ocultas inicialmente -->
                                         <t t-foreach="other_brands" t-as="brand_data" t-key="brand_data.id">
                                             <div class="mb-1 brand-item extra-brand" style="display:none;">
-                                                <a t-att-href="'/subcategoria?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'brand_id=' + str(brand_data.id)" 
+                                                <a t-att-href="'/subcategory?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'brand_id=' + str(brand_data.id)" 
                                                    class="text-decoration-none small"
                                                    t-att-style="'color: #007bff; font-weight: bold;' if current_filters.get('brand_id') == brand_data.id else 'color: #6c757d;'">
                                                     <t t-esc="brand_data.name"/>
@@ -248,21 +248,21 @@
                                     <h6 class="mb-2">Precio</h6>
                                     <div class="price-options mb-2">
                                         <div class="mb-1">
-                                            <a t-att-href="'/subcategoria?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('brand_id') and ('brand_id=' + str(current_filters.get('brand_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'price_range=0_500'" 
+                                            <a t-att-href="'/subcategory?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('brand_id') and ('brand_id=' + str(current_filters.get('brand_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'price_range=0_500'" 
                                                class="text-decoration-none small"
                                                t-att-style="'color: #007bff; font-weight: bold;' if current_filters.get('price_range') == '0_500' else 'color: #6c757d;'">
                                                 Hasta $500 (<t t-esc="price_ranges.get('0_500', 0)"/>)
                                             </a>
                                         </div>
                                         <div class="mb-1">
-                                            <a t-att-href="'/subcategoria?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('brand_id') and ('brand_id=' + str(current_filters.get('brand_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'price_range=500_1000'" 
+                                            <a t-att-href="'/subcategory?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('brand_id') and ('brand_id=' + str(current_filters.get('brand_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'price_range=500_1000'" 
                                                class="text-decoration-none small"
                                                t-att-style="'color: #007bff; font-weight: bold;' if current_filters.get('price_range') == '500_1000' else 'color: #6c757d;'">
                                                 De $500 a $1000 (<t t-esc="price_ranges.get('500_1000', 0)"/>)
                                             </a>
                                         </div>
                                         <div class="mb-1">
-                                            <a t-att-href="'/subcategoria?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('brand_id') and ('brand_id=' + str(current_filters.get('brand_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'price_range=1000_plus'" 
+                                            <a t-att-href="'/subcategory?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('brand_id') and ('brand_id=' + str(current_filters.get('brand_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'price_range=1000_plus'" 
                                                class="text-decoration-none small"
                                                t-att-style="'color: #007bff; font-weight: bold;' if current_filters.get('price_range') == '1000_plus' else 'color: #6c757d;'">
                                                 Más de $1000 (<t t-esc="price_ranges.get('1000_plus', 0)"/>)
@@ -310,7 +310,7 @@
                                             else urlParams.delete('max_price');
 
                                             // Keep other filters
-                                            var newUrl = '/subcategoria?' + urlParams.toString();
+                                            var newUrl = '/subcategory?' + urlParams.toString();
                                             window.location.href = newUrl;
                                             return false;
                                         }
@@ -325,7 +325,7 @@
                                             <div class="mb-1">
                                                 <t t-if="promotion_tag_counts.get(tag.id, 0) > 0">
                                                     <!-- Hay productos, muestra el enlace con los filtros actuales -->
-                                                    <a t-att-href="'/subcategoria?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('brand_id') and ('brand_id=' + str(current_filters.get('brand_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'promotion_id=' + str(tag.id)"
+                                                    <a t-att-href="'/subcategory?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('brand_id') and ('brand_id=' + str(current_filters.get('brand_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'promotion_id=' + str(tag.id)"
                                                        class="text-decoration-none small"
                                                        t-att-style="'color: #007bff; font-weight: bold;' if current_filters.get('promotion_id') == tag.id else 'color: #6c757d;'">
                                                         <t t-esc="tag.name"/> (<t t-esc="promotion_tag_counts.get(tag.id, 0)"/>)
@@ -333,7 +333,7 @@
                                                 </t>
                                                 <t t-else="">
                                                     <!-- No hay productos, muestra el enlace general -->
-                                                    <a t-att-href="'/subcategoria?promotion_id=' + str(tag.id)"
+                                                    <a t-att-href="'/subcategory?promotion_id=' + str(tag.id)"
                                                        class="text-decoration-none small"
                                                        style="color: #6c757d;">
                                                         <t t-esc="tag.name"/> (0)
@@ -351,14 +351,14 @@
                                         <t t-foreach="discount_tags" t-as="tag" t-key="tag['id']">
                                             <div class="mb-1">
                                                 <t t-if="discount_tag_counts.get(tag['id'], 0) > 0">
-                                                    <a t-att-href="'/subcategoria?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('brand_id') and ('brand_id=' + str(current_filters.get('brand_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'discount_id=' + str(tag['id'])"
+                                                    <a t-att-href="'/subcategory?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('brand_id') and ('brand_id=' + str(current_filters.get('brand_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'discount_id=' + str(tag['id'])"
                                                        class="text-decoration-none small"
                                                        t-att-style="'color: #007bff; font-weight: bold;' if current_filters.get('discount_id') == tag['id'] else 'color: #6c757d;'">
                                                         <t t-esc="tag['name']"/> (<t t-esc="discount_tag_counts.get(tag['id'], 0)"/>)
                                                     </a>
                                                 </t>
                                                 <t t-else="">
-                                                    <a t-att-href="'/subcategoria?discount_id=' + str(tag['id'])"
+                                                    <a t-att-href="'/subcategory?discount_id=' + str(tag['id'])"
                                                        class="text-decoration-none small"
                                                        style="color: #6c757d;">
                                                         <t t-esc="tag['name']"/> (0)
@@ -471,7 +471,7 @@
                                             <li class="page-item" t-att-class="'disabled' if current_page == 1 else ''">
                                                 <a class="page-link"
                                                    style="border-radius: 4px; background: #ccc; color: #888; border: none; margin-right: 2px; min-width: 32px; text-align: center;"
-                                                   t-att-href="'/subcategoria?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % (current_page-1)]) if current_page &gt; 1 else '#'"
+                                                   t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % (current_page-1)]) if current_page &gt; 1 else '#'"
                                                    aria-label="Anterior">
                                                     <span aria-hidden="true">&#171;</span>
                                                 </a>
@@ -484,7 +484,7 @@
                                                 <li class="page-item">
                                                     <a class="page-link"
                                                        style="border-radius: 4px; background: transparent; color: #888; border: none; margin-right: 2px; min-width: 32px; text-align: center;"
-                                                       t-att-href="'/subcategoria?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=1'])">1</a>
+                                                       t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=1'])">1</a>
                                                 </li>
                                                 <li class="page-item disabled"><span class="page-link" style="background: transparent; color: #888; border: none;">...</span></li>
                                             </t>
@@ -492,7 +492,7 @@
                                                 <li class="page-item" t-att-class="'active' if page == current_page else ''">
                                                     <a class="page-link"
                                                        t-att-style="'border-radius: 4px; margin-right: 2px; min-width: 32px; text-align: center; background: #ccc; color: #fff; border: none;' if page == current_page else 'border-radius: 4px; background: transparent; color: #888; border: none; margin-right: 2px; min-width: 32px; text-align: center;'"
-                                                       t-att-href="'/subcategoria?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % page]) if page != current_page else '#'">
+                                                       t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % page]) if page != current_page else '#'">
                                                         <t t-esc="page"/>
                                                     </a>
                                                 </li>
@@ -502,14 +502,14 @@
                                                 <li class="page-item">
                                                     <a class="page-link"
                                                        style="border-radius: 4px; background: transparent; color: #888; border: none; margin-right: 2px; min-width: 32px; text-align: center;"
-                                                       t-att-href="'/subcategoria?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % total_pages])"><t t-esc="total_pages"/></a>
+                                                       t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % total_pages])"><t t-esc="total_pages"/></a>
                                                 </li>
                                             </t>
                                             <!-- Botón siguiente -->
                                             <li class="page-item" t-att-class="'disabled' if current_page == total_pages else ''">
                                                 <a class="page-link"
                                                    style="border-radius: 4px; background: #ccc; color: #888; border: none; margin-left: 2px; min-width: 32px; text-align: center;"
-                                                   t-att-href="'/subcategoria?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % (current_page+1)]) if current_page &lt; total_pages else '#'"
+                                                   t-att-href="'/subcategory?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % (current_page+1)]) if current_page &lt; total_pages else '#'"
                                                    aria-label="Siguiente">
                                                     <span aria-hidden="true">&#187;</span>
                                                 </a>
@@ -593,7 +593,7 @@
                         }
                     });
                     
-                    const newUrl = '/subcategoria' + (newUrlParams.toString() ? '?' + newUrlParams.toString() : '');
+                    const newUrl = '/subcategory' + (newUrlParams.toString() ? '?' + newUrlParams.toString() : '');
                     console.log('Redirecting to:', newUrl);
                     
                     window.location.href = newUrl;

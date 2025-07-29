@@ -29,13 +29,13 @@ class WebsiteAuth(Home):
                     return request.redirect('/my')
                 else:
                     # Other authenticated user
-                    return request.redirect('/subcategoria')
+                    return request.redirect('/subcategory')
             return response
         
         # GET request - show login form for anonymous users
         if request.env.user._is_public():
             return request.render('theme_xtream.website_login', {
-                'redirect': redirect or '/subcategoria'
+                'redirect': redirect or '/subcategory'
             })
         
         # User is already logged in, redirect based on user type
@@ -44,7 +44,7 @@ class WebsiteAuth(Home):
         elif request.env.user.has_group('base.group_portal'):
             return request.redirect('/my')
         else:
-            return request.redirect('/subcategoria')
+            return request.redirect('/subcategory')
 
     
     
@@ -121,7 +121,7 @@ class WebsiteAuth(Home):
             'redirect': redirect,
         })
     
-    # @http.route(['/tienda/reset_password'], type='http', auth="public", website=True)
+    # @http.route(['/shop/reset_password'], type='http', auth="public", website=True)
     # def shop_reset_password(self, redirect=None, **post):
     #     """Custom password reset for website users"""
     #     if request.httprequest.method == 'POST':
