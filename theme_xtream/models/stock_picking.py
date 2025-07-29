@@ -3,7 +3,7 @@ from odoo import models, fields, api
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
-    def get_compras(self):
+    def get_delivered_products(self):
         """Obtiene los productos entregados para el usuario actual."""
         user_id = self.env.user.id
         delivered_pickings = self.search([
