@@ -86,8 +86,6 @@ class ShopController(WebsiteSale):
                 ('id', '!=', product_sudo.id),
                 ('website_published', '=', True)
             ])
-        
-        full_website_url = product_sudo.website_url
     
         context = {
             'product': product_sudo,  # Usar product_sudo en lugar de product
@@ -99,12 +97,9 @@ class ShopController(WebsiteSale):
             'list_price': product_sudo.list_price,
             'general_images': general_images,
             'brand_type_products_count': brand_type_products_count,
-            'full_website_url': full_website_url,  # Agregar la URL completa al contexto
         }
-
         # Renderizar la página del producto
         return request.render("theme_xtream.website_view_product_xtream", {
             'product': product_template,
             'product_variant': product_variant,
-            'full_website_url': full_website_url,  # Pasar la URL completa al template
         })
