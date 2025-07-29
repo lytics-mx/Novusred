@@ -26,14 +26,15 @@ class WebsiteCheckout(http.Controller):
 
         delivered_products = []
         pending_products = []
-
+        
         for move in stock_moves:
             deadline_date = move.date_deadline.date() if move.date_deadline else None
             delivery_date = move.date.date() if move.date else None
             purchase_date = move.date.date() if move.date else None
-
+        
             free_shipping = move.product_id.product_tmpl_id.free_shipping
-
+            website_url = f"/shop/product/{move.product_id.product_tmpl_id.id}"  # Generar la URL del producto
+        
             if move.state == 'done':
                 relative_date = format_date(delivery_date, format='d \'de\' MMMM', locale='es') if delivery_date else ''
                 delivered_products.append({
@@ -49,6 +50,7 @@ class WebsiteCheckout(http.Controller):
                     'picking_origin': move.picking_id.origin,
                     'picking_name': move.picking_id.name,
                     'free_shipping': free_shipping,
+                    'website_url': website_url,  # Agregar la URL del producto
                 })
             else:
                 if deadline_date:
@@ -74,7 +76,7 @@ class WebsiteCheckout(http.Controller):
                         relative_date = f'en {days_diff} días'
                 else:
                     relative_date = 'Sin fecha límite'
-
+        
                 pending_products.append({
                     'product_id': move.product_id.id,
                     'product_name': move.product_id.name,
@@ -87,8 +89,9 @@ class WebsiteCheckout(http.Controller):
                     'picking_origin': move.picking_id.origin,
                     'picking_name': move.picking_id.name,
                     'free_shipping': free_shipping,
+                    'website_url': website_url,  # Agregar la URL del producto
                 })
-
+        
         # Count total products
         product_count = len(stock_moves)
 
