@@ -82,7 +82,7 @@ class WebsiteProduct(http.Controller):
         return product
 
 
-    @http.route('/about', auth='public', website=True)
+    @http.route('/nosotros', auth='public', website=True)
     def about(self, **kw):
         return http.request.render('theme_xtream.xtream_about')
         
@@ -90,27 +90,27 @@ class WebsiteProduct(http.Controller):
     def policies(self, **kw):
         return http.request.render('theme_xtream.terms_and_conditions')
 
-    @http.route('/purchasing_policies', auth='public', website=True)
+    @http.route('/politicas/compra', auth='public', website=True)
     def purchasing_policies(self, **kw):
         return http.request.render('theme_xtream.purchasing_policies')
     
-    @http.route('/warranty_policies', auth='public', website=True)
+    @http.route('/politicas/garantia', auth='public', website=True)
     def warranty_policies(self, **kw):
         return http.request.render('theme_xtream.warranty_policies')    
     
-    @http.route('/delivery_policies', auth='public', website=True)
+    @http.route('/politicas/envio', auth='public', website=True)
     def delivery_policies(self, **kw):
         return http.request.render('theme_xtream.delivery_policies')
     
-    @http.route('/privacy_policy', auth='public', website=True)
+    @http.route('/politicas/privacidad', auth='public', website=True)
     def privacy_policy(self, **kw):
         return http.request.render('theme_xtream.privacy_policy')
     
-    @http.route('/refund_policies', auth='public', website=True)
+    @http.route('/politicas/devoluciones', auth='public', website=True)
     def refund_policies(self, **kw):
         return http.request.render('theme_xtream.refund_policies')
     
-    @http.route('/payment_policies', auth='public', website=True)
+    @http.route('/politicas/pago', auth='public', website=True)
     def payment_policies(self, **kw):
         return http.request.render('theme_xtream.payment_policies')
     
