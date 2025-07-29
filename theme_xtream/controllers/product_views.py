@@ -25,13 +25,7 @@ class ShopController(WebsiteSale):
         if not product_variant.exists():
             _logger.warning(f"No se encontró una variante para el producto template con ID {product_id}.")
             return request.not_found()
-
-        # Validar la longitud de website_url
-        website_url = product_template.website_url or ""
-        if len(website_url) > 128:
-            _logger.warning(f"El website_url del producto {product_id} excede los 128 caracteres: {website_url}")
-            website_url = website_url[:128]
-
+    
         # Registrar el producto en el historial
         if request.env.user.id:
             visitor = request.env['website.visitor']._get_visitor_from_request()
@@ -44,23 +38,23 @@ class ShopController(WebsiteSale):
                     })
                 except Exception as e:
                     _logger.error(f"Error al registrar el producto visto: {e}")
-
+    
         # Obtener el producto con sudo para evitar problemas de permisos
         product_sudo = product_template.sudo()
         _logger.info("Producto cargado: %s", product_sudo)
-
+    
         # Obtener la jerarquía de categorías
         categories = []
         categ = product_sudo.categ_id
         while categ:
             categories.insert(0, categ)
             categ = categ.parent_id
-
+    
         # Obtener la URL de referencia (página anterior)
         referer = request.httprequest.headers.get('Referer')
         if not referer or referer == request.httprequest.url:
             referer = '/subcategory'
-
+    
         # Cálculo de descuentos (ejemplo)
         list_price = product_sudo.list_price if product_sudo.list_price is not None else 0
         discounted_price = list_price
@@ -68,18 +62,18 @@ class ShopController(WebsiteSale):
             discounted_price = product_sudo.discounted_price
         elif hasattr(product_sudo, 'standard_price') and product_sudo.standard_price is not None and list_price > product_sudo.standard_price:
             discounted_price = product_sudo.standard_price
-
+    
         fixed_discount = 0
         discount_percentage = 0
         if list_price > discounted_price:
             fixed_discount = list_price - discounted_price
             discount_percentage = int(100 * fixed_discount / list_price)
-
+    
         general_images = request.env['banner.image.line'].search([
             ('name', '=', 'metodos de pago'),
             ('is_active_carousel', '=', True)
         ])    
-
+    
         # Calcular el contador de productos publicados y disponibles por cada marca en available_brands
         brand_type_products_count = 0
         if product_sudo.brand_type_id:
@@ -88,7 +82,7 @@ class ShopController(WebsiteSale):
                 ('id', '!=', product_sudo.id),
                 ('website_published', '=', True)
             ])
-
+    
         context = {
             'product': product_sudo,
             'categories': categories,
@@ -99,11 +93,9 @@ class ShopController(WebsiteSale):
             'list_price': product_sudo.list_price,
             'general_images': general_images,
             'brand_type_products_count': brand_type_products_count,
-            'website_url': website_url,
         }
         # Renderizar la página del producto
         return request.render("theme_xtream.website_view_product_xtream", {
             'product': product_template,
             'product_variant': product_variant,
-            'website_url': website_url,
         })
