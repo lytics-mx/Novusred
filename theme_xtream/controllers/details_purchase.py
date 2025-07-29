@@ -60,7 +60,7 @@ class ProductDetails(http.Controller):
             'brand_image_url': brand_image_url,
             'image_url': f'/web/image/product.product/{product.id}/image_1920',
             'free_shipping': product.product_tmpl_id.free_shipping,  # Agregar el atributo free_shipping
-
+            'website_url': product.website_url,  # Agregar la URL del producto
         }
 
         # Preparar detalles de la compra y seguimiento
