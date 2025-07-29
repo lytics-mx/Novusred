@@ -14,10 +14,6 @@ class ShopController(WebsiteSale):
             '/shop/product/<int:product_id>'
         ], type='http', auth="public", website=True, sitemap=False)
     def product_page_simple(self, product_id, **kwargs):
-        # Redirigir si hay parámetros adicionales en la URL
-        if 'product' in kwargs:
-            return request.redirect(f'/shop/product/{product_id}')
-        
         # Obtener el producto template
         product_template = request.env['product.template'].sudo().browse(product_id)
         if not product_template.exists():
@@ -37,7 +33,7 @@ class ShopController(WebsiteSale):
                 try:
                     request.env['website.track'].sudo().create({
                         'visitor_id': visitor.id,
-                        'product_id': product_variant.id,  # Usar el ID de la variante
+                        'product_id': product_variant.id,
                         'visit_datetime': datetime.now()
                     })
                 except Exception as e:
@@ -88,7 +84,7 @@ class ShopController(WebsiteSale):
             ])
     
         context = {
-            'product': product_sudo,  # Usar product_sudo en lugar de product
+            'product': product_sudo,
             'categories': categories,
             'referer': referer,
             'discounted_price': discounted_price,
