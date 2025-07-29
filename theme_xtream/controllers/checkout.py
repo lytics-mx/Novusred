@@ -2,7 +2,7 @@ from odoo import http
 from odoo.http import request
 
 class CheckoutController(http.Controller):
-    @http.route('/tienda/checkout', type='http', auth='public', website=True)
+    @http.route('/shop/checkout', type='http', auth='public', website=True)
     def checkout_page(self):
         # Obtener la información del usuario actual
         partner = request.env.user.partner_id

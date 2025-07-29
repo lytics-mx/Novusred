@@ -15,24 +15,24 @@ class WebsiteSearch(http.Controller):
         if search_type == 'brand':
             return request.redirect(f'/brand_search_redirect?search={search_sanitized}')
         elif search_type == 'category':
-            return request.redirect(f'/categoria_search?search={search_sanitized}')
+            return request.redirect(f'/category_search?search={search_sanitized}')
         elif search_type == 'model':
             Product = request.env['product.template'].sudo()
             product = Product.search([('product_model', '=', search)], limit=1)
             if product:
-                return request.redirect(f'/tienda/{product.slug()}?product=product.template({product.id},)')
+                return request.redirect(f'/shop/{product.slug()}?product=product.template({product.id},)')
             else:
-                return request.redirect(f'/subcategoria?search={search_sanitized}')
+                return request.redirect(f'/subcategory?search={search_sanitized}')
         else:
             Brand = request.env['brand.type'].sudo()
             brand = Brand.search([('name', 'ilike', search), ('active', '=', True)], limit=1)
             if brand:
-                return request.redirect(f'/subcategoria?brand_id={brand.id}')
+                return request.redirect(f'/subcategory?brand_id={brand.id}')
             Category = request.env['product.category'].sudo()
             category = Category.search([('name', 'ilike', search)], limit=1)
             if category:
-                return request.redirect(f'/subcategoria?category_id={category.id}')
-            return request.redirect(f'/subcategoria?search={search_sanitized}')
+                return request.redirect(f'/subcategory?category_id={category.id}')
+            return request.redirect(f'/subcategory?search={search_sanitized}')
 
     @http.route('/search_live', type='http', auth='public', website=True)
     def search_live(self, query):
