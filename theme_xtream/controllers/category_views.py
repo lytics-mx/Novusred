@@ -3,11 +3,11 @@ from odoo.http import request
 
 class CategoryController(http.Controller):
 
-    @http.route('/category', auth='public', website=True)
+    @http.route('/categoria', auth='public', website=True)
     def home(self):
         return http.request.render('theme_xtream.website_category')  
 
-    @http.route('/subcategory', auth='public', website=True)
+    @http.route('/subcategoria', auth='public', website=True)
     def category(self, category_id=None, subcategory_id=None, brand_id=None, 
                  free_shipping=None, min_price=None, max_price=None, price_range=None,
                  discount_id=None, promotion_id=None, sort=None, search=None, **kw):
@@ -339,7 +339,7 @@ class CategoryController(http.Controller):
         
         return request.render('theme_xtream.website_subcategory', values)
     
-    @http.route('/category/get_subcategories', type='json', auth='public', website=True)
+    @http.route('/categoria/get_subcategories', type='json', auth='public', website=True)
     def get_subcategories(self, category_id):
         try:
             published_products = request.env['product.template'].sudo().search([
@@ -353,7 +353,7 @@ class CategoryController(http.Controller):
         except (ValueError, TypeError):
             return []
     
-    @http.route('/category/get_brands', type='json', auth='public', website=True)
+    @http.route('/categoria/get_brands', type='json', auth='public', website=True)
     def get_brands(self, category_id=None, subcategory_id=None):
         domain = [('website_published', '=', True)]
         try:
@@ -377,7 +377,7 @@ class CategoryController(http.Controller):
         except (ValueError, TypeError):
             return []
         
-    @http.route('/category_search', auth='public', website=True)
+    @http.route('/categoria_search', auth='public', website=True)
     def category_search(self, search=None, **kwargs):
         # Reemplazar guiones con espacios en el parámetro de búsqueda
         if search:
@@ -435,7 +435,7 @@ class CategoryController(http.Controller):
         }
         return request.render('theme_xtream.category_search', values)
     
-    @http.route('/category/<string:slug>', auth='public', website=True)
+    @http.route('/categoria/<string:slug>', auth='public', website=True)
     def category_by_slug(self, slug, **kwargs):
         # Buscar la categoría por slug
         category = request.env['product.category'].sudo().search([('slug', '=', slug)], limit=1)

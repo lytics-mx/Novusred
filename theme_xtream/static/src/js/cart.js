@@ -23,7 +23,7 @@ odoo.define('theme_xtream.cart', function (require) {
                 totalItems += parseInt(input.value) || 0;
             });
             
-            ajax.jsonRpc('/shop/cart/update_badge', 'call', {
+            ajax.jsonRpc('/tienda/cart/update_badge', 'call', {
                 'total_items': totalItems
             });
         }
