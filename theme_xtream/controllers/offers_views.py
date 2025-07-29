@@ -3,7 +3,7 @@ from odoo.http import request
 
 class OffersController(http.Controller):
 
-    @http.route('/offers', type='http', auth='public', website=True)
+    @http.route('/ofertas', type='http', auth='public', website=True)
     def offers(self, **kwargs):
         tag_id = kwargs.get('tag_id')
         brand_type_id = kwargs.get('brand_type_id')

@@ -3,7 +3,7 @@ from odoo.http import request
 
 class WebsiteBrand(http.Controller):
 
-    @http.route('/brand/<string:brand_name>', auth='public', website=True)
+    @http.route('/marca/<string:brand_name>', auth='public', website=True)
     def brand_products(self, brand_name, subcat_id=None, **kwargs):
         BrandType = request.env['brand.type']
         brand_type_rec = BrandType.sudo().search([
@@ -24,9 +24,9 @@ class WebsiteBrand(http.Controller):
 
         products = request.env['product.template'].sudo().search(domain)
 
-        # Si no hay productos publicados, redirige a /brand
+        # Si no hay productos publicados, redirige a /marca
         if not products:
-            return request.redirect('/brand')
+            return request.redirect('/marca')
 
         # Categorías principales de los productos
         category_ids = products.mapped('categ_id').ids
@@ -59,7 +59,7 @@ class WebsiteBrand(http.Controller):
             'banner_image': banner_image,
         })
 
-    @http.route('/brand_search_redirect', type='http', auth='public', website=True)
+    @http.route('/marca_search_redirect', type='http', auth='public', website=True)
     def brand_search_redirect(self, search=None, **kwargs):
         if search:
             BrandType = request.env['brand.type'].sudo()
@@ -70,10 +70,10 @@ class WebsiteBrand(http.Controller):
                 brand = BrandType.search([('name', 'ilike', search)], limit=1)
             if brand:
                 brand_name_url = brand.slug
-                return request.redirect('/brand/%s' % brand_name_url)
-        return request.redirect('/brand')
+                return request.redirect('/marca/%s' % brand_name_url)
+        return request.redirect('/marca')
 
-    @http.route('/brand', auth='public', website=True)
+    @http.route('/marca', auth='public', website=True)
     def home(self):
         products = request.env['product.template'].sudo().search([('website_published', '=', True)], order='create_date desc', limit=10)
         return http.request.render('theme_xtream.website_brand', {

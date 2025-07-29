@@ -8,7 +8,7 @@ _logger = logging.getLogger(__name__)
 
 class ShopController(WebsiteSale):
 
-    @http.route('/tienda/cart', type='http', auth="public", website=True)
+    @http.route('/tienda/carrito', type='http', auth="public", website=True)
     def cart(self, tab=None, **kw):
         order = request.website.sale_get_order()
         # Obtener los productos guardados para el usuario actual
@@ -36,7 +36,7 @@ class ShopController(WebsiteSale):
         return values
 
 
-    @http.route('/tienda/cart/remove', type='http', auth="public", website=True)
+    @http.route('/tienda/carrito/remove', type='http', auth="public", website=True)
     def cart_remove(self, line_id=None, **kw):
         if line_id:
             order = request.website.sale_get_order()
@@ -44,9 +44,9 @@ class ShopController(WebsiteSale):
                 line = order.order_line.filtered(lambda l: l.id == int(line_id))
                 if line:
                     line.unlink()
-        return request.redirect('/tienda/cart')
+        return request.redirect('/tienda/carrito')
     
-    @http.route('/tienda/cart/update_badge', type='json', auth="public", website=True)
+    @http.route('/tienda/carrito/update_badge', type='json', auth="public", website=True)
     def update_cart_badge(self, total_items=None, **post):
         if total_items is not None:
             request.session['website_sale_cart_quantity'] = int(total_items)
@@ -67,7 +67,7 @@ class ShopController(WebsiteSale):
        
 
        
-    @http.route('/tienda/cart/move_to_saved', type='http', auth="public", website=True)
+    @http.route('/tienda/carrito/move_to_saved', type='http', auth="public", website=True)
     def move_to_saved(self, line_id=None, **kw):
         if line_id:
             line_id = int(line_id)
@@ -101,9 +101,9 @@ class ShopController(WebsiteSale):
                     # Eliminar la línea del carrito
                     line.unlink()
     
-        return request.redirect('/tienda/cart?tab=saved')
+        return request.redirect('/tienda/carrito?tab=saved')
        
-    @http.route('/tienda/cart/remove_saved_item', type='http', auth="public", website=True)
+    @http.route('/tienda/carrito/remove_saved_item', type='http', auth="public", website=True)
     def remove_saved_item(self, item_id=None, **kw):
         if item_id:
             item_id = int(item_id)
@@ -112,10 +112,10 @@ class ShopController(WebsiteSale):
             if saved_item:
                 # Eliminar el producto guardado
                 saved_item.unlink()
-        return request.redirect('/tienda/cart?tab=saved')
+        return request.redirect('/tienda/carrito?tab=saved')
 
     
-    @http.route('/tienda/cart/move_to_cart', type='http', auth="public", website=True)
+    @http.route('/tienda/carrito/move_to_cart', type='http', auth="public", website=True)
     def move_to_cart(self, item_id=None, **kw):
         if item_id:
             item_id = int(item_id)
@@ -134,9 +134,9 @@ class ShopController(WebsiteSale):
                     })
                     # Eliminar el producto de "Guardados"
                     saved_item.unlink()
-        return request.redirect('/tienda/cart')
+        return request.redirect('/tienda/carrito')
     
-    @http.route('/tienda/cart/update_bundle', type='http', auth="public", website=True)
+    @http.route('/tienda/carrito/update_bundle', type='http', auth="public", website=True)
     def update_bundle_cart(self, **post):
         """
         Handle adding multiple products (bundle) to the cart.
@@ -160,4 +160,4 @@ class ShopController(WebsiteSale):
                     continue
     
         _logger.info(f"Productos añadidos al carrito: {bundle_product_ids}")
-        return request.redirect('/tienda/cart')
+        return request.redirect('/tienda/carrito')
