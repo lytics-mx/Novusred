@@ -7,7 +7,7 @@ from . import brand_views
 
 from . import search
 
-from . import product_views
+# from . import product_views
 # from . import img_banner
 
 from . import search
