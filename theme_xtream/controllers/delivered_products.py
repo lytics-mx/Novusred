@@ -4,8 +4,8 @@ from babel.dates import format_date
 from datetime import datetime, timedelta
 
 class WebsiteCheckout(http.Controller):
-    @http.route(['/delivered_products'], type='http', auth='user', website=True)
-    def delivered_products(self, search=None, filter_state='all'):
+    @http.route(['/compras'], type='http', auth='user', website=True)
+    def compras(self, search=None, filter_state='all'):
         today = datetime.now().date()
         user = request.env.user
 
@@ -24,7 +24,7 @@ class WebsiteCheckout(http.Controller):
 
         stock_moves = request.env['stock.move'].sudo().search(domain)
 
-        delivered_products = []
+        compras = []
         pending_products = []
 
         for move in stock_moves:
@@ -36,7 +36,7 @@ class WebsiteCheckout(http.Controller):
 
             if move.state == 'done':
                 relative_date = format_date(delivery_date, format='d \'de\' MMMM', locale='es') if delivery_date else ''
-                delivered_products.append({
+                compras.append({
                     'product_id': move.product_id.id,  # ID del product.product
                     'product_name': move.product_id.name,  # Nombre del product.product
                     'template_id': move.product_id.product_tmpl_id.id,  # ID del product.template
@@ -93,7 +93,7 @@ class WebsiteCheckout(http.Controller):
         product_count = len(stock_moves)
 
         return request.render('theme_xtream.delivered_template', {
-            'delivered_products': delivered_products,
+            'compras': compras,
             'pending_products': pending_products,
             'product_count': product_count,
             'search': search,
