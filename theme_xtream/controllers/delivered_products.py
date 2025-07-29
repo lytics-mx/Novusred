@@ -87,7 +87,6 @@ class WebsiteCheckout(http.Controller):
                     'picking_origin': move.picking_id.origin,
                     'picking_name': move.picking_id.name,
                     'free_shipping': free_shipping,
-                    'website_url': move.product_id.website_url,  # Agregar la URL del producto
                 })
 
         # Count total products
