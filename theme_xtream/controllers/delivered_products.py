@@ -1,7 +1,7 @@
 from odoo import http
 from odoo.http import request
 from babel.dates import format_date
-from datetime import datetime, timedelta
+from datetime import datetime
 
 class WebsiteCheckout(http.Controller):
     @http.route(['/delivered_products'], type='http', auth='user', website=True)
@@ -33,6 +33,7 @@ class WebsiteCheckout(http.Controller):
             purchase_date = move.date.date() if move.date else None
 
             free_shipping = move.product_id.product_tmpl_id.free_shipping
+            website_url = move.product_id.product_tmpl_id.website_url  # Obtener el campo website_url
 
             if move.state == 'done':
                 relative_date = format_date(delivery_date, format='d \'de\' MMMM', locale='es') if delivery_date else ''
@@ -49,8 +50,10 @@ class WebsiteCheckout(http.Controller):
                     'picking_origin': move.picking_id.origin,
                     'picking_name': move.picking_id.name,
                     'free_shipping': free_shipping,
+                    'website_url': website_url,  # Agregar el campo website_url
                 })
             else:
+                relative_date = 'Sin fecha límite'
                 if deadline_date:
                     days_diff = (deadline_date - today).days
                     if days_diff > 30:
@@ -72,8 +75,6 @@ class WebsiteCheckout(http.Controller):
                         relative_date = f'Se entregará el {formatted_deadline}'
                     else:
                         relative_date = f'en {days_diff} días'
-                else:
-                    relative_date = 'Sin fecha límite'
 
                 pending_products.append({
                     'product_id': move.product_id.id,
@@ -87,6 +88,7 @@ class WebsiteCheckout(http.Controller):
                     'picking_origin': move.picking_id.origin,
                     'picking_name': move.picking_id.name,
                     'free_shipping': free_shipping,
+                    'website_url': website_url,  # Agregar el campo website_url
                 })
 
         # Count total products
