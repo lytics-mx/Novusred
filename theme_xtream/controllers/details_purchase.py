@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from babel.dates import format_date
 
 class ProductDetails(http.Controller):
-    @http.route(['/detalles/compra/<int:product_id>/<string:pick_origin>'], type='http', auth='user', website=True)
+    @http.route(['/product_details/<int:product_id>/<string:pick_origin>'], type='http', auth='user', website=True)
     def product_details(self, product_id, pick_origin):
         user = request.env.user
 
@@ -21,7 +21,7 @@ class ProductDetails(http.Controller):
         # Obtener la marca desde el modelo brand.type
         brand = product.product_tmpl_id.brand_type_id
         brand_name = brand.name if brand else 'Sin marca'
-        brand_image_url = f'/web/image/marca.type/{brand.id}/icon_image' if brand else '/web/static/src/img/placeholder.png'
+        brand_image_url = f'/web/image/brand.type/{brand.id}/icon_image' if brand else '/web/static/src/img/placeholder.png'
 
         # Buscar pickings relacionados con el producto, el usuario y el picking_origin
         pickings = request.env['stock.picking'].sudo().search([

@@ -16,7 +16,7 @@ class ProductHistoryController(http.Controller):
         }
         return f"{months_spanish[date.month]} {date.year}"
 
-    @http.route(['/tienda/historial', '/tienda/historial/<string:period_filter>'], type='http', auth='user', website=True)
+    @http.route(['/tienda/history', '/tienda/history/<string:period_filter>'], type='http', auth='user', website=True)
     def view_history(self, period_filter=None):
         """Obtiene el historial de productos vistos por el usuario actual agrupado por períodos."""
         user_partner_id = request.env.user.partner_id.id
@@ -121,7 +121,7 @@ class ProductHistoryController(http.Controller):
             'total_products': total_products,
         })
 
-    @http.route('/tienda/historial/remove/<int:product_id>', type='http', auth='user', website=True)
+    @http.route('/tienda/history/remove/<int:product_id>', type='http', auth='user', website=True)
     def remove_from_history(self, product_id):
         """Elimina un producto del historial del usuario actual."""
         user_partner_id = request.env.user.partner_id.id
@@ -137,5 +137,5 @@ class ProductHistoryController(http.Controller):
             track_entries.unlink()
 
         # Redirigir de vuelta al historial
-        return request.redirect('/tienda/historial')
+        return request.redirect('/tienda/history')
     
