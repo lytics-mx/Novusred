@@ -89,26 +89,18 @@ class ProductTemplate(models.Model):
      )
 
 
+     @api.model
+     def assign_images_to_products(self):
+          """Asigna imágenes de adjuntos al campo image_1920 de los productos."""
+          attachments = self.env['ir.attachment'].search([
+               ('res_model', '=', 'product.template'),
+               ('mimetype', 'like', 'image/%')
+          ])
+          for att in attachments:
+               product = self.env['product.template'].browse(att.res_id)
+               if product and not product.image_1920:
+                    product.image_1920 = att.datas  # Copia la imagen binaria al campo
 
-     # is_discount_tag_visible = fields.Boolean(
-     #      string="Etiqueta de descuento visible",
-     #      default=True,
-     #      help="Controla si la etiqueta de descuento es visible en el sitio web"
-     # )
-     # last_viewed_date = fields.Datetime(string="Última fecha vista")
-
-     # type = fields.Selection(
-     # selection_add=[
-     #      ('product', 'Almacenable')
-     # ],
-     # ondelete={'product': 'set default'},
-     # )
-
-     # product_model_id = fields.Many2one(
-     #     comodel_name='product.model',
-     #     string='Modelo',
-     #     help='Selecciona o registra un modelo previamente usado.'
-     # )
 
      @api.depends('brand_type_id')
      def _compute_brand_website(self):
