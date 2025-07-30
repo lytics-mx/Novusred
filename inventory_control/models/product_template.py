@@ -111,12 +111,11 @@ class ProductTemplate(models.Model):
      # )
 
      @api.model
-     def update_seo_images(self):
-          """Fuerza que la imagen SEO (website_meta_image) sea siempre la imagen principal (image_1920) para todos los productos publicados."""
-          products = self.search([('website_published', '=', True)])
+     def reset_seo_images_to_default(self):
+          """Elimina la imagen SEO personalizada para que Odoo use image_1920 por defecto."""
+          products = self.search([('website_published', '=', True), ('website_meta_image', '!=', False)])
           for product in products:
-               # Siempre sobrescribe la imagen SEO con image_1920, aunque ya tenga una personalizada
-               product.write({'website_meta_image': product.image_1920})
+               product.write({'website_meta_image': False})
 
      @api.depends('brand_type_id')
      def _compute_brand_website(self):
