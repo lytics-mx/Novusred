@@ -94,6 +94,7 @@ class ShopController(WebsiteSale):
             'general_images': general_images,
             'brand_type_products_count': brand_type_products_count,
             'image_url': f'/web/image/product.template/{product_sudo.id}/image_1920',
+            'seo_image_url': f'/web/image/product.template/{product_sudo.id}/image_1920',  # Imagen para SEO
 
         }
         # Renderizar la página del producto
