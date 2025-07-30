@@ -96,7 +96,7 @@ class ShopController(WebsiteSale):
             'image_url': f'/web/image/product.template/{product_sudo.id}/image_1920',  # Imagen predeterminada
         }
         # Renderizar la página del producto
-        return request.render("theme_xtream.website_view_product_xtream", context {
+        return request.render("theme_xtream.website_view_product_xtream", context  = {
             'product': product_template,
             'product_variant': product_variant,
         })
