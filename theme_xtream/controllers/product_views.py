@@ -93,9 +93,7 @@ class ShopController(WebsiteSale):
             'list_price': product_sudo.list_price,
             'general_images': general_images,
             'brand_type_products_count': brand_type_products_count,
+            # Forzar que la imagen principal sea utilizada como SEO
+            'seo_image_url': f'/web/image/product.template/{product_sudo.id}/image_1920' if product_sudo.image_1920 else '/web/static/src/img/placeholder.png',
         }
-        # Renderizar la página del producto
-        return request.render("theme_xtream.website_view_product_xtream", {
-            'product': product_template,
-            'product_variant': product_variant,
-        })
+        return request.render("theme_xtream.website_view_product_xtream", context)

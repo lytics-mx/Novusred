@@ -110,13 +110,6 @@ class ProductTemplate(models.Model):
      #     help='Selecciona o registra un modelo previamente usado.'
      # )
 
-     @api.model
-     def reset_seo_images_to_default(self):
-          """Elimina la imagen SEO personalizada para que Odoo use image_1920 por defecto."""
-          products = self.search([('website_published', '=', True), ('website_meta_image', '!=', False)])
-          for product in products:
-               product.write({'website_meta_image': False})
-
      @api.depends('brand_type_id')
      def _compute_brand_website(self):
           for product in self:
