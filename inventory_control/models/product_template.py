@@ -112,16 +112,11 @@ class ProductTemplate(models.Model):
 
      @api.model
      def update_seo_images(self):
-          """Actualiza las imágenes de SEO para todos los productos publicados."""
+          """Fuerza que la imagen SEO (website_meta_image) sea siempre la imagen principal (image_1920) para todos los productos publicados."""
           products = self.search([('website_published', '=', True)])
           for product in products:
-               # Si el producto tiene una imagen principal, asegúrate de que esté configurada para SEO
-               if product.image_1920:
-                    product.write({'website_meta_image': product.image_1920})
-               else:
-                    # Si no tiene imagen principal, usa una imagen predeterminada
-                    placeholder_image = self.env.ref('base.placeholder_image').datas
-                    product.write({'website_meta_image': placeholder_image})
+               # Siempre sobrescribe la imagen SEO con image_1920, aunque ya tenga una personalizada
+               product.write({'website_meta_image': product.image_1920})
 
      @api.depends('brand_type_id')
      def _compute_brand_website(self):
