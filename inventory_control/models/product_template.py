@@ -110,6 +110,19 @@ class ProductTemplate(models.Model):
      #     help='Selecciona o registra un modelo previamente usado.'
      # )
 
+     @api.model
+     def update_seo_images(self):
+          """Actualiza las imágenes de SEO para todos los productos publicados."""
+          products = self.search([('website_published', '=', True)])
+          for product in products:
+               # Si el producto tiene una imagen principal, asegúrate de que esté configurada para SEO
+               if product.image_1920:
+                    product.write({'website_meta_image': product.image_1920})
+               else:
+                    # Si no tiene imagen principal, usa una imagen predeterminada
+                    placeholder_image = self.env.ref('base.placeholder_image').datas
+                    product.write({'website_meta_image': placeholder_image})
+
      @api.depends('brand_type_id')
      def _compute_brand_website(self):
           for product in self:
