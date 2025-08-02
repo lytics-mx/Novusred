@@ -77,13 +77,21 @@
                                                     })
                                                     .then(data => {
                                                         searchResults.innerHTML = '';
-                                                        // Filtrar resultados que empiezan con el query (case-insensitive)
-                                                        const filtered = data.results.filter(result =>
-                                                            result.name.toLowerCase().startsWith(query.toLowerCase())
-                                                        );
-                                                        if (filtered.length > 0) {
+                                                        if (data.results.length > 0) {
+                                                            // Ordenar: primero los que empiezan con el query, luego el resto
+                                                            const lowerQuery = query.toLowerCase();
+                                                            const startsWith = [];
+                                                            const others = [];
+                                                            data.results.forEach(result => {
+                                                                if (result.name && result.name.toLowerCase().startsWith(lowerQuery)) {
+                                                                    startsWith.push(result);
+                                                                } else {
+                                                                    others.push(result);
+                                                                }
+                                                            });
+                                                            const orderedResults = startsWith.concat(others);
                                                             searchResults.style.display = 'block';
-                                                            filtered.slice(0, 5).forEach(result => {
+                                                            orderedResults.slice(0, 5).forEach(result => {
                                                                 const truncatedName = result.name.length > 160 ? result.name.substring(0, 160) + '...' : result.name;
                                                                 const item = document.createElement('a');
                                                                 item.className = 'dropdown-item';
