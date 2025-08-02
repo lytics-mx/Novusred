@@ -19,8 +19,10 @@ class WebsiteSearch(http.Controller):
         elif search_type == 'model':
             Product = request.env['product.template'].sudo()
             product = Product.search([('product_model', '=', search)], limit=1)
-            return request.redirect(f'/shop/{product.slug()}?product=product.template({product.id},)')
-
+            if product:
+                return request.redirect(f'/shop/{product.slug()}?product=product.template({product.id},)')
+            else:
+                return request.redirect(f'/subcategory?search={search_sanitized}')
         else:
             Brand = request.env['brand.type'].sudo()
             brand = Brand.search([('name', 'ilike', search), ('active', '=', True)], limit=1)
@@ -35,11 +37,30 @@ class WebsiteSearch(http.Controller):
     @http.route('/search_live', type='http', auth='public', website=True)
     def search_live(self, query):
         query_sanitized = self._sanitize_search(query)
-        products = request.env['product.template'].sudo().search([
+        Product = request.env['product.template'].sudo()
+
+        # First, get products where name or model starts with the query
+        domain_start = [
             '|',
-            ('name', 'ilike', query),
-            ('product_model', 'ilike', query)
-        ], limit=10)
+            ('name', 'ilike', f'{query}%'),
+            ('product_model', 'ilike', f'{query}%')
+        ]
+        products_start = Product.search(domain_start, limit=10)
+
+        # If not enough results, get products where name or model contains the query (but not starting)
+        if len(products_start) < 10:
+            domain_contains = [
+                '|',
+                ('name', 'ilike', f'%{query}%'),
+                ('product_model', 'ilike', f'%{query}%')
+            ]
+            products_contains = Product.search(domain_contains, limit=10)
+            # Exclude already found products
+            products_extra = products_contains.filtered(lambda p: p not in products_start)
+            # Combine results, keeping the ones that start with query first
+            products = products_start + products_extra[:10 - len(products_start)]
+        else:
+            products = products_start
 
         results = [{
             'id': product.id,
