@@ -23,7 +23,8 @@ class WebsiteSearch(http.Controller):
 
         # Si se encuentra un producto, redirigir a su página
         if product:
-            return request.redirect(f'/shop/{product.slug()}?product=product.template({product.id},)')
+            product_slug = self._sanitize_search(product.name)  # Generar un slug basado en el nombre del producto
+            return request.redirect(f'/shop/{product_slug}-{product.id}')
 
         # Si no se encuentra ningún producto, redirigir a la búsqueda general
         if search_type == 'brand':
