@@ -66,6 +66,7 @@
                                         searchInput.addEventListener('input', function() {
                                             const query = searchInput.value.trim();
                                             const searchType = searchTypeInput ? searchTypeInput.value : 'all';
+                                            // Solo mostrar productos si el filtro es "all"
                                             if (query.length > 0 && searchType === 'all') {
                                                 fetch(`/search_live?query=${encodeURIComponent(query)}`)
                                                     .then(response => {
@@ -77,19 +78,8 @@
                                                     .then(data => {
                                                         searchResults.innerHTML = '';
                                                         if (data.results.length > 0) {
-                                                            // Ordenar: primero los que empiezan exactamente con el query, luego los similares
-                                                            const exact = [];
-                                                            const similar = [];
-                                                            data.results.forEach(result => {
-                                                                if (result.name.toLowerCase().startsWith(query.toLowerCase())) {
-                                                                    exact.push(result);
-                                                                } else {
-                                                                    similar.push(result);
-                                                                }
-                                                            });
-                                                            const ordered = exact.concat(similar);
                                                             searchResults.style.display = 'block';
-                                                            ordered.slice(0, 5).forEach(result => {
+                                                            data.results.slice(0, 5).forEach(result => {
                                                                 const truncatedName = result.name.length > 160 ? result.name.substring(0, 160) + '...' : result.name;
                                                                 const item = document.createElement('a');
                                                                 item.className = 'dropdown-item';
@@ -142,6 +132,7 @@
                                                 }
                                                 if (searchTypeInput) searchTypeInput.value = value;
                                                 if (searchInput) searchInput.placeholder = placeholder;
+                                                // Oculta los resultados si no es "all"
                                                 if (value !== 'all') {
                                                     searchResults.style.display = 'none';
                                                 }
