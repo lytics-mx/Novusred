@@ -39,7 +39,7 @@ class WebsiteSearch(http.Controller):
         query_sanitized = self._sanitize_search(query)
         Product = request.env['product.template'].sudo()
 
-        # Buscar productos donde el nombre o modelo contiene la palabra (no solo al inicio)
+        # Buscar productos donde el nombre o modelo contiene la palabra
         domain = [
             '|',
             ('name', 'ilike', f'%{query}%'),
@@ -47,21 +47,13 @@ class WebsiteSearch(http.Controller):
         ]
         products = Product.search(domain, limit=10)
 
-        # Ordenar resultados: los que empiezan con el query primero
-        def sort_key(product):
-            name = (product.name or '').lower()
-            model = (product.product_model or '').lower()
-            q = query.lower()
-            if name.startswith(q) or model.startswith(q):
-                return 0
-            return 1
-
-        products = sorted(products, key=sort_key)
+        # Ordenar resultados alfabéticamente por nombre
+        products = sorted(products, key=lambda product: (product.name or '').lower())
 
         results = [{
             'id': product.id,
             'name': product.name.replace(' ', '-'),
             'price': product.list_price,
-        } for product in products[:10]]
+        } for product in products]
 
         return request.make_response(json.dumps({'results': results}), headers=[('Content-Type', 'application/json')])
