@@ -12,17 +12,26 @@ class WebsiteSearch(http.Controller):
     @http.route('/search_redirect', auth='public', website=True)
     def search_redirect(self, search='', search_type='all', **kw):
         search_sanitized = self._sanitize_search(search)
-        if search_type == 'brand':
-            return request.redirect(f'/brand_search_redirect?search={search_sanitized}')
-        elif search_type == 'category':
-            return request.redirect(f'/category_search?search={search_sanitized}')
-        elif search_type == 'model':
-            Product = request.env['product.template'].sudo()
+        Product = request.env['product.template'].sudo()
+
+        # Si busca por modelo, redirige al producto exacto si existe
+        if search_type == 'model':
             product = Product.search([('product_model', '=', search)], limit=1)
             if product:
                 return request.redirect(f'/shop/{product.slug()}?product=product.template({product.id},)')
             else:
                 return request.redirect(f'/subcategory?search={search_sanitized}')
+
+        # Si busca por nombre de producto, redirige al producto cuyo nombre inicia con el término buscado
+        if search_type == 'all' or search_type == 'product':
+            product = Product.search([('name', 'ilike', search)], limit=1, order='name')
+            if product and product.name.lower().startswith(search.lower()):
+                return request.redirect(f'/shop/{product.slug()}?product=product.template({product.id},)')
+
+        if search_type == 'brand':
+            return request.redirect(f'/brand_search_redirect?search={search_sanitized}')
+        elif search_type == 'category':
+            return request.redirect(f'/category_search?search={search_sanitized}')
         else:
             Brand = request.env['brand.type'].sudo()
             brand = Brand.search([('name', 'ilike', search), ('active', '=', True)], limit=1)
