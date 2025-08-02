@@ -39,33 +39,29 @@ class WebsiteSearch(http.Controller):
         query_sanitized = self._sanitize_search(query)
         Product = request.env['product.template'].sudo()
 
-        # First, get products where name or model starts with the query
-        domain_start = [
+        # Buscar productos donde el nombre o modelo contiene la palabra (no solo al inicio)
+        domain = [
             '|',
-            ('name', 'ilike', f'{query}%'),
-            ('product_model', 'ilike', f'{query}%')
+            ('name', 'ilike', f'%{query}%'),
+            ('product_model', 'ilike', f'%{query}%')
         ]
-        products_start = Product.search(domain_start, limit=10)
+        products = Product.search(domain, limit=10)
 
-        # If not enough results, get products where name or model contains the query (but not starting)
-        if len(products_start) < 10:
-            domain_contains = [
-                '|',
-                ('name', 'ilike', f'%{query}%'),
-                ('product_model', 'ilike', f'%{query}%')
-            ]
-            products_contains = Product.search(domain_contains, limit=10)
-            # Exclude already found products
-            products_extra = products_contains.filtered(lambda p: p not in products_start)
-            # Combine results, keeping the ones that start with query first
-            products = products_start + products_extra[:10 - len(products_start)]
-        else:
-            products = products_start
+        # Ordenar resultados: los que empiezan con el query primero
+        def sort_key(product):
+            name = (product.name or '').lower()
+            model = (product.product_model or '').lower()
+            q = query.lower()
+            if name.startswith(q) or model.startswith(q):
+                return 0
+            return 1
+
+        products = sorted(products, key=sort_key)
 
         results = [{
             'id': product.id,
             'name': product.name.replace(' ', '-'),
             'price': product.list_price,
-        } for product in products]
+        } for product in products[:10]]
 
         return request.make_response(json.dumps({'results': results}), headers=[('Content-Type', 'application/json')])
