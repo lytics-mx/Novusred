@@ -77,9 +77,13 @@
                                                     })
                                                     .then(data => {
                                                         searchResults.innerHTML = '';
-                                                        if (data.results.length > 0) {
+                                                        // Filtrar resultados que empiezan con el query (case-insensitive)
+                                                        const filtered = data.results.filter(result =>
+                                                            result.name.toLowerCase().startsWith(query.toLowerCase())
+                                                        );
+                                                        if (filtered.length > 0) {
                                                             searchResults.style.display = 'block';
-                                                            data.results.slice(0, 5).forEach(result => {
+                                                            filtered.slice(0, 5).forEach(result => {
                                                                 const truncatedName = result.name.length > 160 ? result.name.substring(0, 160) + '...' : result.name;
                                                                 const item = document.createElement('a');
                                                                 item.className = 'dropdown-item';
