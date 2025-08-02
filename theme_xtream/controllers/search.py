@@ -12,17 +12,26 @@ class WebsiteSearch(http.Controller):
     @http.route('/search_redirect', auth='public', website=True)
     def search_redirect(self, search='', search_type='all', **kw):
         search_sanitized = self._sanitize_search(search)
+        Product = request.env['product.template'].sudo()
+
+        # Buscar el primer producto que coincida con el nombre o modelo
+        product = Product.search([
+            '|',
+            ('name', 'ilike', search),
+            ('product_model', 'ilike', search)
+        ], limit=1)
+
+        # Si se encuentra un producto, redirigir a su página
+        if product:
+            return request.redirect(f'/shop/{product.slug()}?product=product.template({product.id},)')
+
+        # Si no se encuentra ningún producto, redirigir a la búsqueda general
         if search_type == 'brand':
             return request.redirect(f'/brand_search_redirect?search={search_sanitized}')
         elif search_type == 'category':
             return request.redirect(f'/category_search?search={search_sanitized}')
         elif search_type == 'model':
-            Product = request.env['product.template'].sudo()
-            product = Product.search([('product_model', '=', search)], limit=1)
-            if product:
-                return request.redirect(f'/shop/{product.slug()}?product=product.template({product.id},)')
-            else:
-                return request.redirect(f'/subcategory?search={search_sanitized}')
+            return request.redirect(f'/subcategory?search={search_sanitized}')
         else:
             Brand = request.env['brand.type'].sudo()
             brand = Brand.search([('name', 'ilike', search), ('active', '=', True)], limit=1)
@@ -37,18 +46,11 @@ class WebsiteSearch(http.Controller):
     @http.route('/search_live', type='http', auth='public', website=True)
     def search_live(self, query):
         query_sanitized = self._sanitize_search(query)
-        Product = request.env['product.template'].sudo()
-
-        # Buscar productos donde el nombre o modelo contiene la palabra
-        domain = [
+        products = request.env['product.template'].sudo().search([
             '|',
-            ('name', 'ilike', f'%{query}%'),
-            ('product_model', 'ilike', f'%{query}%')
-        ]
-        products = Product.search(domain, limit=10)
-
-        # Ordenar resultados alfabéticamente por nombre
-        products = sorted(products, key=lambda product: (product.name or '').lower())
+            ('name', 'ilike', query),
+            ('product_model', 'ilike', query)
+        ], limit=10)
 
         results = [{
             'id': product.id,
