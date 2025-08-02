@@ -77,9 +77,13 @@
                                                     })
                                                     .then(data => {
                                                         searchResults.innerHTML = '';
-                                                        if (data.results.length > 0) {
+                                                        // Filtrar resultados que contengan el texto buscado en el nombre (case-insensitive)
+                                                        const filteredResults = data.results.filter(result =>
+                                                            result.name && result.name.toLowerCase().includes(query.toLowerCase())
+                                                        );
+                                                        if (filteredResults.length > 0) {
                                                             searchResults.style.display = 'block';
-                                                            data.results.slice(0, 5).forEach(result => {
+                                                            filteredResults.slice(0, 5).forEach(result => {
                                                                 const truncatedName = result.name.length > 160 ? result.name.substring(0, 160) + '...' : result.name;
                                                                 const item = document.createElement('a');
                                                                 item.className = 'dropdown-item';
