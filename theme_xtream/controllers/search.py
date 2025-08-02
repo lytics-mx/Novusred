@@ -24,15 +24,6 @@ class WebsiteSearch(http.Controller):
             else:
                 return request.redirect(f'/subcategory?search={search_sanitized}')
         else:
-            # Prioridad: primero producto, luego marca, luego categoría, luego búsqueda general
-            Product = request.env['product.template'].sudo()
-            product = Product.search([
-                '|',
-                ('name', 'ilike', search),
-                ('product_model', 'ilike', search)
-            ], limit=1)
-            if product:
-                return request.redirect(f'/shop/{product.slug()}?product=product.template({product.id},)')
             Brand = request.env['brand.type'].sudo()
             brand = Brand.search([('name', 'ilike', search), ('active', '=', True)], limit=1)
             if brand:
