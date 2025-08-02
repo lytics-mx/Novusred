@@ -78,7 +78,7 @@
                                                     .then(data => {
                                                         searchResults.innerHTML = '';
                                                         if (data.results.length > 0) {
-                                                            // Ordenar: primero los que empiezan con el query, luego el resto
+                                                            // Ordenar: primero los que empiezan con el query (alfabéticamente), luego el resto (alfabéticamente)
                                                             const lowerQuery = query.toLowerCase();
                                                             const startsWith = [];
                                                             const others = [];
@@ -89,6 +89,9 @@
                                                                     others.push(result);
                                                                 }
                                                             });
+                                                            // Ordenar ambos arrays alfabéticamente por nombre
+                                                            startsWith.sort((a, b) => a.name.localeCompare(b.name));
+                                                            others.sort((a, b) => a.name.localeCompare(b.name));
                                                             const orderedResults = startsWith.concat(others);
                                                             searchResults.style.display = 'block';
                                                             orderedResults.slice(0, 5).forEach(result => {
