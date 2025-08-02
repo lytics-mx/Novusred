@@ -23,7 +23,7 @@ class WebsiteSearch(http.Controller):
 
         # Si se encuentra un producto, redirigir a su página usando website_url
         if product and product.website_url:
-            return request.redirect(product.website_url)
+            return request.redirect(product.website_url + f"?product=product.template({product.id},)")
 
         # Si no se encuentra ningún producto, redirigir a la búsqueda general
         if search_type == 'brand':
