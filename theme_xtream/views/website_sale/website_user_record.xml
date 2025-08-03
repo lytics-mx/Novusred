@@ -47,7 +47,7 @@
                                 document.getElementById('registration_form').addEventListener('submit', function(event) {
                                     event.preventDefault(); // Evita el comportamiento predeterminado
                                     const form = event.target;
-
+                            
                                     // Realiza la solicitud POST
                                     fetch(form.action, {
                                         method: form.method,
@@ -55,7 +55,16 @@
                                     })
                                     .then(response => {
                                         if (response.ok) {
-                                            // Mostrar notificación de éxito centrada y visible por más tiempo
+                                            // Actualizar el ícono de notificación
+                                            const notificationCounter = document.getElementById('notificationCounter');
+                                            const notificationMessage = document.getElementById('notificationMessage');
+                            
+                                            if (notificationCounter && notificationMessage) {
+                                                notificationCounter.style.display = 'inline-block';
+                                                notificationMessage.style.display = 'block';
+                                            }
+                            
+                                            // Mostrar notificación de éxito centrada
                                             const notification = document.createElement('div');
                                             notification.textContent = '¡Registro exitoso!';
                                             notification.style.position = 'fixed';
@@ -70,14 +79,11 @@
                                             notification.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.3)';
                                             notification.style.zIndex = '9999';
                                             document.body.appendChild(notification);
-
-                                            // Ocultar notificación después de 5 segundos y luego redirigir
+                            
+                                            // Ocultar notificación después de 5 segundos
                                             setTimeout(() => {
                                                 notification.remove();
-                                                // Redirige al usuario al login después de que desaparece la notificación
-                                                window.location.href = '/web/login';
                                             }, 5000);
-
                                         } else {
                                             alert('Hubo un error al procesar el formulario.');
                                         }
@@ -87,7 +93,7 @@
                                         alert('Hubo un error al procesar el formulario.');
                                     });
                                 });
-                            </script>                               
+                            </script>                       
                         </form>
                     </div>
                 </div>
