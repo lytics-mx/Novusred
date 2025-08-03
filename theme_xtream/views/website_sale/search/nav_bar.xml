@@ -219,6 +219,28 @@
                             <!-- Right side: User, Cart, Notifications -->
                             <div class="d-flex align-items-center justify-content-end" style="width: 50%;">
                                 <ul class="nav nav-pills flex-grow-1 justify-content-end" style="width: 100%; color: white;">
+                                    <t t-if="notification_message">
+                                        <li class="nav-item dropdown">
+                                            <a class="nav-link text-white position-relative" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fa fa-bell"></i>
+                                                <span id="notificationCounter" class="badge bg-danger position-absolute top-0 start-100 translate-middle" t-if="notification_count" t-esc="notification_count"/>
+                                            </a>
+                                            <ul class="dropdown-menu" aria-labelledby="notificationDropdown">
+                                                <li>
+                                                    <div class="dropdown-item">
+                                                        <p class="mb-0" t-esc="notification_message"/>
+                                                        <a href="/web/login" class="btn btn-primary btn-sm mt-2">Ir al login</a>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </t>                                   
+                                    <li class="nav-item">
+                                        <a class="nav-link text-white" href="/shop/cart">
+                                            <i class="fa fa-shopping-cart"></i>
+                                        </a>
+                                    </li>
+                                                                        
                                     <li class="nav-item d-flex align-items-center">
                                         <t t-if="request.env.user.id == request.website.user_id.id">
                                             <a class="nav-link text-white d-flex align-items-center" href="/web/login">
@@ -242,27 +264,8 @@
                                             </div>
                                         </t>
                                     </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link text-white" href="/shop/cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                    <t t-if="notification_message">
-                                        <li class="nav-item dropdown">
-                                            <a class="nav-link text-white position-relative" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i class="fa fa-bell"></i>
-                                                <span id="notificationCounter" class="badge bg-danger position-absolute top-0 start-100 translate-middle" t-if="notification_count" t-esc="notification_count"/>
-                                            </a>
-                                            <ul class="dropdown-menu" aria-labelledby="notificationDropdown">
-                                                <li>
-                                                    <div class="dropdown-item">
-                                                        <p class="mb-0" t-esc="notification_message"/>
-                                                        <a href="/web/login" class="btn btn-primary btn-sm mt-2">Ir al login</a>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                    </t>
+
+
                                 </ul>
                             </div>
                         </div>
