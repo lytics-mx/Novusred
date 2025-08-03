@@ -227,11 +227,18 @@
                                         </a>
                                         <ul class="dropdown-menu shadow show" aria-labelledby="notificationDropdown" style="min-width: 300px; background-color: #f8f9fa; border-radius: 8px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); position: absolute; right: 0; left: auto; display: block;">
                                             <li id="notificationMessage">
-                                                <div class="dropdown-item">
-                                                    <a href="/web/login" style="text-decoration: none;">
-                                                        <p class="mb-0" style="font-family: 'Questrial', sans-serif; font-size: 15px; color: #222; cursor: pointer;">¡Bienvenido! Inicia sesión.</p>
-                                                    </a>
-                                                </div>
+                                                <t t-if="not request.session.get('registration_success')">
+                                                    <div class="dropdown-item">
+                                                        <a href="/web/login" style="text-decoration: none;">
+                                                            <p class="mb-0" style="font-family: 'Questrial', sans-serif; font-size: 15px; color: #222; cursor: pointer;">¡Bienvenido! Inicia sesión.</p>
+                                                        </a>
+                                                    </div>
+                                                </t>
+                                                <t t-if="request.session.get('registration_success')">
+                                                    <div class="dropdown-item">
+                                                        <p class="mb-0" style="font-family: 'Questrial', sans-serif; font-size: 15px; color: #222;">¡Registro exitoso! Bienvenido.</p>
+                                                    </div>
+                                                </t>
                                             </li>
                                         </ul>
                                     </li>
