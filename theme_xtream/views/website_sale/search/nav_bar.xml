@@ -220,33 +220,39 @@
                             <div class="d-flex align-items-center justify-content-end" style="width: 50%;">
                                 <ul class="nav nav-pills flex-grow-1 justify-content-end" style="width: 100%; color: white;">
                                     <li class="nav-item dropdown" style="position: relative;">
-                                        <!-- Notificación de registro exitoso -->
                                         <a class="nav-link text-white position-relative" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="fa fa-bell"></i>
                                             <span id="notificationCounter" class="badge bg-danger position-absolute top-0 start-100 translate-middle" style="display: none;">1</span>
                                         </a>
                                         <ul class="dropdown-menu shadow" aria-labelledby="notificationDropdown" style="min-width: 300px; background-color: #f8f9fa; border-radius: 8px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); position: absolute; left: 0; right: auto;">
-                                            <li id="notificationMessage" style="display: none;">
-                                                <div class="dropdown-item">
-                                                    <p class="mb-0" style="font-family: 'Questrial', sans-serif; font-size: 15px; color: #222;">Se registró correctamente el usuario. Bienvenido a Novusred.</p>
-                                                </div>
-                                            </li>
+                                            <t t-if="request.session.get('just_registered')">
+                                                <li>
+                                                    <div class="dropdown-item">
+                                                        <p class="mb-0" style="font-family: 'Questrial', sans-serif; font-size: 15px; color: #222;">
+                                                            Se registró correctamente el usuario. Bienvenido a Novusred.
+                                                        </p>
+                                                    </div>
+                                                </li>
+                                            </t>
+                                            <t t-elif="request.env.user.id != request.website.user_id.id">
+                                                <li>
+                                                    <div class="dropdown-item">
+                                                        <p class="mb-0" style="font-family: 'Questrial', sans-serif; font-size: 15px; color: #222;">
+                                                            Usted tiene <t t-esc="product_count"/> compras pendientes.
+                                                        </p>
+                                                    </div>
+                                                </li>
+                                            </t>
+                                            <t t-else="">
+                                                <li>
+                                                    <div class="dropdown-item">
+                                                        <p class="mb-0" style="font-family: 'Questrial', sans-serif; font-size: 15px; color: #222;">
+                                                            No hay notificaciones aún. Regístrate para recibir novedades.
+                                                        </p>
+                                                    </div>
+                                                </li>
+                                            </t>
                                         </ul>
-                                        <script>
-                                        // Mostrar la notificación solo si hay registro exitoso (por ejemplo, usando localStorage o una variable JS)
-                                        document.addEventListener('DOMContentLoaded', function() {
-                                            // Cambia esta lógica según cómo determines que hubo registro exitoso
-                                            var registered = localStorage.getItem('user_registered_success');
-                                            var notificationCounter = document.getElementById('notificationCounter');
-                                            var notificationMessage = document.getElementById('notificationMessage');
-                                            if (registered === '1') {
-                                                if (notificationCounter) notificationCounter.style.display = 'inline-block';
-                                                if (notificationMessage) notificationMessage.style.display = 'block';
-                                                // Opcional: limpiar el flag para que no se muestre siempre
-                                                localStorage.removeItem('user_registered_success');
-                                            }
-                                        });
-                                        </script>
                                     </li>
 
 
