@@ -2,23 +2,6 @@ from odoo import models, api, fields
 
 class UpdateSaleOrderSequence(models.Model):
     _inherit = 'sale.order'
-    # Cambiar el nombre del campo "Vendedor" a "Ejecutivo de cuenta"
-    user_id = fields.Many2one(
-        'res.users',
-        string="Ejecutivo de cuenta",
-        tracking=True,
-        default=lambda self: self.env.user
-    )
-    def _get_report_values(self, docids, data=None):
-        """Sobrescribir valores para reportes"""
-        res = super(UpdateSaleOrderSequence, self)._get_report_values(docids, data)
-        for doc in res.get('docs', []):
-            if 'user_id' in doc and doc['user_id']:
-                doc['user_id'] = {
-                    'name': doc['user_id'].name,
-                    'label': "Ejecutivo de cuenta"
-                }
-        return res
 
     @api.model
     def update_sale_order_sequence(self):
