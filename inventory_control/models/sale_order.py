@@ -13,7 +13,7 @@ class UpdateSaleOrderSequence(models.Model):
         """Sobrescribir valores para reportes"""
         res = super(UpdateSaleOrderSequence, self)._get_report_values(docids, data)
         for doc in res.get('docs', []):
-            if 'user_id' in doc:
+            if 'user_id' in doc and doc['user_id']:
                 doc['user_id'] = {
                     'name': doc['user_id'].name,
                     'label': "Ejecutivo de cuenta"
