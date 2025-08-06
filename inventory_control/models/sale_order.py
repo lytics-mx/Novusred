@@ -3,29 +3,27 @@ from odoo import models, api, fields
 class UpdateSaleOrderSequence(models.Model):
     _inherit = 'sale.order'
 
-    # Sobrescribir el campo 'note' para que siempre tenga el valor "Ejecutivo de cuenta"
-    note = fields.Text(
+    # Cambiar el nombre del campo "Vendedor" a "Ejecutivo de cuenta"
+    user_id = fields.Many2one(
+        'res.users',
         string="Ejecutivo de cuenta",  # Cambiar la etiqueta del campo a "Ejecutivo de cuenta"
-        default="Ejecutivo de cuenta",  # Establecer un valor predeterminado
-        required=False
+        tracking=True,
+        default=lambda self: self.env.user
     )
 
     @api.model
     def create(self, vals):
-        # Forzar el valor de 'note' al crear un nuevo registro
-        vals['note'] = "Ejecutivo de cuenta"
+        # Forzar el valor de 'user_id' al crear un nuevo registro si no está definido
+        if 'user_id' not in vals:
+            vals['user_id'] = self.env.user.id
         return super().create(vals)
 
     def write(self, vals):
-        # Forzar el valor de 'note' al actualizar un registro
-        vals['note'] = "Ejecutivo de cuenta"
+        # Forzar el valor de 'user_id' al actualizar un registro si no está definido
+        if 'user_id' not in vals:
+            vals['user_id'] = self.env.user.id
         return super().write(vals)
 
-    @api.model
-    def update_existing_notes(self):
-        # Actualizar todos los registros existentes para que el campo 'note' sea "Ejecutivo de cuenta"
-        orders = self.search([])
-        orders.write({'note': "Ejecutivo de cuenta"})
 
 
     @api.model
