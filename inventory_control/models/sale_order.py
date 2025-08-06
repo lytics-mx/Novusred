@@ -9,6 +9,17 @@ class UpdateSaleOrderSequence(models.Model):
         tracking=True,
         default=lambda self: self.env.user
     )
+    def _get_report_values(self, docids, data=None):
+        """Sobrescribir valores para reportes"""
+        res = super(UpdateSaleOrderSequence, self)._get_report_values(docids, data)
+        for doc in res.get('docs', []):
+            if 'user_id' in doc:
+                doc['user_id'] = {
+                    'name': doc['user_id'].name,
+                    'label': "Ejecutivo de cuenta"
+                }
+        return res
+
     @api.model
     def update_sale_order_sequence(self):
         # Buscar la secuencia de las órdenes de venta
