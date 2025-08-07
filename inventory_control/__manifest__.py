@@ -30,7 +30,7 @@
         # 'views/sale_order.xml',
         # 'views/product_model.xml',
         # 'views/sale_order_note.xml',
-        'views/sale_order_pdf.xml',
+        'views/sale_orde_pdf.xml',
 
         
      
