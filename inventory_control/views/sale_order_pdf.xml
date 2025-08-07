@@ -1,10 +1,23 @@
 <odoo>
     <template id="inherit_sale_report_saleorder_document" inherit_id="sale.report_saleorder_document">
+
+        <!-- Cambiar "Vendedor" por "Ejecutivo de cuenta" -->
         <xpath expr="//div[@id='informations']//div[div[@t-field='doc.user_id']]" position="replace">
             <div t-if="doc.user_id.name" class="col">
                 <strong>Ejecutivo de cuenta</strong>
-                <div t-field="doc.user_id">Mitchell Admin</div>
+                <div t-field="doc.user_id"/>
             </div>
         </xpath>
+
+        <!-- Insertar Términos y Condiciones después del campo "doc.note" -->
+        <xpath expr="//span[@t-field='doc.note']" position="after">
+            <div class="mt-2" style="font-size: 15px;">
+                Términos y condiciones:
+                <a href="https://novusred.mx/content/2-Terminos-y-Condiciones" target="_blank">
+                    https://novusred.mx/content/2-Terminos-y-Condiciones
+                </a>
+            </div>
+        </xpath>
+
     </template>
 </odoo>
