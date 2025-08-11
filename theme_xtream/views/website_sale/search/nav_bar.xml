@@ -220,7 +220,7 @@
                             <div class="d-flex align-items-center justify-content-end" style="width: 50%;">
                                 <ul class="nav nav-pills flex-grow-1 justify-content-end" style="width: 100%; color: white;">
                                     <li class="nav-item dropdown ms-auto" style="position: relative; margin-left: auto;">
-                                        <!-- Notificación de registro exitoso -->
+                                        <!-- Notificación de registro exitoso y agregado al carrito -->
                                         <a class="nav-link text-white position-relative" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="margin-left: auto;">
                                             <i class="fa fa-bell"></i>
                                             <span id="notificationCounter" class="badge bg-danger position-absolute top-0 end-0 translate-middle" style="display: none;">1</span>                                        
@@ -229,35 +229,40 @@
                                             <li id="notificationMessage" style="display: none;">
                                                 <div class="dropdown-item">                                                    
                                                     <a href="/web/login" style="text-decoration: none;">
-                                                    <p class="mb-0 text-break" style="white-space: normal; cursor: pointer;" onclick="window.location.href='/web/login';">
-                                                        Bienvenido a Novusred, inicia sesión con tu usuario registrado.
-                                                    </p>
+                                                        <p class="mb-0 text-break" style="white-space: normal; cursor: pointer;" onclick="window.location.href='/web/login';">
+                                                            Bienvenido a Novusred, inicia sesión con tu usuario registrado.
+                                                        </p>
                                                     </a>                                               
+                                                </div>
+                                            </li>
+                                            <li id="cartNotificationMessage" style="display: none;">
+                                                <div class="dropdown-item">
+                                                    <p class="mb-0 text-break" style="white-space: normal;">
+                                                        Producto agregado al carrito exitosamente.
+                                                    </p>
                                                 </div>
                                             </li>
                                         </ul>
                                     </li>
-                                <!-- Notificación de producto agregado al carrito -->
-                                <div id="cartAddedNotification" class="alert alert-success text-center"
-                                    style="display:none; position:fixed; top:90px; right:30px; z-index:9999; min-width:220px;">
-                                    Producto agregado al carrito.
-                                </div>
-                                <script>
-                                    document.addEventListener('DOMContentLoaded', function() {
-                                        var addToCartButtons = document.querySelectorAll('.oe_product_cart .a-submit, .oe_product_cart .btn-primary, .fa-shopping-cart');
-                                        addToCartButtons.forEach(function(btn) {
-                                            btn.addEventListener('click', function() {
-                                                var notification = document.getElementById('cartAddedNotification');
-                                                if (notification) {
-                                                    notification.style.display = 'block';
-                                                    setTimeout(function() {
-                                                        notification.style.display = 'none';
-                                                    }, 2500);
-                                                }
-                                            });
-                                        });
-                                    });
-                                </script>
+                                    <script>
+                                    // Notificación de agregado al carrito
+                                    function showCartNotification() {
+                                        var cartMsg = document.getElementById('cartNotificationMessage');
+                                        var notifCounter = document.getElementById('notificationCounter');
+                                        if (cartMsg) {
+                                            cartMsg.style.display = 'block';
+                                            notifCounter.style.display = 'block';
+                                            notifCounter.textContent = '1';
+                                            setTimeout(function() {
+                                                cartMsg.style.display = 'none';
+                                                notifCounter.style.display = 'none';
+                                            }, 3000);
+                                        }
+                                    }
+                                    // Ejemplo: llama showCartNotification() cuando se agregue al carrito
+                                    // window.showCartNotification = showCartNotification;
+                                    </script>
+
 
 
 
