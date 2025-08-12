@@ -17,27 +17,7 @@
                 </a>
             </div>
         </xpath>
-        <!-- Quitar columna de descuento en el encabezado -->
-        <xpath expr="//th[@name='th_discount']" position="replace"/>
-        <!-- Quitar columna de descuento en las líneas -->
-        <!-- <xpath expr="//td[@t-field='line.discount']" position="replace"/> -->
-        <!-- Quitar columna de descuento en las líneas (por si usa otro t-field) -->
-        <xpath expr="//td[@t-if='display_discount']" position="replace"/>
 
-        <!-- Agregar fila de “Descuento total” antes de los totales -->
-        <xpath expr="//table[contains(@class, 'o_total_table')]/t[1]" position="before">
-            <!-- Calcular descuento total -->
-            <t t-set="total_descuento" t-value="0"/>
-            <t t-foreach="doc.order_line" t-as="l">
-                <t t-set="total_descuento" t-value="total_descuento + ((l.price_unit * l.product_uom_qty) * (l.discount / 100))"/>
-            </t>
-            <tr>
-                <td style="text-align:right;"><strong>Descuento total</strong></td>
-                <td class="text-end">
-                    <span t-esc="total_descuento" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
-                </td>
-            </tr>
-        </xpath>
 
     </template>
 </odoo>
