@@ -31,7 +31,6 @@
         # 'views/product_model.xml',
         # 'views/sale_order_note.xml',
         'views/sale_orde_pdf.xml',
-        'views/sale_order_discounted.xml',
 
         
      
