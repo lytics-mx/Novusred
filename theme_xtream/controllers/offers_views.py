@@ -173,7 +173,8 @@ class OffersController(http.Controller):
             if prods_with_discount:
                 tags_with_discount.append(tag)
         
-
+        current_page = int(kwargs.get('page', 1))
+        total_pages = max(1, (len(discounted_products) + products_per_page - 1) // products_per_page)
 
         return request.render('theme_xtream.offers_template', {
             'discounted_products': discounted_products,
@@ -191,4 +192,6 @@ class OffersController(http.Controller):
             'max_price': max_price,
             'product_tags': product_tags,
             'all_offer_tags': all_offer_tags,
+            'current_page': current_page,
+            'total_pages': total_pages,
         })
