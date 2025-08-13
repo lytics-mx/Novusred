@@ -11,7 +11,6 @@ class OffersController(http.Controller):
         free_shipping = kwargs.get('free_shipping', 'false').lower() == 'true'
         min_price = kwargs.get('min_price')
         max_price = kwargs.get('max_price')
-        products_per_page = 15  # Número de productos por página
 
         # Dominio base con todos los filtros activos (excepto precio)
         domain = [
@@ -175,7 +174,13 @@ class OffersController(http.Controller):
                 tags_with_discount.append(tag)
         
         current_page = int(kwargs.get('page', 1))
+        products_per_page = 15
         total_pages = max(1, (len(discounted_products) + products_per_page - 1) // products_per_page)
+
+        # Cortar la lista para mostrar solo los productos de la página actual
+        start = (current_page - 1) * products_per_page
+        end = start + products_per_page
+        paged_products = discounted_products[start:end]
         current_filters = {
             'tag_id': tag_id,
             'brand_type_id': brand_type_id,
@@ -187,11 +192,12 @@ class OffersController(http.Controller):
         # Elimina los filtros vacíos
         current_filters = {k: v for k, v in current_filters.items() if v}
 
-
-
-
         return request.render('theme_xtream.offers_template', {
-            'discounted_products': discounted_products,
+            'discounted_products': paged_products,
+            'current_page': current_page,
+            'total_pages': total_pages,
+            'current_filters': current_filters,
+            
             'categories_with_count': categories_with_count,
             'total_products': len(discounted_products),
             'price_ranges': price_ranges,
@@ -206,8 +212,4 @@ class OffersController(http.Controller):
             'max_price': max_price,
             'product_tags': product_tags,
             'all_offer_tags': all_offer_tags,
-            'current_page': current_page,
-            'total_pages': total_pages,
-            'current_filters': current_filters,
-
         })
