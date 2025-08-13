@@ -11,7 +11,7 @@ class OffersController(http.Controller):
         free_shipping = kwargs.get('free_shipping', 'false').lower() == 'true'
         min_price = kwargs.get('min_price')
         max_price = kwargs.get('max_price')
-        products_per_page = 24  # Número de productos por página
+        products_per_page = 15  # Número de productos por página
 
         # Dominio base con todos los filtros activos (excepto precio)
         domain = [
