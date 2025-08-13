@@ -176,6 +176,19 @@ class OffersController(http.Controller):
         
         current_page = int(kwargs.get('page', 1))
         total_pages = max(1, (len(discounted_products) + products_per_page - 1) // products_per_page)
+        current_filters = {
+            'tag_id': tag_id,
+            'brand_type_id': brand_type_id,
+            'category_id': category_id,
+            'free_shipping': 'true' if free_shipping else '',
+            'min_price': min_price,
+            'max_price': max_price,
+        }
+        # Elimina los filtros vacíos
+        current_filters = {k: v for k, v in current_filters.items() if v}
+
+
+
 
         return request.render('theme_xtream.offers_template', {
             'discounted_products': discounted_products,
@@ -195,4 +208,6 @@ class OffersController(http.Controller):
             'all_offer_tags': all_offer_tags,
             'current_page': current_page,
             'total_pages': total_pages,
+            'current_filters': current_filters,
+
         })
