@@ -493,11 +493,12 @@
                                                     <t t-set="url" t-value="''"/>
                                                     <t t-if="img_name.startswith('brand_')">
                                                         <t t-set="brand_slug" t-value="img_name[6:].split('.')[0].replace(' ', '').lower()"/>
-                                                        <t t-set="url" t-value="'/brand/' + brand_slug"/>
+                                                        <t t-set="url" t-value="'/brand/' + brand_slug.replace('%', '').replace(' ', '-')"/>
                                                     </t>
                                                     <t t-elif="img_name.startswith('category_')">
                                                         <t t-set="cat_search" t-value="img_name[9:].split('.')[0].replace('_', ' ')"/>
-                                                        <t t-set="url" t-value="'/category_search?search=' + cat_search"/>
+                                                        <t t-set="cat_search_url" t-value="cat_search.replace(' ', '-').replace('%', '')"/>
+                                                        <t t-set="url" t-value="'/category_search?search=' + cat_search_url"/>
                                                     </t>
                                                     <t t-elif="img_name and '.' in img_name and not img_name.startswith('brand_') and not img_name.startswith('category_')">
                                                         <t t-set="cat_search" t-value="img_name.rsplit('.', 1)[0].replace('_', ' ').replace('%20', ' ')" />
@@ -505,7 +506,7 @@
                                                         <t t-set="url" t-value="'/subcategory?search=' + cat_search_url"/>
                                                     </t>
                                                     <t t-else="">
-                                                        <t t-set="url" t-value="'/discover'"/>
+                                                        <t t-set="url" t-value="'/discover?search=' + img_name.replace('%', '').replace(' ', '-')"/>
                                                     </t>
                                                     <div class="col-12 col-md-6">
                                                         <a t-att-href="url">
@@ -550,7 +551,7 @@
                                         <t t-set="url" t-value="'/subcategory?search=' + cat_search_url"/>
                                     </t>
                                     <t t-else="">
-                                        <t t-set="url" t-value="'/discover'"/>
+                                        <t t-set="url" t-value="'/discover?search=' + img_name.replace('%', '').replace(' ', '-')"/>
                                     </t>
                                     <div class="col-12 col-md-6">
                                         <a t-att-href="url">
