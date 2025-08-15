@@ -24,7 +24,9 @@ class ProductHistoryController(http.Controller):
         # Obtener todas las visitas del usuario
         tracks = request.env['website.track'].sudo().search([
             ('visitor_id.partner_id', '=', user_partner_id),
-            ('product_id', '!=', False)
+            ('product_id', '!=', False),
+            ('product_id', '!=', None),
+            ('visitor_id.user_ids', 'in', [request.env.user.id])
         ], order='visit_datetime desc')
         
         # Configurar zona horaria
@@ -129,7 +131,9 @@ class ProductHistoryController(http.Controller):
         # Buscar todos los registros de este producto para este usuario
         track_entries = request.env['website.track'].sudo().search([
             ('visitor_id.partner_id', '=', user_partner_id),
-            ('product_id.product_tmpl_id', '=', product_id)
+            ('visitor_id.user_ids', 'in', [request.env.user.id]),
+            ('product_id.product_tmpl_id', '=', product_id),
+            ('product_id', '=', product_id)
         ])
 
         # Eliminar todos los registros

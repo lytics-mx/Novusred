@@ -10,9 +10,11 @@ class ProductViewHistory(models.Model):
 
     @api.model
     def add_product_to_history(self, product_id):
-        """Agrega un producto al historial del usuario actual."""
-        if self.env.user.id:
+        """Agrega un producto al historial del usuario actual solo si es usuario portal."""
+        user = self.env.user
+        portal_group = self.env.ref('base.group_portal')
+        if user.id and portal_group in user.groups_id:
             self.create({
-                'user_id': self.env.user.id,
+                'user_id': user.id,
                 'product_id': product_id,
             })
