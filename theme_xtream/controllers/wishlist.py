@@ -33,4 +33,4 @@ class WishlistController(http.Controller):
         wishlist_item = request.env['product.wishlist'].sudo().browse(item_id)
         if wishlist_item.exists():
             wishlist_item.unlink()
-        return request.redirect('/shop/wishlist')
+        return http.redirect('/shop/wishlist')
