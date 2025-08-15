@@ -1623,5 +1623,27 @@
 
             </div>
         </xpath>
+        <xpath expr="//div[@id='wrap']" position="before">
+            <!-- Modal resumen del carrito -->
+            <div id="cartModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:99999;">
+            <div style="background:#fff; max-width:400px; margin:60px auto; padding:30px; border-radius:10px; position:relative;">
+                <span style="position:absolute; top:10px; right:20px; cursor:pointer; font-size:22px;" onclick="document.getElementById('cartModal').style.display='none'">×</span>
+                <h4>Artículos agregados a su carrito</h4>
+                <div id="cartModalContent"></div>
+                <a href="/shop/cart" class="btn btn-primary mt-3" style="width:100%;">Ver carrito</a>
+            </div>
+            </div>
+            <script>
+            <![CDATA[
+                $(document).on('ajax:success', '#add-to-cart-form button[type="submit"]', function() {
+                    $('#cartModalContent').load('/shop/cart #cart-tab-content', function() {
+                        $('#cartModal').show();
+                    });
+                });
+            ]]>
+            </script>
+        </xpath>
+
+
     </template>
 </odoo>
