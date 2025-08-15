@@ -398,7 +398,12 @@
                 }
             });
 
-
+            $(document).on('ajax:success', '#add-to-cart-form', function() {
+                $('#cart-tab-content').load('/shop/cart #cart-tab-content', function() {
+                    updateTotals('#cart-tab-content', 'cart-total-amount', 'cart_qty');
+                });
+            });
+            
             function updateTotals(contextSelector, totalElementId, storagePrefix) {
                 let subtotal = 0;
                 document.querySelectorAll(`${contextSelector} .cart-quantity-input`).forEach(function (cartInput) {
