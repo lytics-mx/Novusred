@@ -503,7 +503,13 @@
             // Calcular totales al cargar la página
             updateTotals('#cart-tab-content', 'cart-total-amount', 'cart_qty');
             updateTotals('#saved-tab-content', 'saved-total-amount', 'saved_qty');
-        });
+
+            // Recargar contenido del carrito y actualizar totales al agregar un producto
+            $(document).on('ajax:success', '#add-to-cart-form', function () {
+                $('#cart-tab-content').load('/shop/cart #cart-tab-content', function () {
+                    updateTotals('#cart-tab-content', 'cart-total-amount', 'cart_qty');
+                });
+            });
         </script>
       </t>
     </xpath>
