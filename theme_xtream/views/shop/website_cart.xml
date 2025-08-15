@@ -72,7 +72,7 @@
                                         t-att-value="int(line.product_uom_qty)" 
                                         min="1"
                                         t-att-max="int(line.product_id.qty_available)"
-                                        t-att-data-price="line.product_id.discounted_price or line.product_id.list_price"
+                                        t-att-data-price="line.product_id.list_price"
                                         style="width:40px; border:none; box-shadow:none; background:transparent; 
                                             -webkit-appearance: none; -moz-appearance: textfield; margin:0;"
                                         onwheel="return false;"
@@ -403,7 +403,7 @@
                     updateTotals('#cart-tab-content', 'cart-total-amount', 'cart_qty');
                 });
             });
-
+            
             function updateTotals(contextSelector, totalElementId, storagePrefix) {
                 let subtotal = 0;
                 document.querySelectorAll(`${contextSelector} .cart-quantity-input`).forEach(function (cartInput) {
@@ -439,13 +439,6 @@
             document.querySelectorAll('#cart-tab-content .cart-quantity-input input[name="set_qty"]').forEach(function (input) {
                 input.addEventListener('input', function () {
                     updateTotals('#cart-tab-content', 'cart-total-amount', 'cart_qty');
-                });
-
-                // Recargar el contenido del carrito al actualizar la cantidad
-                $(document).on('ajax:success', '#add-to-cart-form', function() {
-                    $('#cart-tab-content').load('/shop/cart #cart-tab-content', function() {
-                        updateTotals('#cart-tab-content', 'cart-total-amount', 'cart_qty');
-                    });
                 });
 
                 // Evitar enviar el formulario si la cantidad no cambió
@@ -488,7 +481,15 @@
                 });
             });
 
-
+            // Cargar cantidades guardadas en localStorage para carrito
+            document.querySelectorAll('#cart-tab-content .cart-quantity-input input[name="set_qty"]').forEach(function (input) {
+                const lineId = input.form.querySelector('input[name="line_id"]').value;
+                const savedQty = localStorage.getItem('cart_qty_' + lineId);
+                if (savedQty) {
+                    input.value = parseInt(savedQty);
+                    input.setAttribute('value', parseInt(savedQty));
+                }
+            });
 
             // Cargar cantidades guardadas en localStorage para guardados
             document.querySelectorAll('#saved-tab-content .cart-quantity-input input[name="set_qty"]').forEach(function (input) {
@@ -501,13 +502,11 @@
             });
 
             // Calcular totales al cargar la página
-            updateTotals('#cart-tab-content', 'cart-total-amount', 'cart_qty');            
+            updateTotals('#cart-tab-content', 'cart-total-amount', 'cart_qty');
             updateTotals('#saved-tab-content', 'saved-total-amount', 'saved_qty');
         });
         </script>
       </t>
     </xpath>
-
-
   </template>
 </odoo>
