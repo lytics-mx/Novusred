@@ -1070,11 +1070,15 @@
                                     credentials: 'same-origin'
                                 })
                                 .then(response => {
-                                    const contentType = response.headers.get("content-type");
-                                    if (contentType &amp;&amp; contentType.includes("application/json")) {
-                                        return response.json();
+                                    if (response.ok) {
+                                        const contentType = response.headers.get("content-type");
+                                        if (contentType &amp;&amp; contentType.includes("application/json")) {
+                                            return response.json();
+                                        } else {
+                                            return Promise.reject("Respuesta no es JSON");
+                                        }
                                     } else {
-                                        throw new Error("Respuesta no es JSON");
+                                        return Promise.reject("Error en la respuesta del servidor");
                                     }
                                 })
                                 .then(data => {
