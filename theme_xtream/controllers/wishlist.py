@@ -30,24 +30,7 @@ class WishlistController(http.Controller):
     
     @http.route('/shop/wishlist/remove/<int:item_id>', type='http', auth='public', methods=['POST'], website=True)
     def remove_wishlist_item(self, item_id):
-        # Eliminar un producto específico de la wishlist
         wishlist_item = request.env['product.wishlist'].sudo().browse(item_id)
         if wishlist_item.exists():
             wishlist_item.unlink()
         return request.redirect('/shop/wishlist')
-    
-    @http.route('/shop/wishlist/add', type='json', auth='user', website=True)
-    def add_to_wishlist(self, product_id):
-        partner_id = request.env.user.partner_id.id
-        if product_id and partner_id:
-            existing = request.env['product.wishlist'].sudo().search([
-                ('product_id', '=', product_id),
-                ('partner_id', '=', partner_id)
-            ], limit=1)
-            if not existing:
-                request.env['product.wishlist'].sudo().create({
-                    'product_id': product_id,
-                    'partner_id': partner_id,
-                })
-            return {'result': 'ok'}
-        return {'result': 'error'}
