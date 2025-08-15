@@ -36,3 +36,18 @@ class WishlistController(http.Controller):
             wishlist_item.unlink()
         return request.redirect('/shop/wishlist')
     
+    @http.route('/shop/wishlist/add', type='json', auth='user', website=True)
+    def add_to_wishlist(self, product_id):
+        partner_id = request.env.user.partner_id.id
+        if product_id and partner_id:
+            existing = request.env['product.wishlist'].sudo().search([
+                ('product_id', '=', product_id),
+                ('partner_id', '=', partner_id)
+            ], limit=1)
+            if not existing:
+                request.env['product.wishlist'].sudo().create({
+                    'product_id': product_id,
+                    'partner_id': partner_id,
+                })
+            return {'result': 'ok'}
+        return {'result': 'error'}
