@@ -412,23 +412,13 @@
                     const qtyInput = cartInput.querySelector('input[name="set_qty"]');
                     if (!qtyInput) return;
             
+                    // Solo sumar si el input está visible
+                    if (qtyInput.offsetParent === null) return;
+            
                     const pricePerUnit = parseFloat(qtyInput.getAttribute('data-price')) || 0;
                     const qty = parseInt(qtyInput.value) || 1;
             
-                    const lineTotal = pricePerUnit * qty;
-                    subtotal += lineTotal;
-            
-                    const row = cartInput.closest('.row');
-                    const lineTotalSpan = row.querySelector('.col-3 .fw-bold');
-                    if (lineTotalSpan) {
-                        lineTotalSpan.textContent = '$' + lineTotal.toFixed(2);
-                    }
-            
-                    const itemIdInput = qtyInput.form.querySelector('input[name="line_id"], input[name="item_id"]');
-                    const itemId = itemIdInput ? itemIdInput.value : null;
-                    if (itemId) {
-                        localStorage.setItem(`${storagePrefix}_${itemId}`, qty);
-                    }
+                    subtotal += pricePerUnit * qty;
                 });
             
                 const subtotalElement = document.getElementById(totalElementId);
