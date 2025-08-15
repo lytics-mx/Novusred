@@ -440,6 +440,14 @@
                     updateTotals('#cart-tab-content', 'cart-total-amount', 'cart_qty');
                 });
 
+                // Recargar el contenido del carrito al actualizar la cantidad
+                $(document).on('ajax:success', '#add-to-cart-form', function() {
+                    $('#cart-tab-content').load('/shop/cart #cart-tab-content', function() {
+                        updateTotals('#cart-tab-content', 'cart-total-amount', 'cart_qty');
+                    });
+                });
+            });
+
                 // Evitar enviar el formulario si la cantidad no cambió
                 input.form.addEventListener('submit', function (e) {
                     const currentQty = parseInt(input.getAttribute('value')) || 1;
