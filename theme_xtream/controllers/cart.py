@@ -19,7 +19,7 @@ class ShopController(WebsiteSale):
             'saved_items': saved_items,
             'active_tab': tab or 'cart',
         }
-        return request.render("theme_xtream.website_cart_buy_now", values)
+        return request.render("theme_xtream.website_sale_cart_inherit", values)
 
     def _prepare_cart_values(self, **kwargs):
         values = super()._prepare_cart_values(**kwargs)
