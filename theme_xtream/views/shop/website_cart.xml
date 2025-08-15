@@ -72,7 +72,7 @@
                                         t-att-value="int(line.product_uom_qty)" 
                                         min="1"
                                         t-att-max="int(line.product_id.qty_available)"
-                                        t-att-data-price="line.product_id.list_price"
+                                        t-att-data-price="line.product_id.discounted_price or line.product_id.list_price"
                                         style="width:40px; border:none; box-shadow:none; background:transparent; 
                                             -webkit-appearance: none; -moz-appearance: textfield; margin:0;"
                                         onwheel="return false;"
@@ -403,7 +403,7 @@
                     updateTotals('#cart-tab-content', 'cart-total-amount', 'cart_qty');
                 });
             });
-            
+
             function updateTotals(contextSelector, totalElementId, storagePrefix) {
                 let subtotal = 0;
                 document.querySelectorAll(`${contextSelector} .cart-quantity-input`).forEach(function (cartInput) {
