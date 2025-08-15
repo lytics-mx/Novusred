@@ -21,7 +21,6 @@
                             <span style="margin-right: 8px;"> Eliminar los productos seleccionados</span>
                             <button type="submit" style="background: none; border: none; padding: 0; cursor: pointer;"
                                 onclick="return confirm('¿Estás seguro de que deseas eliminar todos los productos seleccionados?');">
-                                <i class="fa fa-trash" style="color: #000; font-size: 20px; transition: color 0.2s, transform 0.2s;"></i>
                             </button>
                         </label>
                     </div>
@@ -87,11 +86,13 @@
                                         </t>
                                         <!-- Eliminar individual -->
                                         <div>
-                                            <a t-att-href="'/shop/wishlist/remove/%s' % item.id" 
-                                               style="color: #0009ED; text-decoration: none;"
-                                               onclick="return confirm('¿Estás seguro de que deseas eliminar este producto de tu lista de favoritos?');">
-                                                Eliminar
-                                            </a>
+                                            <form method="post" t-att-action="'/shop/wishlist/remove/%s' % item.id" style="display:inline;">
+                                                <t t-call="theme_xtream.csrf_token"/>
+                                                <button type="submit" style="background: none; border: none; color: #0009ED; text-decoration: none; cursor: pointer;"
+                                                    onclick="return confirm('¿Estás seguro de que deseas eliminar este producto de tu lista de favoritos?');">
+                                                    Eliminar
+                                                </button>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
