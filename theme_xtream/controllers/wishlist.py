@@ -35,12 +35,3 @@ class WishlistController(http.Controller):
             wishlist_item.unlink()
         return request.redirect('/shop/wishlist')
 
-    @http.route('/shop/wishlist/add', type='http', auth='public', methods=['POST'], website=True)
-    def add_to_wishlist(self):
-        product_id = int(request.httprequest.form.get('product_id', 0))
-        if product_id and request.env.user.partner_id:
-            request.env['product.wishlist'].sudo().create({
-                'product_id': product_id,
-                'partner_id': request.env.user.partner_id.id,
-            })
-        return request.redirect('/shop/wishlist')
