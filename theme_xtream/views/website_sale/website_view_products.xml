@@ -1057,7 +1057,7 @@
             <div id="o_product_terms_and_share"></div>
             
             <t t-jquery="body" t-operation="append">
-                <!-- <script>
+                <script type="text/javascript">
                     document.addEventListener('DOMContentLoaded', function() {
                         var form = document.getElementById('add-to-cart-form');
                         if (form) {
@@ -1070,15 +1070,24 @@
                                     credentials: 'same-origin'
                                 })
                                 .then(response => {
-                                    if (response.ok) {
-                                        // Redirige al carrito
-                                        window.location.href = '/shop/cart';
+                                    const contentType = response.headers.get("content-type");
+                                    if (contentType && contentType.includes("application/json")) {
+                                        return response.json();
+                                    } else {
+                                        throw new Error("Respuesta no es JSON");
                                     }
+                                })
+                                .then(data => {
+                                    window.location.href = '/shop/cart';
+                                })
+                                .catch(error => {
+                                    alert("Ocurrió un error inesperado. Intenta más tarde.");
+                                    console.error(error);
                                 });
                             });
                         }
                     });
-                </script> -->
+                </script>
                 <style>
                     .product-thumb.thumb-mini {
                         width: 60px;
