@@ -161,17 +161,3 @@ class ShopController(WebsiteSale):
     
         _logger.info(f"Productos añadidos al carrito: {bundle_product_ids}")
         return request.redirect('/shop/cart')
-
-    @http.route(['/shop/cart/update'], type='http', auth='public', website=True)
-    def cart_update(self, product_id, add_qty=1, **kw):
-        order = request.website.sale_get_order()
-        line = order.order_line.filtered(lambda l: l.product_id.id == int(product_id))
-        if line:
-            line.product_uom_qty += int(add_qty)
-        else:
-            request.env['sale.order.line'].create({
-                'order_id': order.id,
-                'product_id': int(product_id),
-                'product_uom_qty': int(add_qty),
-            })
-        return request.redirect('/shop/cart')
