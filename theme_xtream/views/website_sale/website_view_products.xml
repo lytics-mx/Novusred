@@ -896,40 +896,14 @@
                                         <span style="font-size:18px; font-weight:500; letter-spacing:0.5px;">Comprar</span>
                                     </button>
                                 </form>
-                                <form id="wishlist-form" action="/shop/wishlist/add" method="POST" class="w-100">
-                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" t-nocache="The csrf token must always be up to date."/>
-                                    <input type="hidden" name="product_id" t-att-value="product.product_variant_id.id"/>
-                                    <button type="submit"
-                                        class="btn w-100"
-                                        style="width:363px; height:48px; border-radius:5px; background:#fff; color:#FF5207; border:2px solid #FF5207; font-weight:500; font-family:inherit; letter-spacing:0.5px; display:block; margin-left:auto; margin-right:auto;">
-                                        <span style="font-size:18px; font-weight:500; letter-spacing:0.5px;">
-                                            <i class="fa fa-heart" style="color:#FF5207; margin-right:8px;"></i> Agregar a Wishlist
-                                        </span>
-                                    </button>
-                                </form>
-                            <script type="text/javascript">
-                                document.addEventListener('DOMContentLoaded', function() {
-                                    var wishlistForm = document.getElementById('wishlist-form');
-                                    if (wishlistForm) {
-                                        wishlistForm.addEventListener('submit', function(e) {
-                                            e.preventDefault();
-                                            var data = new FormData(wishlistForm);
-                                            fetch(wishlistForm.action, {
-                                                method: 'POST',
-                                                body: data,
-                                                credentials: 'same-origin'
-                                            })
-                                            .then(response => {
-                                                if (response.ok) {
-                                                    alert('Producto agregado a tu Wishlist');
-                                                } else {
-                                                    alert('No se pudo agregar a Wishlist. Intenta de nuevo.');
-                                                }
-                                            });
-                                        });
-                                    }
-                                });
-                            </script>
+                            <button type="button"
+                                    class="btn btn-light o_add_wishlist o_editable"
+                                    data-action="o_wishlist"
+                                    title="Agregar a la lista de deseos"
+                                    t-att-data-product-product-id="product.product_variant_id.id">
+                                <span class="fa fa-heart" aria-label="Agregar a la lista de deseos"></span>
+                                Agregar a Wishlist
+                            </button>
 
                                 
                             </div>
