@@ -279,7 +279,7 @@ class ProductTemplate(models.Model):
                result.append((template.id, name))
           return result
      
-     @api.depends('seller_ids', 'seller_ids.name')
+     @api.depends('seller_ids', 'seller_ids.name', 'seller_ids.name.name')
      def _compute_main_supplier(self):
           """Calcula el proveedor principal (el primero en la lista)"""
           for record in self:
@@ -288,7 +288,7 @@ class ProductTemplate(models.Model):
                else:
                     record.main_supplier_id = False
      
-     @api.depends('seller_ids', 'seller_ids.name')
+     @api.depends('seller_ids', 'seller_ids.name', 'seller_ids.name.name')
      def _compute_supplier_names(self):
           """Concatena los nombres de todos los proveedores para búsqueda"""
           for record in self:
