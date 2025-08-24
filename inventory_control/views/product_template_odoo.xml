@@ -16,6 +16,12 @@
                 <field name="product_model"/>
             </xpath>
             
+            <!-- Agregar información de proveedores -->
+            <xpath expr="//field[@name='product_model']" position="after">
+                <field name="main_supplier_id" readonly="1"/>
+                <field name="supplier_names" readonly="1"/>
+            </xpath>
+            
             <!-- Campo de documentos técnicos -->
             <xpath expr="//sheet/notebook" position="inside">
                 <page string="Documentos técnicos">
@@ -52,6 +58,13 @@
                 <filter string="Tipo de Marca" name="filter_by_brand_type" context="{'group_by': 'brand_type_id'}"/> 
                 <filter string="Sin imagen" name="filter_by_image_1920" domain="[('image_1920', '=', False)]"/>
                 <filter string="Modelo del Producto" name="filter_by_product_model" domain="[('product_model', 'ilike', '%')]" context="{'group_by': 'product_model'}"/>
+                <filter string="Proveedor Principal" name="filter_by_supplier" context="{'group_by': 'main_supplier_id'}"/>
+            </xpath>
+            
+            <!-- Agregar campo de búsqueda por proveedor -->
+            <xpath expr="//field[@name='default_code']" position="after">
+                <field name="supplier_names" string="Proveedor" filter_domain="[('supplier_names', 'ilike', self)]"/>
+                <field name="main_supplier_id" string="Proveedor Principal"/>
             </xpath>
         </field>
     </record>
@@ -63,8 +76,61 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='default_code']" position="after">
                 <field name="product_model" string="Modelo del Producto"/>
+                <field name="supplier_names" string="Proveedores"/>
             </xpath>
         </field>
     </record>
+    
+    <record id="view_product_template_kanban_inherit" model="ir.ui.view">
+        <field name="name">product.template.kanban.inherit</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_kanban_view"/>
+        <field name="arch" type="xml">
+            <!-- Agregar información del proveedor en la vista kanban -->
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="main_supplier_id"/>
+                <field name="supplier_names"/>
+                <field name="product_model"/>
+            </xpath>
+            
+            <!-- Agregar información del proveedor en el contenido -->
+            <xpath expr="//div[hasclass('o_kanban_record_subtitle')]" position="after">
+                <div class="text-muted" t-if="record.product_model.value">
+                    <strong>Modelo:</strong> <field name="product_model"/>
+                </div>
+                <div class="text-muted" t-if="record.main_supplier_id.value">
+                    <strong>Proveedor:</strong> <field name="main_supplier_id"/>
+                </div>
+                <div class="text-warning" t-if="!record.main_supplier_id.value">
+                    <i class="fa fa-exclamation-triangle"/> Sin proveedor asignado
+                </div>
+            </xpath>
+        </field>
+    </record>
+    
+    <!-- Acción para mostrar productos agrupados por proveedor -->
+    <record id="action_product_template_by_supplier" model="ir.actions.act_window">
+        <field name="name">Productos por Proveedor</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="context">{'group_by': 'main_supplier_id', 'search_default_filter_by_supplier': 1}</field>
+        <field name="domain">[]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                ¡Crea tu primer producto!
+            </p>
+            <p>
+                Aquí puedes ver todos los productos agrupados por proveedor principal.
+                Los productos sin proveedor aparecerán en un grupo separado.
+            </p>
+        </field>
+    </record>
+    
+    <!-- Elemento de menú -->
+    <menuitem id="menu_product_template_by_supplier"
+              name="Productos por Proveedor"
+              parent="stock.menu_stock_inventory_control"
+              action="action_product_template_by_supplier"
+              sequence="15"/>
     
 </odoo>

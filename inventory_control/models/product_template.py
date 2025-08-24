@@ -49,7 +49,23 @@ class ProductTemplate(models.Model):
           string="Descuento (%)",
           compute="_compute_discount_percentage_from_tags",
           store=True,
-          help="Porcentaje de descuento aplicado al producto."
+          help="Porcentaje de descuento calculado automáticamente basado en las etiquetas."
+     )
+     
+     # Campo computed para facilitar búsqueda y agrupación por proveedor
+     main_supplier_id = fields.Many2one(
+          'res.partner',
+          string='Proveedor Principal',
+          compute='_compute_main_supplier',
+          store=True,
+          help='El proveedor principal del producto (el primero en la lista de proveedores)'
+     )
+     
+     supplier_names = fields.Char(
+          string='Nombres de Proveedores',
+          compute='_compute_supplier_names',
+          store=True,
+          help='Nombres de todos los proveedores concatenados para búsqueda'
      )
 
      discounted_price = fields.Float(
@@ -262,4 +278,26 @@ class ProductTemplate(models.Model):
                name = f"{template.product_model or ''} - {template.name or ''}"
                result.append((template.id, name))
           return result
+     
+     @api.depends('seller_ids', 'seller_ids.name')
+     def _compute_main_supplier(self):
+          """Calcula el proveedor principal (el primero en la lista)"""
+          for record in self:
+               if record.seller_ids:
+                    record.main_supplier_id = record.seller_ids[0].name
+               else:
+                    record.main_supplier_id = False
+     
+     @api.depends('seller_ids', 'seller_ids.name')
+     def _compute_supplier_names(self):
+          """Concatena los nombres de todos los proveedores para búsqueda"""
+          for record in self:
+               if record.seller_ids:
+                    supplier_names = []
+                    for seller in record.seller_ids:
+                         if seller.name:
+                              supplier_names.append(seller.name.name)
+                    record.supplier_names = ', '.join(supplier_names)
+               else:
+                    record.supplier_names = ''
      
