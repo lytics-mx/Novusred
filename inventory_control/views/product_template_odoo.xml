@@ -52,7 +52,12 @@
                 <filter string="Tipo de Marca" name="filter_by_brand_type" context="{'group_by': 'brand_type_id'}"/> 
                 <filter string="Sin imagen" name="filter_by_image_1920" domain="[('image_1920', '=', False)]"/>
                 <filter string="Modelo del Producto" name="filter_by_product_model" domain="[('product_model', 'ilike', '%')]" context="{'group_by': 'product_model'}"/>
-                <filter string="Proveedor" name="filter_by_supplier" domain="[('seller_ids.partner_id.name', '!=', False)]" context="{'group_by': 'seller_ids.partner_id.name'}"/>
+                <filter string="Proveedor" name="filter_by_supplier" context="{'group_by': 'seller_ids'}"/>
+            </xpath>
+            
+            <!-- Agregar campo de búsqueda por proveedor -->
+            <xpath expr="//field[@name='default_code']" position="after">
+                <field name="seller_ids" string="Proveedor" filter_domain="[('seller_ids.name', 'ilike', self)]"/>
             </xpath>
         </field>
     </record>
@@ -64,8 +69,34 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='default_code']" position="after">
                 <field name="product_model" string="Modelo del Producto"/>
+                <field name="seller_ids" string="Proveedores"/>
             </xpath>
         </field>
     </record>
+    
+    <!-- Acción para mostrar productos agrupados por proveedor -->
+    <record id="action_product_template_by_supplier" model="ir.actions.act_window">
+        <field name="name">Productos por Proveedor</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="context">{'group_by': 'seller_ids', 'search_default_filter_by_supplier': 1}</field>
+        <field name="domain">[]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                ¡Crea tu primer producto!
+            </p>
+            <p>
+                Aquí puedes ver todos los productos agrupados por proveedor.
+                Los productos sin proveedor aparecerán en un grupo separado.
+            </p>
+        </field>
+    </record>
+    
+    <!-- Elemento de menú -->
+    <menuitem id="menu_product_template_by_supplier"
+              name="Productos por Proveedor"
+              parent="stock.menu_stock_inventory_control"
+              action="action_product_template_by_supplier"
+              sequence="15"/>
     
 </odoo>
