@@ -136,5 +136,17 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-});
-                             
+
+    // Función para mostrar notificación del carrito
+    function showCartNotification(productHtml) {
+        var popup = document.getElementById('notificationPopup');
+        var content = document.getElementById('notificationPopupContent');
+        if (popup && content) {
+            content.innerHTML = productHtml;
+            popup.style.display = 'block';
+            setTimeout(function() {
+                popup.style.display = 'none';
+            }, 4000); // Oculta después de 4 segundos
+        }
+    }
+});                 
