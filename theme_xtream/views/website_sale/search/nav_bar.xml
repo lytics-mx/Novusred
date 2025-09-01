@@ -223,13 +223,25 @@
                     </div>
                 </div>
 
-                <script>
-                    function toggleMobileMenu() {
-                        const menu = document.getElementById('mobileSideMenu');
-                        menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
-                    }
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var menuBtn = document.getElementById('mobileMenuBtn');
+                        var sideMenu = document.getElementById('mobileSideMenu');
+                        var closeBtn = document.getElementById('closeMobileMenu');
+                        if(menuBtn && sideMenu && closeBtn){
+                            menuBtn.onclick = function() {
+                                sideMenu.style.display = 'block';
+                            };
+                            closeBtn.onclick = function() {
+                                sideMenu.style.display = 'none';
+                            };
+                            // Opcional: cerrar al hacer click fuera del menú
+                            sideMenu.onclick = function(e) {
+                                if(e.target === sideMenu) sideMenu.style.display = 'none';
+                            };
+                        }
+                    });
                 </script>
-
             </div>
         </xpath>
     </template>
