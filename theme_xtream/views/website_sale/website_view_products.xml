@@ -1079,42 +1079,50 @@
                         var popupInfo = document.getElementById('popup-product-info');
                         var qtyInput = document.getElementById('qty-input');
                     
-                        if (cartForm && popup && closePopup && popupInfo && qtyInput) {
-                            cartForm.addEventListener('submit', function(e) {
-                                e.preventDefault();
-                                var data = new FormData(cartForm);
-                                data.set('add_qty', qtyInput.value);
-                    
-                                fetch(cartForm.action, {
-                                    method: 'POST',
-                                    body: data,
-                                    credentials: 'same-origin'
-                                })
-                                .then(response => {
-                                    if (response.ok) {
-                                        // Muestra la info del producto en el popup
-                                        var name = document.querySelector('h2[t-esc="product.name"]').textContent;
-                                        var price = document.querySelector('.new-main-price').textContent;
-                                        var desc = document.querySelector('.product-description').textContent;
-                                        var img = document.getElementById('main-product-img').src;
-                                        popupInfo.innerHTML = `
-                                            <div style="display:flex; align-items:flex-start; gap:12px;">
-                                                <img src="${img}" style="width:60px; height:60px; object-fit:cover; border-radius:8px;"/>
-                                                <div>
-                                                    <div style="font-weight:500; font-size:16px;">${qtyInput.value} x ${name}</div>
-                                                    <div style="font-size:15px; color:#666;">${desc}</div>
-                                                </div>
-                                                <div style="margin-left:auto; font-weight:600; font-size:17px; color:#7c5c8a;">${price}</div>
-                                            </div>
-                                        `;
-                                        popup.style.display = 'flex';
+                        if (cartForm) {
+                            if (popup) {
+                                if (closePopup) {
+                                    if (popupInfo) {
+                                        if (qtyInput) {
+                                            cartForm.addEventListener('submit', function(e) {
+                                                e.preventDefault();
+                                                var data = new FormData(cartForm);
+                                                data.set('add_qty', qtyInput.value);
+                                        
+                                                fetch(cartForm.action, {
+                                                    method: 'POST',
+                                                    body: data,
+                                                    credentials: 'same-origin'
+                                                })
+                                                .then(response => {
+                                                    if (response.ok) {
+                                                        // Muestra la info del producto en el popup
+                                                        var name = document.querySelector('h2[t-esc="product.name"]').textContent;
+                                                        var price = document.querySelector('.new-main-price').textContent;
+                                                        var desc = document.querySelector('.product-description').textContent;
+                                                        var img = document.getElementById('main-product-img').src;
+                                                        popupInfo.innerHTML = `
+                                                            <div style="display:flex; align-items:flex-start; gap:12px;">
+                                                                <img src="${img}" style="width:60px; height:60px; object-fit:cover; border-radius:8px;"/>
+                                                                <div>
+                                                                    <div style="font-weight:500; font-size:16px;">${qtyInput.value} x ${name}</div>
+                                                                    <div style="font-size:15px; color:#666;">${desc}</div>
+                                                                </div>
+                                                                <div style="margin-left:auto; font-weight:600; font-size:17px; color:#7c5c8a;">${price}</div>
+                                                            </div>
+                                                        `;
+                                                        popup.style.display = 'flex';
+                                                    }
+                                                });
+                                            });
+                                        
+                                            closePopup.addEventListener('click', function() {
+                                                popup.style.display = 'none';
+                                            });
+                                        }
                                     }
-                                });
-                            });
-                    
-                            closePopup.addEventListener('click', function() {
-                                popup.style.display = 'none';
-                            });
+                                }
+                            }
                         }
                     });
                 </script>
