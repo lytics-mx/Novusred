@@ -4,9 +4,6 @@
             
             <t t-call-assets="website.assets_frontend" t-js="true"/>
             <t t-call-assets="website_sale.assets_frontend" t-js="true"/>
-            <t t-call-assets="'theme_xtream.views_products_css'" t-css="true"/>
-            <t t-call-assets="'theme_xtream.views_products_js'" t-js="true"/>
-
             <div id="wrap" class="oe_structure oe_website_sale text-center" style="padding: 40px 180px;">
             <div class="product-breadcrumb-bar" style="background:#D2D2D2; padding:10px 20px; border-radius:6px; margin-bottom:0; display:flex; align-items:center; gap:10px; justify-content:flex-start;">
                 <t t-set="referer" t-value="request.httprequest.headers.get('Referer')"/>
@@ -332,7 +329,123 @@
                                             </form>
                                         </div>
                                     </div>
-                                    
+                                    <script type="text/javascript">
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        var bundleForm = document.getElementById('bundle-form');
+                                        var totalPriceElement = document.getElementById('bundle-total'); // Elemento para mostrar el precio total
+                                        var buyNowButton = document.getElementById('bundle-buy-now'); // Botón "Comprar"
+
+                                        // Función para obtener el precio de un producto
+                                        function getPriceFromText(text) {
+                                            return parseFloat((text || '').replace(/[^0-9.]/g, '')) || 0;
+                                        }
+
+                                        // Función para obtener el precio raíz (descuento si existe, si no, list_price)
+                                        function getRootPrice() {
+                                            var discounted = document.querySelector('.col-12.col-md-4 .new-main-price');
+                                            if (discounted) {
+                                                return getPriceFromText(discounted.textContent);
+                                            }
+                                            var list = document.querySelector('.col-12.col-md-4 .fw-bold.d-block.new-main-price');
+                                            if (list) {
+                                                return getPriceFromText(list.textContent);
+                                            }
+                                            return 0;
+                                        }
+
+                                        // Función para actualizar el precio total
+                                        function updateTotal() {
+                                            var total = getRootPrice();
+                                            // Sumar los accesorios seleccionados
+                                            document.querySelectorAll('input[name="bundle_product_ids[]"]:checked').forEach(function(cb) {
+                                                var priceDiv = cb.closest('.accessory-card')?.querySelector('.accessory-main-price') || null;
+                                                if (priceDiv) {
+                                                    total += getPriceFromText(priceDiv.textContent);
+                                                }
+                                            });
+                                            if (totalPriceElement) {
+                                                totalPriceElement.textContent = `$${total.toLocaleString('es-MX', { minimumFractionDigits: 2 })}`;
+                                            }
+                                        }
+
+                                        // Escuchar cambios en los checkboxes
+                                        document.querySelectorAll('input[name="bundle_product_ids[]"]').forEach(function(cb) {
+                                            cb.addEventListener('change', updateTotal);
+                                        });
+
+                                        // Actualizar el precio total al cargar la página
+                                        updateTotal();
+
+                                        // Manejo del envío del formulario para "Agregar al carrito"
+                                        bundleForm.addEventListener('submit', function(e) {
+                                            e.preventDefault();
+                                            var data = new FormData(bundleForm);
+
+                                            // Agregar el producto raíz al carrito
+                                            var productRoot = document.querySelector('input[name="product_id"]').value;
+                                            data.append('product_id', productRoot);
+
+                                            // Agregar todos los productos seleccionados al carrito
+                                            var selectedProducts = document.querySelectorAll('input[name="bundle_product_ids[]"]:checked');
+                                            if (selectedProducts.length === 0) {
+                                                alert('Por favor selecciona al menos un producto para agregar al carrito.');
+                                                return;
+                                            }
+                                            selectedProducts.forEach(function(cb) {
+                                                data.append('bundle_product_ids[]', cb.value);
+                                            });
+
+                                            fetch(bundleForm.action, {
+                                                method: 'POST',
+                                                body: data,
+                                                credentials: 'same-origin'
+                                            }).then(function(response) {
+                                                if (response.ok) {
+                                                    window.location.href = '/shop/cart';
+                                                } else {
+                                                    alert('Hubo un error al agregar los productos al carrito. Por favor intenta nuevamente.');
+                                                }
+                                            }).catch(function(error) {
+                                                console.error('Error:', error);
+                                                alert('Hubo un error al procesar tu solicitud.');
+                                            });
+                                        });
+
+                                        // Manejo del botón "Comprar"
+                                        buyNowButton.addEventListener('click', function() {
+                                            var data = new FormData(bundleForm);
+
+                                            // Agregar el producto raíz al carrito
+                                            var productRoot = document.querySelector('input[name="product_id"]').value;
+                                            data.append('product_id', productRoot);
+
+                                            // Agregar todos los productos seleccionados al carrito
+                                            var selectedProducts = document.querySelectorAll('input[name="bundle_product_ids[]"]:checked');
+                                            if (selectedProducts.length === 0) {
+                                                alert('Por favor selecciona al menos un producto para comprar.');
+                                                return;
+                                            }
+                                            selectedProducts.forEach(function(cb) {
+                                                data.append('bundle_product_ids[]', cb.value);
+                                            });
+
+                                            fetch(bundleForm.action, {
+                                                method: 'POST',
+                                                body: data,
+                                                credentials: 'same-origin'
+                                            }).then(function(response) {
+                                                if (response.ok) {
+                                                    window.location.href = '/shop/checkout?try_skip_step=true';
+                                                } else {
+                                                    alert('Hubo un error al procesar tu compra. Por favor intenta nuevamente.');
+                                                }
+                                            }).catch(function(error) {
+                                                console.error('Error:', error);
+                                                alert('Hubo un error al procesar tu solicitud.');
+                                            });
+                                        });
+                                    });
+                                    </script>
                                 </t>
                                 <!-- ...existing code... -->
                                 <!-- ...busca la sección donde aparece la descripción... -->
@@ -571,7 +684,29 @@
                                     </t>
                                 </div>
                             </div>
-
+                            <script type="text/javascript">
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    var mainImg = document.getElementById('main-product-img');
+                                    var thumbs = document.querySelectorAll('#product-thumbs .product-thumb');
+                                    // Cambiar imagen principal al hacer click en miniatura
+                                    thumbs.forEach(function(thumb) {
+                                        thumb.addEventListener('click', function() {
+                                            mainImg.src = thumb.getAttribute('data-img');
+                                            thumbs.forEach(function(t) { t.classList.remove('active'); });
+                                            thumb.classList.add('active');
+                                        });
+                                    });
+                                    // Al hacer click en la imagen principal, vuelve a la primera miniatura
+                                    mainImg.addEventListener('click', function() {
+                                        var firstThumb = document.querySelector('#product-thumbs .product-thumb');
+                                        if (firstThumb) {
+                                            mainImg.src = firstThumb.getAttribute('data-img');
+                                            thumbs.forEach(function(t) { t.classList.remove('active'); });
+                                            firstThumb.classList.add('active');
+                                        }
+                                    });
+                                });
+                            </script>
                             </div>
                             
                         </div>
@@ -596,8 +731,17 @@
                                 </div>
                             </div>
                             <!-- Precios y descuentos -->
+                            <!-- Precios y descuentos alineados a la izquierda junto con la imagen -->
                             <div class="d-flex align-items-start" style="gap: 24px;">                                
+                                <!-- Texto de precios y descuentos a la derecha de la imagen -->
                                 <div style="text-align: left;">
+                                    <!-- <t t-if="product.product_tag_ids">
+                                        <div class="d-flex justify-content-start mb-2 mobile-badge-container">
+                                            <span class="badge bg-primary mobile-badge" style="border-radius: 0; text-transform: uppercase;">
+                                                <t t-esc="product.product_tag_ids[0].name"/>
+                                            </span>
+                                        </div>
+                                    </t> -->
                                     <t t-if="product.discounted_price &lt; product.list_price">
                                         <div class="mt-0 new-discount-amount">
                                             <span class="text-muted" style="font-size: 16px; text-decoration: line-through;">
@@ -642,7 +786,6 @@
                                     </span>
                                 </div>
                             </t>
-
                             <!-- Oferta del día -->
                             <t t-if="product.product_tag_ids">
                                 <div class="d-flex justify-content-start mb-2 mobile-badge-container">
@@ -650,17 +793,21 @@
                                         <t t-esc="product.product_tag_ids[0].name"/>
                                     </span>
                                 </div>
-                            </t>                            <!-- Stock -->
+                            </t>
+                            <!-- Stock -->
                             <div class="mb-3" style="text-align:left;">
                                 <div style="color:#222; font-size:16px; margin-bottom:2px;">
                                     En Stock: <span><t t-esc="int(product.qty_available)"/></span> artículos
                                 </div>
+                                <!-- Marca -->
                                 <div style="color:#222; font-size:16px;">
                                     Marca: <span><t t-esc="product.brand_type_id.name"/></span>
                                 </div>
+                                <!-- Modelo -->
                                 <div style="color:#222; font-size:16px; margin-bottom:10px;">
                                     Modelo: <span><t t-esc="product.product_model"/></span>
                                 </div>
+                                <!-- Cantidad -->
                                 <div style="font-size:16px; margin-bottom:10px;">
                                     Cantidad:
                                     <span class="input-group" style="width:auto; display:inline-flex; vertical-align:middle; margin-left:6px;">
@@ -674,7 +821,53 @@
                                         />
                                         <button type="button" class="btn" id="qty-plus" style="min-width:28px; font-size:20px; padding:0; background:transparent; border:none; color:#222;">+</button>
                                     </span>
+                                    <t t-jquery="body" t-operation="append">
+                                        <style>
+                                            /* Oculta las flechas de los inputs type number en todos los navegadores */
+                                            input[type=number]::-webkit-inner-spin-button, 
+                                            input[type=number]::-webkit-outer-spin-button { 
+                                                -webkit-appearance: none; 
+                                                margin: 0; 
+                                            }
+                                            input[type=number] {
+                                                -moz-appearance: textfield;
+                                            }
+                                            /* Ajusta el ancho del input según el número de dígitos */
+                                            #qty-input {
+                                                width: 2.5em !important;
+                                                min-width: 32px !important;
+                                                max-width: 3em !important;
+                                                text-align: center;
+                                            }
+                                        </style>
+                                    </t>
+                                    <span style="color:#888; font-size:15.2px;">(<t t-esc="int(product.qty_available)"/> disponibles)</span>
                                 </div>
+                                <t t-jquery="body" t-operation="append">
+                                    <script type="text/javascript"><![CDATA[
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                            var qtyInput = document.getElementById('qty-input');
+                                            var minusBtn = document.getElementById('qty-minus');
+                                            var plusBtn = document.getElementById('qty-plus');
+                                            if (qtyInput && minusBtn && plusBtn) {
+                                                var max = parseInt(qtyInput.getAttribute('max')) || 9999;
+                                                minusBtn.addEventListener('click', function() {
+                                                    var val = parseInt(qtyInput.value) || 1;
+                                                    if (val > 1) qtyInput.value = val - 1;
+                                                });
+                                                plusBtn.addEventListener('click', function() {
+                                                    var val = parseInt(qtyInput.value) || 1;
+                                                    if (val < max) qtyInput.value = val + 1;
+                                                });
+                                                qtyInput.addEventListener('input', function() {
+                                                    var val = parseInt(qtyInput.value) || 1;
+                                                    if (val < 1) qtyInput.value = 1;
+                                                    if (val > max) qtyInput.value = max;
+                                                });
+                                            }
+                                        });
+                                    ]]></script>
+                                </t>
                             </div>
                             <!-- Métodos de pago -->
                             <div style="margin-bottom:12px;">
@@ -711,14 +904,39 @@
                                         <span style="font-size:18px; font-weight:500; letter-spacing:0.5px;">Comprar</span>
                                     </button>
                                 </form>
-                            </div>
-                            <!-- Ventana emergente -->
-                            <div id="cart-popup" style="display:none; position:fixed; top:20%; left:50%; transform:translate(-50%, -50%); z-index:1000; background:#fff; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.2); padding:20px; width:300px; text-align:center;">
-                                <p style="font-size:18px; font-weight:600; margin-bottom:12px;">Producto agregado al carrito</p>
-                                <button type="button" id="close-popup" style="background:#4285f4; color:#fff; border:none; border-radius:5px; padding:10px 20px; font-size:16px;">Cerrar</button>
-                                <a href="/shop/cart" style="display:block; margin-top:10px; text-decoration:none; color:#4285f4; font-size:16px;">Ir al carrito</a>
-                            </div>
 
+
+                                
+                            </div>
+                            <script type="text/javascript">
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    var qtyInput = document.getElementById('qty-input');
+                                    var cartQty = document.getElementById('cart-qty');
+                                    var buyQty = document.getElementById('buy-qty');
+                                    var cartForm = document.getElementById('add-to-cart-form');
+                                    var buyForm = document.getElementById('buy-now-form');
+
+                                    cartForm.addEventListener('submit', function(e) {
+                                        cartQty.value = qtyInput.value;
+                                    });
+
+                                    buyForm.addEventListener('submit', function(e) {
+                                        e.preventDefault();
+                                        buyQty.value = qtyInput.value;
+                                        var data = new FormData(buyForm);
+                                        fetch(buyForm.action, {
+                                            method: 'POST',
+                                            body: data,
+                                            credentials: 'same-origin'
+                                        })
+                                        .then(response => {
+                                            if (response.ok) {
+                                                window.location.href = '/shop/checkout?try_skip_step=true';
+                                            }
+                                        });
+                                    });
+                                });
+                            </script>
                         </div>
                         
                         <div style="height:15px;"></div>
@@ -862,7 +1080,556 @@
                         }
                     });
                 </script> -->
+                <style>
+                    .product-thumb.thumb-mini {
+                        width: 60px;
+                        height: 60px;
+                        object-fit: cover;
+                        border-radius: 6px;
+                    }
+                    .main-img-large {
+                        max-width: 100%;
+                        max-height: 350px;
+                        border-radius: 8px;
+                        /* box-shadow: 0 2px 8px rgba(0,0,0,0.08); */ /* Eliminado el sombreado */
+                    }
+                    .product-thumb.active {
+                        border: 2px solid #4285f4;
+                    }
+                    /* Ejemplo de media query para móviles */
+                    @media (max-width: 600px) {
+                    .producto {
+                        width: 100%;
+                        padding: 10px;
+                        box-sizing: border-box;
+                    }
+                    .boton-carrito {
+                        width: 100%;
+                        font-size: 18px;
+                    }
+                    img {
+                        width: 100%;
+                        height: auto;
+                    }
+                    }
+                    /* Oculta la barra de breadcrumb en móviles */
+                    @media (max-width: 600px) {
+                        .product-breadcrumb-bar {
+                            display: none !important;
+                        }
+                    }  
+
+
                 
+
+
+                            /* Regla global para envío gratis - aplicar a todos los tamaños */
+                            .mobile-shipping-text {
+                                color: #FF5207 !important;
+                                font-weight: bold !important;
+                                font-style: italic !important;
+                            }
+                            
+                            /* Regla global para badges sin redondeo */
+                            .mobile-badge {
+                                border-radius: 0 !important; /* Bordes rectos para todos los tamaños */
+                            }
+                            
+                            /* Espaciado general mejorado */
+                            .mobile-product-col {
+                                padding: 2px;
+                                margin-bottom: 5px; /* Aumentado de 15px a 25px */
+                            }
+                            
+                            /* Estilos para móvil */
+                            @media (max-width: 767.98px) {
+                                .mobile-badge {
+                                    font-size: 12px;
+                                    padding: 2px 6px;
+                                }
+                                
+                                .mobile-product-col {
+                                    padding: 2px;
+                                    margin-bottom: 5px;
+                                }
+                                
+                                .mobile-product-card {
+                                    min-height: 240px;
+                                    border: 1px solid #e0e0e0;
+                                    margin: 0 2px;
+                                }
+                                
+                                .mobile-product-image {
+                                    height: 160px;
+                                    object-fit: contain;
+                                    padding: 10px;
+                                }
+                                
+                                .mobile-card-body {
+                                    padding: 6px 10px 10px 10px;
+                                    display: flex;
+                                    flex-direction: column;
+                                    justify-content: space-between;
+                                    flex-grow: 1;
+                                }
+                                
+                                .mobile-badge-container {
+                                    margin-bottom: 4px;
+                                }
+                                
+                                .mobile-price-container {
+                                    flex-wrap: wrap;
+                                    margin-bottom: 5px;
+                                }
+                                
+                                .mobile-main-price {
+                                    font-size: 20px !important;
+                                    font-weight: bold;
+                                }
+                                
+                                .mobile-discount {
+                                    font-size: 14px !important;
+                                    font-weight: normal;
+                                }
+                                
+                                .mobile-discount-amount span {
+                                    font-size: 14px !important;
+                                }
+                                
+                                .mobile-spacer {
+                                    height: 10px;
+                                }
+                                
+                                .mobile-shipping {
+                                    margin-top: 2px;
+                                }
+                                
+                                .mobile-shipping-text {
+                                    font-size: 14px !important;
+                                }
+                                
+                                /* Ocultar filtros en móvil */
+                                .filters {
+                                    display: none;
+                                }
+                                
+                                /* Ajustar header en móvil */
+                                .container {
+                                    padding-left: 10px;
+                                    padding-right: 10px;
+                                }
+                            }
+                            
+                            /* Estilos para tablet */
+                            @media (min-width: 768px) and (max-width: 991.98px) {
+                                .mobile-badge {
+                                    font-size: 12px;
+                                    padding: 3px 8px;
+                                }
+                                
+                                .mobile-product-col {
+                                    padding: 2px;
+                                    margin-bottom: 5px;
+                                }
+                                
+                                .mobile-product-card {
+                                    min-height: 300px; /* Reducido de 350px */
+                                }
+                                
+                                .mobile-product-image {
+                                    height: 200px; /* Reducido de 200px */
+                                }
+                                
+                                .mobile-shipping-text {
+                                    font-size: 14px !important;
+                                }
+                            }
+                            
+                            /* Estilos desktop */
+                            @media (min-width: 992px) {
+                                .mobile-badge {
+                                    font-size: 14px;
+                                    padding: 4px 10px;
+                                }
+                                
+                                .mobile-product-col {
+                                    padding: 2px; /* Incrementado de 2px a 3px para más espacio lateral */
+                                    margin-bottom: 5px; /* Incrementado de 25px a 35px para más espacio abajo */
+                                }
+                                
+                                .mobile-product-card {
+                                    min-height: 320px;
+                                    border: 1px solid #e0e0e0;
+                                    margin: 0 2px;
+                                }
+                                
+                                .mobile-product-image {
+                                    height: 300px;
+                                    object-fit: contain;
+                                }
+                                
+                                .mobile-main-price {
+                                    font-size: 20px !important;
+                                }
+                                
+                                .mobile-discount {
+                                    font-size: 14px !important;
+                                }
+                                
+                                .mobile-discount-amount span {
+                                    font-size: 14px !important;
+                                }
+                                
+                                .mobile-shipping-text {
+                                    font-size: 1rem !important;
+                                }
+                            }
+
+
+                            /* Estilos para móvil */
+                            @media (max-width: 767.98px) {
+                                /* Estilos de filtros móviles */
+                                .mobile-filters-container {
+                                    margin: 0 10px;
+                                }
+                                
+                                .mobile-filters-panel {
+                                    border: 1px solid #dee2e6;
+                                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                                    background: white;
+                                    border-radius: 8px;
+                                    padding: 16px;
+                                }
+                                
+                                .mobile-categories-grid {
+                                    display: flex;
+                                    flex-wrap: wrap;
+                                    gap: 6px;
+                                }
+                                
+                                .mobile-price-form .form-control-sm {
+                                    font-size: 13px;
+                                    border: 1px solid #dee2e6;
+                                    border-radius: 4px;
+                                }
+                                
+                                /* Botón de filtros */
+                                .btn-outline-dark:hover {
+                                    background-color: #f8f9fa;
+                                    border-color: #dee2e6;
+                                }
+                                
+                                /* Espaciado de filtros */
+                                .form-check-label {
+                                    color: #555;
+                                }
+                                
+                                .btn-outline-secondary {
+                                    border-color: #dee2e6;
+                                    color: #555;
+                                    border-radius: 4px;
+                                }
+                                
+                                .btn-outline-secondary:hover {
+                                    background-color: #e9ecef;
+                                    border-color: #dee2e6;
+                                    color: #333;
+                                }
+                             } 
+
+
+
+                        .custom-bundle-checkbox {
+                            width: 30px !important;
+                            height: 30px !important;
+                            border-radius: 9px !important;
+                            border-width: 1px !important;
+                            border-style: solid !important;
+                            border-color: #888 !important;
+                            background: #f8f8f8 !important;
+                            appearance: none;
+                            -webkit-appearance: none;
+                            outline: none;
+                            cursor: pointer;
+                            position: relative;
+                        }
+                        .custom-bundle-checkbox:checked {
+                            background: #4285f4 !important;
+                            border-color: #4285f4 !important;
+                        }
+                        .custom-bundle-checkbox:checked::after {
+                            content: '';
+                            display: block;
+                            position: absolute;
+                            left: 8px;
+                            top: 4px;
+                            width: 8px;
+                            height: 16px;
+                            border: solid #fff;
+                            border-width: 0 4px 4px 0;
+                            transform: rotate(45deg);
+                        }
+
+
+                        /* Card blanco y ajuste de tamaño */
+                        .accessory-card-100 {
+                            background: #fff !important;
+                            width: 120px !important;
+                            min-width: 120px !important;
+                            max-width: 120px !important;
+                            position: relative;
+                            margin-left: auto;
+                            margin-right: auto;
+                        }
+                        .accessory-card-100:not(:last-child) {
+                            margin-right: 24px;
+                        }
+
+                        .accessory-card-100:not(:last-child)::after {
+                            content: "+";
+                            position: absolute;
+                            right: -20px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            font-size: 24px;
+                            font-weight: bold;
+                            color: #888;
+                            line-height: 1;
+                            pointer-events: none;
+                        }
+                        .accessory-card-100 .card-body,
+                        .accessory-card-100 .card-title {
+                            width: 100px;
+                            max-width: 100px;
+                            white-space: normal;
+                            overflow: hidden;
+                            text-overflow: clip;
+                            font-size: 13px;
+                            line-height: 1.1;
+                            word-break: break-word;
+                            padding: 4px 2px 2px 2px;
+                            background: #fff !important;
+                        }
+                        .accessory-card-100 .card-title {
+                            display: -webkit-box;
+                            -webkit-line-clamp: 2;
+                            -webkit-box-orient: vertical;
+                            max-height: 2.2em;
+                            text-overflow: clip;
+                            overflow: hidden;
+                            font-size: 13px !important;
+                        }
+                        .accessory-card-100 .accessory-badge,
+                        .accessory-card-100 .accessory-badge-container .badge {
+                            font-size: 10px !important;
+                            padding: 2px 4px !important;
+                            border-radius: 0 !important;
+                            max-width: 90px;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            display: inline-block;
+                        }
+                        .accessory-card-100 .accessory-main-price {
+                            font-size: 16px !important;
+                            font-weight: bold;
+                            color: #000;
+                            margin-right: 4px;
+                            display: inline-block;
+                            vertical-align: middle;
+                        }
+                        .accessory-card-100 .accessory-discount {
+                            font-size: 12px !important;
+                            color: #FF5207;
+                            font-weight: normal;
+                            margin-left: 2px;
+                            vertical-align: middle;
+                            display: inline-block;
+                        }
+                        .accessory-card-100 .accessory-price-container {
+                            display: flex;
+                            align-items: center;
+                            gap: 2px;
+                            flex-wrap: wrap;
+                        }
+                        .accessory-card-100 .accessory-main-price + .accessory-discount {
+                            margin-left: 2px;
+                        }
+
+
+
+
+                        /* Estilos para productos compactos */
+
+                        
+                        /* Ajusta el diseño para que siempre haya tres tarjetas en una fila */
+                        .compact-products-grid {
+                            display: flex;
+                            gap: 12px; /* Espaciado uniforme entre las tarjetas */
+                            flex-wrap: nowrap; /* Evita que las tarjetas se desplacen a otra línea */
+                            justify-content: space-between; /* Distribuye las tarjetas uniformemente */
+                        }
+                        
+                        .compact-product-card {
+                            flex: 1 1 calc(33.33% - 12px); /* Cada tarjeta ocupa un tercio del espacio disponible */
+                            max-width: calc(33.33% - 12px); /* Limita el ancho máximo */
+                            min-width: calc(33.33% - 12px); /* Limita el ancho mínimo */
+                            background: #fff;
+                            border: 1px solid #e0e0e0;
+                            border-radius: 8px;
+                            overflow: hidden;
+                            margin-bottom: 12px;
+                            transition: box-shadow 0.2s ease;
+                        }
+                        
+                        .compact-product-card:hover {
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                        }
+                        
+                        /* Ajustes responsivos */
+                        @media (max-width: 991.98px) {
+                            .compact-product-card {
+                                flex: 1 1 calc(33.33% - 8px); /* Ajusta el espacio para pantallas medianas */
+                                max-width: calc(33.33% - 8px);
+                                min-width: calc(33.33% - 8px);
+                            }
+                        }
+                        
+                        @media (max-width: 767.98px) {
+                            .compact-products-grid {
+                                flex-wrap: wrap; /* Permite que las tarjetas se ajusten en filas múltiples */
+                                gap: 8px; /* Reduce el espacio entre las tarjetas */
+                            }
+                            .compact-product-card {
+                                flex: 1 1 calc(50% - 8px); /* Dos tarjetas por fila en pantallas pequeñas */
+                                max-width: calc(50% - 8px);
+                                min-width: calc(50% - 8px);
+                            }
+                        }
+                        
+                                                
+                        /* Ajusta el texto y los detalles del producto */
+                        .mobile-card-body {
+                            padding: 4px 6px; /* Reducido */
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: space-between;
+                        }
+                        
+                        .mobile-badge-container {
+                            margin-bottom: 2px; /* Reducido */
+                        }
+                        
+                        .mobile-badge {
+                            font-size: 6px; /* Más reducido */
+                            padding: 1px 3px; /* Más reducido */
+                            text-transform: uppercase;
+                            border-radius: 0;
+                        }
+                        
+                        .mobile-price-container {
+                            flex-wrap: wrap;
+                            margin-bottom: 3px; /* Reducido */
+                        }
+                        
+                        .mobile-main-price {
+                            font-size: 14px; /* Más reducido */
+                            font-weight: bold;
+                        }
+                        
+                        .mobile-discount {
+                            font-size: 8px; /* Más reducido */
+                            font-weight: normal;
+                            color: #FF5207;
+                        }
+                        
+                        .mobile-discount-amount span {
+                            font-size: 8px; /* Más reducido */
+                            color: #888;
+                        }
+                        
+                        .mobile-shipping {
+                            margin-top: 1px; /* Reducido */
+                        }
+                        
+                        .mobile-shipping-text {
+                            font-size: 8px; /* Más reducido */
+                            color: #FF5207;
+                            font-weight: bold;
+                            font-style: italic;
+                        }
+                        
+                        /* Ajustes para pantallas pequeñas */
+                        @media (max-width: 767.98px) {
+                            .mobile-card-body {
+                                padding: 3px 5px; /* Más reducido */
+                            }
+                            .mobile-badge {
+                                font-size: 5px; /* Más reducido */
+                                padding: 1px 2px; /* Más reducido */
+                            }
+                            .mobile-main-price {
+                                font-size: 12px; /* Más reducido */
+                            }
+                            .mobile-discount {
+                                font-size: 6px; /* Más reducido */
+                            }
+                            .mobile-discount-amount span {
+                                font-size: 6px; /* Más reducido */
+                            }
+                            .mobile-shipping-text {
+                                font-size: 6px; /* Más reducido */
+                            }
+                        }
+                        
+                        /* Ajustes para pantallas medianas */
+                        @media (min-width: 768px) and (max-width: 991.98px) {
+                            .mobile-card-body {
+                                padding: 5px 8px; /* Reducido */
+                            }
+                            .mobile-badge {
+                                font-size: 8px; /* Reducido */
+                                padding: 2px 4px; /* Reducido */
+                            }
+                            .mobile-main-price {
+                                font-size: 16px; /* Reducido */
+                            }
+                            .mobile-discount {
+                                font-size: 10px; /* Reducido */
+                            }
+                            .mobile-discount-amount span {
+                                font-size: 10px; /* Reducido */
+                            }
+                            .mobile-shipping-text {
+                                font-size: 10px; /* Reducido */
+                            }
+                        }
+                        
+                        /* Ajustes para pantallas grandes */
+                        @media (min-width: 992px) {
+                            .mobile-card-body {
+                                padding: 6px 10px; /* Reducido */
+                            }
+                            .mobile-badge {
+                                font-size: 12px; /* Reducido */
+                                padding: 3px 5px; /* Reducido */
+                            }
+                            .mobile-main-price {
+                                font-size: 18px; /* Reducido */
+                            }
+                            .mobile-discount {
+                                font-size: 12px; /* Reducido */
+                            }
+                            .mobile-discount-amount span {
+                                font-size: 12px; /* Reducido */
+                            }
+                            .mobile-shipping-text {
+                                font-size: 10px; /* Reducido */
+                            }
+                        }
+                        
+                                
+                        </style>  
             </t>
 
             </div>
