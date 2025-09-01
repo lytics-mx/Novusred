@@ -84,8 +84,10 @@
           '/theme_xtream/static/src/css/owl.carousel.min.css',
           '/theme_xtream/static/src/css/owl.theme.default.min.css',
           '/theme_xtream/static/src/css/style.css',
-          'theme_xtream/static/src/css/views_products.css',
-          
+          '/theme_xtream/static/src/css/views_products.css',
+
+          '/theme_xtream/static/src/js/views_products.js',
+
           '/theme_xtream/static/src/js/owl.carousel.js',
           '/theme_xtream/static/src/js/owl.carousel.min.js',
           '/theme_xtream/static/src/js/new_arrivals.js',
