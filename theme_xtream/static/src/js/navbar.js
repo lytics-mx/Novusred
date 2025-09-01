@@ -149,4 +149,27 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 4000); // Oculta después de 4 segundos
         }
     }
+
+
+        // Actualiza el badge del carrito
+    function updateCartBadge(qty) {
+        var badge = document.getElementById('notificationCounter');
+        if (badge) {
+            badge.textContent = qty;
+            badge.style.display = qty > 0 ? 'inline-block' : 'none';
+        }
+    }
+    
+    // Muestra el popup de notificación
+    function showCartNotification(productName, qty) {
+        var popup = document.getElementById('notificationPopup');
+        var content = document.getElementById('notificationPopupContent');
+        if (popup && content) {
+            content.innerHTML = `<div>${qty} x ${productName} agregado(s) al carrito.</div>`;
+            popup.style.display = 'block';
+            setTimeout(function() { popup.style.display = 'none'; }, 3500); // Se oculta después de 3.5s
+        }
+    }
+    
+
 });                 
