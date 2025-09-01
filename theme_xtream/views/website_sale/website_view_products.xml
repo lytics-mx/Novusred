@@ -912,29 +912,49 @@
                                 document.addEventListener('DOMContentLoaded', function() {
                                     var qtyInput = document.getElementById('qty-input');
                                     var cartQty = document.getElementById('cart-qty');
-                                    var buyQty = document.getElementById('buy-qty');
                                     var cartForm = document.getElementById('add-to-cart-form');
-                                    var buyForm = document.getElementById('buy-now-form');
-
-                                    cartForm.addEventListener('submit', function(e) {
-                                        cartQty.value = qtyInput.value;
-                                    });
-
-                                    buyForm.addEventListener('submit', function(e) {
-                                        e.preventDefault();
-                                        buyQty.value = qtyInput.value;
-                                        var data = new FormData(buyForm);
-                                        fetch(buyForm.action, {
-                                            method: 'POST',
-                                            body: data,
-                                            credentials: 'same-origin'
-                                        })
-                                        .then(response => {
-                                            if (response.ok) {
-                                                window.location.href = '/shop/checkout?try_skip_step=true';
-                                            }
+                                
+                                    if (cartForm) {
+                                        cartForm.addEventListener('submit', function(e) {
+                                            e.preventDefault();
+                                            cartQty.value = qtyInput.value;
+                                
+                                            var data = new FormData(cartForm);
+                                            fetch(cartForm.action, {
+                                                method: 'POST',
+                                                body: data,
+                                                credentials: 'same-origin'
+                                            })
+                                            .then(response => {
+                                                if (response.ok) {
+                                                    // Obtén los datos del producto desde el DOM
+                                                    var imgSrc = document.getElementById('main-product-img').src;
+                                                    var name = document.querySelector('h2').textContent;
+                                                    var price = document.querySelector('.new-main-price') ? document.querySelector('.new-main-price').textContent : '';
+                                                    var desc = document.querySelector('.product-description') ? document.querySelector('.product-description').textContent : '';
+                                                    var qty = qtyInput.value;
+                                
+                                                    // Construye el HTML para la notificación
+                                                    var html = `
+                                                        <div style="display:flex;align-items:flex-start;">
+                                                            <img src="${imgSrc}" style="height:64px;width:64px;object-fit:contain;margin-right:12px;">
+                                                            <div>
+                                                                <div style="font-weight:600;">${qty} x ${name}</div>
+                                                                <div style="font-size:18px;color:#7c5c8a;font-weight:600;">${price}</div>
+                                                                <div style="font-size:14px;color:#333;">
+                                                                    ${desc}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    `;
+                                                    // Llama la función global (de navbar.js)
+                                                    if (typeof showCartNotification === 'function') {
+                                                        showCartNotification(html);
+                                                    }
+                                                }
+                                            });
                                         });
-                                    });
+                                    }
                                 });
                             </script>
                         </div>
