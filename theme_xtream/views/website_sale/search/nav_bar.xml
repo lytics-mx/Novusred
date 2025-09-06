@@ -174,6 +174,35 @@
                         <img src="/theme_xtream/static/src/img/logos/logo.png" alt="Logo" style="height:36px;" />                    
                     </a>
                 </nav>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var menuBtn = document.getElementById('mobileMenuBtn');
+                        var sideMenu = document.getElementById('mobileSideMenu');
+                        var closeBtn = document.getElementById('closeMobileMenu');
+                        var backdrop = document.getElementById('mobileSideMenuBackdrop');
+
+                        function openMenu() {
+                            if (sideMenu && backdrop) {
+                                sideMenu.style.transform = 'translateX(0)';
+                                sideMenu.style.display = 'block';
+                                backdrop.style.display = 'block';
+                            }
+                        }
+                        function closeMenu() {
+                            if (sideMenu && backdrop) {
+                                sideMenu.style.transform = 'translateX(-100%)';
+                                setTimeout(function() {
+                                    sideMenu.style.display = 'none';
+                                    backdrop.style.display = 'none';
+                                }, 300);
+                            }
+                        }
+
+                        if (menuBtn) menuBtn.addEventListener('click', openMenu);
+                        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+                        if (backdrop) backdrop.addEventListener('click', closeMenu);
+                    });
+                </script>
                 
                 <!-- Menú lateral móvil -->
                 <div id="mobileSideMenu" class="mobile-side-menu" style="display:none; position:fixed; top:0; left:0; width:80vw; max-width:320px; height:100vh; background:#fff; z-index:2000; box-shadow:2px 0 8px rgba(0,0,0,0.08); transition:transform 0.3s; transform:translateX(-100%);">
