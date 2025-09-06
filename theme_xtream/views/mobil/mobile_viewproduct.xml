@@ -1,45 +1,70 @@
 <odoo>
     <template id="website_view_product_xtream_mobile" inherit_id="website_sale.product">
         <xpath expr="//div[@id='wrap']" position="replace">
-            <div class="d-block d-md-none" style="padding: 0 8px;">
-                <!-- Galería de imágenes para móvil -->
-                <div class="text-center" style="margin-bottom: 18px;">
-                    <!-- Imagen principal -->
-                    <img id="main-product-img-mobile"
-                         t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                         class="img-fluid"
-                         style="max-width:100%; max-height:260px; border-radius:8px; object-fit:contain; background:#fff; margin-bottom:10px;" />
-                    <!-- Miniaturas debajo -->
-                    <div id="product-thumbs-mobile" style="display:flex; justify-content:center; gap:8px; margin-top:8px;">
-                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                             class="img-thumbnail product-thumb-mobile active"
-                             t-att-data-img="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                             style="width:48px; height:48px; object-fit:cover; border-radius:6px; cursor:pointer;" />
-                        <t t-if="product.product_image_ids">
-                            <t t-foreach="product.product_image_ids" t-as="img">
-                                <img t-att-src="'/web/image/product.image/' + str(img.id) + '/image_1920'"
-                                     class="img-thumbnail product-thumb-mobile"
-                                     t-att-data-img="'/web/image/product.image/' + str(img.id) + '/image_1920'"
-                                     style="width:48px; height:48px; object-fit:cover; border-radius:6px; cursor:pointer;" />
-                            </t>
-                        </t>
-                    </div>
+            <div class="d-block d-md-none px-3 py-2" style="font-family: 'Montserrat', Arial, sans-serif;">
+                <!-- Estado del producto -->
+                <div style="font-size:12px; color:#888;">Nuevo</div>
+                <!-- Título -->
+                <div style="font-size:18px; font-weight:600; margin-bottom:4px;">
+                    <t t-esc="product.name"/>
                 </div>
-                <!-- Aquí puedes seguir con el resto del contenido móvil... -->
+                <!-- Estrellas -->
+                <div class="mb-2">
+                    <span style="color:#0057ff; font-size:20px;">&#9733;&#9733;&#9733;&#9733;</span>
+                    <span style="color:#ccc; font-size:20px;">&#9733;</span>
+                </div>
+                <!-- Slider de imágenes -->
+                <div class="mb-2 text-center">
+                    <span style="font-size:11px; background:#f2f2f2; border-radius:8px; padding:2px 8px;">1 / 6</span>
+                </div>
+                <div class="mb-3 text-center">
+                    <img t-att-src="product.image_url" alt="Imagen producto" style="max-width:100%; border-radius:10px;"/>
+                </div>
+                <!-- Precio y descuento -->
+                <div class="mb-1" style="display:flex; align-items:center;">
+                    <span style="text-decoration:line-through; color:#888; font-size:14px; margin-right:8px;">
+                        <t t-esc="product.list_price"/>
+                    </span>
+                    <span style="font-size:24px; font-weight:700; color:#222;">
+                        $<t t-esc="product.price"/>
+                    </span>
+                    <span style="color:#ff5a1f; font-size:14px; font-weight:600; margin-left:8px;">
+                        21% OFF
+                    </span>
+                </div>
+                <div style="font-size:13px; color:#888;">120 de descuento</div>
+                <!-- Envío gratis -->
+                <div style="color:#ff5a1f; font-size:14px; font-weight:600;">Envío gratis</div>
+                <!-- Detalles -->
+                <div style="font-size:13px; color:#444;">
+                    Modelo: <t t-esc="product.default_code"/><br/>
+                    Marca: <t t-esc="product.product_brand_id.name"/><br/>
+                    Disponible
+                </div>
+                <!-- Selector de cantidad -->
+                <div class="my-3">
+                    <button class="btn btn-light w-100" style="border-radius:8px; border:1px solid #e0e0e0; text-align:left;">
+                        Cantidad: 1 (500 disponibles)
+                        <span class="float-end">&gt;</span>
+                    </button>
+                </div>
+                <!-- Métodos de pago -->
+                <div style="font-size:13px; color:#888;">Puedes pagar con:</div>
+                <div class="d-flex flex-wrap align-items-center mb-3" style="gap:8px;">
+                    <img src="/theme_xtream/static/src/img/visa.svg" style="height:24px;"/>
+                    <img src="/theme_xtream/static/src/img/mastercard.svg" style="height:24px;"/>
+                    <img src="/theme_xtream/static/src/img/amex.svg" style="height:24px;"/>
+                    <img src="/theme_xtream/static/src/img/paypal.svg" style="height:24px;"/>
+                    <img src="/theme_xtream/static/src/img/oxxo.svg" style="height:24px;"/>
+                </div>
+                <!-- Botones -->
+                <button class="btn btn-primary w-100 mb-2" style="background:#2979ff; border-radius:8px; font-weight:600;">
+                    Agregar al carrito
+                </button>
+                <button class="btn btn-primary w-100" style="background:#82b1ff; border-radius:8px; font-weight:600;">
+                    Agregar al carrito
+                </button>
             </div>
-            <script type="text/javascript">
-                document.addEventListener('DOMContentLoaded', function() {
-                    var mainImg = document.getElementById('main-product-img-mobile');
-                    var thumbs = document.querySelectorAll('#product-thumbs-mobile .product-thumb-mobile');
-                    thumbs.forEach(function(thumb) {
-                        thumb.addEventListener('click', function() {
-                            mainImg.src = thumb.getAttribute('data-img');
-                            thumbs.forEach(function(t) { t.classList.remove('active'); });
-                            thumb.classList.add('active');
-                        });
-                    });
-                });
-            </script>
         </xpath>
     </template>
 </odoo>
