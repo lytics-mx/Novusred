@@ -93,7 +93,8 @@
           '/theme_xtream/static/src/js/custom.js',
           '/theme_xtream/static/src/css/custom.css',
           '/theme_xtream/static/src/css/home.css',          
-        
+          '/theme_xtream/static/src/css/navbar.css',
+          '/theme_xtream/static/src/js/navbar.js',        
 
 
       ]
