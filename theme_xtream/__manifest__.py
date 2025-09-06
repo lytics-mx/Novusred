@@ -71,6 +71,7 @@
         'views/shop/website_details_purchase.xml',
 
         'views/csrf_token.xml',
+        'views/mobil/mobile_viewproduct.xml',
 
 
 

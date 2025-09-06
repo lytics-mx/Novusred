@@ -1,0 +1,45 @@
+<odoo>
+    <template id="website_view_product_xtream_mobile" inherit_id="website_sale.product">
+        <xpath expr="//div[@id='wrap']" position="replace">
+            <div class="d-block d-md-none" style="padding: 0 8px;">
+                <!-- Galería de imágenes para móvil -->
+                <div class="text-center" style="margin-bottom: 18px;">
+                    <!-- Imagen principal -->
+                    <img id="main-product-img-mobile"
+                         t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                         class="img-fluid"
+                         style="max-width:100%; max-height:260px; border-radius:8px; object-fit:contain; background:#fff; margin-bottom:10px;" />
+                    <!-- Miniaturas debajo -->
+                    <div id="product-thumbs-mobile" style="display:flex; justify-content:center; gap:8px; margin-top:8px;">
+                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                             class="img-thumbnail product-thumb-mobile active"
+                             t-att-data-img="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                             style="width:48px; height:48px; object-fit:cover; border-radius:6px; cursor:pointer;" />
+                        <t t-if="product.product_image_ids">
+                            <t t-foreach="product.product_image_ids" t-as="img">
+                                <img t-att-src="'/web/image/product.image/' + str(img.id) + '/image_1920'"
+                                     class="img-thumbnail product-thumb-mobile"
+                                     t-att-data-img="'/web/image/product.image/' + str(img.id) + '/image_1920'"
+                                     style="width:48px; height:48px; object-fit:cover; border-radius:6px; cursor:pointer;" />
+                            </t>
+                        </t>
+                    </div>
+                </div>
+                <!-- Aquí puedes seguir con el resto del contenido móvil... -->
+            </div>
+            <script type="text/javascript">
+                document.addEventListener('DOMContentLoaded', function() {
+                    var mainImg = document.getElementById('main-product-img-mobile');
+                    var thumbs = document.querySelectorAll('#product-thumbs-mobile .product-thumb-mobile');
+                    thumbs.forEach(function(thumb) {
+                        thumb.addEventListener('click', function() {
+                            mainImg.src = thumb.getAttribute('data-img');
+                            thumbs.forEach(function(t) { t.classList.remove('active'); });
+                            thumb.classList.add('active');
+                        });
+                    });
+                });
+            </script>
+        </xpath>
+    </template>
+</odoo>
