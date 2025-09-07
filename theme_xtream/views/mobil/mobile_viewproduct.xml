@@ -9,7 +9,7 @@
                     Nuevo
                 </div>                <!-- Título -->
                 <div style="font-size:18px; font-weight:600; margin-bottom:4px;">
-                    <t t-esc="product.name and (product.name[:40] + '...' if len(product.name) > 40 else product.name)"/>
+                    <t t-esc="product.name and (product.name[:40] + '' if len(product.name) > 40 else product.name)"/>
                 </div>
                 <div style="font-size:13px; color:#888; margin-bottom:4px;">
                     <t t-if="product.product_model">
@@ -51,25 +51,59 @@
                     </div>
                 </t>
                 <!-- Precio y descuento -->
-                <div class="mb-1" style="display:flex; align-items:center;">
-                    <span style="text-decoration:line-through; color:#888; font-size:14px; margin-right:8px;">
-                        <t t-esc="product.list_price"/>
-                    </span>
-                    <span style="font-size:24px; font-weight:700; color:#222;">
-                        <!-- $<t t-esc="product.price"/> -->
-                    </span>
-                    <span style="color:#ff5a1f; font-size:14px; font-weight:600; margin-left:8px;">
-                        21% OFF
-                    </span>
-                </div>
-                <div style="font-size:13px; color:#888;">120 de descuento</div>
-                <!-- Envío gratis -->
-                <div style="color:#ff5a1f; font-size:14px; font-weight:600;">Envío gratis</div>
-                <!-- Detalles -->
-                <div style="font-size:13px; color:#444;">
-                    Modelo: <t t-esc="product.default_code"/><br/>
-                    <!-- Marca: <t t-esc="product.product_brand_id.name"/><br/> -->
-                    Disponible
+                <div class="card-body accessory-card-body accessory-card-100" style="text-align: left; padding: 4px 2px 2px 2px;">
+                    <!-- Tag -->
+                    <t t-if="product.product_tag_ids">
+                        <div class="d-flex justify-content-start mb-2 accessory-badge-container">
+                            <span class="badge bg-primary accessory-badge" style="border-radius: 0; text-transform: uppercase; font-size:10px; padding:2px 4px; max-width:90px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                <t t-esc="product.product_tag_ids[0].name"/>
+                            </span>
+                        </div>
+                    </t>
+
+                    <!-- Precio con descuento -->
+                    <t t-set="has_list" t-value="bool(product.list_price)"/>
+                    <t t-set="has_price" t-value="bool(product.price)"/>
+                    <t t-set="discount_amount" t-value="(product.list_price - product.price) if (product.list_price and product.price and product.list_price > product.price) else 0"/>
+                    <t t-set="discount_percentage" t-value="int((discount_amount / product.list_price) * 100) if (product.list_price and discount_amount) else 0"/>
+
+                    <t t-if="discount_amount &gt; 0">
+                        <div class="mb-1" style="display:flex; align-items:center;">
+                            <span style="text-decoration:line-through; color:#888; font-size:14px; margin-right:8px;">
+                                $<t t-esc="'{:,}'.format(int(product.list_price or 0))"/>
+                            </span>
+                            <span style="font-size:24px; font-weight:700; color:#222;">
+                                $<t t-esc="'{:,}'.format(int(product.price or 0))"/>
+                            </span>
+                            <span style="color:#ff5a1f; font-size:14px; font-weight:600; margin-left:8px;">
+                                <t t-if="discount_percentage &gt; 0"><t t-esc="discount_percentage"/>% OFF</t>
+                                <t t-elif="discount_amount &gt; 0">-$<t t-esc="'{:,}'.format(int(discount_amount))"/> OFF</t>
+                            </span>
+                        </div>
+                        <div style="font-size:13px; color:#888;">
+                            $<t t-esc="'{:,}'.format(int(discount_amount))"/> de descuento
+                        </div>
+                    </t>
+                    <t t-elif="has_list">
+                        <div class="mb-1" style="display:flex; align-items:center;">
+                            <span style="font-size:24px; font-weight:700; color:#222;">
+                                $<t t-esc="'{:,}'.format(int(product.list_price or 0))"/>
+                            </span>
+                        </div>
+                    </t>
+
+                    <!-- Envío gratis -->
+                    <t t-if="product.free_shipping">
+                        <div style="color:#ff5a1f; font-size:14px; font-weight:600;">Envío gratis</div>
+                    </t>
+
+                    <!-- Detalles -->
+                    <div style="font-size:13px; color:#444;">
+                        Modelo: <t t-esc="product.default_code"/><br/>
+                        Marca: <t t-esc="product.brand_type_id.name"/><br/>
+
+                        Disponible
+                    </div>
                 </div>
                 <!-- Selector de cantidad -->
                 <div class="my-3">
