@@ -112,16 +112,14 @@
                 <div class="my-3">
                     <button type="button" class="btn btn-light w-100" id="qty-toggle-btn" style="border-radius:8px; border:1px solid #e0e0e0; text-align:left; display:flex; align-items:center; justify-content:space-between; padding:0.5rem;">
                         <span>
-                            Cantidad: <span id="qty-toggle-value"></span>
-                            <span style="color:#888; font-size:14px;">(<t t-esc="int(product.qty_available)"/> disponibles)</span>
+                            Disponible: <strong><t t-esc="int(product.qty_available)"/></strong>
                         </span>
                         <span class="float-end">&gt;</span>
                     </button>
 
-                    <div id="mobile-qty-container" style="display:none; margin-top:8px; align-items:center;">
-                        <div style="font-size:16px; margin-bottom:6px; width:100%; display:flex; align-items:center; justify-content:space-between;">
-                            <span style="font-weight:500;">Cantidad:</span>
-                            <span class="input-group" style="width:auto; display:inline-flex; vertical-align:middle; margin-left:6px;">
+                    <div id="mobile-qty-container" style="display:none; margin-top:8px; align-items:center; justify-content:center;">
+                        <div style="width:100%; display:flex; align-items:center; justify-content:center;">
+                            <span class="input-group" style="width:auto; display:inline-flex; vertical-align:middle;">
                                 <button type="button" class="btn" id="qty-minus" style="min-width:28px; font-size:20px; padding:0; background:transparent; border:none; color:#222;">-</button>
                                 <input id="qty-input" type="number" name="add_qty" value="1" min="1" t-att-max="product.qty_available"
                                     class="form-control text-center"
@@ -165,14 +163,8 @@
                             var qtyInput = document.getElementById('qty-input');
                             var minusBtn = document.getElementById('qty-minus');
                             var plusBtn = document.getElementById('qty-plus');
-                            var toggleValue = document.getElementById('qty-toggle-value');
 
                             if (!toggleBtn || !container || !qtyInput) return;
-
-                            function updateToggleText() {
-                                var val = parseInt(qtyInput.value) || 1;
-                                toggleValue.textContent = val;
-                            }
 
                             toggleBtn.addEventListener('click', function() {
                                 var isOpen = container.style.display === 'flex' || container.style.display === 'block';
@@ -189,14 +181,12 @@
                                 var val = parseInt(qtyInput.value) || 1;
                                 if (val > 1) {
                                     qtyInput.value = val - 1;
-                                    updateToggleText();
                                 }
                             });
                             plusBtn && plusBtn.addEventListener('click', function() {
                                 var val = parseInt(qtyInput.value) || 1;
                                 if (val < max) {
                                     qtyInput.value = val + 1;
-                                    updateToggleText();
                                 }
                             });
                             qtyInput.addEventListener('input', function() {
@@ -204,11 +194,7 @@
                                 if (val < 1) val = 1;
                                 if (val > max) val = max;
                                 qtyInput.value = val;
-                                updateToggleText();
                             });
-
-                            // initialize
-                            updateToggleText();
                         });
                     ]]></script>
                 </t>
