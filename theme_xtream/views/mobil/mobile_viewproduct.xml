@@ -51,7 +51,7 @@
                     </div>
                 </t>
                 <!-- Precio y descuento -->
-                <div class="card-body mobile-card-body">
+                <div class="card-body mobile-card-body" style="text-align:left;">
                     <!-- <t t-if="product.product_tag_ids">
                         <div class="d-flex justify-content-start mb-2 mobile-badge-container">
                             <span class="badge bg-primary mobile-badge" style="border-radius: 0; text-transform: uppercase;">
@@ -65,12 +65,12 @@
                                 $<t t-esc="'{:,}'.format(int(product.list_price))" />
                             </span>
                         </div>
-                        <div class="d-flex align-items-center justify-content-between mobile-price-container">
+                        <div class="d-flex align-items-center justify-content-start mobile-price-container" style="text-align:left; gap:8px;">
                             <span class="text-dark fw-bold mobile-main-price" style="font-size: 28px; color: #000; font-weight: bold;">
                                 $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
                             </span>
                             <t t-if="product.discount_percentage or product.fixed_discount">
-                                <span class="mobile-discount" style="font-size: 16px; font-weight: normal; color: #FF5207;">
+                                <span class="mobile-discount" style="font-size: 16px; font-weight: normal; color: #FF5207; margin-left:8px;">
                                     <t t-if="product.discount_percentage">
                                         <t t-esc="int(product.discount_percentage)" />% OFF
                                     </t>
@@ -89,13 +89,19 @@
                         </t>
                     </t>
                     <t t-elif="product.list_price">
-                        <span class="fw-bold d-block mobile-main-price">
+                        <span class="fw-bold d-block mobile-main-price" style="text-align:left;">
                             $<t t-esc="'{:,}'.format(int(product.list_price))" />
                         </span>
                     </t>
                 </div>
                 <!-- Envío gratis -->
-                <div style="color:#ff5a1f; font-size:14px; font-weight:600;">Envío gratis</div>
+                <t t-if="product.free_shipping">
+                    <div class="mt-0 mobile-shipping d-flex justify-content-start" style="text-align:left;">
+                        <span class="text-orange mobile-shipping-text">
+                            Envío gratis
+                        </span>
+                    </div>
+                </t>
                 <!-- Detalles -->
                 <div style="font-size:13px; color:#444;">
                         Modelo: <t t-esc="product.default_code"/><br/>
