@@ -52,14 +52,16 @@
                 </t>
                 <!-- Precio y descuento -->
                 <div class="card-body mobile-card-body">
-                <t t-if="product.discounted_price &lt; product.list_price">
-                    <div class="text-muted" style="font-size:13px;">
-                        $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))"/>
-                    </div>
-                </t>
+                    <!-- <t t-if="product.product_tag_ids">
+                        <div class="d-flex justify-content-start mb-2 mobile-badge-container">
+                            <span class="badge bg-primary mobile-badge" style="border-radius: 0; text-transform: uppercase;">
+                                <t t-esc="product.product_tag_ids[0].name"/>
+                            </span>
+                        </div>
+                    </t> -->
                     <t t-if="product.discounted_price &lt; product.list_price">
                         <div class="mt-0 mobile-discount-amount">
-                            <span class="text-muted" style="font-size: 16px;">
+                            <span class="text-muted" style="font-size: 16px; text-decoration: line-through;">
                                 $<t t-esc="'{:,}'.format(int(product.list_price))" />
                             </span>
                         </div>
@@ -78,6 +80,13 @@
                                 </span>
                             </t>
                         </div>
+                        <t t-if="product.list_price and product.discounted_price and (product.list_price - product.discounted_price) &gt; 0">
+                            <div class="mt-0 mobile-discount-amount">
+                                <span class="text-muted">
+                                    $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" /> descuento
+                                </span>
+                            </div>
+                        </t>
                     </t>
                     <t t-elif="product.list_price">
                         <span class="fw-bold d-block mobile-main-price">
