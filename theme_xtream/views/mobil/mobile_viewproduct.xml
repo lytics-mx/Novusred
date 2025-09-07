@@ -21,36 +21,35 @@
                 </div>
                 <!-- Estrellas -->
                 <div class="mb-2">
-                    <t t-set="stars">
-                        <t t-if="product.sale_order_count > 100">4.5</t>
-                        <t t-elif="product.sale_order_count > 50">3</t>
-                        <t t-elif="product.sale_order_count > 25">2</t>
-                        <t t-else="">1</t>
-                    </t>
-                    <t t-if="stars == '4.5'">
-                        <span style="color:#0057ff; font-size:20px;">&#9733;&#9733;&#9733;&#9733;</span>
-                        <span style="color:#0057ff; font-size:20px;">&#189;</span>
-                    </t>
-                    <t t-elif="stars == '3'">
-                        <span style="color:#0057ff; font-size:20px;">&#9733;&#9733;&#9733;</span>
-                        <span style="color:#ccc; font-size:20px;">&#9733;&#9733;</span>
-                    </t>
-                    <t t-elif="stars == '2'">
-                        <span style="color:#0057ff; font-size:20px;">&#9733;&#9733;</span>
-                        <span style="color:#ccc; font-size:20px;">&#9733;&#9733;&#9733;</span>
-                    </t>
-                    <t t-else="">
-                        <span style="color:#0057ff; font-size:20px;">&#9733;</span>
-                        <span style="color:#ccc; font-size:20px;">&#9733;&#9733;&#9733;&#9733;</span>
-                    </t>
+                    <span style="color:#0057ff; font-size:20px;">&#9733;&#9733;&#9733;&#9733;</span>
+                    <span style="color:#ccc; font-size:20px;">&#9733;</span>
                 </div>
                 <!-- Slider de imágenes -->
                 <div class="mb-2 text-center">
-                    <span style="font-size:11px; background:#f2f2f2; border-radius:8px; padding:2px 8px;">1 / 6</span>
+                    <t t-set="pcount" t-value="1 + (len(product.product_image_ids) if product.product_image_ids else 0)"/>
+                    <span style="font-size:11px; background:#f2f2f2; border-radius:8px; padding:2px 8px;">
+                        <t t-esc="1"/> / <t t-esc="pcount"/>
+                    </span>
                 </div>
                 <div class="mb-3 text-center">
-                    <!-- <img t-att-src="product.image_url" alt="Imagen producto" style="max-width:100%; border-radius:10px;"/> -->
+                    <!-- Imagen principal primero -->
+                    <img id="main-product-img"
+                         t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                         alt="Imagen principal"
+                         style="max-width:100%; border-radius:10px; object-fit:contain;"/>
                 </div>
+                <!-- Imágenes adicionales (si existen) -->
+                <t t-if="product.product_image_ids">
+                    <div class="d-flex justify-content-center gap-2 mb-3" style="overflow:auto; padding-bottom:4px;">
+                        <t t-foreach="product.product_image_ids" t-as="img">
+                            <img t-att-src="'/web/image/product.image/' + str(img.id) + '/image_1920'"
+                                 t-att-alt="img.name or 'Imagen adicional'"
+                                 class="img-thumbnail thumb-mini"
+                                 t-att-data-img="'/web/image/product.image/' + str(img.id) + '/image_1920'"
+                                 style="height:64px; width:auto; cursor:pointer; border-radius:8px;"/>
+                        </t>
+                    </div>
+                </t>
                 <!-- Precio y descuento -->
                 <div class="mb-1" style="display:flex; align-items:center;">
                     <span style="text-decoration:line-through; color:#888; font-size:14px; margin-right:8px;">
