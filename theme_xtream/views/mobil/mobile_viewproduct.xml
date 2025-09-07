@@ -111,27 +111,24 @@
                 <!-- Selector de cantidad -->
                 <div class="my-3">
                     <button type="button" class="btn btn-light w-100" id="qty-toggle-btn" style="border-radius:8px; border:1px solid #e0e0e0; text-align:left; display:flex; align-items:center; justify-content:space-between; padding:0.5rem;">
-                        <span>
-                            Cantidad: <span id="qty-toggle-value"></span>
-                            <span style="color:#888; font-size:14px;">(<t t-esc="int(product.qty_available)"/> disponibles)</span>
+                        <span id="qty-toggle-text">
+                            <span id="qty-toggle-value"></span>
+                            <span id="qty-available-text" style="color:#888; font-size:14px; margin-left:6px;"></span>
                         </span>
                         <span class="float-end">&gt;</span>
                     </button>
 
                     <div id="mobile-qty-container" style="display:none; margin-top:8px; align-items:center;">
-                        <div style="font-size:16px; margin-bottom:6px; width:100%; display:flex; align-items:center; justify-content:space-between;">
-                            <span style="font-weight:500;">Cantidad:</span>
-                            <span class="input-group" style="width:auto; display:inline-flex; vertical-align:middle; margin-left:6px;">
-                                <button type="button" class="btn" id="qty-minus" style="min-width:28px; font-size:20px; padding:0; background:transparent; border:none; color:#222;">-</button>
-                                <input id="qty-input" type="number" name="add_qty" value="1" min="1" t-att-max="product.qty_available"
-                                    class="form-control text-center"
-                                    style="width:2.5em; min-width:32px; max-width:3em; padding:0 4px; border:none; box-shadow:none; background:transparent; outline:none; font-size:14px;"
-                                    onwheel="return false;"
-                                    inputmode="numeric"
-                                    maxlength="4"
-                                />
-                                <button type="button" class="btn" id="qty-plus" style="min-width:28px; font-size:20px; padding:0; background:transparent; border:none; color:#222;">+</button>
-                            </span>
+                        <div style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px;">
+                            <button type="button" class="btn" id="qty-minus" style="min-width:36px; height:36px; font-size:20px; padding:0; background:transparent; border:1px solid #e0e0e0; color:#222; border-radius:6px;">-</button>
+                            <input id="qty-input" type="number" name="add_qty" value="1" min="1" t-att-max="product.qty_available"
+                                class="form-control text-center"
+                                style="width:3.5em; min-width:48px; max-width:4.5em; padding:0 4px; border:1px solid #e0e0e0; box-shadow:none; background:transparent; outline:none; font-size:16px; border-radius:6px;"
+                                onwheel="return false;"
+                                inputmode="numeric"
+                                maxlength="4"
+                            />
+                            <button type="button" class="btn" id="qty-plus" style="min-width:36px; height:36px; font-size:20px; padding:0; background:transparent; border:1px solid #e0e0e0; color:#222; border-radius:6px;">+</button>
                         </div>
                     </div>
                 </div>
@@ -149,9 +146,9 @@
                         }
                         /* Ajusta el ancho del input según el número de dígitos */
                         #qty-input {
-                            width: 2.5em !important;
-                            min-width: 32px !important;
-                            max-width: 3em !important;
+                            width: 3.5em !important;
+                            min-width: 48px !important;
+                            max-width: 4.5em !important;
                             text-align: center;
                         }
                     </style>
@@ -166,12 +163,22 @@
                             var minusBtn = document.getElementById('qty-minus');
                             var plusBtn = document.getElementById('qty-plus');
                             var toggleValue = document.getElementById('qty-toggle-value');
+                            var availableText = document.getElementById('qty-available-text');
 
                             if (!toggleBtn || !container || !qtyInput) return;
 
+                            var max = parseInt(qtyInput.getAttribute('max')) || 9999;
+
                             function updateToggleText() {
                                 var val = parseInt(qtyInput.value) || 1;
-                                toggleValue.textContent = val;
+                                // If the selected quantity equals the available stock, show only "(N disponibles)"
+                                if (val === max) {
+                                    toggleValue.textContent = '';
+                                    availableText.textContent = '(' + max + ' disponibles)';
+                                } else {
+                                    toggleValue.textContent = val;
+                                    availableText.textContent = '(' + max + ' disponibles)';
+                                }
                             }
 
                             toggleBtn.addEventListener('click', function() {
@@ -180,11 +187,12 @@
                                 if (!isOpen) {
                                     // show -> focus input
                                     qtyInput.focus();
+                                    // select text for quick typing on mobile
+                                    try { qtyInput.select(); } catch (e) {}
                                 }
                             });
 
                             // Quantity control logic
-                            var max = parseInt(qtyInput.getAttribute('max')) || 9999;
                             minusBtn && minusBtn.addEventListener('click', function() {
                                 var val = parseInt(qtyInput.value) || 1;
                                 if (val > 1) {
@@ -207,10 +215,30 @@
                                 updateToggleText();
                             });
 
+                            // prevent mouse wheel changing number on focused input
+                            qtyInput.addEventListener('wheel', function(e){ e.preventDefault(); });
+
                             // initialize
                             updateToggleText();
+
+                            // Update hidden cart inputs when forms submit
+                            var addToCartForm = document.getElementById('add-to-cart-form-mobile');
+                            var buyNowForm = document.getElementById('buy-now-form-mobile');
+                            if (addToCartForm) {
+                                addToCartForm.addEventListener('submit', function() {
+                                    var cartQty = document.getElementById('cart-qty');
+                                    if (cartQty) cartQty.value = qtyInput.value;
+                                });
+                            }
+                            if (buyNowForm) {
+                                buyNowForm.addEventListener('submit', function() {
+                                    var buyQty = document.getElementById('buy-qty');
+                                    if (buyQty) buyQty.value = qtyInput.value;
+                                });
+                            }
                         });
                     ]]></script>
+                </t>
                 </t>
                 <!-- Métodos de pago -->
                 <div style="font-size:13px; color:#888;">Puedes pagar con:</div>
