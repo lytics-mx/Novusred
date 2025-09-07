@@ -269,39 +269,41 @@
         Productos que podrían interesarte
     </div>
     <t t-foreach="suggested_products" t-as="sug">
-        <div class="d-flex align-items-start mb-3 px-2" style="gap:10px;">
-            <img t-att-src="'/web/image/product.template/' + str(sug.id) + '/image_1920'"
-                 alt="Imagen producto"
-                 style="width:70px; height:70px; object-fit:contain; border-radius:8px; background:#f7f7f7;"/>
-            <div style="flex:1;">
-                <div style="font-size:13px; font-weight:600; color:#222; line-height:1.2; margin-bottom:2px;">
-                    <t t-esc="sug.name and (sug.name[:45] + '...' if len(sug.name) > 45 else sug.name)"/>
-                </div>
-                <div class="d-flex align-items-center" style="gap:6px;">
-                    <span style="font-size:18px; font-weight:700; color:#000;">
-                        $<t t-esc="'{:,}'.format(int(sug.discounted_price or sug.list_price or 0))"/>
-                    </span>
-                    <t t-if="sug.discount_percentage">
-                        <span style="font-size:13px; color:#FF5207; font-weight:600;">
-                            <t t-esc="int(sug.discount_percentage)"/>% OFF
+        <t t-if="sug.product_tag_ids and 1 in [tag.id for tag in sug.product_tag_ids]">
+            <div class="d-flex align-items-start mb-3 px-2" style="gap:10px;">
+                <img t-att-src="'/web/image/product.template/' + str(sug.id) + '/image_1920'"
+                     alt="Imagen producto"
+                     style="width:70px; height:70px; object-fit:contain; border-radius:8px; background:#f7f7f7;"/>
+                <div style="flex:1;">
+                    <div style="font-size:13px; font-weight:600; color:#222; line-height:1.2; margin-bottom:2px;">
+                        <t t-esc="sug.name and (sug.name[:45] + '...' if len(sug.name) > 45 else sug.name)"/>
+                    </div>
+                    <div class="d-flex align-items-center" style="gap:6px;">
+                        <span style="font-size:18px; font-weight:700; color:#000;">
+                            $<t t-esc="'{:,}'.format(int(sug.discounted_price or sug.list_price or 0))"/>
                         </span>
+                        <t t-if="sug.discount_percentage">
+                            <span style="font-size:13px; color:#FF5207; font-weight:600;">
+                                <t t-esc="int(sug.discount_percentage)"/>% OFF
+                            </span>
+                        </t>
+                    </div>
+                    <t t-if="sug.list_price and sug.discounted_price and (sug.list_price - sug.discounted_price) > 0">
+                        <div style="font-size:12px; color:#888;">
+                            $<t t-esc="'{:,}'.format(int(sug.list_price - sug.discounted_price))"/> de descuento
+                        </div>
                     </t>
-                </div>
-                <t t-if="sug.list_price and sug.discounted_price and (sug.list_price - sug.discounted_price) > 0">
+                    <t t-if="sug.free_shipping">
+                        <div style="font-size:13px; color:#FF5207; font-weight:600;">
+                            Envío gratis
+                        </div>
+                    </t>
                     <div style="font-size:12px; color:#888;">
-                        $<t t-esc="'{:,}'.format(int(sug.list_price - sug.discounted_price))"/> de descuento
+                        por <t t-esc="sug.brand_type_id and sug.brand_type_id.name"/>
                     </div>
-                </t>
-                <t t-if="sug.free_shipping">
-                    <div style="font-size:13px; color:#FF5207; font-weight:600;">
-                        Envío gratis
-                    </div>
-                </t>
-                <div style="font-size:12px; color:#888;">
-                    por <t t-esc="sug.brand_type_id and sug.brand_type_id.name"/>
                 </div>
             </div>
-        </div>
+        </t>
     </t>
 </div>
 
