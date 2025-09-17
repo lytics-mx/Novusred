@@ -591,8 +591,8 @@
                                 <!-- Desktop version (5 per slide) - visible on md screens and up -->
                                 <t t-set="chunks" t-value="[brands[i:i+5] for i in range(0, len(brands), 5)]" />
                                 <t t-foreach="chunks" t-as="chunk" t-key="chunk_index">
-                                    <div t-att-class="'carousel-item d-none d-md-block' + (' active' if chunk_index == 0 else '')">
-                                        <div class="row g-3 align-items-stretch">
+                                    <div t-att-class="'carousel-item' + (' active' if chunk_index == 0 else '')">
+                                        <div class="row g-3 align-items-stretch justify-content-center">
                                             <t t-foreach="chunk" t-as="brand" t-key="brand.id">
                                                 <div class="col-12 col-sm-6 col-md-4 col-lg-2 d-flex justify-content-center align-items-stretch" style="flex: 1 0 20%; max-width: 20%;">
                                                     <div class="position-relative text-center w-100 d-flex flex-column h-100"
@@ -601,11 +601,11 @@
                                                         <img t-att-src="'data:image/png;base64,' + brand.cover_image.decode('utf-8')"
                                                              alt="Portada de la Marca"
                                                              style="width: 100%; height: 120px; object-fit: cover;" />
-                                                        <!-- Ícono de la marca (icon_image) sin borde -->
-                                                        <div style="background-color: white; padding: 10px; margin-top: -20px; width: 80%; margin-left: auto; margin-right: auto;">
+                                                        <!-- Ícono de la marca circular y sin fondo (tamaño 171px) -->
+                                                        <div style="background-color: transparent; padding: 10px; margin-top: -86px; width: 171px; height: 171px; margin-left: auto; margin-right: auto; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center;">
                                                             <img t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')"
                                                                  alt="Ícono de la Marca"
-                                                                 style="width: 100%; height: auto; object-fit: contain;" />
+                                                                 style="width: 100%; height: 100%; object-fit: contain; display: block; background: transparent; border: none;" />
                                                         </div>
                                                         <!-- Nombre de la marca -->
                                                         <div style="margin-top: 10px;">
@@ -620,8 +620,8 @@
                                                                 <t t-foreach="published_products[:3]" t-as="product" t-key="product.id">
                                                                     <div style="width: 60px; height: 60px; border-radius: 5px; overflow: hidden;">
                                                                         <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                                                                            alt="Producto"
-                                                                            style="width: 100%; height: 100%; object-fit: cover;" />
+                                                                             alt="Producto"
+                                                                             style="width: 100%; height: 100%; object-fit: cover;" />
                                                                     </div>
                                                                 </t>
                                                             </t>
@@ -639,56 +639,7 @@
                                     </div>
                                 </t>
                                 
-                                <!-- Mobile version (2 per slide) - visible on sm screens and below -->
-                                <t t-set="mobile_chunks" t-value="[brands[i:i+2] for i in range(0, len(brands), 2)]" />
-                                <t t-foreach="mobile_chunks" t-as="chunk" t-key="chunk_index">
-                                    <div t-att-class="'carousel-item d-block d-md-none' + (' active' if chunk_index == 0 else '')">
-                                        <div class="row g-3 align-items-stretch">
-                                            <t t-foreach="chunk" t-as="brand" t-key="brand.id">
-                                                <div class="col-6 d-flex justify-content-center align-items-stretch">
-                                                    <div class="position-relative text-center w-100 d-flex flex-column h-100"
-                                                         style="background-color: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.10); min-height: 280px;">
-                                                        <!-- Imagen de portada (cover_image) -->
-                                                        <img t-att-src="'data:image/png;base64,' + brand.cover_image.decode('utf-8')"
-                                                             alt="Portada de la Marca"
-                                                             style="width: 100%; height: 80px; object-fit: cover;" />
-                                                        <!-- Ícono de la marca (icon_image) sin borde -->
-                                                        <div style="background-color: white; padding: 8px; margin-top: -20px; width: 80%; margin-left: auto; margin-right: auto;">
-                                                            <img t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')"
-                                                                 alt="Ícono de la Marca"
-                                                                 style="width: 100%; height: auto; object-fit: contain;" />
-                                                        </div>
-                                                        <!-- Nombre de la marca -->
-                                                        <div style="margin-top: 8px;">
-                                                            <span style="font-family: 'Questrial', sans-serif; font-size: 14px; font-weight: bold;">
-                                                                <t t-esc="brand.name" />
-                                                            </span>
-                                                        </div>
-                                                        <!-- Productos relacionados -->
-                                                        <div class="d-flex justify-content-center gap-1 flex-wrap mt-1" style="min-height: 50px;">
-                                                            <t t-set="published_products" t-value="brand.product_ids.filtered(lambda p: p.website_published)" />
-                                                            <t t-if="published_products">
-                                                                <t t-foreach="published_products[:3]" t-as="product" t-key="product.id">
-                                                                    <div style="width: 45px; height: 45px; border-radius: 5px; overflow: hidden;">
-                                                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                                                                            alt="Producto"
-                                                                            style="width: 100%; height: 100%; object-fit: cover;" />
-                                                                    </div>
-                                                                </t>
-                                                            </t>
-                                                        </div>
-                                                        <!-- Enlace para ver más SIEMPRE abajo -->
-                                                        <div style="margin-top: auto; margin-bottom: 10px;">
-                                                            <a t-att-href="'/brand/' + (brand.name or '').replace(' ', '').lower()" style="font-family: 'Questrial', sans-serif; font-size: 13px; color: #6c757d; text-decoration: none;">
-                                                                Ver marca
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </t>
-                                        </div>
-                                    </div>
-                                </t>
+                                
                             </div>
                             <!-- Controles del carrusel -->
                             <button class="carousel-control-prev" type="button" data-bs-target="#brandsCarousel" data-bs-slide="prev">
