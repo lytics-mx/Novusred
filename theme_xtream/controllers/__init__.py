@@ -5,7 +5,7 @@ from . import historial_views
 from . import category_views
 from . import brand_views
 
-from . import search
+#from . import search
 
 # from . import product_views
 # from . import img_banner
