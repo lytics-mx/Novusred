@@ -60,7 +60,7 @@ class WebsiteSearch(http.Controller):
         if not products:
             products = product_template.search(
                 ['|',
-                 ('name', '=ilike', query_sanitized + '%'),
+                 ('name', 'ilike', query_sanitized + '%'),
                  ('product_model', '=ilike', query_sanitized + '%')],
                 order='list_price asc',
                 limit=10
@@ -71,5 +71,5 @@ class WebsiteSearch(http.Controller):
             'name': product.name.replace(' ', '-'),
             'price': product.list_price,
         } for product in products]
-        
+
         return request.make_response(json.dumps({'results': results}), headers=[('Content-Type', 'application/json')])
