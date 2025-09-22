@@ -147,10 +147,11 @@
                                 
                                 <t t-if="product_tags">
                                     <!-- Mobile view stays the same -->
+                                    <!-- Primer grupo de 3 tags -->
                                     <div class="d-block d-md-none">
-                                        <div class="row g-3" style="margin: 0 auto;">
-                                            <t t-foreach="product_tags[0:4]" t-as="tag">
-                                                <div class="col-3 px-2">
+                                        <div class="row g-3 justify-content-center" style="margin: 0 auto;">
+                                            <t t-foreach="product_tags[0:3]" t-as="tag">
+                                                <div class="col-4 px-2">
                                                     <a t-att-href="'/offers?tag_id=' + str(tag.id)" class="text-decoration-none">
                                                         <div class="text-center position-relative tag-item clickable-tag">
                                                             <div class="tag-icon-container" style="width: 85px; height: 85px; border-radius: 50%; background-color: #ffffff; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
@@ -168,6 +169,30 @@
                                             </t>
                                         </div>
                                     </div>
+                                    <!-- Segundo grupo de 3 tags -->
+                                    <t t-if="len(product_tags) > 3">
+                                        <div class="d-block d-md-none mt-3">
+                                            <div class="row g-3 justify-content-center" style="margin: 0 auto;">
+                                                <t t-foreach="product_tags[3:6]" t-as="tag">
+                                                    <div class="col-4 px-2">
+                                                        <a t-att-href="'/offers?tag_id=' + str(tag.id)" class="text-decoration-none">
+                                                            <div class="text-center position-relative tag-item clickable-tag">
+                                                                <div class="tag-icon-container" style="width: 85px; height: 85px; border-radius: 50%; background-color: #ffffff; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                                                                    <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
+                                                                         t-att-alt="tag.name"
+                                                                         class="tag-icon"
+                                                                         style="width: 45px; height: 45px;" />
+                                                                </div>
+                                                                <div class="tag-name" style="font-size: 12px; margin-top: 8px; color: #000; line-height: 1.2;">
+                                                                    <t t-esc="tag.name" />
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </t>
 
                                     <!-- Modified Desktop view with more separation between icons -->
                                     <div class="d-none d-md-block">
