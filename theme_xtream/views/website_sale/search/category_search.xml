@@ -3,26 +3,46 @@
     <template id="category_search" name="Categorías">
         <t t-call="website.layout">
             <div id="wrap" class="oe_structure oe_empty" style="font-family: 'Questrial', sans-serif;">
-                <!-- Verifica que la ruta de la imagen sea válidas -->
+                <!-- Verifica que la ruta de la imagen sea válida -->
                 <t t-if="category and category.banner_image">
-                    <div style="position: relative;">
+                    <!-- Desktop banner -->
+                    <div class="d-none d-md-block" style="position: relative;">
                         <img t-att-src="'/web/image/product.category/' + str(category.id) + '/banner_image'"
                              alt="Imagen de Banner"
                              class="img-fluid"
                              style="width: 1920px; height: 380px; object-fit: cover; display: block; margin: 0 auto;" />
-                        <div class="d-none d-md-block" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
+                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
+                    </div>
+
+                    <!-- Mobile banner -->
+                    <div class="d-block d-md-none" style="position: relative;">
+                        <img t-att-src="'/web/image/product.category/' + str(category.id) + '/banner_image'"
+                             alt="Imagen de Banner Mobile"
+                             class="img-fluid"
+                             style="width: 100%; height: 200px; object-fit: cover; display: block; margin: 0 auto;" />
+                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 60px;"></div>
                     </div>
                 </t>
                 <t t-else="">
-                    <!-- Default image if no active brand banner -->
-                    <div style="position: relative;">
-                        <img src="/theme_xtream/static/src/img/product-img/imagenes_home.png" 
-                             alt="Default Image" 
+                    <!-- Default images if no active category banner -->
+                    <!-- Desktop default -->
+                    <div class="d-none d-md-block" style="position: relative;">
+                        <img src="/theme_xtream/static/src/img/product-img/imagenes_home.png"
+                             alt="Default Image Desktop"
                              class="img-fluid"
-                             style="width: 100%; height: auto; max-height: 200px; object-fit: cover;" /> <!-- Added max-height for mobile -->
-                        <div class="d-none d-md-block" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
+                             style="width: 100%; max-width: 1920px; height: 380px; object-fit: cover; display: block; margin: 0 auto;" />
+                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
                     </div>
-                </t>     
+
+                    <!-- Mobile default -->
+                    <div class="d-block d-md-none" style="position: relative;">
+                        <img src="/theme_xtream/static/src/img/product-img/imagenes_home.png"
+                             alt="Default Image Mobile"
+                             class="img-fluid"
+                             style="width: 100%; height: 180px; object-fit: cover; display: block; margin: 0 auto;" />
+                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 60px;"></div>
+                    </div>
+                </t>
 
                 <!-- Nuestras Mejores category -->
                 <div class="container mt-4" style="padding: 5px 0;">
