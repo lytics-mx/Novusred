@@ -15,8 +15,7 @@ class SaleOrderLine(models.Model):
     
     def name_get(self):
         result = []
-        for product in self.product_id:
-            name = f"{product.product_model or ''} - {product.name or ''}"
-            result.append((product.id, name))
+        for line in self:
+            name = f"{line.product_model or ''} - {line.product_id.name or ''}"
+            result.append((line.id, name))
         return result
-            
