@@ -24,21 +24,21 @@ class SaleOrderLine(models.Model):
             name = f"{product.product_model or ''} - {product.name or ''}"
             result.append((product.id, name))
         return result
-    
+        
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
-            # Solo validar si la línea es de producto (no nota ni sección)
-            if not vals.get('display_type') and not vals.get('product_id'):
+            # Solo validar si la línea es de producto (display_type vacío o None)
+            display_type = vals.get('display_type', False)
+            if not display_type and not vals.get('product_id'):
                 raise ValidationError(_("Debe seleccionar un producto para cada línea de pedido."))
         return super().create(vals_list)
     
     def write(self, vals):
-        # Solo validar si la línea es de producto (no nota ni sección)
-        if ('product_id' in vals or 'display_type' in vals):
-            for line in self:
-                display_type = vals.get('display_type', line.display_type)
-                product_id = vals.get('product_id', line.product_id.id)
-                if not display_type and not product_id:
-                    raise ValidationError(_("Debe seleccionar un producto para cada línea de pedido."))
+        # Solo validar si la línea es de producto (display_type vacío o None)
+        for line in self:
+            display_type = vals.get('display_type', line.display_type)
+            product_id = vals.get('product_id', line.product_id.id)
+            if not display_type and not product_id:
+                raise ValidationError(_("Debe seleccionar un producto para cada línea de pedido."))
         return super().write(vals)
