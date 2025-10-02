@@ -10,14 +10,14 @@ class SaleOrderLine(models.Model):
         store=True,
         readonly=True
     )
-
+    
     product_id = fields.Many2one(
         'product.product',
         string='Producto',
         domain=[('sale_ok', '=', True)],
-        required=True
+        required=False  # <-- Cambia esto a False
     )
-
+    
     def name_get(self):
         result = []
         for product in self.product_id:
