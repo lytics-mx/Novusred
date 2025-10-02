@@ -1,5 +1,4 @@
-from odoo import models, fields, api, _
-from odoo.exceptions import ValidationError
+from odoo import models, fields, api
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
@@ -10,12 +9,11 @@ class SaleOrderLine(models.Model):
         store=True,
         readonly=True
     )
-    
 
     
     def name_get(self):
         result = []
-        for line in self:
-            name = f"{line.product_model or ''} - {line.product_id.name or ''}"
-            result.append((line.id, name))
+        for product in self.product_id:
+            name = f"{product.product_model or ''} - {product.name or ''}"
+            result.append((product.id, name))
         return result
