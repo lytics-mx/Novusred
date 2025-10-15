@@ -71,7 +71,10 @@
         'views/shop/website_details_purchase.xml',
 
         'views/csrf_token.xml',
+
+# Vistas para móviles        
         'views/mobil/mobile_viewproduct.xml',
+        'views/mobil/mobile_home.xml',
 
 
 
