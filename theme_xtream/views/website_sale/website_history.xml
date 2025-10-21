@@ -180,91 +180,92 @@
                                     <div class="d-block d-md-none mobile-list">
                                         <t t-foreach="period_products" t-as="item">
                                             <t t-set="product" t-value="item['product']" />
-                                            <div class="product-item-mobile mb-3">
-                                                <a t-att-href="product.website_url" class="text-decoration-none">
-                                                    <div class="card shadow-sm bg-white" style="border-radius: 12px; overflow: hidden;">
-                                                        <div class="d-flex align-items-center" style="gap: 10px;">
-                                                            <!-- Imagen del producto -->
-                                                            <div style="flex: 0 0 90px; max-width: 90px;">
-                                                                <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
-                                                                     class="img-fluid mobile-product-image"
-                                                                     style="width: 90px; height: 90px; object-fit: contain; background: #f8f9fa; border-radius: 8px;" 
-                                                                     loading="lazy" />
-                                                            </div>
-                                                            <!-- Información del producto -->
-                                                            <div class="flex-grow-1 ps-1">
-                                                                <!-- Nombre del producto -->
-                                                                <h6 class="card-title namehistory mb-1" style="font-size: 0.95rem; line-height: 1.2; color: #222; font-weight: 500;">
-                                                                    <t t-esc="product.name" />
-                                                                </h6>
-                                                                <!-- Precios y descuentos -->
-                                                                <div class="d-flex align-items-center mb-1" style="gap: 8px;">
-                                                                    <span class="text-dark fw-bold" style="font-size: 1.1rem;">
-                                                                        <t t-if="product.discounted_price &lt; product.list_price">
-                                                                            $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
-                                                                        </t>
-                                                                        <t t-else="">
-                                                                            $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                                                        </t>
-                                                                    </span>
-                                                                    <span class="mobile-discount" style="font-size: 0.98rem; font-weight: bold; color: #FF5207;">
-                                                                        <t t-if="product.discount_percentage">
-                                                                            <t t-esc="int(product.discount_percentage)" />% OFF
-                                                                        </t>
-                                                                        <t t-elif="product.fixed_discount">
-                                                                            -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
-                                                                        </t>
-                                                                    </span>
-                                                                </div>
-                                                                <t t-if="product.discounted_price &lt; product.list_price">
-                                                                    <div class="text-muted mb-1" style="font-size: 0.85rem;">
-                                                                        <span style="text-decoration: line-through;">
-                                                                            $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                                                        </span>
-                                                                        <span class="ms-1" style="font-size: 0.85em;">
-                                                                            (<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" /> de descuento)
-                                                                        </span>
-                                                                    </div>
-                                                                </t>
-                                                                <!-- Envío gratis -->
-                                                                <t t-if="product.free_shipping">
-                                                                    <div class="mb-1">
-                                                                        <span class="text-orange" style="color: #FF5207; font-size: 0.85rem; font-weight: bold; font-style: italic;">
-                                                                            Envío gratis
-                                                                        </span>
-                                                                    </div>
-                                                                </t>
-                                                                <!-- Marca -->
-                                                                <p class="text-muted mb-1" style="font-size: 0.85rem;">
-                                                                    Por <t t-esc="product.brand_type_id.name"/>
-                                                                </p>
-                                                                <!-- Botón eliminar -->
-                                                                <a t-att-href="'/shop/history/remove/' + str(product.id)" 
-                                                                   t-att-data-product-id="product.id"
-                                                                   class="text-blue delete-history-item-mobile" 
-                                                                   style="font-size: 0.85rem; color: #007bff; text-decoration: none;"
-                                                                   onclick="event.preventDefault(); event.stopPropagation();
-                                                                           if(confirm('¿Eliminar del historial?')) {
-                                                                               fetch('/shop/history/remove/' + this.getAttribute('data-product-id'))
-                                                                               .then(response => {
-                                                                                   if (response.ok) {
-                                                                                       this.closest('.product-item-mobile').style.transition = 'opacity 0.3s, transform 0.3s';
-                                                                                       this.closest('.product-item-mobile').style.opacity = '0';
-                                                                                       this.closest('.product-item-mobile').style.transform = 'translateX(-100%)';
-                                                                                       setTimeout(() => {
-                                                                                           location.reload();
-                                                                                       }, 300);
-                                                                                   }
-                                                                               });
-                                                                           }">
-                                                                    Eliminar
-                                                                </a>
-                                                            </div>
-                                                        </div>
+                                            <div class="product-item-mobile mb-3" style="background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: 1px solid #e9ecef;">
+                                                <div class="d-flex align-items-start" style="gap: 12px; padding: 12px;">
+                                                    <!-- Imagen del producto -->
+                                                    <div style="flex: 0 0 80px; max-width: 80px;">
+                                                        <a t-att-href="product.website_url">
+                                                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                                                                 class="img-fluid mobile-product-image"
+                                                                 style="width: 80px; height: 80px; object-fit: contain; background: #f8f9fa; border-radius: 8px; border: 1px solid #eee;" 
+                                                                 loading="lazy" />
+                                                        </a>
                                                     </div>
-                                                </a>
+                                                    <!-- Información del producto -->
+                                                    <div class="flex-grow-1 ps-1">
+                                                        <!-- Nombre del producto -->
+                                                        <h6 class="card-title namehistory mb-1" style="font-size: 0.92rem; line-height: 1.15; color: #222; font-weight: 500; margin-bottom: 2px;">
+                                                            <a t-att-href="product.website_url" style="color: #222; text-decoration: none;">
+                                                                <t t-esc="product.name" />
+                                                            </a>
+                                                        </h6>
+                                                        <!-- Precios y descuentos -->
+                                                        <div class="d-flex align-items-center mb-1" style="gap: 8px;">
+                                                            <span class="text-dark fw-bold" style="font-size: 1.05rem;">
+                                                                <t t-if="product.discounted_price &lt; product.list_price">
+                                                                    $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
+                                                                </t>
+                                                                <t t-else="">
+                                                                    $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                                </t>
+                                                            </span>
+                                                            <span class="mobile-discount" style="font-size: 0.98rem; font-weight: bold; color: #FF5207;">
+                                                                <t t-if="product.discount_percentage">
+                                                                    <t t-esc="int(product.discount_percentage)" />% OFF
+                                                                </t>
+                                                                <t t-elif="product.fixed_discount">
+                                                                    -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
+                                                                </t>
+                                                            </span>
+                                                        </div>
+                                                        <t t-if="product.discounted_price &lt; product.list_price">
+                                                            <div class="text-muted mb-1" style="font-size: 0.85rem;">
+                                                                <span style="text-decoration: line-through;">
+                                                                    $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                                                </span>
+                                                                <span class="ms-1" style="font-size: 0.85em;">
+                                                                    (<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" /> de descuento)
+                                                                </span>
+                                                            </div>
+                                                        </t>
+                                                        <!-- Envío gratis -->
+                                                        <t t-if="product.free_shipping">
+                                                            <div class="mb-1">
+                                                                <span class="text-orange" style="color: #FF5207; font-size: 0.85rem; font-weight: bold; font-style: italic;">
+                                                                    Envío gratis
+                                                                </span>
+                                                            </div>
+                                                        </t>
+                                                        <!-- Marca -->
+                                                        <p class="text-muted mb-1" style="font-size: 0.85rem;">
+                                                            Por <t t-esc="product.brand_type_id.name"/>
+                                                        </p>
+                                                        <!-- Botón eliminar -->
+                                                        <a t-att-href="'/shop/history/remove/' + str(product.id)" 
+                                                           t-att-data-product-id="product.id"
+                                                           class="text-blue delete-history-item-mobile" 
+                                                           style="font-size: 0.85rem; color: #007bff; text-decoration: none;"
+                                                           onclick="event.preventDefault(); event.stopPropagation();
+                                                                   if(confirm('¿Eliminar del historial?')) {
+                                                                       fetch('/shop/history/remove/' + this.getAttribute('data-product-id'))
+                                                                       .then(response => {
+                                                                           if (response.ok) {
+                                                                               this.closest('.product-item-mobile').style.transition = 'opacity 0.3s, transform 0.3s';
+                                                                               this.closest('.product-item-mobile').style.opacity = '0';
+                                                                               this.closest('.product-item-mobile').style.transform = 'translateX(-100%)';
+                                                                               setTimeout(() => {
+                                                                                   location.reload();
+                                                                               }, 300);
+                                                                           }
+                                                                       });
+                                                                   }">
+                                                            Eliminar
+                                                        </a>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </t>
+                                    </div>
                                     </div>
                                 </div>
                             </t>
