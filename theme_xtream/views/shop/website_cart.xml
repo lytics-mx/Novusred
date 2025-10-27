@@ -2,7 +2,7 @@
     <template id="website_sale_cart_inherit" inherit_id="website_sale.cart">
     <xpath expr="." position="replace">
       <t t-call="website.layout">
-        <div id="wrap" class="oe_website_sale" style="background:#ededed;min-height:100vh;">
+        <div id="wrap" class="oe_website_sale d-block" style="background:#ededed;min-height:100vh;display:block!important;width:100%;">
           <div class="container py-5">
             <div class="card shadow-sm rounded" style="max-width:900px;margin:auto;background:#fff;">
                 <div class="card-body p-0" style="background-color:#fff;">
@@ -345,6 +345,250 @@
             </div>
           </div>
         </div>
+                <div id="wrap" class="oe_website_sale d-block" style="background:#ededed;min-height:100vh;display:block!important;width:100%;">
+                    <div class="container py-4 px-2">
+                        <div class="card shadow-sm rounded" style="max-width:900px;margin:auto;background:#fff;">
+                            <div class="card-body p-0" style="background-color:#fff;">
+                                <div class="px-3 pt-3 pb-2">
+                                    <ul class="nav nav-tabs border-0">
+                                        <li class="nav-item">
+                                            <button class="nav-link active" id="cart-tab-btn" data-tab="cart-tab">
+                                                Carrito (<t t-esc="len(website_sale_order.order_line)"/>)
+                                            </button>
+                                        </li>
+                                        <li class="nav-item">
+                                            <button class="nav-link" id="saved-tab-btn" data-tab="saved-tab">
+                                                Guardados (<t t-esc="len(saved_items)"/>)
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <hr class="my-0"/>
+
+                                <!-- Contenido del carrito -->
+                                <div id="cart-tab-content" class="tab-content">
+                                    <t t-set="order" t-value="website_sale_order"/>
+                                    <t t-if="order and order.order_line">
+                                        <t t-foreach="order.order_line" t-as="line">
+                                            <div class="row align-items-center px-3 py-3 border-bottom gx-2">
+                                                <!-- Imagen -->
+                                                <div class="col-12 col-sm-3 col-md-2 d-flex justify-content-center align-items-center mb-2 mb-sm-0">
+                                                    <img t-att-src="'/web/image/product.product/%d/image_128' % line.product_id.id"
+                                                             class="img-fluid rounded" style="max-width:80px; height:auto;"/>
+                                                </div>
+
+                                                <!-- Detalles -->
+                                                <div class="col-12 col-sm-6 col-md-5 mb-2 mb-sm-0">
+                                                    <div class="fw-semibold" style="font-size:15px;">
+                                                        <span class="text-truncate d-block" style="max-width:100%;" t-att-title="line.product_id.display_name">
+                                                            <t t-esc="line.product_id.display_name"/>
+                                                        </span>
+                                                    </div>
+                                                    <div class="text-muted small mb-1">
+                                                        <t t-if="line.product_id.product_tmpl_id.brand_type_id">
+                                                            por <t t-esc="line.product_id.product_tmpl_id.brand_type_id.name"/>
+                                                        </t>
+                                                    </div>
+                                                    <div style="font-size:14px;">
+                                                        <a t-att-href="'/shop/cart/remove?line_id=%d' % line.id" style="color:#0009ED;" class="small">Eliminar</a>
+                                                        <span class="mx-1 text-muted">|</span>
+                                                        <a t-att-href="'/brand/%s' % (line.product_id.product_tmpl_id.brand_type_id.slug if line.product_id.product_tmpl_id.brand_type_id and line.product_id.product_tmpl_id.brand_type_id.slug else '')"
+                                                             style="color:#0009ED;" class="small">Más productos de la marca</a>
+                                                        <span class="mx-1 text-muted">|</span>
+                                                        <a t-att-href="'/shop/cart/move_to_saved?line_id=%d' % line.id" style="color:#0009ED;" class="small">Guardar para después</a>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Cantidad -->
+                                                <div class="col-6 col-sm-3 col-md-2 text-center mb-2 mb-sm-0">
+                                                    <div class="cart-quantity-input d-flex justify-content-center">
+                                                        <form t-att-action="'/shop/cart/update'" method="post" class="d-inline-flex align-items-center">
+                                                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                            <input type="hidden" name="line_id" t-att-value="line.id"/>
+                                                            <input type="hidden" name="product_id" t-att-value="line.product_id.id"/>
+
+                                                            <span class="input-group border rounded overflow-hidden d-inline-flex align-items-center" style="width:auto; vertical-align:middle;">
+                                                                <button type="button" class="btn btn-light border-0"
+                                                                                style="min-width:36px; font-size:16px; padding:6px 0; background:#f8f8f8;"
+                                                                                t-att-disabled="line.product_id.qty_available &lt;= 1"
+                                                                                onclick="var qtyInput=this.parentNode.querySelector('[name=\'set_qty\']'); qtyInput.value=Math.max(1,parseInt(qtyInput.value)-1); qtyInput.dispatchEvent(new Event('input'));">-</button>
+
+                                                                <input type="number" name="set_qty"
+                                                                             class="form-control text-center"
+                                                                             t-att-value="int(line.product_uom_qty)"
+                                                                             min="1"
+                                                                             t-att-max="int(line.product_id.qty_available)"
+                                                                             t-att-data-price="'%.2f' % (line.product_id.discounted_price or line.product_id.list_price or 0)"
+                                                                             style="width:48px; border:none; box-shadow:none; background:transparent; margin:0;"
+                                                                             onwheel="return false;"
+                                                                             inputmode="numeric"
+                                                                             maxlength="3"/>
+                                                                <button type="button" class="btn btn-light border-0"
+                                                                                style="min-width:36px; font-size:16px; padding:6px 0; background:#f8f8f8;"
+                                                                                t-att-disabled="line.product_id.qty_available &lt;= 1"
+                                                                                onclick="var qtyInput=this.parentNode.querySelector('[name=\'set_qty\']'); qtyInput.value=Math.min(parseInt(qtyInput.getAttribute('max')),parseInt(qtyInput.value)+1); qtyInput.dispatchEvent(new Event('input'));">+</button>
+                                                            </span>
+                                                        </form>
+                                                    </div>
+                                                    <div class="small text-muted mt-1"><t t-esc="int(line.product_id.qty_available)"/> disponibles</div>
+                                                </div>
+
+                                                <!-- Precio -->
+                                                <div class="col-6 col-sm-12 col-md-3 text-md-end text-start">
+                                                    <span class="fw-bold d-block" style="font-size:18px;">
+                                                        $<t t-esc="'%.2f' % ((line.product_id.discounted_price or line.product_id.list_price) * line.product_uom_qty)"/>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="p-4 text-center text-muted">
+                                            <i class="fa fa-shopping-cart fa-3x mb-3"></i>
+                                            <p>Tu carrito está vacío</p>
+                                            <a href="/subcategory" class="btn btn-primary">Ir a la tienda</a>
+                                        </div>
+                                    </t>
+                                </div>
+
+                                <!-- Contenido de guardados -->
+                                <div id="saved-tab-content" class="tab-content d-none">
+                                    <t t-set="saved_items" t-value="request.env['saved.items'].search([('user_id', '=', request.env.user.id)])"/>
+                                    <t t-if="saved_items">
+                                        <t t-foreach="saved_items" t-as="item">
+                                            <div class="row align-items-center px-3 py-3 border-bottom gx-2">
+                                                <div class="col-12 col-sm-3 col-md-2 d-flex justify-content-center align-items-center mb-2 mb-sm-0">
+                                                    <img t-att-src="'/web/image/product.product/%d/image_128' % item.product_id.id"
+                                                             class="img-fluid rounded" style="max-width:80px; height:auto;"/>
+                                                </div>
+                                                <div class="col-12 col-sm-6 col-md-5 mb-2 mb-sm-0">
+                                                    <div class="fw-semibold" style="font-size:15px;">
+                                                        <span class="text-truncate d-block" style="max-width:100%;" t-att-title="item.name">
+                                                            <t t-esc="item.name"/>
+                                                        </span>
+                                                    </div>
+                                                    <div class="text-muted small mb-1">
+                                                        <t t-if="item.brand_name">
+                                                            por <t t-esc="item.brand_name"/>
+                                                        </t>
+                                                    </div>
+                                                    <div style="font-size:14px;">
+                                                        <a t-att-href="'/shop/cart/remove_saved_item?item_id=%d' % item.id" style="color:#0009ED;" class="small">Eliminar</a>
+                                                        <span class="mx-1 text-muted">|</span>
+                                                        <a t-att-href="'/brand/%s' % (item.brand_id.slug if item.brand_id and item.brand_id.slug else '')" style="color:#0009ED;" class="small">Más productos de la marca</a>
+                                                        <span class="mx-1 text-muted">|</span>
+                                                        <a t-att-href="'/shop/cart/move_to_cart?item_id=%d' % item.id" style="color:#0009ED;" class="small">Agregar al carrito</a>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6 col-sm-3 col-md-2 text-center mb-2 mb-sm-0">
+                                                    <div class="cart-quantity-input d-flex justify-content-center">
+                                                        <form t-att-action="'/shop/cart/move_to_cart'" method="post" class="d-inline-flex align-items-center">
+                                                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                            <input type="hidden" name="item_id" t-att-value="item.id"/>
+                                                            <input type="hidden" name="product_id" t-att-value="item.product_id.id"/>
+
+                                                            <span class="input-group border rounded overflow-hidden d-inline-flex align-items-center" style="width:auto; vertical-align:middle;">
+                                                                <button type="button" class="btn btn-light border-0"
+                                                                                style="min-width:36px; font-size:16px; padding:6px 0; background:#f8f8f8;"
+                                                                                t-att-disabled="item.quantity_available &lt;= 1"
+                                                                                onclick="var qtyInput=this.parentNode.querySelector('[name=\'set_qty\']'); qtyInput.value=Math.max(1,parseInt(qtyInput.value)-1); qtyInput.dispatchEvent(new Event('input'));">-</button>
+
+                                                                <input type="number" name="set_qty"
+                                                                             class="form-control text-center"
+                                                                             t-att-value="1"
+                                                                             min="1"
+                                                                             t-att-max="int(item.quantity_available)"
+                                                                             t-att-data-price="item.price"
+                                                                             style="width:48px; border:none; box-shadow:none; background:transparent; margin:0;"
+                                                                             onwheel="return false;"
+                                                                             inputmode="numeric"
+                                                                             maxlength="3"/>
+                                                                <button type="button" class="btn btn-light border-0"
+                                                                                style="min-width:36px; font-size:16px; padding:6px 0; background:#f8f8f8;"
+                                                                                t-att-disabled="item.quantity_available &lt;= 1"
+                                                                                onclick="var qtyInput=this.parentNode.querySelector('[name=\'set_qty\']'); qtyInput.value=Math.min(parseInt(qtyInput.getAttribute('max')),parseInt(qtyInput.value)+1); qtyInput.dispatchEvent(new Event('input'));">+</button>
+                                                            </span>
+                                                        </form>
+                                                    </div>
+                                                    <div class="small text-muted mt-1"><t t-esc="int(item.quantity_available)"/> disponibles</div>
+                                                </div>
+                                                <div class="col-6 col-sm-12 col-md-3 text-md-end text-start">
+                                                    <span class="fw-bold d-block" style="font-size:18px;">
+                                                        $<t t-esc="'%.2f' % (item.price)"/>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="p-4 text-center text-muted">
+                                            <i class="fa fa-bookmark fa-3x mb-3"></i>
+                                            <p>No tienes productos guardados</p>
+                                            <a href="/subcategory" class="btn btn-primary">Ir a la tienda</a>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+
+                            <!-- Pie: envío, total y botón (solo visible en tab de carrito) -->
+                            <div id="cart-footer" class="card-footer bg-white border-0 pt-3 pb-3" t-if="order and order.order_line">
+                                <div class="row align-items-center">
+                                    <div class="col-12 col-md-6 mb-2 mb-md-0">
+                                        <t t-if="order.partner_shipping_id">
+                                            <div class="text-primary" style="font-size:15px;">
+                                                <t t-if="order.partner_shipping_id.contact_address_complete">
+                                                    <span class="text-primary" style="display:inline-block; vertical-align:middle;">Envío a:</span>
+                                                    <span class="d-inline-block text-primary" id="shipping-address" style="max-width:180px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; vertical-align:middle; cursor:pointer;">
+                                                        <t t-esc="order.partner_shipping_id.contact_address_complete"/>
+                                                    </span>
+                                                    <script type="text/javascript">
+                                                        document.addEventListener('DOMContentLoaded', function() {
+                                                            const shippingAddress = document.getElementById('shipping-address');
+                                                            const fullAddress = '<t t-esc="order.partner_shipping_id.contact_address_complete"/>';
+                                                            if (!shippingAddress) return;
+                                                            shippingAddress.addEventListener('click', function() {
+                                                                if (shippingAddress.style.whiteSpace === 'nowrap') {
+                                                                    shippingAddress.style.maxWidth = 'none';
+                                                                    shippingAddress.style.whiteSpace = 'normal';
+                                                                    shippingAddress.style.overflow = 'visible';
+                                                                    shippingAddress.style.textOverflow = 'unset';
+                                                                    shippingAddress.textContent = fullAddress;
+                                                                } else {
+                                                                    shippingAddress.style.maxWidth = '180px';
+                                                                    shippingAddress.style.whiteSpace = 'nowrap';
+                                                                    shippingAddress.style.overflow = 'hidden';
+                                                                    shippingAddress.style.textOverflow = 'ellipsis';
+                                                                    shippingAddress.textContent = fullAddress;
+                                                                }
+                                                            });
+                                                        });
+                                                    </script>
+                                                </t>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <div class="col-6 col-md-3 text-end">
+                                        <div class="fw-semibold" style="font-size:16px;">
+                                            Total: $<span id="cart-total-amount">0.00</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3 text-end">
+                                        <button type="button" class="btn"
+                                                        id="shop-checkout-button"
+                                                        style="width:100%; height:48px; border-radius:6px; background:#4285f4; color:#fff; border:none; font-weight:500; font-size:18px;"
+                                                        onclick="window.location.href='/shop/checkout';">
+                                            Continuar compra
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+
         <style>
             .collapse {
                 transition: height 0.3s ease;
