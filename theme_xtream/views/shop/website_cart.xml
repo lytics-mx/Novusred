@@ -27,43 +27,84 @@
                   <t t-set="order" t-value="website_sale_order"/>
                   <t t-if="order and order.order_line">
                     <t t-foreach="order.order_line" t-as="line">
-                      <div class="row cart-item-row align-items-center px-3 py-3 border-bottom">
+                      <div class="row cart-item-row align-items-center px-3 py-2 border-bottom">
                         <!-- Imagen -->
                         <div class="col-3 col-sm-2 d-flex justify-content-center align-items-center pe-0">
                           <img t-att-src="'/web/image/product.product/%d/image_128' % line.product_id.id"
-                               class="img-fluid rounded" style="max-width:70px; height:auto;"/>
+                               class="img-fluid rounded" style="max-width:64px; height:auto;"/>
                         </div>
 
                         <!-- Título, marca y acciones -->
-                        <div class="col-7 col-sm-5 ps-2">
-                          <div class="d-flex justify-content-between align-items-start">
-                            <div class="product-info w-100">
-                              <div class="fw-semibold product-title" style="font-size:15px;">
-                                <span class="text-truncate d-block" style="max-width:100%;" t-att-title="line.product_id.display_name">
-                                  <t t-esc="line.product_id.display_name"/>
-                                </span>
-                              </div>
-                              <div class="text-muted small mb-1 small-hide-sm">
-                                <t t-if="line.product_id.product_tmpl_id.brand_type_id">
-                                  por <t t-esc="line.product_id.product_tmpl_id.brand_type_id.name"/>
-                                </t>
-                              </div>
-                              <div class="d-flex flex-wrap align-items-center" style="font-size:14px;">
-                                <a t-att-href="'/shop/cart/remove?line_id=%d' % line.id"
-                                   style="color:#0009ED;" class="small me-2">Eliminar</a>
-                                <span class="mx-1 text-muted d-none d-sm-inline">|</span>
-                                <a t-att-href="'/brand/%s' % (line.product_id.product_tmpl_id.brand_type_id.slug if line.product_id.product_tmpl_id.brand_type_id and line.product_id.product_tmpl_id.brand_type_id.slug else '')"
-                                   style="color:#0009ED;" class="small mx-2 mx-sm-2">Más productos</a>
-                                <span class="mx-1 text-muted d-none d-sm-inline">|</span>
-                                <a t-att-href="'/shop/cart/move_to_saved?line_id=%d' % line.id"
-                                   style="color:#0009ED;" class="small ms-2">Guardar</a>
-                              </div>
+                        <div class="col-9 col-sm-5 ps-2">
+                          <div class="product-info">
+                            <div class="fw-semibold product-title" style="font-size:15px;">
+                              <span class="text-truncate d-block" style="max-width:100%;" t-att-title="line.product_id.display_name">
+                                <t t-esc="line.product_id.display_name"/>
+                              </span>
+                            </div>
+                            <div class="text-muted small mb-1 small-hide-sm" style="font-size:13px;">
+                              <t t-if="line.product_id.product_tmpl_id.brand_type_id">
+                                por <t t-esc="line.product_id.product_tmpl_id.brand_type_id.name"/>
+                              </t>
+                            </div>
+                            <div class="d-flex flex-wrap align-items-center" style="font-size:13px;">
+                              <a t-att-href="'/shop/cart/remove?line_id=%d' % line.id"
+                                 style="color:#0009ED;" class="small me-2">Eliminar</a>
+                              <span class="mx-1 text-muted d-none d-sm-inline">|</span>
+                              <a t-att-href="'/brand/%s' % (line.product_id.product_tmpl_id.brand_type_id.slug if line.product_id.product_tmpl_id.brand_type_id and line.product_id.product_tmpl_id.brand_type_id.slug else '')"
+                                 style="color:#0009ED;" class="small mx-2 mx-sm-2">Más productos</a>
+                              <span class="mx-1 text-muted d-none d-sm-inline">|</span>
+                              <a t-att-href="'/shop/cart/move_to_saved?line_id=%d' % line.id"
+                                 style="color:#0009ED;" class="small ms-2">Guardar</a>
                             </div>
                           </div>
                         </div>
 
-                        <!-- Cantidad (mobile friendly) -->
-                        <div class="col-6 col-sm-2 mt-2 mt-sm-0 d-flex justify-content-start align-items-center">
+                        <!-- Cantidad + Precio (vista móvil: fila dedicada) -->
+                        <div class="col-12 d-sm-none mt-2">
+                          <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                              <div class="cart-quantity-input">
+                                <form t-att-action="'/shop/cart/update'" method="post" class="d-inline-flex align-items-center">
+                                  <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                  <input type="hidden" name="line_id" t-att-value="line.id"/>
+                                  <input type="hidden" name="product_id" t-att-value="line.product_id.id"/>
+
+                                  <span class="input-group border rounded overflow-hidden d-inline-flex align-items-center" style="vertical-align:middle;">
+                                    <button type="button" class="btn btn-light border-0"
+                                            style="min-width:30px; font-size:16px; padding:4px 6px; background:#f8f8f8;"
+                                            t-att-disabled="line.product_id.qty_available &lt;= 1"
+                                            onclick="var qtyInput=this.parentNode.querySelector('[name=\'set_qty\']'); qtyInput.value=Math.max(1,parseInt(qtyInput.value)-1); qtyInput.dispatchEvent(new Event('input'));">-</button>
+
+                                    <input type="number" name="set_qty"
+                                           class="form-control text-center"
+                                           t-att-value="int(line.product_uom_qty)"
+                                           min="1"
+                                           t-att-max="int(line.product_id.qty_available)"
+                                           t-att-data-price="'%.2f' % (line.product_id.discounted_price or line.product_id.list_price or 0)"
+                                           style="width:52px; border:none; box-shadow:none; background:transparent; margin:0; padding:0;"
+                                           onwheel="return false;"
+                                           inputmode="numeric"
+                                           maxlength="3"/>
+
+                                    <button type="button" class="btn btn-light border-0"
+                                            style="min-width:30px; font-size:16px; padding:4px 6px; background:#f8f8f8;"
+                                            t-att-disabled="line.product_id.qty_available &lt;= 1"
+                                            onclick="var qtyInput=this.parentNode.querySelector('[name=\'set_qty\']'); qtyInput.value=Math.min(parseInt(qtyInput.getAttribute('max')),parseInt(qtyInput.value)+1); qtyInput.dispatchEvent(new Event('input'));">+</button>
+                                  </span>
+                                </form>
+                              </div>
+                              <div class="small text-muted mt-1"><t t-esc="int(line.product_id.qty_available)"/> disponibles</div>
+                            </div>
+
+                            <div class="fw-bold product-price text-end" style="font-size:16px;">
+                              $<t t-esc="'%.2f' % ((line.product_id.discounted_price or line.product_id.list_price or 0) * line.product_uom_qty)"/>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Cantidad (desktop) -->
+                        <div class="col-6 col-sm-3 mt-2 mt-sm-0 d-none d-sm-flex justify-content-start align-items-center">
                           <div class="cart-quantity-input w-auto">
                             <form t-att-action="'/shop/cart/update'" method="post" class="d-inline-flex align-items-center">
                               <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
@@ -82,7 +123,7 @@
                                        min="1"
                                        t-att-max="int(line.product_id.qty_available)"
                                        t-att-data-price="'%.2f' % (line.product_id.discounted_price or line.product_id.list_price or 0)"
-                                       style="width:44px; border:none; box-shadow:none; background:transparent; margin:0; padding:0;"
+                                       style="width:56px; border:none; box-shadow:none; background:transparent; margin:0; padding:0;"
                                        onwheel="return false;"
                                        inputmode="numeric"
                                        maxlength="3"/>
@@ -97,10 +138,10 @@
                           <div class="small text-muted ms-2 d-none d-sm-block"><t t-esc="int(line.product_id.qty_available)"/> disponibles</div>
                         </div>
 
-                        <!-- Precio -->
-                        <div class="col-3 col-sm-3 text-end">
+                        <!-- Precio (desktop) -->
+                        <div class="col-6 col-sm-2 text-end mt-2 mt-sm-0">
                           <div class="product-price fw-bold" style="font-size:18px;">
-                            $<t t-esc="'%.2f' % ((line.product_id.discounted_price or line.product_id.list_price) * line.product_uom_qty)"/>
+                            $<t t-esc="'%.2f' % ((line.product_id.discounted_price or line.product_id.list_price or 0) * line.product_uom_qty)"/>
                           </div>
                         </div>
                       </div>
