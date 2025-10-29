@@ -89,11 +89,14 @@ class ProductTemplate(models.Model):
      )
      @api.model
      def create(self, vals):
-          # Si el tipo es consu o service, forzamos que sea product
-          if vals.get('type') in ('consu', 'service'):
-               vals['type'] = 'product'
-          return super(ProductTemplate, self).create(vals)
-
+               # Forzar que consumibles/servicios sean 'product' para permitir creación de quants
+               if vals.get('type') in ('consu', 'service'):
+                    vals['type'] = 'product'
+               res = super(ProductTemplate, self).create(vals)
+               # Asegurar que todas las variantes tengan el mismo product_model
+               if 'product_model' in vals and res.product_variant_ids:
+                    res.product_variant_ids.write({'product_model': vals['product_model']})
+               return res
 
      # is_discount_tag_visible = fields.Boolean(
      #      string="Etiqueta de descuento visible",
