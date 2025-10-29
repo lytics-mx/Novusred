@@ -87,18 +87,8 @@ class ProductTemplate(models.Model):
           store=True,
           help='Displays the brand type on the website'
      )
-     @api.model
-     def create(self, vals):
-         # evitar mutar el dict original
-         vals = dict(vals or {})
-         # Forzar consumibles/servicios/combo a 'product' para permitir creación de quants
-         if vals.get('type') in ('consu', 'service', 'combo'):
-             vals['type'] = 'product'
-         res = super(ProductTemplate, self).create(vals)
-         # Asegurar que todas las variantes tengan el mismo product_model
-         if 'product_model' in vals and res.product_variant_ids:
-             res.product_variant_ids.write({'product_model': vals['product_model']})
-         return res
+
+
 
      # is_discount_tag_visible = fields.Boolean(
      #      string="Etiqueta de descuento visible",
@@ -249,7 +239,13 @@ class ProductTemplate(models.Model):
              for variant in self.product_variant_ids:
                  variant.product_model = self.product_model
      
-
+     @api.model
+     def create(self, vals):
+         res = super(ProductTemplate, self).create(vals)
+         # Asegurar que todas las variantes tengan el mismo product_model
+         if 'product_model' in vals and res.product_variant_ids:
+             res.product_variant_ids.write({'product_model': vals['product_model']})
+         return res
      
      def write(self, vals):
          res = super(ProductTemplate, self).write(vals)
