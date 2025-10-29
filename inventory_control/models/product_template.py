@@ -87,7 +87,12 @@ class ProductTemplate(models.Model):
           store=True,
           help='Displays the brand type on the website'
      )
-
+     @api.model
+     def create(self, vals):
+          # Si el tipo es consu o service, forzamos que sea product
+          if vals.get('type') in ('consu', 'service'):
+               vals['type'] = 'product'
+          return super(ProductTemplate, self).create(vals)
 
 
      # is_discount_tag_visible = fields.Boolean(
