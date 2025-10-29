@@ -249,13 +249,7 @@ class ProductTemplate(models.Model):
              for variant in self.product_variant_ids:
                  variant.product_model = self.product_model
      
-     @api.model
-     def create(self, vals):
-         res = super(ProductTemplate, self).create(vals)
-         # Asegurar que todas las variantes tengan el mismo product_model
-         if 'product_model' in vals and res.product_variant_ids:
-             res.product_variant_ids.write({'product_model': vals['product_model']})
-         return res
+
      
      def write(self, vals):
          res = super(ProductTemplate, self).write(vals)
