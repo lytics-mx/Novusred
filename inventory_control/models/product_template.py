@@ -263,3 +263,24 @@ class ProductTemplate(models.Model):
                result.append((template.id, name))
           return result
           
+     # Mantener el label visible como 'Bienes'
+     @api.depends('type')
+     def _compute_display_type(self):
+          for record in self:
+               if record.type == 'product' and record.name.lower().find('bienes') != -1:
+                    record.display_type_custom = 'Bienes'
+               else:
+                    record.display_type_custom = record.type
+
+     display_type_custom = fields.Char(string='Tipo visible', compute='_compute_display_type')
+
+     @api.model
+     def create(self, vals):
+          if vals.get('type') == 'bienes':
+               vals['type'] = 'product'  # Internamente almacenable
+          return super().create(vals)
+
+     def write(self, vals):
+          if vals.get('type') == 'bienes':
+               vals['type'] = 'product'  # Internamente almacenable
+          return super().write(vals)
