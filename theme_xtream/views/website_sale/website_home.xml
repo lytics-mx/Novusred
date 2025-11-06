@@ -237,8 +237,7 @@
 <!-- SECCION DE OFERTAS -->
                 <t t-set="discounted_products" t-value="request.env['product.template'].sudo().search([
                     ('website_published', '=', True),
-                    ('product_tag_ids', '!=', False),
-                    ('qty_available', '>', 1)
+                    ('product_tag_ids', '!=', False)
                 ], order='create_date desc', limit=10)" />
                 
                 <t t-if="discounted_products and len(discounted_products) > 5">
@@ -377,6 +376,8 @@
                                                                             <span class="fw-bold d-block" style="font-size: 25px;">
                                                                                 $<t t-esc="'{:,}'.format(int(product.list_price))" />
                                                                             </span>
+                                                                            <!-- Espacio reservado para descuento -->
+                                                                            <!-- <div class="mt-0" style="height: 24px;"></div> -->
                                                                         </t>
                                                                         <!-- Envío gratis SIEMPRE al final -->
                                                                         <!-- <t t-if="product.free_shipping">
