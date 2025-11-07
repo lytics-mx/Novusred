@@ -9,10 +9,21 @@ class WebsiteTrack(models.Model):
     
     @api.model
     def create(self, vals):
-        # When creating a track record, set the current user if they're logged in
-        if not self.env.user._is_public():
-            vals['user_id'] = self.env.user.id
+        # Prefer explicit user_id passed in vals
+        if vals.get('user_id'):
+            return super(WebsiteTrack, self).create(vals)
+
+        # Prefer user id passed in context (tracking_user_id)
+        tracking_user = self.env.context.get('tracking_user_id')
+        if tracking_user:
+            vals['user_id'] = tracking_user
+        else:
+            # Fallback: si el env.user actual no es public, asignarlo
+            if not self.env.user._is_public():
+                vals['user_id'] = self.env.user.id
+
         return super(WebsiteTrack, self).create(vals)
+    
     
     def get_grouped_viewed_products(self, user_id=None):
         """Agrupa los productos vistos por 'Hoy' y por mes para un usuario específico."""
