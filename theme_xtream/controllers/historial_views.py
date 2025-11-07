@@ -19,11 +19,11 @@ class ProductHistoryController(http.Controller):
     @http.route(['/shop/history', '/shop/history/<string:period_filter>'], type='http', auth='user', website=True)
     def view_history(self, period_filter=None):
         """Obtiene el historial de productos vistos por el usuario actual agrupado por períodos."""
-        user_partner_id = request.env.user.partner_id.id
+        user_id = request.env.user.id
         
-        # Obtener todas las visitas del usuario
+        # Obtener todas las visitas del usuario (filtrando por user, no por partner)
         tracks = request.env['website.track'].sudo().search([
-            ('visitor_id.partner_id', '=', user_partner_id),
+            ('visitor_id.user_id', '=', user_id),
             ('product_id', '!=', False),
             ('product_id', '!=', None),
         ], order='visit_datetime desc')
@@ -125,12 +125,11 @@ class ProductHistoryController(http.Controller):
     @http.route('/shop/history/remove/<int:product_id>', type='http', auth='user', website=True)
     def remove_from_history(self, product_id):
         """Elimina un producto del historial del usuario actual."""
-        user_partner_id = request.env.user.partner_id.id
+        user_id = request.env.user.id
         
-        # Buscar todos los registros de este producto para este usuario
+        # Buscar todos los registros de este producto para este usuario (filtrando por user)
         track_entries = request.env['website.track'].sudo().search([
-            ('visitor_id.partner_id', '=', user_partner_id),
-            # ('visitor_id.user_id', 'in', [request.env.user.id]),  # <-- Elimina esta línea
+            ('visitor_id.user_id', '=', user_id),
             ('product_id.product_tmpl_id', '=', product_id),
             ('product_id', '=', product_id)
         ])
