@@ -1359,8 +1359,187 @@
                         <span style="font-size:16px; font-weight:600;">Comprar</span>
                     </button>
                 </form>
-
-
+<div class="col-12 col-md-9">
+    <h5 style="font-weight:600; margin-bottom:12px; font-size:22px; text-align:left;">Productos que podrían interesarte</h5>
+    <t t-set="acc_list" t-value="[acc for acc in product.accessory_product_ids if acc.product_variant_id.id != product.product_variant_id.id]"/>
+    <t t-set="acc_count" t-value="len(acc_list)"/>
+    <!-- Si hay más de 3 se mantiene la posibilidad de carousel, pero cada slide muestra una lista vertical -->
+    <t t-if="acc_count > 3">
+        <div id="accessory-carousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <t t-foreach="range(0, acc_count, 3)" t-as="idx">
+                    <div t-attf-class="carousel-item #{'active' if idx == 0 else ''}">
+                        <div class="products-list" style="display:flex; flex-direction:column; gap:12px; padding: 8px 0;">
+                            <t t-foreach="acc_list[idx:idx+3]" t-as="acc" t-key="acc.id">
+                                <a t-att-href="acc.product_tmpl_id and acc.product_tmpl_id.website_url or acc.website_url" style="text-decoration:none; color:inherit;">
+                                    <div class="product-list-item p-3" style="border: 1.5px solid #bdbdbd; border-radius: 8px; background: #fff;">
+                                        <div class="row align-items-center">
+                                            <div class="col-4 position-relative" style="padding-left:0;">
+                                                <!-- Checkbox overlay -->
+                                                <div style="position:absolute; z-index:2; left:8px; top:8px;">
+                                                    <input type="checkbox" name="bundle_product_ids[]" t-att-value="acc.product_variant_id.id" class="bundle-checkbox custom-bundle-checkbox" style="width:26px; height:26px; border-radius:6px; border:1px solid #888; background:#f8f8f8;"/>
+                                                </div>
+                                                <div style="position: relative; overflow: hidden; padding-top: 100%; background:#fff;">
+                                                    <img t-att-src="acc.product_tmpl_id and ('/web/image/product.template/%s/image_1024' % acc.product_tmpl_id.id) or ('/web/image/product.template/%s/image_1024' % acc.id)"
+                                                         alt="Imagen accesorio"
+                                                         style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:contain; padding:8px;"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-8" style="padding-left:8px;">
+                                                <div class="card-body p-0" style="background:#fff;">
+                                                    <t t-if="acc.product_tag_ids">
+                                                        <div style="margin-bottom:6px;">
+                                                            <span class="badge bg-primary" style="border-radius:0; text-transform:uppercase; font-size:10px; padding:2px 6px;">
+                                                                <t t-esc="acc.product_tag_ids[0].name"/>
+                                                            </span>
+                                                        </div>
+                                                    </t>
+                                                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                                                        <t t-if="acc.discounted_price &lt; acc.list_price">
+                                                            <div style="font-size:13px; color:#888; text-decoration:line-through;">
+                                                                $<t t-esc="'{:,}'.format(int(acc.list_price or 0))"/>
+                                                            </div>
+                                                            <div style="font-size:18px; font-weight:700; color:#000;">
+                                                                $<t t-esc="'{:,}'.format(int(acc.discounted_price or 0))"/>
+                                                            </div>
+                                                            <t t-if="acc.discount_percentage or acc.fixed_discount">
+                                                                <div style="color:#FF5207; font-size:12px;">
+                                                                    <t t-if="acc.discount_percentage">
+                                                                        <t t-esc="int(acc.discount_percentage)"/>% OFF
+                                                                    </t>
+                                                                    <t t-elif="acc.fixed_discount">
+                                                                        -$<t t-esc="'{:,}'.format(int(acc.fixed_discount))"/> MXN
+                                                                    </t>
+                                                                </div>
+                                                            </t>
+                                                        </t>
+                                                        <t t-elif="acc.list_price">
+                                                            <div style="font-size:18px; font-weight:700; color:#000;">
+                                                                $<t t-esc="'{:,}'.format(int(acc.list_price or 0))"/>
+                                                            </div>
+                                                        </t>
+                                                    </div>
+                                                    <t t-if="acc.free_shipping">
+                                                        <div style="color:#FF5207; font-size:12px; margin-bottom:6px;">
+                                                            Envío gratis
+                                                        </div>
+                                                    </t>
+                                                    <div style="font-size:13px; color:#666; margin-bottom:4px;">
+                                                        <t t-if="acc.product_tmpl_id and acc.product_tmpl_id.brand_type_id">
+                                                            <small>por <t t-esc="acc.product_tmpl_id.brand_type_id.name"/></small>
+                                                        </t>
+                                                        <t t-elif="acc.brand_type_id">
+                                                            <small>por <t t-esc="acc.brand_type_id.name"/></small>
+                                                        </t>
+                                                    </div>
+                                                    <h6 class="card-title mb-0" style="font-size:14px; line-height:1.1; max-height:2.2em; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; text-transform:none;">
+                                                        <t t-esc="acc.name"/>
+                                                    </h6>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#accessory-carousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Anterior</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#accessory-carousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Siguiente</span>
+            </button>
+        </div>
+        <t t-jquery="body" t-operation="append">
+            <script type="text/javascript"><![CDATA[
+                document.addEventListener('DOMContentLoaded', function() {
+                    if (window.bootstrap && window.bootstrap.Carousel) {
+                        var el = document.getElementById('accessory-carousel');
+                        if (el) new window.bootstrap.Carousel(el, {interval:0, wrap:true});
+                    }
+                });
+            ]]></script>
+        </t>
+    </t>
+    <t t-else="">
+        <div class="products-list" style="display:flex; flex-direction:column; gap:12px;">
+            <t t-foreach="acc_list" t-as="acc" t-key="acc.id">
+                <a t-att-href="acc.product_tmpl_id and acc.product_tmpl_id.website_url or acc.website_url" style="text-decoration:none; color:inherit;">
+                    <div class="product-list-item p-3" style="border: 1.5px solid #bdbdbd; border-radius: 8px; background: #fff;">
+                        <div class="row align-items-center">
+                            <div class="col-4 position-relative" style="padding-left:0;">
+                                <div style="position:absolute; z-index:2; left:8px; top:8px;">
+                                    <input type="checkbox" name="bundle_product_ids[]" t-att-value="acc.product_variant_id.id" class="bundle-checkbox custom-bundle-checkbox" style="width:26px; height:26px; border-radius:6px; border:1px solid #888; background:#f8f8f8;"/>
+                                </div>
+                                <div style="position: relative; overflow: hidden; padding-top: 100%; background:#fff;">
+                                    <img t-att-src="acc.product_tmpl_id and ('/web/image/product.template/%s/image_1024' % acc.product_tmpl_id.id) or ('/web/image/product.template/%s/image_1024' % acc.id)"
+                                         alt="Imagen accesorio"
+                                         style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:contain; padding:8px;"/>
+                                </div>
+                            </div>
+                            <div class="col-8" style="padding-left:8px;">
+                                <div class="card-body p-0" style="background:#fff;">
+                                    <t t-if="acc.product_tag_ids">
+                                        <div style="margin-bottom:6px;">
+                                            <span class="badge bg-primary" style="border-radius:0; text-transform:uppercase; font-size:10px; padding:2px 6px;">
+                                                <t t-esc="acc.product_tag_ids[0].name"/>
+                                            </span>
+                                        </div>
+                                    </t>
+                                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                                        <t t-if="acc.discounted_price &lt; acc.list_price">
+                                            <div style="font-size:13px; color:#888; text-decoration:line-through;">
+                                                $<t t-esc="'{:,}'.format(int(acc.list_price or 0))"/>
+                                            </div>
+                                            <div style="font-size:18px; font-weight:700; color:#000;">
+                                                $<t t-esc="'{:,}'.format(int(acc.discounted_price or 0))"/>
+                                            </div>
+                                            <t t-if="acc.discount_percentage or acc.fixed_discount">
+                                                <div style="color:#FF5207; font-size:12px;">
+                                                    <t t-if="acc.discount_percentage">
+                                                        <t t-esc="int(acc.discount_percentage)"/>% OFF
+                                                    </t>
+                                                    <t t-elif="acc.fixed_discount">
+                                                        -$<t t-esc="'{:,}'.format(int(acc.fixed_discount))"/> MXN
+                                                    </t>
+                                                </div>
+                                            </t>
+                                        </t>
+                                        <t t-elif="acc.list_price">
+                                            <div style="font-size:18px; font-weight:700; color:#000;">
+                                                $<t t-esc="'{:,}'.format(int(acc.list_price or 0))"/>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <t t-if="acc.free_shipping">
+                                        <div style="color:#FF5207; font-size:12px; margin-bottom:6px;">
+                                            Envío gratis
+                                        </div>
+                                    </t>
+                                    <div style="font-size:13px; color:#666; margin-bottom:4px;">
+                                        <t t-if="acc.product_tmpl_id and acc.product_tmpl_id.brand_type_id">
+                                            <small>por <t t-esc="acc.product_tmpl_id.brand_type_id.name"/></small>
+                                        </t>
+                                        <t t-elif="acc.brand_type_id">
+                                            <small>por <t t-esc="acc.brand_type_id.name"/></small>
+                                        </t>
+                                    </div>
+                                    <h6 class="card-title mb-0" style="font-size:14px; line-height:1.1; max-height:2.2em; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; text-transform:none;">
+                                        <t t-esc="acc.name"/>
+                                    </h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </t>
+        </div>
+    </t>
+</div>
                 
             </div>            
         </xpath>
