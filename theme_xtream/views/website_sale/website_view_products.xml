@@ -1415,8 +1415,8 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <hr/>
-                                        <h3 class="h5" style="font-weight:600; margin-bottom:12px; margin-top:18px; text-align:left; font-size:23px;">Descripción</h3>
-                                        <div class="product-description mb-3" style="text-align:left; font-size:17px;" lang="es">
+                                        <h3 class="h5" style="font-size:18px; color:#222; font-weight:600; text-align:left; margin-bottom:8px;">Descripción</h3>
+                                        <div class="product-description mb-3 d-block" style="text-align:left; font-size:clamp(14px,2.5vw,17px); line-height:1.35; word-wrap:break-word; word-break:break-word; overflow-wrap:break-word; padding:0 4px;" lang="es">
                                             <t t-if="product.website_description">
                                                 <t t-raw="product.website_description"/>
                                             </t>
@@ -1424,6 +1424,21 @@
                                                 <t t-esc="product.description_sale"/>
                                             </t>
                                         </div>
+                                        <t t-jquery="body" t-operation="append">
+                                            <style>
+                                                /* Ensure description content is mobile-friendly */
+                                                .product-description img { max-width: 100% !important; height: auto !important; display: block; margin: 8px 0; }
+                                                .product-description iframe, .product-description video { max-width: 100% !important; height: auto !important; display: block; }
+                                                .product-description p, .product-description div { margin: 0 0 0.6rem 0; }
+                                                .product-description ul, .product-description ol { padding-left: 1rem; margin: 0 0 0.6rem 0; }
+                                                /* Small screens tweaks */
+                                                @media (max-width: 767.98px) {
+                                                    .product-description { font-size: 15px !important; padding-left: 6px !important; padding-right: 6px !important; }
+                                                }
+                                                /* Prevent very long words from breaking layout */
+                                                .product-description { overflow-wrap: anywhere; -webkit-hyphens: auto; -ms-word-break: break-all; word-break: break-word; }
+                                            </style>
+                                        </t>
                                         <hr/>
                                         <div class="product-specifications" style="text-align:left; font-size:17px;" lang="es">
                                             <h4 class="h6" style="font-weight:600; margin-bottom:12px; font-size:22px;">Ficha técnica</h4>
