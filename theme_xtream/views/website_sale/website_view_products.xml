@@ -1441,50 +1441,85 @@
                                         </t>
                                         <hr/>
                                         <div class="product-specifications" style="text-align:left; font-size:17px;" lang="es">
-                                            <h4 class="h6" style="font-weight:600; margin-bottom:12px; font-size:22px;">Ficha técnica</h4>
+                                            <h4 class="h6" style="font-size:18px; color:#222; font-weight:600; text-align:left; margin-bottom:8px;">Ficha técnica</h4>
 
                                             <!-- Responsive grid: stack on xs, two columns on sm+ -->
-                                            <div class="container-fluid px-0">
+                                            <div class="container-fluid px-0 spec-grid">
+                                                <style>
+                                                    /* Scoped spec styles */
+                                                    .spec-grid .row { margin: 0; }
+                                                    .spec-item {
+                                                        display: flex;
+                                                        align-items: stretch;
+                                                        gap: 0;
+                                                    }
+                                                    .spec-label {
+                                                        flex: 0 0 40%;
+                                                        background: #ecf0f1;
+                                                        padding: 12px 14px;
+                                                        font-weight: 600;
+                                                        min-width: 110px;
+                                                        border-radius: 8px 0 0 8px;
+                                                        box-sizing: border-box;
+                                                        font-size: 14px;
+                                                        color: #222;
+                                                    }
+                                                    .spec-value {
+                                                        flex: 1;
+                                                        background: #ecf0f1;
+                                                        padding: 12px 14px;
+                                                        border-radius: 0 8px 8px 0;
+                                                        box-sizing: border-box;
+                                                        font-size: 14px;
+                                                        color: #222;
+                                                        word-break: break-word;
+                                                    }
+
+                                                    /* Make the grid compact and readable on very small screens */
+                                                    @media (max-width: 767.98px) {
+                                                        .spec-grid { max-width: 480px; margin: 0 auto; }
+                                                        .spec-item { align-items: center; }
+                                                        .spec-label, .spec-value { font-size: 13px; padding: 10px 12px; }
+                                                        /* If screen is too narrow, allow the label to shrink but keep it visually distinct */
+                                                        .spec-label { flex: 0 0 36%; min-width: 90px; }
+                                                        .spec-value { flex: 1 1 64%; }
+                                                        /* Tighter vertical spacing between rows */
+                                                        .spec-grid .row > [class*="col-"] { padding-left: 6px; padding-right: 6px; margin-bottom: 6px; }
+                                                    }
+                                                </style>
+
                                                 <div class="row gy-2">
                                                     <div class="col-12 col-sm-6">
-                                                        <div class="d-flex flex-column flex-sm-row align-items-stretch">
-                                                            <div style="flex:0 0 40%; background:#ecf0f1; border-radius:8px 0 0 8px; padding:12px 14px; font-weight:500; min-width:120px;">
-                                                                Modelo
-                                                            </div>
-                                                            <div style="flex:1; background:#ecf0f1; border-radius:0 8px 8px 0; padding:12px 14px;">
+                                                        <div class="spec-item">
+                                                            <div class="spec-label">Modelo</div>
+                                                            <div class="spec-value">
                                                                 <t t-esc="product.product_model or ''"/>
                                                             </div>
                                                         </div>
                                                     </div>
 
                                                     <div class="col-12 col-sm-6">
-                                                        <div class="d-flex flex-column flex-sm-row align-items-stretch">
-                                                            <div style="flex:0 0 40%; background:#ecf0f1; border-radius:8px 0 0 8px; padding:12px 14px; font-weight:500; min-width:120px;">
-                                                                Stock
-                                                            </div>
-                                                            <div style="flex:1; background:#ecf0f1; border-radius:0 8px 8px 0; padding:12px 14px;">
+                                                        <div class="spec-item">
+                                                            <div class="spec-label">Stock</div>
+                                                            <div class="spec-value">
                                                                 <t t-esc="int(product.qty_available)"/>
                                                             </div>
                                                         </div>
                                                     </div>
 
                                                     <div class="col-12 col-sm-6">
-                                                        <div class="d-flex flex-column flex-sm-row align-items-stretch">
-                                                            <div style="flex:0 0 40%; background:#ecf0f1; border-radius:8px 0 0 8px; padding:12px 14px; font-weight:500; min-width:120px;">
-                                                                Referencia
-                                                            </div>
-                                                            <div style="flex:1; background:#ecf0f1; border-radius:0 8px 8px 0; padding:12px 14px;">
+                                                        <div class="spec-item">
+                                                            <div class="spec-label">Referencia</div>
+                                                            <div class="spec-value">
                                                                 <t t-esc="product.default_code or ''"/>
                                                             </div>
                                                         </div>
                                                     </div>
 
                                                     <div class="col-12 col-sm-6">
-                                                        <div class="d-flex flex-column flex-sm-row align-items-stretch">
-                                                            <div style="flex:0 0 40%; background:#ecf0f1; border-radius:8px 0 0 8px; padding:12px 14px; font-weight:500; min-width:120px;">
-                                                                Actualizado
-                                                            </div>
-                                                            <div style="flex:1; background:#ecf0f1; border-radius:0 8px 8px 0; padding:12px 14px;">
+                                                        <div class="spec-item">
+                                                            <div class="spec-label">Actualizado</div>
+                                                            <div class="spec-value">
                                                                 <t t-esc="product.write_date and product.write_date.strftime('%Y-%m-%d %H:%M:%S') or ''"/>
                                                             </div>
                                                         </div>
