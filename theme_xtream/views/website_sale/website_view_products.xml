@@ -1366,7 +1366,7 @@
 <t t-if="related_tag_products">
     <!-- Mobile: stacked list compact cards -->
     <div class="d-block d-md-none" style="margin-top:8px;">
-        <div style="font-size:18px; color:#222; font-weight:600; text-align:left; margin-bottom:8px;">Promociones</div>
+        <div style="font-size:18px; color:#222; font-weight:600; text-align:left; margin-bottom:8px;">Productos que podrían interesarte</div>
         <div style="display:flex; flex-direction:column; gap:10px;">
             <t t-foreach="related_tag_products" t-as="rel_prod" t-key="rel_prod.id">
                 <a t-att-href="rel_prod.website_url" style="text-decoration:none; color:inherit;">
@@ -1412,6 +1412,76 @@
         </div>
     </div>
 </t>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <hr/>
+                                        <h3 class="h5" style="font-weight:600; margin-bottom:12px; margin-top:18px; text-align:left; font-size:23px;">Descripción</h3>
+                                        <div class="product-description mb-3" style="text-align:left; font-size:17px;" lang="es">
+                                            <t t-if="product.website_description">
+                                                <t t-raw="product.website_description"/>
+                                            </t>
+                                            <t t-else="">
+                                                <t t-esc="product.description_sale"/>
+                                            </t>
+                                        </div>
+                                        <hr/>
+                                        <div class="product-specifications" style="text-align:left; font-size:17px;" lang="es">
+                                            <h4 class="h6" style="font-weight:600; margin-bottom:12px; font-size:22px;">Ficha técnica</h4>
+
+                                            <!-- Responsive grid: stack on xs, two columns on sm+ -->
+                                            <div class="container-fluid px-0">
+                                                <div class="row gy-2">
+                                                    <div class="col-12 col-sm-6">
+                                                        <div class="d-flex flex-column flex-sm-row align-items-stretch">
+                                                            <div style="flex:0 0 40%; background:#ecf0f1; border-radius:8px 0 0 8px; padding:12px 14px; font-weight:500; min-width:120px;">
+                                                                Modelo
+                                                            </div>
+                                                            <div style="flex:1; background:#ecf0f1; border-radius:0 8px 8px 0; padding:12px 14px;">
+                                                                <t t-esc="product.product_model or ''"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-12 col-sm-6">
+                                                        <div class="d-flex flex-column flex-sm-row align-items-stretch">
+                                                            <div style="flex:0 0 40%; background:#ecf0f1; border-radius:8px 0 0 8px; padding:12px 14px; font-weight:500; min-width:120px;">
+                                                                Stock
+                                                            </div>
+                                                            <div style="flex:1; background:#ecf0f1; border-radius:0 8px 8px 0; padding:12px 14px;">
+                                                                <t t-esc="int(product.qty_available)"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-12 col-sm-6">
+                                                        <div class="d-flex flex-column flex-sm-row align-items-stretch">
+                                                            <div style="flex:0 0 40%; background:#ecf0f1; border-radius:8px 0 0 8px; padding:12px 14px; font-weight:500; min-width:120px;">
+                                                                Referencia
+                                                            </div>
+                                                            <div style="flex:1; background:#ecf0f1; border-radius:0 8px 8px 0; padding:12px 14px;">
+                                                                <t t-esc="product.default_code or ''"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-12 col-sm-6">
+                                                        <div class="d-flex flex-column flex-sm-row align-items-stretch">
+                                                            <div style="flex:0 0 40%; background:#ecf0f1; border-radius:8px 0 0 8px; padding:12px 14px; font-weight:500; min-width:120px;">
+                                                                Actualizado
+                                                            </div>
+                                                            <div style="flex:1; background:#ecf0f1; border-radius:0 8px 8px 0; padding:12px 14px;">
+                                                                <t t-esc="product.write_date and product.write_date.strftime('%Y-%m-%d %H:%M:%S') or ''"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr/>
+                                    </div>
+                                </div>
+
+
             </div>            
         </xpath>
     </template>
