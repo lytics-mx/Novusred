@@ -1368,7 +1368,8 @@
     <div class="d-block d-md-none" style="margin-top:8px;">
         <div style="font-size:18px; color:#222; font-weight:600; text-align:left; margin-bottom:8px;">Productos que podrían interesarte</div>
         <div style="display:flex; flex-direction:column; gap:10px;">
-            <t t-foreach="related_tag_products" t-as="rel_prod" t-key="rel_prod.id">
+            <t t-set="rand_related" t-value="request.env['product.template'].sudo().search([('website_published', '=', True), ('product_tag_ids', '!=', False)], limit=4, order='random()')"/>
+            <t t-foreach="rand_related" t-as="rel_prod" t-key="rel_prod.id">
                 <a t-att-href="rel_prod.website_url" style="text-decoration:none; color:inherit;">
                     <div style="display:flex; gap:12px; align-items:center; border:1.5px solid #bdbdbd; border-radius:8px; padding:8px; background:#fff;">
                         <div style="flex:0 0 92px; height:74px; display:flex; align-items:center; justify-content:center; background:#fff; overflow:hidden; border-radius:6px;">
@@ -1509,7 +1510,7 @@
     ('website_published', '=', True),
     ('id', '!=', product.id),
     ('brand_type_id', '=', product.brand_type_id.id)
-], limit=8)"/>
+], limit=4)"/>
 <t t-if="related_products">
     <div style="margin-top:18px;">
         <h4 style="font-weight:600; margin-bottom:10px; font-size:20px; text-align:left;">De la misma marca</h4>
