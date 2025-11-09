@@ -1359,10 +1359,17 @@
                         <span style="font-size:16px; font-weight:600;">Comprar</span>
                     </button>
                 </form>
-<t t-set="related_tag_products" t-value="request.env['product.template'].sudo().search([
-                                ('website_published', '=', True),
-                                ('product_tag_ids', '!=', False)
-                            ], limit=4)"/>
+<t t-set="no_tag_products" t-value="request.env['product.template'].sudo().search([
+    ('website_published', '=', True),
+    ('id', '!=', product.id),
+    ('product_tag_ids', '=', False)
+], limit=2)"/>
+<t t-set="tag_products_random" t-value="request.env['product.template'].sudo().search([
+    ('website_published', '=', True),
+    ('id', '!=', product.id),
+    ('product_tag_ids', '!=', False)
+], order='random()', limit=2)"/>
+<t t-set="related_tag_products" t-value="no_tag_products + tag_products_random"/>
 <t t-if="related_tag_products">
     <!-- Mobile: stacked list compact cards -->
     <div class="d-block d-md-none" style="margin-top:8px;">
