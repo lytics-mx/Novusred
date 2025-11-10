@@ -1156,16 +1156,11 @@
                         </div>
                     </t> -->
                     <t t-if="product.discounted_price &lt; product.list_price">
-                        <div class="mt-0 mobile-discount-amount">
-                            <span class="text-muted" style="font-size: 16px; text-decoration: line-through;">
-                                $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                            </span>
-                        </div>
-                        <div class="d-flex align-items-center justify-content-start mobile-price-container" style="text-align:left; gap:8px;">
-                            <span class="text-dark fw-bold mobile-main-price" style="font-size: 28px; color: #000; font-weight: bold;">
-                                $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
-                            </span>
-                            <t t-if="product.discount_percentage or product.fixed_discount">
+                        <t t-if="product.discount_percentage or product.fixed_discount">
+                            <div class="d-flex align-items-center justify-content-start mobile-price-container" style="text-align:left; gap:8px;">
+                                <span class="text-dark fw-bold mobile-main-price" style="font-size: 28px; color: #000; font-weight: bold;">
+                                    $<t t-esc="'{:,}'.format(int(product.discounted_price or 0))" />
+                                </span>
                                 <span class="mobile-discount" style="font-size: 16px; font-weight: normal; color: #FF5207; margin-left:8px;">
                                     <t t-if="product.discount_percentage">
                                         <t t-esc="int(product.discount_percentage)" />% OFF
@@ -1174,14 +1169,35 @@
                                         -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
                                     </t>
                                 </span>
-                            </t>
-                        </div>
+                            </div>
+                            <!-- Precio tachado abajo cuando existe OFF o MXN -->
+                            <div class="mt-0 mobile-discount-amount">
+                                <span class="text-muted" style="font-size: 16px; text-decoration: line-through;">
+                                    $<t t-esc="'{:,}'.format(int(product.list_price or 0))" />
+                                </span>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <!-- Sin badge: mantener tachado arriba como antes -->
+                            <div class="mt-0 mobile-discount-amount">
+                                <span class="text-muted" style="font-size: 16px; text-decoration: line-through;">
+                                    $<t t-esc="'{:,}'.format(int(product.list_price or 0))" />
+                                </span>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-start mobile-price-container" style="text-align:left; gap:8px;">
+                                <span class="text-dark fw-bold mobile-main-price" style="font-size: 28px; color: #000; font-weight: bold;">
+                                    $<t t-esc="'{:,}'.format(int(product.discounted_price or 0))" />
+                                </span>
+                            </div>
+                        </t>
                         <t t-if="product.list_price and product.discounted_price and (product.list_price - product.discounted_price) &gt; 0">
                             <div class="mt-0 mobile-discount-amount">
                                 <span class="text-muted">
                                     $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" /> descuento
                                 </span>
                             </div>
+                        </t>
+                    </t>
                         </t>
                     </t>
                     <t t-elif="product.list_price">
