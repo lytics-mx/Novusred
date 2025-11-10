@@ -395,152 +395,178 @@
                         </div>
 
                         <style>
-                        /* Marketplace offer card - estilo ajustado para parecerse a la imagen */
-                        .best-offers-grid { margin-left: 0; margin-right: 0; }
-                        .offer-card-link { text-decoration: none; color: inherit; display: block; }
+                        /* Ajustes para que el diseño se parezca a la imagen proporcionada,
+                            manteniendo la estructura HTML existente - sólo estilos */
 
-                        /* Card general */
-                        .offer-card {
-                            border-radius: 10px;
-                            border: 1px solid #eaeaea;
-                            background: #fff;
-                            transition: box-shadow .18s ease, transform .18s ease;
-                            overflow: hidden;
-                            padding: 8px;
-                            display: flex;
-                            flex-direction: column;
-                            align-items: stretch;
+                        .best-offers-grid {
+                             margin-left: 0;
+                             margin-right: 0;
                         }
-
-                        /* Imagen */
+                        .offer-card-link {
+                             text-decoration: none;
+                             color: inherit;
+                        }
+                        .offer-card {
+                             border-radius: 10px;
+                             border: 1px solid #e6e6e6;
+                             background: #fff;
+                             transition: box-shadow 0.18s ease;
+                             padding: 8px;
+                             display: flex;
+                             flex-direction: column;
+                             justify-content: flex-start;
+                             min-height: 220px; /* altura compacta similar a la imagen */
+                             box-sizing: border-box;
+                        }
+                        .offer-card:hover {
+                             box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+                        }
                         .offer-img-wrap {
-                            width: 100%;
-                            background: #fafafa;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            height: 140px;
-                            border-radius: 8px;
-                            position: relative;
-                            overflow: hidden;
+                             width: 100%;
+                             background: #fff;
+                             display: flex;
+                             align-items: center;
+                             justify-content: center;
+                             height: 140px; /* reducido para ajustarse a proporciones de la imagen */
+                             overflow: hidden;
+                             padding: 6px;
                         }
                         .offer-img {
-                            max-width: 100%;
-                            max-height: 120px;
-                            object-fit: contain;
-                            display: block;
-                            transition: transform .18s;
+                             max-width: 100%;
+                             max-height: 120px;
+                             object-fit: contain;
+                             margin: 0 auto;
+                             display: block;
+                             transition: transform 0.18s ease;
                         }
-                        .offer-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.08); transform: translateY(-2px); }
-                        .offer-card:hover .offer-img { transform: scale(1.03); }
-
-                        /* Badge de porcentaje sobre la imagen */
-                        .offer-discount-badge {
-                            position: absolute;
-                            top: 8px;
-                            left: 8px;
-                            background: #FF5207;
-                            color: #fff;
-                            padding: 4px 8px;
-                            font-weight: 700;
-                            font-size: 12px;
-                            border-radius: 4px;
-                            text-transform: uppercase;
-                            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+                        .offer-card:hover .offer-img {
+                             transform: scale(1.03);
                         }
-
-                        /* Área de información */
                         .offer-info {
-                            padding: 10px 8px 8px 8px;
-                            display: flex;
-                            flex-direction: column;
-                            gap: 6px;
+                             padding: 8px 6px 6px 6px;
+                             display: flex;
+                             flex-direction: column;
+                             gap: 6px;
+                             flex-grow: 1;
                         }
                         .offer-title {
-                            font-size: 14px;
-                            font-weight: 600;
-                            color: #222;
-                            line-height: 1.1;
-                            margin: 0;
-                            text-align: left;
-                            height: 2.4em;
-                            overflow: hidden;
-                            display: -webkit-box;
-                            -webkit-line-clamp: 2;
-                            -webkit-box-orient: vertical;
+                             font-size: 14px;
+                             font-weight: 500;
+                             color: #222;
+                             min-height: 2.2em;
+                             max-height: 2.2em;
+                             overflow: hidden;
+                             display: -webkit-box;
+                             -webkit-line-clamp: 2;
+                             -webkit-box-orient: vertical;
+                             margin: 0;
                         }
 
-                        /* Precios */
+                        /* Precios: viejo tachado y nuevo destacado */
                         .offer-prices {
-                            display: flex;
-                            align-items: baseline;
-                            gap: 8px;
-                            justify-content: flex-start;
-                            width: 100%;
-                        }
-                        .offer-new-price {
-                            color: #000;
-                            font-size: 20px;
-                            font-weight: 800;
+                             display: flex;
+                             align-items: baseline;
+                             gap: 10px;
+                             justify-content: flex-start;
+                             flex-wrap: nowrap;
                         }
                         .offer-old-price {
-                            color: #888;
-                            font-size: 13px;
-                            text-decoration: line-through;
+                             color: #7a7a7a;
+                             font-size: 13px;
+                             text-decoration: line-through;
+                        }
+                        .offer-new-price {
+                             color: #000;
+                             font-size: 20px;
+                             font-weight: 700;
                         }
 
-                        /* Texto de ahorro y envío */
+                        /* Fila de precio + descuento a la derecha */
+                        .offer-discount {
+                             margin-left: auto;
+                             color: #FF5207;
+                             font-size: 13px;
+                             font-weight: 700;
+                             font-style: italic;
+                             display: inline-block;
+                             white-space: nowrap;
+                        }
+
+                        /* Texto de ahorro/diferencia */
                         .offer-saved {
-                            color: #666;
-                            font-size: 12px;
-                            text-align: left;
+                             color: #7a7a7a;
+                             font-size: 12px;
                         }
+
+                        /* Envío gratis estilo sutil pero visible */
                         .offer-shipping {
-                            color: #FF5207;
-                            font-weight: 700;
-                            font-style: italic;
-                            font-size: 13px;
-                            text-align: left;
+                             color: #28a745;
+                             font-weight: 700;
+                             font-size: 13px;
+                             font-style: italic;
                         }
 
-                        /* Badge de etiqueta/categoría */
+                        /* Badge de categoría / etiqueta */
+                        .offer-badge {
+                             margin-top: 6px;
+                             align-self: flex-start;
+                        }
                         .offer-badge span {
-                            background: #0d6efd;
-                            color: #fff;
-                            font-size: 11px;
-                            padding: 4px 8px;
-                            border-radius: 3px;
-                            text-transform: uppercase;
-                            font-weight: 600;
+                             background: #0d6efd;
+                             color: #fff;
+                             font-size: 11px;
+                             padding: 4px 8px;
+                             border-radius: 2px;
+                             text-transform: uppercase;
+                             font-weight: 600;
+                             letter-spacing: 0.4px;
                         }
 
-                        /* Ver todas */
+                        /* Link ver todas */
                         .offer-see-all-link {
-                            color: #0d6efd;
-                            font-size: 15px;
-                            font-weight: 700;
-                            text-decoration: underline;
+                             color: #0d6efd;
+                             font-size: 15px;
+                             font-weight: 700;
+                             text-decoration: underline;
+                             cursor: pointer;
                         }
 
-                        /* Responsive adjustments */
+                        /* Responsive: ajustes más compactos en pantallas pequeñas */
                         @media (max-width: 991.98px) {
-                            .offer-card { padding: 6px; }
-                            .offer-img-wrap { height: 120px; }
-                            .offer-img { max-height: 90px; }
-                            .offer-new-price { font-size: 18px; }
-                            .offer-title { font-size: 13px; height: 2.2em; }
-                            .offer-discount-badge { font-size: 11px; padding: 3px 6px; }
-                            .offer-old-price { font-size: 12px; }
-                            .offer-saved { font-size: 12px; }
-                            .offer-shipping { font-size: 12px; }
-                        }
-
-                        @media (max-width: 575.98px) {
-                            .offer-prices { gap: 6px; }
-                            .offer-new-price { font-size: 18px; }
-                            .offer-img-wrap { height: 110px; }
-                            .offer-img { max-height: 80px; }
-                            .offer-title { font-size: 13px; }
+                             .offer-card {
+                                  min-height: 200px;
+                                  padding: 6px;
+                             }
+                             .offer-img-wrap {
+                                  height: 120px;
+                             }
+                             .offer-img {
+                                  max-height: 96px;
+                             }
+                             .offer-title {
+                                  font-size: 13px;
+                                  min-height: 2em;
+                                  max-height: 2em;
+                             }
+                             .offer-new-price {
+                                  font-size: 18px;
+                             }
+                             .offer-old-price {
+                                  font-size: 12px;
+                             }
+                             .offer-discount {
+                                  font-size: 12px;
+                             }
+                             .offer-saved {
+                                  font-size: 11px;
+                             }
+                             .offer-shipping {
+                                  font-size: 12px;
+                             }
+                             .offer-badge span {
+                                  font-size: 10px;
+                                  padding: 3px 6px;
+                             }
                         }
                         </style>
                     </div>
