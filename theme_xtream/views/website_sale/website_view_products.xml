@@ -1096,23 +1096,26 @@
 
 
             </div>
-
             <div class="d-block d-md-none w-100 px-3 py-2 mx-auto" style="font-family: 'Montserrat', Arial, sans-serif; max-width:480px; margin:0 auto; padding-top:0.5rem; padding-bottom:0.5rem; text-align:center; box-sizing:border-box;">
+                <!-- Force a stable reference to the product being viewed -->
+                <t t-set="root_product" t-value="request.env['product.template'].sudo().browse(product.id)"/>
+
                 <!-- Estado del producto -->
-                <t t-set="pdate" t-value="product.create_date"/>
+                <t t-set="pdate" t-value="root_product.create_date"/>
                 <t t-set="now" t-value="datetime.datetime.now()"/>
                 <div t-if="pdate and pdate.year == now.year and pdate.month == now.month" style="font-size:12px; color:#888;">
                     Nuevo
-                </div>                <!-- Título -->
+                </div>
+                <!-- Título -->
                 <div style="font-size:18px; font-weight:600; margin-bottom:4px;">
-                    <t t-esc="product.name and (product.name[:40] + '' if len(product.name) > 40 else product.name)"/>
+                    <t t-esc="root_product.name and (root_product.name[:40] + '' if len(root_product.name) > 40 else root_product.name)"/>
                 </div>
                 <div style="font-size:13px; color:#888; margin-bottom:4px;">
-                    <t t-if="product.product_model">
-                        <t t-esc="product.product_model"/>
+                    <t t-if="root_product.product_model">
+                        <t t-esc="root_product.product_model"/>
                     </t>
-                    <t t-elif="product.default_code">
-                        <t t-esc="product.default_code"/>
+                    <t t-elif="root_product.default_code">
+                        <t t-esc="root_product.default_code"/>
                     </t>
                 </div>
                 <!-- Estrellas -->
@@ -1122,22 +1125,22 @@
                 </div>
                 <!-- Slider de imágenes -->
                 <div class="mb-2 text-center">
-                    <t t-set="pcount" t-value="1 + (len(product.product_image_ids) if product.product_image_ids else 0)"/>
+                    <t t-set="pcount" t-value="1 + (len(root_product.product_image_ids) if root_product.product_image_ids else 0)"/>
                     <span style="font-size:11px; background:#f2f2f2; border-radius:8px; padding:2px 8px;">
                         <t t-esc="1"/> / <t t-esc="pcount"/>
                     </span>
                 </div>
                 <div class="mb-3 text-center">
                     <!-- Imagen principal primero -->
-                    <img id="main-product-img"
-                         t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                    <img id="main-product-img-mobile"
+                         t-att-src="'/web/image/product.template/' + str(root_product.id) + '/image_1920'"
                          alt="Imagen principal"
                          style="max-width:100%; border-radius:10px; object-fit:contain;"/>
                 </div>
                 <!-- Imágenes adicionales (si existen) -->
-                <t t-if="product.product_image_ids">
+                <t t-if="root_product.product_image_ids">
                     <div class="d-flex justify-content-center gap-2 mb-3" style="overflow:auto; padding-bottom:4px;">
-                        <t t-foreach="product.product_image_ids" t-as="img">
+                        <t t-foreach="root_product.product_image_ids" t-as="img">
                             <img t-att-src="'/web/image/product.image/' + str(img.id) + '/image_1920'"
                                  t-att-alt="img.name or 'Imagen adicional'"
                                  class="img-thumbnail thumb-mini"
@@ -1148,50 +1151,43 @@
                 </t>
                 <!-- Precio y descuento -->
                 <div class="card-body mobile-card-body" style="text-align:left; display:flex; flex-direction:column; justify-content:center; align-items:flex-start; padding:8px 0; min-height:87.74px; box-sizing:border-box;">
-                    <!-- <t t-if="product.product_tag_ids">
-                        <div class="d-flex justify-content-start mb-2 mobile-badge-container">
-                            <span class="badge bg-primary mobile-badge" style="border-radius: 0; text-transform: uppercase;">
-                                <t t-esc="product.product_tag_ids[0].name"/>
-                            </span>
-                        </div>
-                    </t> -->
-                    <t t-if="product.discounted_price &lt; product.list_price">
+                    <t t-if="root_product.discounted_price &lt; root_product.list_price">
                         <div class="mt-0 mobile-discount-amount">
                             <span class="text-muted" style="font-size: 16px; text-decoration: line-through;">
-                                $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                $<t t-esc="'{:,}'.format(int(root_product.list_price))" />
                             </span>
                         </div>
                         <div class="d-flex align-items-center justify-content-start mobile-price-container" style="text-align:left; gap:8px;">
                             <span class="text-dark fw-bold mobile-main-price" style="font-size: 28px; color: #000; font-weight: bold;">
-                                $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
+                                $<t t-esc="'{:,}'.format(int(root_product.discounted_price))" />
                             </span>
-                            <t t-if="product.discount_percentage or product.fixed_discount">
+                            <t t-if="root_product.discount_percentage or root_product.fixed_discount">
                                 <span class="mobile-discount" style="font-size: 16px; font-weight: normal; color: #FF5207; margin-left:8px;">
-                                    <t t-if="product.discount_percentage">
-                                        <t t-esc="int(product.discount_percentage)" />% OFF
+                                    <t t-if="root_product.discount_percentage">
+                                        <t t-esc="int(root_product.discount_percentage)" />% OFF
                                     </t>
-                                    <t t-elif="product.fixed_discount">
-                                        -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
+                                    <t t-elif="root_product.fixed_discount">
+                                        -$<t t-esc="'{:,}'.format(int(root_product.fixed_discount))" /> MXN
                                     </t>
                                 </span>
                             </t>
                         </div>
-                        <t t-if="product.list_price and product.discounted_price and (product.list_price - product.discounted_price) &gt; 0">
+                        <t t-if="root_product.list_price and root_product.discounted_price and (root_product.list_price - root_product.discounted_price) &gt; 0">
                             <div class="mt-0 mobile-discount-amount">
                                 <span class="text-muted">
-                                    $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" /> descuento
+                                    $<t t-esc="'{:,}'.format(int(root_product.list_price - root_product.discounted_price))" /> descuento
                                 </span>
                             </div>
                         </t>
                     </t>
-                    <t t-elif="product.list_price">
+                    <t t-elif="root_product.list_price">
                         <span class="fw-bold d-block mobile-main-price" style="text-align:left;">
-                            $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                            $<t t-esc="'{:,}'.format(int(root_product.list_price))" />
                         </span>
                     </t>
                 </div>
                 <!-- Envío gratis -->
-                <t t-if="product.free_shipping">
+                <t t-if="root_product.free_shipping">
                     <div class="mt-0 mobile-shipping d-flex justify-content-start" style="text-align:left;">
                         <span class="text-orange mobile-shipping-text">
                             Envío gratis
@@ -1200,8 +1196,8 @@
                 </t>
                 <!-- Detalles -->
                 <div class="text-start" style="font-size:13px; color:#444; text-align:left; padding-left:8px; padding-right:8px;">
-                    <div>Modelo: <t t-esc="product.default_code"/></div>
-                    <div>Marca: <t t-esc="product.brand_type_id.name"/></div>
+                    <div>Modelo: <t t-esc="root_product.default_code"/></div>
+                    <div>Marca: <t t-esc="root_product.brand_type_id.name"/></div>
                     <div>Disponible:</div>
                 </div>
                 <!-- Selector de cantidad -->
@@ -1217,7 +1213,7 @@
                     <div id="mobile-qty-container" style="display:none; margin-top:8px; align-items:center;">
                         <div style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px;">
                             <button type="button" class="btn" id="qty-minus" style="min-width:36px; height:36px; font-size:20px; padding:0; background:transparent; border:1px solid #e0e0e0; color:#222; border-radius:6px;">-</button>
-                            <input id="qty-input" type="number" name="add_qty" value="1" min="1" t-att-max="product.qty_available"
+                            <input id="qty-input" type="number" name="add_qty" value="1" min="1" t-att-max="root_product.qty_available"
                                 class="form-control text-center"
                                 style="width:3.5em; min-width:48px; max-width:4.5em; padding:0 4px; border:1px solid #e0e0e0; box-shadow:none; background:transparent; outline:none; font-size:16px; border-radius:6px;"
                                 onwheel="return false;"
