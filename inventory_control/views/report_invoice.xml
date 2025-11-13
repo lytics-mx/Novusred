@@ -1,10 +1,83 @@
 <odoo>
-    <template id="report_invoice_document_inherit_remove_terms" inherit_id="account.report_invoice_document">
-        <!-- Quitar "Términos de pago" -->
-        <xpath expr="//span[@id='payment_terms_note_id']" position="replace"/>
-        <!-- Quitar "Payment Communication" -->
-        <xpath expr="//p[@name='payment_communication']" position="replace"/>
-        <!-- Elimina este xpath si da error -->
-        <!-- <xpath expr="//div[@name='comment']" position="replace"/> -->
+    <template id="report_invoice_document_inherit_cfdi_top" inherit_id="account.report_invoice_document">
+        <!-- Mover el bloque CFDI arriba, junto a la tabla de datos de factura -->
+        <xpath expr="//div[@id='informations']" position="replace">
+            <div class="row mb-4">
+                <!-- Columna izquierda: datos de factura -->
+                <div class="col-7">
+                    <!-- ...aquí va el contenido original de la tabla de factura... -->
+                    <div id="informations" class="row mb-4">
+                        <!-- Copia aquí los <div class="col" ...> de la tabla de factura -->
+                        <div class="col" t-if="o.invoice_date" name="invoice_date">
+                            <strong>Fecha de factura</strong>
+                            <div t-field="o.invoice_date"/>
+                        </div>
+                        <div class="col" t-if="o.invoice_date_due" name="due_date">
+                            <strong>Fecha límite</strong>
+                            <div t-field="o.invoice_date_due"/>
+                        </div>
+                        <div class="col" t-if="o.invoice_origin" name="origin">
+                            <strong>Origen</strong>
+                            <div t-field="o.invoice_origin"/>
+                        </div>
+                        <div class="col" t-if="o.l10n_mx_edi_usage" name="usage">
+                            <strong>Uso</strong>
+                            <div t-field="o.l10n_mx_edi_usage"/>
+                        </div>
+                        <div class="col" t-if="o.l10n_mx_edi_payment_method_id" name="forma_pago">
+                            <strong>Forma de Pago:</strong>
+                            <div t-field="o.l10n_mx_edi_payment_method_id.code"/> - <span t-field="o.l10n_mx_edi_payment_method_id.name"/>
+                        </div>
+                        <div class="col" t-if="o.l10n_mx_edi_payment_policy" name="metodo_pago">
+                            <strong>Método de Pago:</strong>
+                            <div t-field="o.l10n_mx_edi_payment_policy"/>
+                        </div>
+                    </div>
+                </div>
+                <!-- Columna derecha: datos CFDI -->
+                <div class="col-5">
+                    <div id="cfdi_data" class="table-responsive">
+                        <table class="table table-sm">
+                            <tr>
+                                <td><strong>Versión:</strong></td>
+                                <td t-field="o.l10n_mx_edi_cfdi_version"/>
+                            </tr>
+                            <tr>
+                                <td><strong>Folio Fiscal:</strong></td>
+                                <td t-field="o.l10n_mx_edi_cfdi_uuid"/>
+                            </tr>
+                            <tr>
+                                <td><strong>No. de serie del CSD del Emisor:</strong></td>
+                                <td t-field="o.l10n_mx_edi_cfdi_certificado"/>
+                            </tr>
+                            <tr>
+                                <td><strong>Fecha y hora de emisión:</strong></td>
+                                <td t-field="o.l10n_mx_edi_cfdi_date"/>
+                            </tr>
+                            <tr>
+                                <td><strong>Fecha y hora de Certificación:</strong></td>
+                                <td t-field="o.l10n_mx_edi_cfdi_tfd_date"/>
+                            </tr>
+                            <tr>
+                                <td><strong>Uso de CFDI:</strong></td>
+                                <td t-field="o.l10n_mx_edi_usage"/>
+                            </tr>
+                            <tr>
+                                <td><strong>Régimen fiscal:</strong></td>
+                                <td t-field="o.company_id.l10n_mx_edi_fiscal_regime"/>
+                            </tr>
+                            <tr>
+                                <td><strong>Tipo de CFDI:</strong></td>
+                                <td t-field="o.l10n_mx_edi_cfdi_type"/>
+                            </tr>
+                            <tr>
+                                <td><strong>Serie y Folio:</strong></td>
+                                <td t-field="o.name"/>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </xpath>
     </template>
 </odoo>
