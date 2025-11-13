@@ -1,40 +1,12 @@
 <odoo>
     <template id="report_invoice_document_inherit_cfdi_top" inherit_id="account.report_invoice_document">
         <!-- Mover el bloque CFDI arriba, junto a la tabla de datos de factura -->
-        <xpath expr="//div[@id='informations']" position="replace">
+        <!-- Insertar el bloque CFDI después del div existente con id="informations"
+             en lugar de reemplazarlo para no eliminar elementos que otras
+             plantillas puedan buscar (p. ej. elementos con name="customer_code"). -->
+        <xpath expr="//div[@id='informations']" position="after">
             <div class="row mb-4">
-                <!-- Columna izquierda: datos de factura -->
-                <div class="col-7">
-                    <!-- ...aquí va el contenido original de la tabla de factura... -->
-                    <div id="informations" class="row mb-4">
-                        <!-- Copia aquí los <div class="col" ...> de la tabla de factura -->
-                        <div class="col" t-if="o.invoice_date" name="invoice_date">
-                            <strong>Fecha de factura</strong>
-                            <div t-field="o.invoice_date"/>
-                        </div>
-                        <div class="col" t-if="o.invoice_date_due" name="due_date">
-                            <strong>Fecha límite</strong>
-                            <div t-field="o.invoice_date_due"/>
-                        </div>
-                        <div class="col" t-if="o.invoice_origin" name="origin">
-                            <strong>Origen</strong>
-                            <div t-field="o.invoice_origin"/>
-                        </div>
-                        <div class="col" t-if="o.l10n_mx_edi_usage" name="usage">
-                            <strong>Uso</strong>
-                            <div t-field="o.l10n_mx_edi_usage"/>
-                        </div>
-                        <div class="col" t-if="o.l10n_mx_edi_payment_method_id" name="forma_pago">
-                            <strong>Forma de Pago:</strong>
-                            <div t-field="o.l10n_mx_edi_payment_method_id.code"/> - <span t-field="o.l10n_mx_edi_payment_method_id.name"/>
-                        </div>
-                        <div class="col" t-if="o.l10n_mx_edi_payment_policy" name="metodo_pago">
-                            <strong>Método de Pago:</strong>
-                            <div t-field="o.l10n_mx_edi_payment_policy"/>
-                        </div>
-                    </div>
-                </div>
-                <!-- Columna derecha: datos CFDI -->
+                <!-- Columna derecha: datos CFDI (se inserta como bloque separado) -->
                 <div class="col-5">
                     <div id="cfdi_data" class="table-responsive">
                         <table class="table table-sm">
