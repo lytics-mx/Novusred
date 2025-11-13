@@ -31,7 +31,7 @@
         # 'views/product_model.xml',
         # 'views/sale_order_note.xml',
         'views/sale_orde_pdf.xml',
-
+        'views/report_cfdi.xml',
         
      
     ],
