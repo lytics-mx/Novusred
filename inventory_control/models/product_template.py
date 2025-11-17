@@ -263,30 +263,18 @@ class ProductTemplate(models.Model):
                result.append((template.id, name))
           return result
           
-     # Mantener el label visible como 'Bienes'
-     @api.depends('type')
-     def _compute_display_type(self):
-          for record in self:
-               if record.type == 'product' and record.name.lower().find('bienes') != -1:
-                    record.display_type_custom = 'Bienes'
-               else:
-                    record.display_type_custom = record.type
+
 
      display_type_custom = fields.Char(string='Tipo visible', compute='_compute_display_type')
 
-     @api.model
-     def create(self, vals):
-          if vals.get('type') == 'bienes':
-               vals['type'] = 'product'  # Internamente almacenable
-          return super().create(vals)
+
 
      def apply_route_to_all_products(self):
-          """Aplica la ruta 'Make to Order' y 'Manufacture' a todos los productos."""
-          # Define las rutas que deseas aplicar
-          make_to_order_route = self.env.ref('stock.route_warehouse0_mto')
-          manufacture_route = self.env.ref('mrp.route_warehouse0_manufacture')
-
-          # Aplica las rutas a todos los productos
-          products = self.search([])
-          for product in products:
-               product.route_ids = [(4, make_to_order_route.id), (4, manufacture_route.id)]
+         """Aplica la ruta 'Triangular' a todos los productos."""
+         # Obtén la referencia de la ruta 'Triangular'
+         triangular_route = self.env.ref('stock.route_triangular')  # Asegúrate de que el XML ID sea correcto
+     
+         # Aplica la ruta a todos los productos
+         products = self.search([])
+         for product in products:
+             product.route_ids = [(4, triangular_route.id)]  # Agrega la ruta 'Triangular'
