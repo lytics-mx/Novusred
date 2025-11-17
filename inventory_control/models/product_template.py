@@ -265,7 +265,6 @@ class ProductTemplate(models.Model):
           
 
 
-     display_type_custom = fields.Char(string='Tipo visible', compute='_compute_display_type')
 
 
 
