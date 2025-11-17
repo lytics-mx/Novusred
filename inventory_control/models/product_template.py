@@ -275,14 +275,12 @@ class ProductTemplate(models.Model):
      display_type_custom = fields.Char(string='Tipo visible', compute='_compute_display_type')
 
      @api.model
-     def apply_route_to_all_products(self):
-          """Aplica la ruta 'Make to Order' y 'Manufacture' a todos los productos."""
-          # Define las rutas que deseas aplicar
-          make_to_order_route = self.env.ref('stock.route_warehouse0_mto')
-          manufacture_route = self.env.ref('mrp.route_warehouse0_manufacture')
+     def create(self, vals):
+          if vals.get('type') == 'bienes':
+               vals['type'] = 'product'  # Internamente almacenable
+          return super().create(vals)
 
-          # Aplica las rutas a todos los productos
-          products = self.search([])
-          for product in products:
-               product.route_ids = [(4, make_to_order_route.id), (4, manufacture_route.id)]
-               
+     def write(self, vals):
+          if vals.get('type') == 'bienes':
+               vals['type'] = 'product'  # Internamente almacenable
+          return super().write(vals)
