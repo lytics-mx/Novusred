@@ -1161,7 +1161,48 @@
                             </div>
                         </t>
                     </div>
-
+                    <!-- Colecciones de marcas -->
+                    <div class="container mt-3 px-2">
+                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 20px;">Colecciones</h2>
+                        
+                        <!-- Obtener productos de diferentes marcas -->
+                        <t t-set="brand_collections" t-value="request.env['brand.type'].sudo().search([
+                            ('active', '=', True),
+                            ('product_ids', '!=', False)
+                        ], limit=6)" />
+                        
+                        <t t-if="brand_collections">
+                            <div class="row row-cols-2 g-2">
+                                <t t-foreach="brand_collections" t-as="brand_collection">
+                                    <t t-set="brand_products" t-value="brand_collection.product_ids.filtered(lambda p: p.website_published)[:1]" />
+                                    <t t-if="brand_products">
+                                        <div class="col">
+                                            <a t-att-href="'/brand/' + (brand_collection.name or '').replace(' ', '').lower()" style="text-decoration: none;">
+                                                <div class="card h-100" style="border: none; border-radius: 12px; overflow: hidden; box-shadow: 0px 2px 8px rgba(0,0,0,0.08);">
+                                                    <img t-att-src="'/web/image/product.template/' + str(brand_products[0].id) + '/image_1920'" 
+                                                         class="card-img-top" 
+                                                         style="height: 120px; object-fit: contain; background: #f8f9fa; padding: 10px;" />
+                                                    <div class="card-body p-2 text-center" style="background: white;">
+                                                        <h6 class="mb-0" style="font-family: 'Questrial', sans-serif; font-size: 13px; color: #333; font-weight: 600;">
+                                                            <t t-esc="brand_collection.name" />
+                                                        </h6>
+                                                        <p class="mb-0 mt-1" style="font-size: 11px; color: #888;">
+                                                            Ver colección
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </t>
+                                </t>
+                            </div>
+                            <div class="mt-2" style="text-align: right;">
+                                <a href="/brands" style="font-family: 'Questrial', sans-serif; font-size: 15px; color: #1976d2; text-decoration: none; font-weight: bold;">
+                                    Ver todas &gt;
+                                </a>
+                            </div>
+                        </t>
+                    </div>
                     <!-- Historial - Sección móvil -->
                     <t t-if="request.env.user and request.env.user.id != request.env.ref('base.public_user').id">
                         <t t-set="visitor" t-value="request.env['website.visitor']._get_visitor_from_request()" />
