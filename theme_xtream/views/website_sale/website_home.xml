@@ -1228,8 +1228,12 @@
                             ('website_published', '=', True),
                             ('brand_type_id', '!=', False)
                         ], limit=4)" />
+                        <t t-set="brand_products_extra" t-value="request.env['product.template'].sudo().search([
+                            ('website_published', '=', True),
+                            ('brand_type_id', '!=', False)
+                        ], offset=4, limit=4)" />
                         <t t-if="brand_products">
-                            <div class="row row-cols-2 g-2">
+                            <div class="row row-cols-2 g-2" id="brand-collections-initial">
                                 <t t-foreach="brand_products" t-as="product">
                                     <div class="col">
                                         <a t-att-href="'/brand/' + (product.brand_type_id.name or '').replace(' ', '').lower()" style="text-decoration: none;">
@@ -1242,20 +1246,8 @@
                                     </div>
                                 </t>
                             </div>
-                            <div class="mt-2" style="text-align: left;">
-                                <div style="background: #fff; border-radius: 12px; padding: 10px 0;">
-                                    <a href="/brands" style="font-family: 'Questrial', sans-serif; font-size: 15px; color: #1976d2; text-decoration: none; font-weight: bold; display: block;">
-                                        &nbsp; Ver todas &nbsp;
-                                    </a>
-                                </div>
-                            </div>
-                            <!-- Mostrar otras 4 colecciones con el mismo diseño -->
-                            <t t-set="brand_products_extra" t-value="request.env['product.template'].sudo().search([
-                                ('website_published', '=', True),
-                                ('brand_type_id', '!=', False)
-                            ], offset=4, limit=4)" />
                             <t t-if="brand_products_extra">
-                                <div class="row row-cols-2 g-2 mt-2">
+                                <div class="row row-cols-2 g-2" id="brand-collections-extra" style="display: none;">
                                     <t t-foreach="brand_products_extra" t-as="product">
                                         <div class="col">
                                             <a t-att-href="'/brand/' + (product.brand_type_id.name or '').replace(' ', '').lower()" style="text-decoration: none;">
@@ -1269,6 +1261,30 @@
                                     </t>
                                 </div>
                             </t>
+                            <div class="mt-2" style="text-align: left;">
+                                <div style="background: #fff; border-radius: 12px; padding: 10px 0;">
+                                    <a href="javascript:void(0);" id="show-more-collections" style="font-family: 'Questrial', sans-serif; font-size: 15px; color: #1976d2; text-decoration: none; font-weight: bold; display: block;">
+                                        Ver todas
+                                    </a>
+                                    <a href="/brands" id="see-all-brands-link" style="display:none; font-family: 'Questrial', sans-serif; font-size: 15px; color: #1976d2; text-decoration: none; font-weight: bold; margin-top: 8px;">
+                                        Ver todas las marcas
+                                    </a>
+                                </div>
+                            </div>
+                            <script type="text/javascript">
+                                (function() {
+                                    var btn = document.getElementById('show-more-collections');
+                                    var extra = document.getElementById('brand-collections-extra');
+                                    var seeAll = document.getElementById('see-all-brands-link');
+                                    if(btn && extra && seeAll){
+                                        btn.addEventListener('click', function(){
+                                            extra.style.display = 'flex';
+                                            btn.style.display = 'none';
+                                            seeAll.style.display = 'block';
+                                        });
+                                    }
+                                })();
+                            </script>
                         </t>
                     </div>
                     <!-- Historial - Sección móvil -->
