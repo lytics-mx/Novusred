@@ -1245,10 +1245,30 @@
                             <div class="mt-2" style="text-align: left;">
                                 <div style="background: #fff; border-radius: 12px; padding: 10px 0;">
                                     <a href="/brands" style="font-family: 'Questrial', sans-serif; font-size: 15px; color: #1976d2; text-decoration: none; font-weight: bold; display: block;">
-                                        Ver todas
+                                        &nbsp; Ver todas &nbsp;
                                     </a>
                                 </div>
                             </div>
+                            <!-- Mostrar otras 4 colecciones con el mismo diseño -->
+                            <t t-set="brand_products_extra" t-value="request.env['product.template'].sudo().search([
+                                ('website_published', '=', True),
+                                ('brand_type_id', '!=', False)
+                            ], offset=4, limit=4)" />
+                            <t t-if="brand_products_extra">
+                                <div class="row row-cols-2 g-2 mt-2">
+                                    <t t-foreach="brand_products_extra" t-as="product">
+                                        <div class="col">
+                                            <a t-att-href="'/brand/' + (product.brand_type_id.name or '').replace(' ', '').lower()" style="text-decoration: none;">
+                                                <div class="card h-100" style="border: none; border-radius: 12px; overflow: hidden; box-shadow: 0px 2px 8px rgba(0,0,0,0.08);">
+                                                    <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                         class="card-img-top" 
+                                                         style="height: 120px; object-fit: contain; background: #f8f9fa; padding: 10px;" />
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </t>
+                                </div>
+                            </t>
                         </t>
                     </div>
                     <!-- Historial - Sección móvil -->
