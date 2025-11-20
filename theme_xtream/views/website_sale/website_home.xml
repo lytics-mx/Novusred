@@ -1131,24 +1131,24 @@
                         <t t-if="brands">
                             <div id="brandsCarouselMobile" class="carousel slide" data-bs-ride="carousel">
                                 <div class="carousel-inner">
-                                    <t t-foreach="brands" t-as="brand" t-key="brand.id">
-                                        <div t-att-class="'carousel-item' + (' active' if loop.index0 == 0 else '')">
-                                            <a t-att-href="'/brand/' + (brand.name or '').replace(' ', '').lower()" style="text-decoration: none;">
+                                    <t t-foreach="enumerate(brands)" t-as="brand_tuple" t-key="brand_tuple[1].id">
+                                        <div t-att-class="'carousel-item' + (' active' if brand_tuple[0] == 0 else '')">
+                                            <a t-att-href="'/brand/' + (brand_tuple[1].name or '').replace(' ', '').lower()" style="text-decoration: none;">
                                                 <div class="d-flex align-items-end" style="background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.10); min-height: 120px; position: relative;">
                                                     <!-- Cover image as background -->
-                                                    <img t-att-src="'data:image/png;base64,' + brand.cover_image.decode('utf-8')"
+                                                    <img t-att-src="'data:image/png;base64,' + brand_tuple[1].cover_image.decode('utf-8')"
                                                          alt="Portada de la Marca"
                                                          style="width: 100%; height: 100px; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 1;" />
                                                     <!-- Brand icon over background -->
                                                     <div style="position: relative; z-index: 2; margin-left: 15px; margin-bottom: 15px; background: #fff; border-radius: 8px; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                                                        <img t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')"
+                                                        <img t-att-src="'data:image/png;base64,' + brand_tuple[1].icon_image.decode('utf-8')"
                                                              alt="Ícono de la Marca"
                                                              style="width: 60px; height: 60px; object-fit: contain; background: transparent; border: none;" />
                                                     </div>
                                                     <!-- Brand name and slogan -->
                                                     <div style="position: relative; z-index: 2; margin-left: 20px; margin-bottom: 18px;">
                                                         <span style="font-family: 'Questrial', sans-serif; font-size: 18px; font-weight: bold; color: #1a1a1a; display: block;">
-                                                            <t t-esc="brand.name" />
+                                                            <t t-esc="brand_tuple[1].name" />
                                                         </span>
                                                         <span style="font-family: 'Questrial', sans-serif; font-size: 13px; color: #555; display: block;">
                                                             EXCEED YOUR VISION
