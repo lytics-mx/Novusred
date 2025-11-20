@@ -1013,31 +1013,30 @@
                                     <t t-foreach="discounted_products" t-as="product">
                                         <div class="col-6" style="padding-left: 4px; padding-right: 4px;">
                                             <a t-att-href="product.website_url" style="text-decoration: none;">
-                                                <div class="product-card" style="border-radius: 10px; background: #fff; border: 1px solid transparent; box-shadow: none;">
+                                                <div class="custom-offer-card">
                                                     <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                                                         class="card-img-top"
-                                                         style="height: 90px; object-fit: contain; background: #fff; border-radius: 10px 10px 0 0; border: none; box-shadow: none;" />
-                                                    <div class="card-body p-2" style="background: #fff; border-radius: 0 0 10px 10px; border: none; box-shadow: none;">
-                                                        <div style="font-size: 12px; color: #222; min-height: 28px; font-weight: 500; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; white-space: normal;">
+                                                         class="card-img-top custom-offer-img" />
+                                                    <div class="card-body custom-offer-body">
+                                                        <div class="custom-offer-title">
                                                             <t t-esc="product.name" />
                                                         </div>
                                                         <div class="d-flex align-items-center mt-1 mb-1">
-                                                            <span class="fw-bold" style="font-size: 15px; color: #222;">
+                                                            <span class="fw-bold custom-offer-price">
                                                                 $<t t-esc="'{:,}'.format(int(product.discounted_price if product.discounted_price &lt; product.list_price else product.list_price))" />
                                                             </span>
                                                             <t t-if="product.discounted_price &lt; product.list_price and product.discount_percentage">
-                                                                <span class="ms-2" style="color: #FF5207; font-size: 11px;">
+                                                                <span class="ms-2 custom-offer-discount">
                                                                     <t t-esc="int(product.discount_percentage)" />% OFF
                                                                 </span>
                                                             </t>
                                                         </div>
                                                         <t t-if="product.discounted_price &lt; product.list_price">
-                                                            <div style="font-size: 11px; color: #888;">
+                                                            <div class="custom-offer-descuento">
                                                                 $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" /> de descuento
                                                             </div>
                                                         </t>
                                                         <t t-if="product.free_shipping">
-                                                            <div style="color: #FF7B00; font-size: 11px; font-weight: 600;">
+                                                            <div class="custom-offer-envio">
                                                                 Envío gratis
                                                             </div>
                                                         </t>
@@ -1054,6 +1053,64 @@
                                 </div>
                             </div>
                         </div>
+                        <style>
+                            .custom-offer-card {
+                                border-radius: 12px;
+                                background: #fff;
+                                border: 1px solid transparent;
+                                box-shadow: none;
+                                overflow: hidden;
+                                transition: box-shadow 0.2s;
+                            }
+                            .custom-offer-card:hover {
+                                box-shadow: none;
+                            }
+                            .custom-offer-img {
+                                height: 90px;
+                                object-fit: contain;
+                                background: #fff;
+                                border-radius: 12px 12px 0 0;
+                                width: 100%;
+                                border: none;
+                                box-shadow: none;
+                            }
+                            .custom-offer-body {
+                                padding: 10px 8px 8px 8px;
+                                background: #fff;
+                                border-radius: 0 0 12px 12px;
+                                border: none;
+                                box-shadow: none;
+                            }
+                            .custom-offer-title {
+                                font-size: 12px;
+                                color: #222;
+                                min-height: 28px;
+                                font-weight: 500;
+                                display: -webkit-box;
+                                -webkit-line-clamp: 2;
+                                -webkit-box-orient: vertical;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                white-space: normal;
+                            }
+                            .custom-offer-price {
+                                font-size: 15px;
+                                color: #222;
+                            }
+                            .custom-offer-discount {
+                                color: #FF5207;
+                                font-size: 11px;
+                            }
+                            .custom-offer-descuento {
+                                font-size: 11px;
+                                color: #888;
+                            }
+                            .custom-offer-envio {
+                                color: #FF7B00;
+                                font-size: 11px;
+                                font-weight: 600;
+                            }
+                        </style>
                     </t>
 
                     <!-- Descubre -->
