@@ -1000,11 +1000,9 @@
                     <!-- También pueden interesarte -->
                     <div class="container mt-3 px-2">
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 20px;">También pueden interesarte</h2>
-
                         <t t-set="interest_products" t-value="request.env['product.template'].sudo().search([
                             ('website_published', '=', True)
                         ], order='website_sequence, create_date desc', limit=1)" />
-
                         <t t-if="interest_products">
                             <div class="row row-cols-1 g-2">
                                 <t t-foreach="interest_products" t-as="product">
@@ -1013,24 +1011,20 @@
                                             <div class="p-3">
                                                 <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" class="card-img-top" style="height: 180px; object-fit: contain; width: 100%;" />
                                             </div>
-                                            
                                             <div class="card-body p-2">
                                                 <h6 class="card-title mb-1 text-dark" style="font-size: 14px; font-weight: normal; margin-top: -10px;">
                                                     <t t-esc="product.name" />
                                                 </h6>
-
                                                 <div class="d-flex align-items-baseline mb-1">
                                                     <span class="fw-bold text-dark me-1" style="font-size: 20px;">
                                                         $<t t-esc="'{:,}'.format(int(product.discounted_price if product.discounted_price &lt; product.list_price else product.list_price))" />
                                                     </span>
-                                                    
                                                     <t t-if="product.discounted_price &lt; product.list_price and product.discount_percentage">
                                                         <span class="text-danger" style="font-size: 13px; font-weight: normal;">
                                                             <t t-esc="int(product.discount_percentage)" />% OFF
                                                         </span>
                                                     </t>
                                                 </div>
-
                                                 <t t-if="product.discounted_price &lt; product.list_price">
                                                     <p class="mb-1 text-muted" style="font-size: 13px;">
                                                         <t t-if="product.fixed_discount">
@@ -1041,7 +1035,6 @@
                                                         </t>
                                                     </p>
                                                 </t>
-
                                                 <t t-if="product.free_shipping">
                                                     <p class="text-orange mb-0" style="font-size: 13px; font-weight: 600;">Envío gratis</p>
                                                 </t>
@@ -1052,13 +1045,12 @@
                             </div>
                         </t>
                     </div>
-
                     <style>
                         .text-orange {
-                            color: #FF7B00; /* Puedes ajustar este color naranja para que coincida exactamente */
+                            color: #FF7B00;
                         }
                         .card.product-card {
-                            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil como en la imagen de referencia */
+                            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
                         }
                     </style>
 
