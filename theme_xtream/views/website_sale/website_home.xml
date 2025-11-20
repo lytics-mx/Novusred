@@ -970,16 +970,16 @@
                     </t>
 
                     <!-- Ofertas -->
-                    <t t-set="ofertas_products" t-value="request.env['product.template'].sudo().search([
+                    <t t-set="discounted_products" t-value="request.env['product.template'].sudo().search([
                         ('website_published', '=', True),
                         ('product_tag_ids', '!=', False),
                         ('qty_available', '>', 1)
                     ], order='create_date desc', limit=4)" />
-                    <t t-if="ofertas_products">
+                    <t t-if="discounted_products">
                         <div class="container mt-3 px-2">
                             <h2 style="font-family: 'Questrial', sans-serif; font-size: 20px;">Ofertas</h2>
                             <div class="row row-cols-2 g-2">
-                                <t t-foreach="ofertas_products" t-as="product">
+                                <t t-foreach="discounted_products" t-as="product">
                                     <div class="col">
                                         <a t-att-href="product.website_url" class="card h-100 shadow-sm product-card" style="text-decoration: none; border-radius: 10px;">
                                             <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" class="card-img-top" style="height: 120px; object-fit: contain; border-radius: 10px 10px 0 0;" />
