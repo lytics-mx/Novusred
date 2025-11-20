@@ -1246,6 +1246,20 @@
                                     </div>
                                 </t>
                             </div>
+                        <t t-if="brand_products">
+                            <div class="row row-cols-2 g-2" id="brand-collections-initial">
+                                <t t-foreach="brand_products" t-as="product">
+                                    <div class="col">
+                                        <a t-att-href="'/brand/' + (product.brand_type_id.name or '').replace(' ', '').lower()" style="text-decoration: none;">
+                                            <div class="card h-100" style="border: none; border-radius: 12px; overflow: hidden; box-shadow: 0px 2px 8px rgba(0,0,0,0.08);">
+                                                <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                     class="card-img-top" 
+                                                     style="height: 120px; object-fit: contain; background: #f8f9fa; padding: 10px;" />
+                                            </div>
+                                        </a>
+                                    </div>
+                                </t>
+                            </div>
                             <t t-if="brand_products_extra">
                                 <div class="row row-cols-2 g-2" id="brand-collections-extra" style="display: none;">
                                     <t t-foreach="brand_products_extra" t-as="product">
@@ -1264,10 +1278,10 @@
                             <div class="mt-2" style="text-align: left;">
                                 <div style="background: #fff; border-radius: 12px; padding: 10px 0;">
                                     <a href="javascript:void(0);" id="show-more-collections" style="font-family: 'Questrial', sans-serif; font-size: 15px; color: #1976d2; text-decoration: none; font-weight: bold; display: block;">
-                                        Ver todas
+                                        Ver todas &gt;
                                     </a>
                                     <a href="/brands" id="see-all-brands-link" style="display:none; font-family: 'Questrial', sans-serif; font-size: 15px; color: #1976d2; text-decoration: none; font-weight: bold; margin-top: 8px;">
-                                        Ver todas las marcas
+                                        Ver todas las marcas &gt;
                                     </a>
                                 </div>
                             </div>
@@ -1276,7 +1290,7 @@
                                     var btn = document.getElementById('show-more-collections');
                                     var extra = document.getElementById('brand-collections-extra');
                                     var seeAll = document.getElementById('see-all-brands-link');
-                                    if(btn && extra && seeAll){
+                                    if(btn &amp;&amp; extra &amp;&amp; seeAll){
                                         btn.addEventListener('click', function(){
                                             extra.style.display = 'flex';
                                             btn.style.display = 'none';
