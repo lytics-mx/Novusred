@@ -1152,6 +1152,68 @@
                         </div>
                     </div>
 
+                    <!-- Historial - Sección móvil -->
+                    <t t-if="request.env.user and request.env.user.id != request.env.ref('base.public_user').id">
+                        <t t-set="visitor" t-value="request.env['website.visitor']._get_visitor_from_request()" />
+                        <t t-set="viewed_products" t-value="request.env['website.track'].sudo().search([
+                            ('visitor_id', '=', visitor.id),
+                            ('product_id', '!=', False)
+                        ], order='visit_datetime desc', limit=10).mapped('product_id.product_tmpl_id').filtered(lambda p: p.website_published)" />
+                        <t t-if="viewed_products">
+                            <div class="container mt-3 px-2 d-block d-md-none">
+                                <h2 style="font-family: 'Questrial', sans-serif; font-size: 20px;">Tu historial</h2>
+                                <div>
+                                    <t t-foreach="viewed_products" t-as="product">
+                                        <div class="d-flex align-items-center mb-3" style="background: #fff; border-radius: 10px; box-shadow: 0px 2px 8px rgba(0,0,0,0.06); padding: 12px;">
+                                            <a t-att-href="product.website_url" style="display: flex; align-items: center; text-decoration: none; width: 100%;">
+                                                <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                                                    alt="product.name"
+                                                    style="width: 90px; height: 90px; object-fit: contain; border-radius: 8px; background: #fff; margin-right: 16px; flex-shrink: 0;" />
+                                                <div class="flex-grow-1" style="min-width: 0;">
+                                                    <div style="font-size: 15px; font-weight: 500; color: #222; margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; white-space: normal; line-height: 1.3;">
+                                                        <t t-esc="product.name.upper()" />
+                                                    </div>
+                                                    
+                                                    <!-- Precio y descuento -->
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <span class="fw-bold" style="font-size: 18px; color: #222;">
+                                                            $<t t-esc="'{:,}'.format(int(product.discounted_price if product.discounted_price &lt; product.list_price else product.list_price))" />
+                                                        </span>
+                                                        <t t-if="product.discounted_price &lt; product.list_price and product.discount_percentage">
+                                                            <span class="ms-2" style="color: #FF5207; font-size: 14px; font-weight: 500;">
+                                                                <t t-esc="int(product.discount_percentage)" />% OFF
+                                                            </span>
+                                                        </t>
+                                                    </div>
+                                                    
+                                                    <!-- Descuento en pesos -->
+                                                    <t t-if="product.discounted_price &lt; product.list_price">
+                                                        <div style="font-size: 13px; color: #888; margin-bottom: 4px;">
+                                                            $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" /> de descuento
+                                                        </div>
+                                                    </t>
+                                                    
+                                                    <!-- Envío gratis -->
+                                                    <t t-if="product.free_shipping">
+                                                        <div style="color: #FF7B00; font-size: 14px; font-weight: 600;">
+                                                            Envío gratis
+                                                        </div>
+                                                    </t>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </t>
+                                </div>
+                                <div class="mt-2" style="text-align: right;">
+                                    <a href="/shop?search=" style="font-family: 'Questrial', sans-serif; font-size: 15px; color: #1976d2; text-decoration: none; font-weight: bold;">
+                                        Ver más &gt;
+                                    </a>
+                                </div>
+                            </div>
+                        </t>
+                    </t>
+
+
                     <!-- Categorías populares -->
                     <div class="container mt-3 px-2">
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 20px;">Categorías populares</h2>
