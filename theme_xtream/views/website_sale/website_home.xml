@@ -1059,45 +1059,40 @@
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 20px;">También pueden interesarte</h2>
                         <t t-set="interest_products" t-value="request.env['product.template'].sudo().search([
                             ('website_published', '=', True)
-                        ], order='website_sequence, create_date desc', limit=1)" />
+                        ], order='website_sequence, create_date desc', limit=4)" />
                         <t t-if="interest_products">
-                            <div class="row row-cols-1 g-2">
+                            <div class="list-group">
                                 <t t-foreach="interest_products" t-as="product">
-                                    <div class="col">
-                                        <a t-att-href="product.website_url" class="card product-card border-0" style="text-decoration: none; border-radius: 8px; overflow: hidden;">
-                                            <div class="p-3">
-                                                <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" class="card-img-top" style="height: 180px; object-fit: contain; width: 100%;" />
+                                    <a t-att-href="product.website_url" class="list-group-item list-group-item-action d-flex align-items-center" style="border-radius: 10px; margin-bottom: 10px; box-shadow: 0px 2px 8px rgba(0,0,0,0.06);">
+                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                                             alt="product.name"
+                                             style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px; background: #fff; margin-right: 16px;" />
+                                        <div class="flex-grow-1">
+                                            <div style="font-size: 15px; font-weight: 500; color: #222; margin-bottom: 2px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; white-space: normal;">
+                                                <t t-esc="product.name" />
                                             </div>
-                                            <div class="card-body p-2">
-                                                <h6 class="card-title mb-1 text-dark" style="font-size: 14px; font-weight: normal; margin-top: -10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; white-space: normal;">
-                                                    <t t-esc="product.name" />
-                                                </h6>
-                                                <div class="d-flex align-items-baseline mb-1">
-                                                    <span class="fw-bold text-dark me-1" style="font-size: 20px;">
-                                                        $<t t-esc="'{:,}'.format(int(product.discounted_price if product.discounted_price &lt; product.list_price else product.list_price))" />
+                                            <div class="d-flex align-items-center mb-1">
+                                                <span class="fw-bold" style="font-size: 18px; color: #222;">
+                                                    $<t t-esc="'{:,}'.format(int(product.discounted_price if product.discounted_price &lt; product.list_price else product.list_price))" />
+                                                </span>
+                                                <t t-if="product.discounted_price &lt; product.list_price and product.discount_percentage">
+                                                    <span class="ms-2" style="color: #FF5207; font-size: 14px;">
+                                                        <t t-esc="int(product.discount_percentage)" />% OFF
                                                     </span>
-                                                    <t t-if="product.discounted_price &lt; product.list_price and product.discount_percentage">
-                                                        <span class="text-danger" style="font-size: 13px; font-weight: normal;">
-                                                            <t t-esc="int(product.discount_percentage)" />% OFF
-                                                        </span>
-                                                    </t>
-                                                </div>
-                                                <t t-if="product.discounted_price &lt; product.list_price">
-                                                    <p class="mb-1 text-muted" style="font-size: 13px;">
-                                                        <t t-if="product.fixed_discount">
-                                                            $<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> de descuento
-                                                        </t>
-                                                        <t t-elif="product.list_price - product.discounted_price > 0">
-                                                            $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" /> de descuento
-                                                        </t>
-                                                    </p>
-                                                </t>
-                                                <t t-if="product.free_shipping">
-                                                    <p class="text-orange mb-0" style="font-size: 13px; font-weight: 600;">Envío gratis</p>
                                                 </t>
                                             </div>
-                                        </a>
-                                    </div>
+                                            <t t-if="product.discounted_price &lt; product.list_price">
+                                                <div style="font-size: 13px; color: #888;">
+                                                    $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" /> de descuento
+                                                </div>
+                                            </t>
+                                            <t t-if="product.free_shipping">
+                                                <div style="color: #FF7B00; font-size: 14px; font-weight: 600;">
+                                                    Envío gratis
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </a>
                                 </t>
                             </div>
                         </t>
