@@ -1000,32 +1000,27 @@
                     <!-- También pueden interesarte -->
                     <div class="container mt-3 px-2">
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 20px;">También pueden interesarte</h2>
-                        <!-- Banner fijo de interés -->
-                        <div class="mb-3" style="background: #fff; border-radius: 10px; overflow: hidden;">
-                            <img src="/theme_xtream/static/src/img/home/notifier_banner.jpg" alt="Detección eficiente contra incendios" style="width: 100%; display: block;"/>
-                        </div>
+                    
                         <t t-set="interest_products" t-value="request.env['product.template'].sudo().search([
                             ('website_published', '=', True),
                             ('qty_available', '>', 1)
                         ], order='website_sequence, create_date desc', limit=6)" />
-                        <t t-if="interest_products">
-                            <div class="row row-cols-2 g-2">
-                                <t t-foreach="interest_products" t-as="product">
-                                    <div class="col">
-                                        <a t-att-href="product.website_url" class="card h-100 shadow-sm product-card" style="text-decoration: none;">
-                                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" class="card-img-top" style="height: 120px; object-fit: contain;" />
-                                            <div class="card-body p-2">
-                                                <span class="fw-bold" style="font-size: 18px;">$<t t-esc="'{:,}'.format(int(product.discounted_price if product.discounted_price &lt; product.list_price else product.list_price))" /></span>
-                                                <h6 class="card-title mb-1 text-truncate" style="font-size: 0.85rem;"><t t-esc="product.name" /></h6>
-                                                <t t-if="product.free_shipping">
-                                                    <span class="text-orange" style="font-size: 13px;">Envío gratis</span>
-                                                </t>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </t>
-                            </div>
-                        </t>
+                        <div class="row row-cols-2 g-2">
+                            <t t-foreach="interest_products" t-as="product">
+                                <div class="col">
+                                    <a t-att-href="product.website_url" class="card h-100 shadow-sm product-card" style="text-decoration: none;">
+                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" class="card-img-top" style="height: 120px; object-fit: contain;" />
+                                        <div class="card-body p-2">
+                                            <span class="fw-bold" style="font-size: 18px;">$<t t-esc="'{:,}'.format(int(product.discounted_price if product.discounted_price &lt; product.list_price else product.list_price))" /></span>
+                                            <h6 class="card-title mb-1 text-truncate" style="font-size: 0.85rem;"><t t-esc="product.name" /></h6>
+                                            <t t-if="product.free_shipping">
+                                                <span class="text-orange" style="font-size: 13px;">Envío gratis</span>
+                                            </t>
+                                        </div>
+                                    </a>
+                                </div>
+                            </t>
+                        </div>
                     </div>
 
                     <!-- Descubre -->
