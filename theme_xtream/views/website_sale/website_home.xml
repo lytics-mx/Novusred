@@ -1110,7 +1110,23 @@
                             </t>
                         </div>
                     </div>
-                    <!-- También pueden interesarte -->
+                    
+
+                    <!-- Descubre -->
+                    <div class="container mt-3 px-2">
+                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 20px;">Descubre</h2>
+                        <t t-set="active_product_banner" t-value="request.env['banner.image.line'].sudo().search([('is_active_product_carousel', '=', True)], limit=1)" />
+                        <t t-if="active_product_banner and active_product_banner.product_images">
+                            <div class="row g-2">
+                                <t t-foreach="active_product_banner.product_images[:2]" t-as="image" t-key="image.id">
+                                    <div class="col-12">
+                                        <img t-att-src="'/web/image/' + str(image.id)" alt="Product Image" class="img-fluid w-100" style="object-fit: cover;" />
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+                    </div>
+<!-- También pueden interesarte -->
                     <div class="container mt-3 px-2">
                         <div style="background: #fff; border-radius: 14px; padding: 12px 6px;">
                             <h2 style="font-family: 'Questrial', sans-serif; font-size: 20px;">También pueden interesarte</h2>
@@ -1165,22 +1181,6 @@
                             </t>
                         </div>
                     </div>
-
-                    <!-- Descubre -->
-                    <div class="container mt-3 px-2">
-                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 20px;">Descubre</h2>
-                        <t t-set="active_product_banner" t-value="request.env['banner.image.line'].sudo().search([('is_active_product_carousel', '=', True)], limit=1)" />
-                        <t t-if="active_product_banner and active_product_banner.product_images">
-                            <div class="row g-2">
-                                <t t-foreach="active_product_banner.product_images[:2]" t-as="image" t-key="image.id">
-                                    <div class="col-12">
-                                        <img t-att-src="'/web/image/' + str(image.id)" alt="Product Image" class="img-fluid w-100" style="object-fit: cover;" />
-                                    </div>
-                                </t>
-                            </div>
-                        </t>
-                    </div>
-
                     <!-- Marcas -->
                     <div class="container mt-3 px-2">
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 20px;">Marcas</h2>
