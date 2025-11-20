@@ -1223,33 +1223,31 @@
                     <!-- Colecciones de marcas -->
                     <div class="container mt-3 px-2">
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 20px;">Colecciones</h2>
+                        <!-- Obtener productos publicados de cualquier marca -->
                         <t t-set="brand_products" t-value="request.env['product.template'].sudo().search([
                             ('website_published', '=', True),
                             ('brand_type_id', '!=', False)
                         ], limit=4)" />
                         <t t-if="brand_products">
-                            <div class="row g-2" style="margin: 0;">
+                            <div class="row row-cols-2 g-2">
                                 <t t-foreach="brand_products" t-as="product">
-                                    <div class="col-6" style="padding: 6px;">
+                                    <div class="col">
                                         <a t-att-href="'/brand/' + (product.brand_type_id.name or '').replace(' ', '').lower()" style="text-decoration: none;">
-                                            <div class="card h-100" style="border: none; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.10); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 140px;">
-                                                <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                                                     class="card-img-top"
-                                                     style="width: 90px; height: 90px; object-fit: contain; background: #fff; margin: 16px auto 8px auto; display: block;" />
-                                                <div class="card-body p-2" style="text-align: center;">
-                                                    <span style="font-family: 'Questrial', sans-serif; font-size: 15px; color: #333; font-weight: 500; display: block; white-space: normal;">
-                                                        <t t-esc="product.brand_type_id.name" />
-                                                    </span>
-                                                </div>
+                                            <div class="card h-100" style="border: none; border-radius: 12px; overflow: hidden; box-shadow: 0px 2px 8px rgba(0,0,0,0.08);">
+                                                <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
+                                                     class="card-img-top" 
+                                                     style="height: 120px; object-fit: contain; background: #f8f9fa; padding: 10px;" />
                                             </div>
                                         </a>
                                     </div>
                                 </t>
                             </div>
                             <div class="mt-2" style="text-align: left;">
-                                <a href="/brands" style="font-family: 'Questrial', sans-serif; font-size: 15px; color: #1976d2; text-decoration: none; font-weight: bold;">
-                                    Ver todas
-                                </a>
+                                <div style="background: #fff; border-radius: 12px; padding: 10px 0;">
+                                    <a href="/brands" style="font-family: 'Questrial', sans-serif; font-size: 15px; color: #1976d2; text-decoration: none; font-weight: bold; display: block;">
+                                        Ver todas
+                                    </a>
+                                </div>
                             </div>
                         </t>
                     </div>
