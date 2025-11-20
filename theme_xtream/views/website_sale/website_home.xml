@@ -1000,27 +1000,47 @@
                     <!-- También pueden interesarte -->
                     <div class="container mt-3 px-2">
                         <h2 style="font-family: 'Questrial', sans-serif; font-size: 20px;">También pueden interesarte</h2>
-                    
                         <t t-set="interest_products" t-value="request.env['product.template'].sudo().search([
                             ('website_published', '=', True),
                             ('qty_available', '>', 1)
                         ], order='website_sequence, create_date desc', limit=6)" />
-                        <div class="row row-cols-2 g-2">
-                            <t t-foreach="interest_products" t-as="product">
-                                <div class="col">
-                                    <a t-att-href="product.website_url" class="card h-100 shadow-sm product-card" style="text-decoration: none;">
-                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" class="card-img-top" style="height: 120px; object-fit: contain;" />
-                                        <div class="card-body p-2">
-                                            <span class="fw-bold" style="font-size: 18px;">$<t t-esc="'{:,}'.format(int(product.discounted_price if product.discounted_price &lt; product.list_price else product.list_price))" /></span>
-                                            <h6 class="card-title mb-1 text-truncate" style="font-size: 0.85rem;"><t t-esc="product.name" /></h6>
-                                            <t t-if="product.free_shipping">
-                                                <span class="text-orange" style="font-size: 13px;">Envío gratis</span>
-                                            </t>
-                                        </div>
-                                    </a>
-                                </div>
-                            </t>
-                        </div>
+                        <t t-if="interest_products">
+                            <div class="row row-cols-2 g-2">
+                                <t t-foreach="interest_products" t-as="product">
+                                    <div class="col">
+                                        <a t-att-href="product.website_url" class="card h-100 shadow-sm product-card" style="text-decoration: none;">
+                                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" class="card-img-top" style="height: 120px; object-fit: contain;" />
+                                            <div class="card-body p-2">
+                                                <span class="fw-bold" style="font-size: 18px;">
+                                                    $<t t-esc="'{:,}'.format(int(product.discounted_price if product.discounted_price < product.list_price else product.list_price))" />
+                                                </span>
+                                                <h6 class="card-title mb-1 text-truncate" style="font-size: 0.85rem;">
+                                                    <t t-esc="product.name" />
+                                                </h6>
+                                                <t t-if="product.discounted_price < product.list_price">
+                                                    <span class="text-danger" style="font-size: 13px;">
+                                                        <t t-if="product.discount_percentage">
+                                                            <t t-esc="int(product.discount_percentage)" />% OFF
+                                                        </t>
+                                                        <t t-elif="product.fixed_discount">
+                                                            -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
+                                                        </t>
+                                                    </span>
+                                                    <br/>
+                                                    <span class="text-muted" style="font-size: 13px;">
+                                                        $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" /> de descuento
+                                                    </span>
+                                                </t>
+                                                <t t-if="product.free_shipping">
+                                                    <br/>
+                                                    <span class="text-orange" style="font-size: 13px;">Envío gratis</span>
+                                                </t>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
                     </div>
 
                     <!-- Descubre -->
