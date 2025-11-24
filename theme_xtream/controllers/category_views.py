@@ -237,12 +237,16 @@ class CategoryController(http.Controller):
             count = len(category_products.filtered(lambda p: tag in p.product_tag_ids))
             promotion_tag_counts[tag.id] = count
 
+        # Calcula la página antes de la consulta
         try:
             current_page = int(request.params.get('page', 1))
         except Exception:
             current_page = 1
-
         per_page = 5
+        offset = (current_page - 1) * per_page
+        
+        # Aplica paginación en la consulta
+        products = request.env['product.template'].sudo().search(domain, offset=offset, limit=per_page)
         total_products = len(period_products)
         total_pages = max(1, (total_products + per_page - 1) // per_page)
         start = (current_page - 1) * per_page
