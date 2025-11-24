@@ -944,7 +944,7 @@
                     <div class="products-list-mobile">
                         <t t-foreach="period_products" t-as="product_data" t-key="product_data['product'].id">
                             <a t-att-href="product_data['product'].website_url" style="text-decoration: none; color: inherit;">
-                                <div class="product-list-item-mobile d-flex align-items-center mb-3" style="background: #fff; border-radius: 8px; border: 1px solid #eee; padding: 10px;">
+                                <div class="product-list-item-mobile d-flex align-items-center mb-1" style="background: #fff; border-radius: 8px; border: 1px solid #eee; padding: 8px;">
                                     <!-- Imagen del producto -->
                                     <div style="width: 90px; flex-shrink: 0;">
                                         <img t-att-src="'/web/image/product.template/%s/image_1024' % product_data['product'].id"
@@ -959,7 +959,7 @@
                                             </span>
                                         </t>
                                         <h6 style="font-size: 15px; margin: 6px 0 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family:'Questrial',sans-serif;">
-                                            <t t-esc="product_data['product'].name" />
+                                            <t t-esc="product_data['product'].name[:27] + '..' if len(product_data['product'].name) > 27 else product_data['product'].name" />
                                         </h6>
                                         <t t-if="product_data['product'].brand_type_id">
                                             <span class="text-muted" style="font-size: 13px;">por <t t-esc="product_data['product'].brand_type_id.name" /></span>
