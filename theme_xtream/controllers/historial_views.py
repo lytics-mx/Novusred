@@ -21,12 +21,6 @@ class ProductHistoryController(http.Controller):
         """Obtiene el historial de productos vistos por el usuario actual agrupado por períodos."""
         user_id = request.env.user.id
         
-        # Obtener todas las visitas del usuario (filtrando por user, no por partner)
-        tracks = request.env['website.track'].sudo().search([
-            ('visitor_id.user_id', '=', user_id),
-            ('product_id', '!=', False),
-            ('product_id', '!=', None),
-        ], order='visit_datetime desc')
 
         # Buscar registros de website.track creados por nuestro beacon (tienen user_id)
         tracks = request.env['website.track'].search([
