@@ -1022,161 +1022,48 @@
                         <div class="d-block d-md-none">
                             <h3
                                 style="font-family: 'Questrial', sans-serif; font-size: 18px; text-align: center; margin-bottom: 20px;">
-                                Computadoras Y Accesorios
+                                <t t-esc="category.name if category else 'Categoría'" />
                             </h3>
                             <div class="accordion" id="categoryAccordion">
-                                <!-- Todos -->
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header">
-                                        <button class="accordion-button collapsed" type="button"
-                                            data-bs-toggle="collapse" data-bs-target="#collapseAll"
-                                            aria-expanded="false">
-                                            Todos
-                                        </button>
-                                    </h2>
-                                    <div id="collapseAll" class="accordion-collapse collapse"
-                                        data-bs-parent="#categoryAccordion">
-                                        <div class="accordion-body">
-                                            <ul class="list-unstyled">
-                                                <t t-set="all_subcats"
-                                                    t-value="request.env['product.category'].sudo().search([('parent_id','!=',False)], limit=18)" />
-                                                <t t-foreach="all_subcats" t-as="subcat">
-                                                    <li class="py-2 border-bottom">
-                                                        <a
-                                                            t-att-href="'/subcategory?subcategory_id=' + str(subcat.id)"
-                                                            class="text-decoration-none text-dark d-block">
-                                                            <t t-esc="subcat.name" />
-                                                        </a>
-                                                    </li>
-                                                </t>
-                                            </ul>
+                                <t t-if="category and category.child_id">
+                                    <t t-foreach="category.child_id" t-as="subcat">
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header">
+                                                <button class="accordion-button collapsed" type="button"
+                                                    data-bs-toggle="collapse"
+                                                    t-att-data-bs-target="'#collapse' + str(subcat.id)"
+                                                    aria-expanded="false">
+                                                    <t t-esc="subcat.name" />
+                                                </button>
+                                            </h2>
+                                            <div t-att-id="'collapse' + str(subcat.id)" class="accordion-collapse collapse"
+                                                data-bs-parent="#categoryAccordion">
+                                                <div class="accordion-body">
+                                                    <ul class="list-unstyled">
+                                                        <t t-if="subcat.child_id">
+                                                            <t t-foreach="subcat.child_id" t-as="child">
+                                                                <li class="py-2 border-bottom">
+                                                                    <a t-att-href="'/subcategory?category_id=' + str(category.id) + '&amp;subcategory_id=' + str(child.id)"
+                                                                        class="text-decoration-none text-dark d-block">
+                                                                        <t t-esc="child.name" />
+                                                                    </a>
+                                                                </li>
+                                                            </t>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <li class="py-2 text-muted">No hay subcategorías disponibles</li>
+                                                        </t>
+                                                    </ul>
+                                                </div>
+                                            </div>
                                         </div>
+                                    </t>
+                                </t>
+                                <t t-else="">
+                                    <div class="text-center" style="color: #666; font-size: 16px;">
+                                        No hay subcategorías disponibles
                                     </div>
-                                </div>
-
-                                <!-- Control de Acceso -->
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header">
-                                        <button class="accordion-button collapsed" type="button"
-                                            data-bs-toggle="collapse"
-                                            data-bs-target="#collapseControl" aria-expanded="false">
-                                            Control de Acceso
-                                        </button>
-                                    </h2>
-                                    <div id="collapseControl" class="accordion-collapse collapse"
-                                        data-bs-parent="#categoryAccordion">
-                                        <div class="accordion-body">
-                                            <ul class="list-unstyled">
-                                                <t t-set="control_acceso"
-                                                    t-value="request.env['product.category'].sudo().search([('name','=','Control de Acceso')], limit=1)" />
-                                                <t t-if="control_acceso">
-                                                    <!-- Ver todos de Control de Acceso -->
-                                                    <li class="py-2 border-bottom">
-                                                        <a
-                                                            t-att-href="'/subcategory?category_id=' + str(control_acceso.id)"
-                                                            class="text-decoration-none text-primary fw-bold d-block">
-                                                            Ver todos los productos de Control de
-                                                            Acceso
-                                                        </a>
-                                                    </li>
-                                                    <!-- Subcategorías -->
-                                                    <t t-foreach="control_acceso.child_id"
-                                                        t-as="subcat">
-                                                        <li class="py-2 border-bottom">
-                                                            <a
-                                                                t-att-href="'/subcategory?category_id=' + str(control_acceso.id) + '&amp;subcategory_id=' + str(subcat.id)"
-                                                                class="text-decoration-none text-dark d-block">
-                                                                <t t-esc="subcat.name" />
-                                                            </a>
-                                                        </li>
-                                                    </t>
-                                                </t>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Saleable -->
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header">
-                                        <button class="accordion-button collapsed" type="button"
-                                            data-bs-toggle="collapse"
-                                            data-bs-target="#collapseSaleable" aria-expanded="false">
-                                            Saleable
-                                        </button>
-                                    </h2>
-                                    <div id="collapseSaleable" class="accordion-collapse collapse"
-                                        data-bs-parent="#categoryAccordion">
-                                        <div class="accordion-body">
-                                            <ul class="list-unstyled">
-                                                <t t-set="saleable"
-                                                    t-value="request.env['product.category'].sudo().search([('name','=','Saleable')], limit=1)" />
-                                                <t t-if="saleable">
-                                                    <!-- Ver todos de Saleable -->
-                                                    <li class="py-2 border-bottom">
-                                                        <a
-                                                            t-att-href="'/subcategory?category_id=' + str(saleable.id)"
-                                                            class="text-decoration-none text-primary fw-bold d-block">
-                                                            Ver todos los productos de Saleable
-                                                        </a>
-                                                    </li>
-                                                    <!-- Subcategorías -->
-                                                    <t t-foreach="saleable.child_id" t-as="subcat">
-                                                        <li class="py-2 border-bottom">
-                                                            <a
-                                                                t-att-href="'/subcategory?category_id=' + str(saleable.id) + '&amp;subcategory_id=' + str(subcat.id)"
-                                                                class="text-decoration-none text-dark d-block">
-                                                                <t t-esc="subcat.name" />
-                                                            </a>
-                                                        </li>
-                                                    </t>
-                                                </t>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Videovigilancia -->
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header">
-                                        <button class="accordion-button collapsed" type="button"
-                                            data-bs-toggle="collapse"
-                                            data-bs-target="#collapseVideo" aria-expanded="false">
-                                            Videovigilancia
-                                        </button>
-                                    </h2>
-                                    <div id="collapseVideo" class="accordion-collapse collapse"
-                                        data-bs-parent="#categoryAccordion">
-                                        <div class="accordion-body">
-                                            <ul class="list-unstyled">
-                                                <t t-set="videovigilancia"
-                                                    t-value="request.env['product.category'].sudo().search([('name','=','Videovigilancia')], limit=1)" />
-                                                <t t-if="videovigilancia">
-                                                    <!-- Ver todos de Videovigilancia -->
-                                                    <li class="py-2 border-bottom">
-                                                        <a
-                                                            t-att-href="'/subcategory?category_id=' + str(videovigilancia.id)"
-                                                            class="text-decoration-none text-primary fw-bold d-block">
-                                                            Ver todos los productos de
-                                                            Videovigilancia
-                                                        </a>
-                                                    </li>
-                                                    <!-- Subcategorías -->
-                                                    <t t-foreach="videovigilancia.child_id"
-                                                        t-as="subcat">
-                                                        <li class="py-2 border-bottom">
-                                                            <a
-                                                                t-att-href="'/subcategory?category_id=' + str(videovigilancia.id) + '&amp;subcategory_id=' + str(subcat.id)"
-                                                                class="text-decoration-none text-dark d-block">
-                                                                <t t-esc="subcat.name" />
-                                                            </a>
-                                                        </li>
-                                                    </t>
-                                                </t>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
+                                </t>
                             </div>
                         </div>
                     </div>
