@@ -42,29 +42,6 @@
                                 <t t-set="product_tags" t-value="request.env['product.tag'].sudo().search([])"/>
                                 
                                 <t t-if="product_tags">
-                                    <!-- Mobile view stays the same -->
-                                    <div class="d-block d-md-none">
-                                        <div class="row g-3" style="margin: 0 auto;">
-                                            <t t-foreach="product_tags[0:4]" t-as="tag">
-                                                <div class="col-3 px-2">
-                                                    <a t-att-href="'/offers?tag_id=%s&amp;brand_type_id=%s' % (tag.id, brand_type.id)" class="text-decoration-none">                                                        
-                                                        <div class="text-center position-relative tag-item clickable-tag">
-                                                            <div class="tag-icon-container" style="width: 85px; height: 85px; border-radius: 50%; background-color: #ffffff; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
-                                                                <img t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
-                                                                     t-att-alt="tag.name"
-                                                                     class="tag-icon"
-                                                                     style="width: 45px; height: 45px;" />
-                                                            </div>
-                                                            <div class="tag-name" style="font-size: 12px; margin-top: 8px; color: #000; line-height: 1.2;">
-                                                                <t t-esc="tag.name" />
-                                                            </div>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                            </t>
-                                        </div>
-                                    </div>
-
                                     <!-- Modified Desktop view with more separation between icons -->
                                     <div class="d-none d-md-block">
                                         <div class="d-flex justify-content-center" style="margin: 0 auto; gap: 87px; max-width: 1000px;">
@@ -185,90 +162,6 @@
                                     </t>
                                 </div>
 
-                            </div>
-
-                            <!-- Mobile View -->
-                            <div class="d-md-none">
-                                 <div class="row g-2">
-                                    <t t-foreach="discounted_products[:4]" t-as="product">
-                                        <div class="col-6">
-                                            <div class="card h-100 shadow-sm product-card">
-                                                <a t-att-href="'/shop/product/' + str(product.id)">
-                                                    <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%;">
-                                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" 
-                                                             class="card-img-top" 
-                                                             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 8px; transition: transform 0.3s ease;"
-                                                             onmouseover="this.style.transform='scale(1.1)'" 
-                                                             onmouseout="this.style.transform='scale(1)'" />
-                                                    </div>
-                                                </a>
-                                                <div class="card-body mobile-card-body d-flex flex-column justify-content-between flex-grow-1">
-                                                    <div>
-                                                        <t t-if="product.discounted_price &lt; product.list_price">
-                                                            <t t-if="product.product_tag_ids">
-                                                                <div class="d-flex justify-content-start mb-2 mobile-badge-container">
-                                                                    <span class="badge bg-primary mobile-badge" style="border-radius: 0; text-transform: uppercase;">
-                                                                        <t t-esc="product.product_tag_ids[0].name if product.product_tag_ids else ''"/>
-                                                                    </span>
-                                                                </div>
-                                                            </t>
-                                                            <t t-if="product.list_price">
-                                                                <div class="mt-0 mobile-discount-amount">
-                                                                    <span class="text-muted" style="font-size: 16px;">
-                                                                        $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                                                    </span>
-                                                                </div>
-                                                            </t>
-                                                            <div class="d-flex align-items-center justify-content-between mobile-price-container">
-                                                                <t t-if="product.discounted_price">
-                                                                    <span class="text-dark fw-bold mobile-main-price" style="font-size: 28px; color: #000; font-weight: bold;">
-                                                                        $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
-                                                                    </span>
-                                                                </t>
-                                                                <t t-if="product.discount_percentage or product.fixed_discount">
-                                                                    <span class="mobile-discount" style="font-size: 16px; font-weight: normal; color: #FF5207;">
-                                                                        <t t-if="product.discount_percentage">
-                                                                            <t t-esc="int(product.discount_percentage)" />% OFF
-                                                                        </t>
-                                                                        <t t-elif="product.fixed_discount">
-                                                                            -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
-                                                                        </t>
-                                                                    </span>
-                                                                </t>
-                                                            </div>
-                                                            <t t-if="product.list_price and product.discounted_price and (product.list_price - product.discounted_price) &gt; 0">
-                                                                <div class="mt-0 mobile-discount-amount">
-                                                                    <span class="text-muted">
-                                                                        $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" /> descuento
-                                                                    </span>
-                                                                </div>
-                                                            </t>
-                                                        </t>
-                                                        <t t-else="">
-                                                            <t t-if="product.list_price">
-                                                                <span class="fw-bold d-block mobile-main-price">
-                                                                    $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                                                </span>
-                                                            </t>
-                                                        </t>
-                                                        <t t-if="product.free_shipping">
-                                                            <div class="mt-0 mobile-shipping">
-                                                                <span class="text-orange mobile-shipping-text">
-                                                                    Envío gratis
-                                                                </span>
-                                                            </div>
-                                                        </t>
-                                                    </div>
-                                                    <t t-if="product.name">
-                                                        <h6 class="card-title mb-2" style="font-size: 16px; line-height: 1.2; max-height: 2.4em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-transform: uppercase;">
-                                                            <t t-esc="product.name" />
-                                                        </h6>
-                                                    </t>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </t>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -583,12 +476,12 @@
                 <section class="best-offers ">
                     <div class="container mt-4">
                         <div class="o_wsale_products_grid_table_wrapper">
+                            <t t-set="all_tagged_products"
+                               t-value="request.env['product.template'].sudo().search([('brand_type_id', '=', brand_type.id), ('website_published', '=', True), ('product_tag_ids', '!=', False)], order='create_date desc')" />
+                            <t t-set="all_untagged_products"
+                               t-value="request.env['product.template'].sudo().search([('brand_type_id', '=', brand_type.id), ('website_published', '=', True), ('product_tag_ids', '=', False)], order='create_date desc')" />
                             <t t-set="discounted_products"
-                                t-value="request.env['product.template'].sudo().search([
-                                ('website_published', '=', True),
-                                ('product_tag_ids', '!=', False)
-                            ], order='create_date desc', limit=8)" />
-
+                               t-value="list(all_tagged_products) + list(all_untagged_products)" />     
 
                             <!-- Mobile View -->
                             <div class="d-block d-md-none">
