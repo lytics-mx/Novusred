@@ -4,135 +4,63 @@
         <t t-call="website.layout">
             <div id="wrap" class="oe_structure oe_empty"
                 style="font-family: 'Questrial', sans-serif;">
-                <div class="d-none d-md-block">
-                    <t t-set="active_banner"
-                        t-value="request.env['banner.image.line'].sudo().search([('is_active_carousel', '=', True), ('name', '=', 'categorias')], limit=1)" />
-                    <t t-if="active_banner">
-                        <t t-if="len(active_banner.general_images) == 1">
-                            <!-- Single image, no carousel -->
-                            <div style="position: relative;">
-                                <img t-att-src="'/web/image/' + str(active_banner.general_images[0].id)"
-                                    alt="General Image"
-                                    style="width: 100%; height: auto; object-fit: cover;" />
-                                <div
-                                    style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
-                            </div>
-                        </t>
-                        <t t-elif="len(active_banner.general_images) > 1">
-                            <!-- Carousel for multiple images -->
-                            <div id="generalImagesCarousel" class="carousel slide"
-                                data-bs-ride="carousel">
-                                <div class="carousel-inner">
-                                    <t t-foreach="active_banner.general_images" t-as="image"
-                                        t-key="image.id">
-                                        <div
-                                            t-att-class="'carousel-item' + (' active' if image == active_banner.general_images[0] else '')"
-                                            style="position: relative;">
-                                            <img t-att-src="'/web/image/' + str(image.id)"
-                                                alt="General Image"
-                                                style="width: 100%; height: auto; object-fit: cover;" />
-                                            <div
-                                                style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
-                                        </div>
-                                    </t>
-                                </div>
-                                <!-- Carousel controls -->
-                                <button class="carousel-control-prev" type="button"
-                                    data-bs-target="#generalImagesCarousel" data-bs-slide="prev">
-                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Previous</span>
-                                </button>
-                                <button class="carousel-control-next" type="button"
-                                    data-bs-target="#generalImagesCarousel" data-bs-slide="next">
-                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Next</span>
-                                </button>
-                            </div>
-                        </t>
-                    </t>
-                    <t t-else="">
-                        <!-- Default image if no active banner -->
-                        <div style="position: relative;">
-                            <img src="/theme_xtream/static/src/img/product-img/imagenes_home.png"
-                                alt="Default Image"
+                <t t-set="active_banner"
+                    t-value="request.env['banner.image.line'].sudo().search([('is_active_carousel', '=', True), ('name', '=', 'categorias')], limit=1)" />
+                <t t-if="active_banner">
+                    <t t-if="len(active_banner.general_images) == 1">
+                        <!-- Single image, no carousel -->
+                        <div class="d-block d-md-none" style="position: relative;">
+                            <img t-att-src="'/web/image/' + str(active_banner.general_images[0].id)"
+                                alt="General Image"
                                 style="width: 100%; height: auto; object-fit: cover;" />
-                            <div
-                                style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
+                        </div>
+                        <div class="d-none d-md-block" style="position: relative;">
+                            <img t-att-src="'/web/image/' + str(active_banner.general_images[0].id)"
+                                alt="General Image"
+                                style="width: 100%; height: auto; object-fit: cover;" />
                         </div>
                     </t>
-                </div>
-                <!-- ...existing code... -->
-                <!-- Portada/Banner -->
-                <div class="mobile-banner-container d-block d-md-none" style="background: #fff; padding: 10px 0 0 0;">
-                    <!-- Banner/carousel code aquí -->
-                    <t t-set="active_banner"
-                        t-value="request.env['banner.image.line'].sudo().search([('is_active_carousel', '=', True), ('name', '=', 'categorias')], limit=1)" />
-                    <t t-if="active_banner">
-                        <t t-if="len(active_banner.general_images) == 1">
-                            <!-- Single image, no carousel -->
-                            <div style="position: relative;">
-                                <img t-att-src="'/web/image/' + str(active_banner.general_images[0].id)"
-                                    alt="General Image"
-                                    style="width: 100%; height: auto; object-fit: cover;" />
-                                <div
-                                    style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
+                    <t t-elif="len(active_banner.general_images) > 1">
+                        <!-- Carousel for multiple images -->
+                        <div id="generalImagesCarousel" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <t t-foreach="active_banner.general_images" t-as="image" t-key="image.id">
+                                    <div
+                                        t-att-class="'carousel-item' + (' active' if image == active_banner.general_images[0] else '')"
+                                        style="position: relative;">
+                                        <img t-att-src="'/web/image/' + str(image.id)"
+                                            alt="General Image"
+                                            style="width: 100%; height: auto; object-fit: cover;" />
+                                    </div>
+                                </t>
                             </div>
-                        </t>
-                        <t t-elif="len(active_banner.general_images) > 1">
-                            <!-- Carousel for multiple images -->
-                            <div id="generalImagesCarousel" class="carousel slide"
-                                data-bs-ride="carousel">
-                                <div class="carousel-inner">
-                                    <t t-foreach="active_banner.general_images" t-as="image"
-                                        t-key="image.id">
-                                        <div
-                                            t-att-class="'carousel-item' + (' active' if image == active_banner.general_images[0] else '')"
-                                            style="position: relative;">
-                                            <img t-att-src="'/web/image/' + str(image.id)"
-                                                alt="General Image"
-                                                style="width: 100%; height: auto; object-fit: cover;" />
-                                            <div
-                                                style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
-                                        </div>
-                                    </t>
-                                </div>
-                                <!-- Carousel controls -->
-                                <button class="carousel-control-prev" type="button"
-                                    data-bs-target="#generalImagesCarousel" data-bs-slide="prev">
-                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Previous</span>
-                                </button>
-                                <button class="carousel-control-next" type="button"
-                                    data-bs-target="#generalImagesCarousel" data-bs-slide="next">
-                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Next</span>
-                                </button>
-                            </div>
-                        </t>
-                    </t>
-                    <t t-else="">
-                        <!-- Default image if no active banner -->
-                        <div style="position: relative;">
-                            <img src="/theme_xtream/static/src/img/product-img/imagenes_home.png"
-                                alt="Default Image"
-                                style="width: 100%; height: auto; object-fit: cover;" />
-                            <div
-                                style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;"></div>
+                            <!-- Carousel controls -->
+                            <button class="carousel-control-prev" type="button"
+                                data-bs-target="#generalImagesCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button"
+                                data-bs-target="#generalImagesCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
                         </div>
                     </t>
-                </div>
-                <!-- ...existing code... -->
-
-                <style>
-                @media (max-width: 767.98px) {
-                    .mobile-banner-container {
-                        background: #fff;
-                        padding: 10px 0 0 0;
-                        border-radius: 0 0 16px 16px;
-                        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-                    }
-                }
-                </style>
+                </t>
+                <t t-else="">
+                    <!-- Default image if no active banner -->
+                    <div class="d-block d-md-none" style="position: relative;">
+                        <img src="/theme_xtream/static/src/img/product-img/imagenes_home.png"
+                            alt="Default Image"
+                            style="width: 100%; height: auto; object-fit: cover;" />
+                    </div>
+                    <div class="d-none d-md-block" style="position: relative;">
+                        <img src="/theme_xtream/static/src/img/product-img/imagenes_home.png"
+                            alt="Default Image"
+                            style="width: 100%; height: auto; object-fit: cover;" />
+                    </div>
+                </t>
 
 
                 <!-- Nuestras Mejores category -->
