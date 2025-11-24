@@ -419,12 +419,8 @@
                 <section class="best-offers ">
                     <div class="container mt-4">
                         <div class="o_wsale_products_grid_table_wrapper">
-                            <t t-set="all_tagged_products"
-                               t-value="request.env['product.template'].sudo().search([('brand_type_id', '=', brand_type.id), ('website_published', '=', True), ('product_tag_ids', '!=', False)], order='create_date desc')" />
-                            <t t-set="all_untagged_products"
-                               t-value="request.env['product.template'].sudo().search([('brand_type_id', '=', brand_type.id), ('website_published', '=', True), ('product_tag_ids', '=', False)], order='create_date desc')" />
                             <t t-set="discounted_products"
-                               t-value="list(all_tagged_products) + list(all_untagged_products)" />     
+                               t-value="request.env['product.template'].sudo().search([('brand_type_id', '=', brand_type.id), ('website_published', '=', True), ('product_tag_ids', '!=', False)], order='create_date desc')" />
 
                             <!-- Mobile View -->
                             <div class="d-block d-md-none">
@@ -433,7 +429,7 @@
                                     t-value="request.env['product.template'].sudo().search([
                                 ('website_published', '=', True),
                                 ('product_tag_ids', '!=', False)
-                            ], order='create_date desc', limit=4)" />
+                            ], order='create_date desc')" />
                                 <t t-if="discounted_products">
                                     <div class="container mt-3 px-2">
                                         <div
@@ -575,13 +571,8 @@
                 <section class="special_products">
                     <div class="container mt-4">
                         <div class="o_wsale_products_grid_table_wrapper">
-                            <t t-set="all_tagged_products"
-                               t-value="request.env['product.template'].sudo().search([('brand_type_id', '=', brand_type.id), ('website_published', '=', True), ('product_tag_ids', '!=', False)], order='create_date desc')" />
-                            <t t-set="all_untagged_products"
-                               t-value="request.env['product.template'].sudo().search([('brand_type_id', '=', brand_type.id), ('website_published', '=', True), ('product_tag_ids', '=', False)], order='create_date desc')" />
                             <t t-set="discounted_products"
-                               t-value="list(all_tagged_products) + list(all_untagged_products)" />     
-
+                               t-value="request.env['product.template'].sudo().search([('brand_type_id', '=', brand_type.id), ('website_published', '=', True), ('product_tag_ids', '=', False)], order='create_date desc')" />     
 
                             <!-- Mobile View -->
 
@@ -589,17 +580,15 @@
                                 <t t-set="discounted_products"
                                     t-value="request.env['product.template'].sudo().search([
                                 ('website_published', '=', True),
-                                '|',
-                                ('discount_percentage', '>=', 50),
-                                ('fixed_discount', '>=', 50)
-                            ], order='create_date desc', limit=4)" />
+                                ('product_tag_ids', '=', False)
+                            ], order='create_date desc')" />
                                 <t t-if="discounted_products">
                                     <div class="container mt-3 px-2">
                                         <div
                                             style="background: #fff; border-radius: 14px; padding: 12px 6px;">
                                             <h2
                                                 style="font-family: 'Questrial', sans-serif; font-size: 20px;">
-                                                Ofertas</h2>
+                                                Productos que pueden interesarte</h2>
                                             <div class="row g-2">
                                                 <t t-foreach="discounted_products"
                                                     t-as="product">
@@ -663,12 +652,7 @@
                                                     </div>
                                                 </t>
                                             </div>
-                                            <div class="mt-2" style="text-align: left;">
-                                                <a href="/offers"
-                                                    style="font-family: 'Questrial', sans-serif; font-size: 13px; color: #1976d2; text-decoration: none; font-weight: bold;">
-                                                    Ver todas
-                                                </a>
-                                            </div>
+
                                         </div>
                                     </div>
                                 </t>
