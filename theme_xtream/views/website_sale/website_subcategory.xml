@@ -855,26 +855,54 @@
                                         }
                                         }
                                     </style>
-                                    <script type="text/javascript">
-                                        function customPriceSearch(e) {
-                                        e.preventDefault();
-                                        var min = document.getElementById('min-price').value;
-                                        var max = document.getElementById('max-price').value;
-                                        var urlParams = new URLSearchParams(window.location.search);
-                                        // Remove any existing price_range
-                                        urlParams.delete('price_range');
-
-                                        // Set min_price and max_price if present
-                                        if (min) urlParams.set('min_price', min);
-                                        else urlParams.delete('min_price');
-                                        if (max) urlParams.set('max_price', max);
-                                        else urlParams.delete('max_price');
-
-                                        // Keep other filters
-                                        var newUrl = '/subcategory?' + urlParams.toString();
-                                        window.location.href = newUrl;
-                                        return false;
+                                    <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        // Botón aplicar filtros móvil
+                                        var btnFilterApplyMobile = document.getElementById('btnFilterApplyMobile');
+                                        if (btnFilterApplyMobile) {
+                                            btnFilterApplyMobile.onclick = function() {
+                                                var urlParams = new URLSearchParams(window.location.search);
+                                    
+                                                // Envío gratis
+                                                var freeShipping = document.getElementById('freeShippingToggle');
+                                                if (freeShipping &amp;&amp; freeShipping.checked) {
+                                                    urlParams.set('free_shipping', 'true');
+                                                } else {
+                                                    urlParams.delete('free_shipping');
+                                                }
+                                    
+                                                // Marca (si tienes select o links, aquí puedes agregar la lógica)
+                                                // Ejemplo: Si tienes un select de marca en móvil
+                                                var brandSelect = document.getElementById('brand-select-mobile');
+                                                if (brandSelect &amp;&amp; brandSelect.value) {
+                                                    urlParams.set('brand_id', brandSelect.value);
+                                                }
+                                    
+                                                // Rango de precio personalizado
+                                                var minPrice = document.getElementById('min-price');
+                                                var maxPrice = document.getElementById('max-price');
+                                                urlParams.delete('price_range');
+                                                if (minPrice &amp;&amp; minPrice.value) urlParams.set('min_price', minPrice.value);
+                                                else urlParams.delete('min_price');
+                                                if (maxPrice &amp;&amp; maxPrice.value) urlParams.set('max_price', maxPrice.value);
+                                                else urlParams.delete('max_price');
+                                    
+                                                // Descuentos y promociones (agrega lógica si tienes selects/checkboxes en móvil)
+                                                // Ejemplo:
+                                                var discountSelect = document.getElementById('discount-select-mobile');
+                                                if (discountSelect &amp;&amp; discountSelect.value) {
+                                                    urlParams.set('discount_id', discountSelect.value);
+                                                }
+                                                var promotionSelect = document.getElementById('promotion-select-mobile');
+                                                if (promotionSelect &amp;&amp; promotionSelect.value) {
+                                                    urlParams.set('promotion_id', promotionSelect.value);
+                                                }
+                                    
+                                                // Redirigir con los filtros aplicados
+                                                window.location.href = '/subcategory?' + urlParams.toString();
+                                            };
                                         }
+                                    });
                                     </script>
                                 </div>
 
