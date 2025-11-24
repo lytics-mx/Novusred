@@ -25,8 +25,14 @@ class ProductHistoryController(http.Controller):
         tracks = request.env['website.track'].sudo().search([
             ('visitor_id.user_id', '=', user_id),
             ('product_id', '!=', False),
+            ('product_id', '!=', None),
         ], order='visit_datetime desc')
 
+        # Buscar registros de website.track creados por nuestro beacon (tienen user_id)
+        tracks = request.env['website.track'].search([
+            ('user_id', '=', user_id),
+            ('product_id', '!=', False),
+        ], order='visit_datetime desc')
 
 
         # Configurar zona horaria
@@ -127,21 +133,17 @@ class ProductHistoryController(http.Controller):
     def remove_from_history(self, product_id):
         """Elimina un producto del historial del usuario actual."""
         user_id = request.env.user.id
-        
+    
         # Buscar todos los registros de este producto para este usuario (filtrando por user)
         track_entries = request.env['website.track'].sudo().search([
             ('visitor_id.user_id', '=', user_id),
             ('product_id.product_tmpl_id', '=', product_id),
             ('product_id', '=', product_id)
         ])
-        track_entries = request.env['website.track'].search([
-            ('user_id', '=', user_id),
-            ('product_id.product_tmpl_id', '=', product_id),
-        ])
         # Eliminar todos los registros
         if track_entries:
             track_entries.unlink()
-
+    
         # Redirigir de vuelta al historial
         return request.redirect('/shop/history')
     
