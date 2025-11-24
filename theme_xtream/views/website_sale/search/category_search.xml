@@ -577,7 +577,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>                        
+                        </div>
                     </div>
                 </section>
 
@@ -761,86 +761,88 @@
 
                             <!-- Mobile View -->
                             <div class="d-md-none">
-                                    <div class="container mt-3 px-2">
-                                        <div
-                                            style="background: #fff; border-radius: 14px; padding: 12px 6px;">
-                                            <h2
-                                                style="font-family: 'Questrial', sans-serif; font-size: 20px;">
-                                                Ofertas</h2>
-                                            <div class="row g-2">
-                                                <t t-foreach="best_offer_products" t-as="product">
-                                                    <div class="col-6"
-                                                        style="padding-left: 4px; padding-right: 4px;">
-                                                        <a t-att-href="'/shop/product/' + str(product.id)"
-                                                            style="text-decoration: none;">
-                                                            <div class="custom-offer-card">
-                                                                <img
-                                                                    t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                                                                    class="card-img-top custom-offer-img"
-                                                                    style="background: transparent;" />
+                                <div class="container mt-3 px-2">
+                                    <div
+                                        style="background: #fff; border-radius: 14px; padding: 12px 6px;">
+                                        <h2
+                                            style="font-family: 'Questrial', sans-serif; font-size: 20px;">
+                                            Ofertas</h2>
+                                        <div class="row g-2">
+                                            <t t-foreach="best_offer_products" t-as="product">
+                                                <div class="col-6"
+                                                    style="padding-left: 4px; padding-right: 4px;">
+                                                    <a
+                                                        t-att-href="'/shop/product/' + str(product.id)"
+                                                        style="text-decoration: none;">
+                                                        <div class="custom-offer-card">
+                                                            <img
+                                                                t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                                                                class="card-img-top custom-offer-img"
+                                                                style="background: transparent;" />
+                                                            <div
+                                                                class="card-body custom-offer-body">
+                                                                <div class="custom-offer-title">
+                                                                    <t t-esc="product.name" />
+                                                                </div>
                                                                 <div
-                                                                    class="card-body custom-offer-body">
-                                                                    <div class="custom-offer-title">
-                                                                        <t t-esc="product.name" />
-                                                                    </div>
-                                                                    <div
-                                                                        class="d-flex align-items-center mt-1 mb-1">
-                                                                        <span
-                                                                            class="fw-bold custom-offer-price">
-                                                                            $<t
-                                                                                t-esc="'{:,}'.format(int(product.discounted_price if product.discounted_price &lt; product.list_price else product.list_price))" />
-                                                                        </span>
-                                                                        <t
-                                                                            t-if="product.discounted_price &lt; product.list_price and product.discount_percentage">
-                                                                            <span
-                                                                                class="ms-2 custom-offer-discount">
-                                                                                <t
-                                                                                    t-esc="int(product.discount_percentage)" />%
-                                                                                OFF </span>
-                                                                        </t>
-                                                                        <t
-                                                                            t-elif="product.fixed_discount">
-                                                                            <span
-                                                                                class="ms-2 custom-offer-discount">
-                                                                                -$<t
-                                                                                    t-esc="'{:,}'.format(int(product.fixed_discount))" />
-                                                                                MXN </span>
-                                                                        </t>
-                                                                    </div>
+                                                                    class="d-flex align-items-center mt-1 mb-1">
+                                                                    <span
+                                                                        class="fw-bold custom-offer-price">
+                                                                        $<t
+                                                                            t-esc="'{:,}'.format(int(product.discounted_price if product.discounted_price &lt; product.list_price else product.list_price))" />
+                                                                    </span>
                                                                     <t
-                                                                        t-if="product.discounted_price &lt; product.list_price">
-                                                                        <div
-                                                                            class="custom-offer-descuento">
-                                                                            $<t
-                                                                                t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" />
-                                                                            de descuento </div>
+                                                                        t-if="product.discounted_price &lt; product.list_price and product.discount_percentage">
+                                                                        <span
+                                                                            class="ms-2 custom-offer-discount">
+                                                                            <t
+                                                                                t-esc="int(product.discount_percentage)" />%
+                                                                            OFF </span>
                                                                     </t>
-                                                                    <t t-if="product.free_shipping">
-                                                                        <div
-                                                                            class="custom-offer-envio">
-                                                                            Envío gratis
-                                                                        </div>
+                                                                    <t
+                                                                        t-elif="product.fixed_discount">
+                                                                        <span
+                                                                            class="ms-2 custom-offer-discount">
+                                                                            -$<t
+                                                                                t-esc="'{:,}'.format(int(product.fixed_discount))" />
+                                                                            MXN </span>
                                                                     </t>
                                                                 </div>
+                                                                <t
+                                                                    t-if="product.discounted_price &lt; product.list_price">
+                                                                    <div
+                                                                        class="custom-offer-descuento">
+                                                                        $<t
+                                                                            t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" />
+                                                                        de descuento </div>
+                                                                </t>
+                                                                <t t-if="product.free_shipping">
+                                                                    <div
+                                                                        class="custom-offer-envio">
+                                                                        Envío gratis
+                                                                    </div>
+                                                                </t>
                                                             </div>
-                                                        </a>
-                                                    </div>
-                                                </t>
-                                            </div>
-                                            <div class="mt-2" style="text-align: left;">
-                                                <a t-att-href="'/offers?category_id=' + str(category.id)"
-                                                    style="font-family: 'Questrial', sans-serif; font-size: 13px; color: #1976d2; text-decoration: none; font-weight: bold;">
-                                                    Ver todas
-                                                </a>
-                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </t>
+                                        </div>
+                                        <div class="mt-2" style="text-align: left;">
+                                            <a
+                                                t-att-href="'/offers?category_id=' + str(category.id)"
+                                                style="font-family: 'Questrial', sans-serif; font-size: 13px; color: #1976d2; text-decoration: none; font-weight: bold;">
+                                                Ver todas
+                                            </a>
                                         </div>
                                     </div>
+                                </div>
                             </div>
 
                         </div>
                     </div>
                 </section>
-<section class="more-categories py-5">
+                <section class="more-categories">
                     <t t-if="category and category.child_id">
                         <h2 class="text-center"
                             style="font-family: 'Questrial', sans-serif; font-size: 25px;">MÁS
@@ -915,7 +917,7 @@
                         </div>
                     </div>
                 </section>
-<section class="best-offers py-5">
+                <section class="best-offers">
                     <div class="container mt-4">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <t t-if="best_offer_products">
@@ -938,80 +940,82 @@
                             </t>
                             <!-- Mobile View -->
                             <div class="d-md-none">
-                                    <div class="container mt-3 px-2">
-                                        <div
-                                            style="background: #fff; border-radius: 14px; padding: 12px 6px;">
-                                            <h2
-                                                style="font-family: 'Questrial', sans-serif; font-size: 20px;">
-                                                Ofertas</h2>
-                                            <div class="row g-2">
-                                                <t t-foreach="best_offer_products" t-as="product">
-                                                    <div class="col-6"
-                                                        style="padding-left: 4px; padding-right: 4px;">
-                                                        <a t-att-href="'/shop/product/' + str(product.id)"
-                                                            style="text-decoration: none;">
-                                                            <div class="custom-offer-card">
-                                                                <img
-                                                                    t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                                                                    class="card-img-top custom-offer-img"
-                                                                    style="background: transparent;" />
+                                <div class="container mt-3 px-2">
+                                    <div
+                                        style="background: #fff; border-radius: 14px; padding: 12px 6px;">
+                                        <h2
+                                            style="font-family: 'Questrial', sans-serif; font-size: 20px;">
+                                            Ofertas</h2>
+                                        <div class="row g-2">
+                                            <t t-foreach="best_offer_products" t-as="product">
+                                                <div class="col-6"
+                                                    style="padding-left: 4px; padding-right: 4px;">
+                                                    <a
+                                                        t-att-href="'/shop/product/' + str(product.id)"
+                                                        style="text-decoration: none;">
+                                                        <div class="custom-offer-card">
+                                                            <img
+                                                                t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                                                                class="card-img-top custom-offer-img"
+                                                                style="background: transparent;" />
+                                                            <div
+                                                                class="card-body custom-offer-body">
+                                                                <div class="custom-offer-title">
+                                                                    <t t-esc="product.name" />
+                                                                </div>
                                                                 <div
-                                                                    class="card-body custom-offer-body">
-                                                                    <div class="custom-offer-title">
-                                                                        <t t-esc="product.name" />
-                                                                    </div>
-                                                                    <div
-                                                                        class="d-flex align-items-center mt-1 mb-1">
-                                                                        <span
-                                                                            class="fw-bold custom-offer-price">
-                                                                            $<t
-                                                                                t-esc="'{:,}'.format(int(product.discounted_price if product.discounted_price &lt; product.list_price else product.list_price))" />
-                                                                        </span>
-                                                                        <t
-                                                                            t-if="product.discounted_price &lt; product.list_price and product.discount_percentage">
-                                                                            <span
-                                                                                class="ms-2 custom-offer-discount">
-                                                                                <t
-                                                                                    t-esc="int(product.discount_percentage)" />%
-                                                                                OFF </span>
-                                                                        </t>
-                                                                        <t
-                                                                            t-elif="product.fixed_discount">
-                                                                            <span
-                                                                                class="ms-2 custom-offer-discount">
-                                                                                -$<t
-                                                                                    t-esc="'{:,}'.format(int(product.fixed_discount))" />
-                                                                                MXN </span>
-                                                                        </t>
-                                                                    </div>
+                                                                    class="d-flex align-items-center mt-1 mb-1">
+                                                                    <span
+                                                                        class="fw-bold custom-offer-price">
+                                                                        $<t
+                                                                            t-esc="'{:,}'.format(int(product.discounted_price if product.discounted_price &lt; product.list_price else product.list_price))" />
+                                                                    </span>
                                                                     <t
-                                                                        t-if="product.discounted_price &lt; product.list_price">
-                                                                        <div
-                                                                            class="custom-offer-descuento">
-                                                                            $<t
-                                                                                t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" />
-                                                                            de descuento </div>
+                                                                        t-if="product.discounted_price &lt; product.list_price and product.discount_percentage">
+                                                                        <span
+                                                                            class="ms-2 custom-offer-discount">
+                                                                            <t
+                                                                                t-esc="int(product.discount_percentage)" />%
+                                                                            OFF </span>
                                                                     </t>
-                                                                    <t t-if="product.free_shipping">
-                                                                        <div
-                                                                            class="custom-offer-envio">
-                                                                            Envío gratis
-                                                                        </div>
+                                                                    <t
+                                                                        t-elif="product.fixed_discount">
+                                                                        <span
+                                                                            class="ms-2 custom-offer-discount">
+                                                                            -$<t
+                                                                                t-esc="'{:,}'.format(int(product.fixed_discount))" />
+                                                                            MXN </span>
                                                                     </t>
                                                                 </div>
+                                                                <t
+                                                                    t-if="product.discounted_price &lt; product.list_price">
+                                                                    <div
+                                                                        class="custom-offer-descuento">
+                                                                        $<t
+                                                                            t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" />
+                                                                        de descuento </div>
+                                                                </t>
+                                                                <t t-if="product.free_shipping">
+                                                                    <div
+                                                                        class="custom-offer-envio">
+                                                                        Envío gratis
+                                                                    </div>
+                                                                </t>
                                                             </div>
-                                                        </a>
-                                                    </div>
-                                                </t>
-                                            </div>
-                                            <div class="mt-2" style="text-align: left;">
-                                                <a t-att-href="'/offers?category_id=' + str(category.id)"
-                                                    style="font-family: 'Questrial', sans-serif; font-size: 13px; color: #1976d2; text-decoration: none; font-weight: bold;">
-                                                    Ver todas
-                                                </a>
-                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </t>
+                                        </div>
+                                        <div class="mt-2" style="text-align: left;">
+                                            <a
+                                                t-att-href="'/offers?category_id=' + str(category.id)"
+                                                style="font-family: 'Questrial', sans-serif; font-size: 13px; color: #1976d2; text-decoration: none; font-weight: bold;">
+                                                Ver todas
+                                            </a>
                                         </div>
                                     </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1029,21 +1033,25 @@
                                     <t t-foreach="category.child_id" t-as="subcat">
                                         <div class="accordion-item">
                                             <h2 class="accordion-header">
-                                                <button class="accordion-button collapsed" type="button"
+                                                <button class="accordion-button collapsed"
+                                                    type="button"
                                                     data-bs-toggle="collapse"
                                                     t-att-data-bs-target="'#collapse' + str(subcat.id)"
                                                     aria-expanded="false">
                                                     <t t-esc="subcat.name" />
                                                 </button>
                                             </h2>
-                                            <div t-att-id="'collapse' + str(subcat.id)" class="accordion-collapse collapse"
+                                            <div t-att-id="'collapse' + str(subcat.id)"
+                                                class="accordion-collapse collapse"
                                                 data-bs-parent="#categoryAccordion">
                                                 <div class="accordion-body">
                                                     <ul class="list-unstyled">
                                                         <t t-if="subcat.child_id">
-                                                            <t t-foreach="subcat.child_id" t-as="child">
+                                                            <t t-foreach="subcat.child_id"
+                                                                t-as="child">
                                                                 <li class="py-2 border-bottom">
-                                                                    <a t-att-href="'/subcategory?category_id=' + str(category.id) + '&amp;subcategory_id=' + str(child.id)"
+                                                                    <a
+                                                                        t-att-href="'/subcategory?category_id=' + str(category.id) + '&amp;subcategory_id=' + str(child.id)"
                                                                         class="text-decoration-none text-dark d-block">
                                                                         <t t-esc="child.name" />
                                                                     </a>
@@ -1051,7 +1059,8 @@
                                                             </t>
                                                         </t>
                                                         <t t-else="">
-                                                            <li class="py-2 text-muted">No hay subcategorías disponibles</li>
+                                                            <li class="py-2 text-muted">No hay
+                                                                subcategorías disponibles</li>
                                                         </t>
                                                     </ul>
                                                 </div>
