@@ -23,65 +23,30 @@ class WebsiteSearch(http.Controller):
         Product = request.env['product.template'].sudo()
         Brand = request.env['brand.type'].sudo()
         Category = request.env['product.category'].sudo()
-    
+
         if not q:
-            # Redirige a la página general según el filtro
-            if search_type == 'brand':
-                return request.redirect('/brand')
-            elif search_type == 'category':
-                return request.redirect('/category')
-            elif search_type == 'product':
-                return request.redirect('/subcategory')
-            else:
-                return request.redirect('/subcategory')
-    
-        # FILTRO POR MARCA
-        if search_type == 'brand':
-            brand = Brand.search([('name', 'ilike', q)], limit=1)
-            if brand:
-                return request.redirect(f'/brand_search?brand_id={brand.id}&search={self._sanitize_search(search)}')
-            else:
-                return request.redirect(f'/brand_search?search={self._sanitize_search(search)}')
-    
-        # FILTRO POR CATEGORÍA
-        elif search_type == 'category':
-            category = Category.search([('name', 'ilike', q)], limit=1)
-            if category:
-                return request.redirect(f'/category_search?category_id={category.id}&search={self._sanitize_search(search)}')
-            else:
-                return request.redirect(f'/category_search?search={self._sanitize_search(search)}')
-    
-        # FILTRO POR PRODUCTO
-        elif search_type == 'product':
-            product = Product.search([
-                '|', ('name', 'ilike', q), ('product_model', 'ilike', q)
-            ], limit=1)
-            if product:
-                return request.redirect(product.website_url or f'/shop/product/{product.id}')
-            else:
-                return request.redirect(f'/subcategory?search={self._sanitize_search(search)}')
-    
-        # FILTRO TODOS (original)
+            return request.redirect('/subcategory')
+
         # 1) Exact brand match (priority)
         brand = Brand.search([('name', 'ilike', q)], limit=1)
         if brand:
             return request.redirect(f'/subcategory?brand_id={brand.id}')
-    
+
         # 2) Exact category match
         category = Category.search([('name', 'ilike', q)], limit=1)
         if category:
             return request.redirect(f'/subcategory?category_id={category.id}')
-    
+
         # 3) Product by code (startswith)
         product = Product.search([('default_code', 'ilike', q + '%')], limit=1)
         if product:
             return request.redirect(product.website_url or f'/shop/product/{product.id}')
-    
+
         # 4) Product by name or model
         product = Product.search(['|', ('name', 'ilike', q), ('product_model', 'ilike', q)], limit=1)
         if product:
             return request.redirect(product.website_url or f'/shop/product/{product.id}')
-    
+
         # 5) Fallback fuzzy brand/category then general search page
         brand = Brand.search([('name', 'ilike', q)], limit=1)
         if brand:
@@ -89,7 +54,7 @@ class WebsiteSearch(http.Controller):
         category = Category.search([('name', 'ilike', q)], limit=1)
         if category:
             return request.redirect(f'/subcategory?category_id={category.id}')
-    
+
         search_sanitized = self._sanitize_search(search)
         return request.redirect(f'/subcategory?search={search_sanitized}')
 
