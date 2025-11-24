@@ -603,60 +603,71 @@
             <div id="wrap-mobile" class="oe_structure oe_empty d-block d-md-none" style="font-family: 'Questrial', sans-serif;">
                 <div class="container mt-3">
                     <!-- Filtros móviles -->
-                    <div class="mobile-filters-panel mb-3">
-                        <h5 class="text-orange fw-bold mobile-shipping-text">Envío gratis</h5>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="freeShippingToggleMobile"
-                                t-att-checked="'checked' if str(current_filters.get('free_shipping', '')).lower() == 'true' else None" />
-                            <label class="form-check-label" for="freeShippingToggleMobile" style="font-size: 13px;">
-                                Solo productos con envío gratis
-                            </label>
+                    <div class="d-block d-md-none mb-2" style="background: #fff;">
+                        <div class="d-flex justify-content-between align-items-center" style="border-bottom: 1px solid #eee;">
+                            <button id="btnSortMobile" class="btn btn-link w-50 text-center" style="color: #007bff;">Ordenar</button>
+                            <div style="width:1px; background:#eee; height:24px;"></div>
+                            <button id="btnFilterMobile" class="btn btn-link w-50 text-center" style="color: #007bff;">Filtrar</button>
                         </div>
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                var toggle = document.getElementById('freeShippingToggleMobile');
-                                if (toggle) {
-                                    var currentFreeShipping = '<t t-esc="str(current_filters.get(&apos;free_shipping&apos;) or &apos;&apos;).lower()" />';
-                                    toggle.checked = (currentFreeShipping === 'true');
-                                    toggle.addEventListener('change', function() {
-                                        var urlParams = new URLSearchParams(window.location.search);
-                                        var newUrl = '/subcategory?';
-                                        var params = [];
-                                        if (urlParams.get('category_id')) { params.push('category_id=' + urlParams.get('category_id')); }
-                                        if (urlParams.get('subcategory_id')) { params.push('subcategory_id=' + urlParams.get('subcategory_id')); }
-                                        if (urlParams.get('brand_id')) { params.push('brand_id=' + urlParams.get('brand_id')); }
-                                        if (urlParams.get('price_range')) { params.push('price_range=' + urlParams.get('price_range')); }
-                                        if (urlParams.get('discount_id')) { params.push('discount_id=' + urlParams.get('discount_id')); }
-                                        if (urlParams.get('promotion_id')) { params.push('promotion_id=' + urlParams.get('promotion_id')); }
-                                        if (urlParams.get('sort')) { params.push('sort=' + urlParams.get('sort')); }
-                                        if (this.checked) { params.push('free_shipping=true'); }
-                                        if (params.length > 0) { newUrl += params.join('&amp;'); } else { newUrl = '/subcategory'; }
-                                        window.location.href = newUrl;
-                                    });
-                                }
-                            });
-                        </script>
-                        <!-- Marca -->
-                        <div class="mt-3">
-                            <h6 style="font-size: 14px;">Marca</h6>
-                            <div class="mobile-categories-grid">
-                                <t t-foreach="forced_brands" t-as="brand_data" t-key="brand_data.id">
-                                    <a t-att-href="'/subcategory?brand_id=' + str(brand_data.id)" class="btn btn-outline-secondary btn-sm mb-1" style="font-size: 13px;">
-                                        <t t-esc="brand_data.name" />
-                                    </a>
-                                </t>
+                        <!-- Ordenar: desplegable -->
+                        <div id="sortMobilePanel" style="display:none; padding:16px 0;">
+                            <div class="d-flex align-items-center justify-content-center mb-2">
+                                <label for="sort-select-mobile" class="form-label me-2 mb-0 small">Ordenar por:</label>
+                                <select id="sort-select-mobile" class="form-select form-select-sm" style="width: auto;">
+                                    <option value="relevance"
+                                        t-att-selected="'selected' if current_filters.get('sort') == 'relevance' or not current_filters.get('sort') else None">Más relevante</option>
+                                    <option value="newest"
+                                        t-att-selected="'selected' if current_filters.get('sort') == 'newest' else None">Más reciente</option>
+                                    <option value="best_sellers"
+                                        t-att-selected="'selected' if current_filters.get('sort') == 'best_sellers' else None">Más vendidos</option>
+                                    <option value="offers"
+                                        t-att-selected="'selected' if current_filters.get('sort') == 'offers' else None">Ofertas</option>
+                                    <option value="price_low"
+                                        t-att-selected="'selected' if current_filters.get('sort') == 'price_low' else None">Precio: menor a mayor</option>
+                                    <option value="price_high"
+                                        t-att-selected="'selected' if current_filters.get('sort') == 'price_high' else None">Precio: mayor a menor</option>
+                                    <option value="alphabetical"
+                                        t-att-selected="'selected' if current_filters.get('sort') == 'alphabetical' else None">A-Z</option>
+                                </select>
                             </div>
+                            <button id="btnSortApplyMobile" class="btn btn-primary w-100">Buscar</button>
                         </div>
-                        <!-- Precio rápido -->
-                        <div class="mt-3">
-                            <h6 style="font-size: 14px;">Precio</h6>
-                            <div class="mobile-categories-grid">
-                                <a t-att-href="'/subcategory?price_range=0_500'" class="btn btn-outline-secondary btn-sm mb-1" style="font-size: 13px;">Hasta $500</a>
-                                <a t-att-href="'/subcategory?price_range=500_1000'" class="btn btn-outline-secondary btn-sm mb-1" style="font-size: 13px;">$500 a $1000</a>
-                                <a t-att-href="'/subcategory?price_range=1000_plus'" class="btn btn-outline-secondary btn-sm mb-1" style="font-size: 13px;">Más de $1000</a>
+                        <!-- Filtrar: desplegable -->
+                        <div id="filterMobilePanel" style="display:none; padding:16px 0;">
+                            <!-- Aquí va TODO el contenido de filtros de desktop, puedes copiar el bloque de filtros-sidebar -->
+                            <div class="filters-sidebar" style="padding: 0;">
+                                <!-- ...copiar aquí el contenido de filtros de desktop... -->
                             </div>
+                            <button id="btnFilterApplyMobile" class="btn btn-primary w-100 mt-2">Buscar</button>
                         </div>
                     </div>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            var btnSort = document.getElementById('btnSortMobile');
+                            var btnFilter = document.getElementById('btnFilterMobile');
+                            var sortPanel = document.getElementById('sortMobilePanel');
+                            var filterPanel = document.getElementById('filterMobilePanel');
+                            btnSort.onclick = function() {
+                                sortPanel.style.display = sortPanel.style.display === 'none' ? 'block' : 'none';
+                                filterPanel.style.display = 'none';
+                            };
+                            btnFilter.onclick = function() {
+                                filterPanel.style.display = filterPanel.style.display === 'none' ? 'block' : 'none';
+                                sortPanel.style.display = 'none';
+                            };
+                            document.getElementById('btnSortApplyMobile').onclick = function() {
+                                var sortValue = document.getElementById('sort-select-mobile').value;
+                                var urlParams = new URLSearchParams(window.location.search);
+                                urlParams.set('sort', sortValue);
+                                window.location.href = '/subcategory?' + urlParams.toString();
+                            };
+                            document.getElementById('btnFilterApplyMobile').onclick = function() {
+                                // Aquí puedes tomar los valores de los filtros y construir la URL igual que en desktop
+                                // Por ejemplo, puedes reutilizar la función updateFilters() si la tienes
+                                updateFilters();
+                            };
+                        });
+                    </script>
                     <!-- Lista de productos móvil -->
                     <div>
                         <t t-foreach="period_products" t-as="product_data" t-key="product_data['product'].id">
