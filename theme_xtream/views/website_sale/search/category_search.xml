@@ -36,75 +36,12 @@
                 <!-- Nuestras Mejores category -->
                 <div class="container mt-4" style="padding: 5px 0;">
                     <div style="text-align: left; margin-bottom: 0;">
-                        <t t-if="category and category.brand_ids">
+                        <t t-if="brands">
                             <h2
                                 style="font-family: 'Questrial', sans-serif; font-size: 25px; text-align: center; margin-bottom: 0;">NUESTRAS
                                 MEJORES MARCAS</h2>
                         </t>
                     </div>
-
-                    <!-- Mobile view -->
-                    <div class="d-block d-md-none" style="padding: 15px 0;">
-                        <t t-if="len(brands) > 3">
-                            <div id="brandsMobileCarousel" class="carousel slide"
-                                data-bs-ride="carousel" style="margin: 10px 0;">
-                                <div class="carousel-inner">
-                                    <t t-foreach="range(0, len(brands), 3)" t-as="i">
-                                        <div
-                                            t-att-class="'carousel-item' + (' active' if i == 0 else '')">
-                                            <div class="row g-3" style="margin: 10px 0;">
-                                                <t t-foreach="brands[i:min(i+3, len(brands))]"
-                                                    t-as="brand">
-                                                    <div class="col-4" style="padding: 10px;">
-                                                        <a
-                                                            t-att-href="'/subcategory?brand_id=' + str(brand.id)">
-                                                            <div
-                                                                class="brand-card h-100 d-flex align-items-center justify-content-center"
-                                                                style="background-color: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); padding: 20px; margin: 5px;">
-                                                                <img
-                                                                    t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')"
-                                                                    alt="Ícono de la Marca"
-                                                                    style="width: 100%; height: auto; object-fit: contain;" />
-                                                            </div>
-                                                        </a>
-                                                    </div>
-                                                </t>
-                                            </div>
-                                        </div>
-                                    </t>
-                                </div>
-                                <button class="carousel-control-prev" type="button"
-                                    data-bs-target="#brandsMobileCarousel" data-bs-slide="prev">
-                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Previous</span>
-                                </button>
-                                <button class="carousel-control-next" type="button"
-                                    data-bs-target="#brandsMobileCarousel" data-bs-slide="next">
-                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Next</span>
-                                </button>
-                            </div>
-                        </t>
-                        <t t-else="">
-                            <div class="row g-3" style="margin: 10px 0;">
-                                <t t-foreach="brands" t-as="brand">
-                                    <div class="col-4" style="padding: 10px;">
-                                        <a t-att-href="'/subcategory?brand_id=' + str(brand.id)">
-                                            <div
-                                                class="brand-card h-100 d-flex align-items-center justify-content-center"
-                                                style="background-color: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); padding: 20px; margin: 5px;">
-                                                <img
-                                                    t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')"
-                                                    alt="Ícono de la Marca"
-                                                    style="width: 100%; height: auto; object-fit: contain;" />
-                                            </div>
-                                        </a>
-                                    </div>
-                                </t>
-                            </div>
-                        </t>
-                    </div>
-
                     <!-- Desktop view -->
                     <div class="d-none d-md-block" style="padding: 15px 0;">
                         <t t-if="len(brands) > 4">
@@ -1170,7 +1107,32 @@
                     </div>
                 </t>
 
-
+                <div class="container mt-4" style="padding: 5px 0;">
+                    <div style="text-align: left; margin-bottom: 0;">
+                        <t t-if="brands">
+                            <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px; text-align: center; margin-bottom: 0;">NUESTRAS MEJORES MARCAS</h2>
+                        </t>
+                    </div>
+                    
+                    <!-- Mobile view -->
+                    <div class="d-block d-md-none" style="padding: 15px 0;">
+                        <h2 style="font-size: 25px; text-align: center;">NUESTRAS MEJORES MARCAS</h2>
+                        <div class="row g-3 justify-content-center" style="margin: 10px 0;">
+                            <t t-foreach="brands[:3]" t-as="brand">
+                                <div class="col-4 d-flex justify-content-center" style="padding: 10px;">
+                                    <a t-att-href="'/subcategory?brand_id=' + str(brand.id)">
+                                        <div class="brand-card d-flex align-items-center justify-content-center" 
+                                             style="background-color: white; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.2); width: 90px; height: 90px; overflow: hidden; padding: 0; margin: 0 auto;">
+                                            <img t-att-src="'data:image/png;base64,' + brand.icon_image.decode('utf-8')"
+                                                 alt="Ícono de la Marca"
+                                                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />
+                                        </div>
+                                    </a>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
 
             </div>
         </t>
