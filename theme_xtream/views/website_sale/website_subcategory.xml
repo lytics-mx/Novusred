@@ -3,7 +3,7 @@
         <t t-call="website.layout">
             <div id="wrap" class="oe_structure oe_empty"
                 style="font-family: 'Questrial', sans-serif;">
-                <div class="container mt-4">
+                <div class="container mt-4 d-none d-md-block">
                     <div class="row">
                         <!-- Header con breadcrumb y ordenamiento -->
 
@@ -138,7 +138,6 @@
                                 </div> -->
 
                                 <!-- Free Shipping Toggle -->
-                                <!-- Free Shipping Toggle -->
                                 <div class="mb-3 p-3 border rounded-3 bg-white">
                                     <h5 class="text-orange fw-bold"
                                         style="color: #FF5207; font-size: 16px; font-style: italic; background-color: white;">Envío
@@ -186,7 +185,6 @@
                                     newUrl; }); } }); </script>
 
                                 <!-- Brands (Marca) -->
-                                <!-- ...existing code... -->
                                 <div class="filter-section mb-4"
                                     t-if="forced_brands or other_brands">
                                     <h6 class="mb-2">Marca</h6>
@@ -600,6 +598,117 @@
 
                     </div>
                 </div>
+            <div id="wrap-mobile" class="oe_structure oe_empty d-block d-md-none" style="font-family: 'Questrial', sans-serif;">
+                <div class="container mt-3">
+                    <!-- Filtros móviles -->
+                    <div class="mobile-filters-panel mb-3">
+                        <h5 class="text-orange fw-bold mobile-shipping-text">Envío gratis</h5>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="freeShippingToggleMobile"
+                                t-att-checked="'checked' if str(current_filters.get('free_shipping', '')).lower() == 'true' else None" />
+                            <label class="form-check-label" for="freeShippingToggleMobile" style="font-size: 13px;">
+                                Solo productos con envío gratis
+                            </label>
+                        </div>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var toggle = document.getElementById('freeShippingToggleMobile');
+                                if (toggle) {
+                                    var currentFreeShipping = '<t t-esc="str(current_filters.get(&apos;free_shipping&apos;) or &apos;&apos;).lower()" />';
+                                    toggle.checked = (currentFreeShipping === 'true');
+                                    toggle.addEventListener('change', function() {
+                                        var urlParams = new URLSearchParams(window.location.search);
+                                        var newUrl = '/subcategory?';
+                                        var params = [];
+                                        if (urlParams.get('category_id')) { params.push('category_id=' + urlParams.get('category_id')); }
+                                        if (urlParams.get('subcategory_id')) { params.push('subcategory_id=' + urlParams.get('subcategory_id')); }
+                                        if (urlParams.get('brand_id')) { params.push('brand_id=' + urlParams.get('brand_id')); }
+                                        if (urlParams.get('price_range')) { params.push('price_range=' + urlParams.get('price_range')); }
+                                        if (urlParams.get('discount_id')) { params.push('discount_id=' + urlParams.get('discount_id')); }
+                                        if (urlParams.get('promotion_id')) { params.push('promotion_id=' + urlParams.get('promotion_id')); }
+                                        if (urlParams.get('sort')) { params.push('sort=' + urlParams.get('sort')); }
+                                        if (this.checked) { params.push('free_shipping=true'); }
+                                        if (params.length > 0) { newUrl += params.join('&'); } else { newUrl = '/subcategory'; }
+                                        window.location.href = newUrl;
+                                    });
+                                }
+                            });
+                        </script>
+                        <!-- Marca -->
+                        <div class="mt-3">
+                            <h6 style="font-size: 14px;">Marca</h6>
+                            <div class="mobile-categories-grid">
+                                <t t-foreach="forced_brands" t-as="brand_data" t-key="brand_data.id">
+                                    <a t-att-href="'/subcategory?brand_id=' + str(brand_data.id)" class="btn btn-outline-secondary btn-sm mb-1" style="font-size: 13px;">
+                                        <t t-esc="brand_data.name" />
+                                    </a>
+                                </t>
+                            </div>
+                        </div>
+                        <!-- Precio rápido -->
+                        <div class="mt-3">
+                            <h6 style="font-size: 14px;">Precio</h6>
+                            <div class="mobile-categories-grid">
+                                <a t-att-href="'/subcategory?price_range=0_500'" class="btn btn-outline-secondary btn-sm mb-1" style="font-size: 13px;">Hasta $500</a>
+                                <a t-att-href="'/subcategory?price_range=500_1000'" class="btn btn-outline-secondary btn-sm mb-1" style="font-size: 13px;">$500 a $1000</a>
+                                <a t-att-href="'/subcategory?price_range=1000_plus'" class="btn btn-outline-secondary btn-sm mb-1" style="font-size: 13px;">Más de $1000</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Lista de productos móvil -->
+                    <div>
+                        <t t-foreach="period_products" t-as="product_data" t-key="product_data['product'].id">
+                            <a t-att-href="product_data['product'].website_url" style="text-decoration: none; color: inherit;">
+                                <div class="mobile-product-card mb-3">
+                                    <img t-att-src="'/web/image/product.template/%s/image_1024' % product_data['product'].id"
+                                        class="mobile-product-image w-100" alt="Product Image" />
+                                    <div class="mobile-card-body">
+                                        <t t-if="product_data['product'].product_tag_ids">
+                                            <span class="badge bg-primary mobile-badge">
+                                                <t t-esc="product_data['product'].product_tag_ids[0].name" />
+                                            </span>
+                                        </t>
+                                        <h6 style="font-size: 15px; margin: 6px 0 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                            <t t-esc="product_data['product'].name" />
+                                        </h6>
+                                        <t t-if="product_data['product'].brand_type_id">
+                                            <span class="text-muted" style="font-size: 13px;">Por <t t-esc="product_data['product'].brand_type_id.name" /></span>
+                                        </t>
+                                        <div class="mobile-price-container mt-2">
+                                            <t t-if="product_data['product'].discounted_price &lt; product_data['product'].list_price">
+                                                <span class="text-muted mobile-discount-amount" style="font-size: 16px;">
+                                                    $<t t-esc="'{:,}'.format(int(product_data['product'].list_price))" />
+                                                </span>
+                                                <span class="text-dark fw-bold mobile-main-price">
+                                                    $<t t-esc="'{:,}'.format(int(product_data['product'].discounted_price))" />
+                                                </span>
+                                                <t t-if="product_data['product'].discount_percentage">
+                                                    <span class="mobile-discount" style="color: #FF5207;">
+                                                        <t t-esc="int(product_data['product'].discount_percentage)" />% OFF
+                                                    </span>
+                                                </t>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="fw-bold mobile-main-price">
+                                                    $<t t-esc="'{:,}'.format(int(product_data['product'].list_price))" />
+                                                </span>
+                                            </t>
+                                        </div>
+                                        <t t-if="product_data['product'].free_shipping">
+                                            <span class="mobile-shipping-text">Envío gratis</span>
+                                        </t>
+                                    </div>
+                                </div>
+                            </a>
+                        </t>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
             </div>
 
             <!-- JavaScript -->
