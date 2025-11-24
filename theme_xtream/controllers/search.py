@@ -27,6 +27,32 @@ class WebsiteSearch(http.Controller):
         if not q:
             return request.redirect('/subcategory')
 
+        # Filtrado por tipo
+        if search_type == 'brand':
+            brand = Brand.search([('name', 'ilike', q)], limit=1)
+            if brand:
+                return request.redirect(f'/search_brand?brand_id={brand.id}')
+            else:
+                return request.redirect(f'/search_brand?search={self._sanitize_search(search)}')
+
+        elif search_type == 'category':
+            category = Category.search([('name', 'ilike', q)], limit=1)
+            if category:
+                return request.redirect(f'/search_category?category_id={category.id}')
+            else:
+                return request.redirect(f'/search_category?search={self._sanitize_search(search)}')
+
+        elif search_type == 'product':
+            product = Product.search([
+                '|', ('name', 'ilike', q), ('product_model', 'ilike', q)
+            ], limit=1)
+            if product:
+                return request.redirect(product.website_url or f'/shop/product/{product.id}')
+            else:
+                return request.redirect(f'/search_product?search={self._sanitize_search(search)}')
+
+        # Si es "todos" o no se seleccionó filtro, sigue el flujo original
+        # ...original logic for 'all'...
         # 1) Exact brand match (priority)
         brand = Brand.search([('name', 'ilike', q)], limit=1)
         if brand:
@@ -57,6 +83,7 @@ class WebsiteSearch(http.Controller):
 
         search_sanitized = self._sanitize_search(search)
         return request.redirect(f'/subcategory?search={search_sanitized}')
+# ...existing code...
 
     @http.route('/search_live', type='http', auth='public', website=True)
     def search_live(self, query=None, **kw):
