@@ -589,7 +589,6 @@
                                     </nav>
                                 </div>
                             </t>
-                            <!-- ...existing code... -->
                         </div>
 
                         <div style="height: 30px;"></div>
@@ -1086,7 +1085,87 @@
                                     </li>
                                 </ul>
                             </nav>
+                            <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                // Botones y paneles
+                                var btnSort = document.getElementById('btnSortMobile');
+                                var btnFilter = document.getElementById('btnFilterMobile');
+                                var sortPanel = document.getElementById('sortMobilePanel');
+                                var filterPanel = document.getElementById('filterMobilePanel');
+                            
+                                // Mostrar/ocultar paneles
+                                if (btnSort) {
+                                    btnSort.onclick = function() {
+                                        sortPanel.style.display = sortPanel.style.display === 'none' ? 'block' : 'none';
+                                        filterPanel.style.display = 'none';
+                                    };
+                                }
+                                if (btnFilter) {
+                                    btnFilter.onclick = function() {
+                                        filterPanel.style.display = filterPanel.style.display === 'none' ? 'block' : 'none';
+                                        sortPanel.style.display = 'none';
+                                    };
+                                }
+                            
+                                // Aplicar ordenamiento
+                                var btnSortApply = document.getElementById('btnSortApplyMobile');
+                                if (btnSortApply) {
+                                    btnSortApply.onclick = function() {
+                                        var sortValue = document.getElementById('sort-select-mobile').value;
+                                        var urlParams = new URLSearchParams(window.location.search);
+                                        urlParams.set('sort', sortValue);
+                                        window.location.href = '/subcategory?' + urlParams.toString();
+                                    };
+                                }
+                            
+                                // Aplicar filtros
+                                var btnFilterApply = document.getElementById('btnFilterApplyMobile');
+                                if (btnFilterApply) {
+                                    btnFilterApply.onclick = function() {
+                                        // Recoge los filtros del panel móvil
+                                        var urlParams = new URLSearchParams(window.location.search);
+                            
+                                        // Envío gratis
+                                        var freeShipping = document.getElementById('freeShippingToggle');
+                                        if (freeShipping &amp;&amp; freeShipping.checked) {
+                                            urlParams.set('free_shipping', 'true');
+                                        } else {
+                                            urlParams.delete('free_shipping');
+                                        }
+                            
+                                        // Marca
+                                        var brandLinks = document.querySelectorAll('#filterMobilePanel .brands-list a');
+                                        brandLinks.forEach(function(link) {
+                                            link.onclick = function(e) {
+                                                e.preventDefault();
+                                                var href = new URL(link.href, window.location.origin);
+                                                var brandId = href.searchParams.get('brand_id');
+                                                if (brandId) urlParams.set('brand_id', brandId);
+                                                window.location.href = '/subcategory?' + urlParams.toString();
+                                            };
+                                        });
+                            
+                                        // Rango de precio personalizado
+                                        var minPrice = document.getElementById('min-price');
+                                        var maxPrice = document.getElementById('max-price');
+                                        urlParams.delete('price_range');
+                                        if (minPrice &amp;&amp; minPrice.value) urlParams.set('min_price', minPrice.value);
+                                        else urlParams.delete('min_price');
+                                        if (maxPrice &amp;&amp; maxPrice.value) urlParams.set('max_price', maxPrice.value);
+                                        else urlParams.delete('max_price');
+                            
+                                        // Descuentos y promociones (solo si seleccionas desde el panel)
+                                        // Si tienes selects o checkboxes, agrégalos aquí igual que arriba
+                            
+                                        // Redirigir con los filtros aplicados
+                                        window.location.href = '/subcategory?' + urlParams.toString();
+                                    };
+                                }
+                            });
+                            </script>                            
                         </div>
+
+                        
                     </t>
                 </div>
             </div>
