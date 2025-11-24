@@ -83,11 +83,11 @@
                     ('visitor_id', '=', request.env['website.visitor']._get_visitor_from_request().id),
                     ('product_id', '!=', False)
                 ]).mapped('product_id.categ_id')" />
-                <t t-set="suggested_products" t-value="request.env['product.template'].sudo().search([
+                <t t-set="suggested_products" t-value="viewed_categories and request.env['product.template'].sudo().search([
                     ('categ_id', 'in', viewed_categories.ids),
                     ('website_published', '=', True),
                     ('qty_available', '>', 1)
-                ], limit=10)" />
+                ], limit=10) or request.env['product.template']" />
                 <t t-if="suggested_products">
                     <div class="container mt-4">
                         <div style="text-align: left;">
