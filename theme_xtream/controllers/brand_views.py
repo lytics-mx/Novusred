@@ -79,4 +79,12 @@ class WebsiteBrand(http.Controller):
         return http.request.render('theme_xtream.website_brand', {
             'products': products,
         })
-    
+
+    @http.route('/brand_search', auth='public', website=True)
+    def brand_search(self, brand_id=None, search=None, **kwargs):
+        BrandType = request.env['brand.type'].sudo()
+        brand_type = BrandType.browse(int(brand_id)) if brand_id else None
+        return request.render('theme_xtream.brand_search', {
+            'brand_type': brand_type,
+            'search': search,
+        })

@@ -1,133 +1,52 @@
 from odoo import http
 from odoo.http import request
 import json
-import re
-import unicodedata
+
 
 class WebsiteSearch(http.Controller):
 
-    def _normalize(self, text):
-        if not text:
-            return ''
-        text = unicodedata.normalize('NFKD', text)
-        text = text.encode('ascii', 'ignore').decode('ascii')  # quita tildes
-        return re.sub(r'\s+', ' ', text.strip().lower())
-
     def _sanitize_search(self, search):
-        return (search or '').replace(' ', '-')
+        # Reemplaza espacios por guiones
+        return search.replace(' ', '-')
 
     @http.route('/search_redirect', auth='public', website=True)
     def search_redirect(self, search='', search_type='all', **kw):
-        q = (search or '').strip()
-        q_norm = self._normalize(q)
-        Product = request.env['product.template'].sudo()
-        Brand = request.env['brand.type'].sudo()
-        Category = request.env['product.category'].sudo()
-
-        if not q:
-            return request.redirect('/subcategory')
-
-        # 1) Exact brand match (priority)
-        brand = Brand.search([('name', 'ilike', q)], limit=1)
-        if brand:
-            return request.redirect(f'/subcategory?brand_id={brand.id}')
-
-        # 2) Exact category match
-        category = Category.search([('name', 'ilike', q)], limit=1)
-        if category:
-            return request.redirect(f'/subcategory?category_id={category.id}')
-
-        # 3) Product by code (startswith)
-        product = Product.search([('default_code', 'ilike', q + '%')], limit=1)
-        if product:
-            return request.redirect(product.website_url or f'/shop/product/{product.id}')
-
-        # 4) Product by name or model
-        product = Product.search(['|', ('name', 'ilike', q), ('product_model', 'ilike', q)], limit=1)
-        if product:
-            return request.redirect(product.website_url or f'/shop/product/{product.id}')
-
-        # 5) Fallback fuzzy brand/category then general search page
-        brand = Brand.search([('name', 'ilike', q)], limit=1)
-        if brand:
-            return request.redirect(f'/subcategory?brand_id={brand.id}')
-        category = Category.search([('name', 'ilike', q)], limit=1)
-        if category:
-            return request.redirect(f'/subcategory?category_id={category.id}')
-
         search_sanitized = self._sanitize_search(search)
-        return request.redirect(f'/subcategory?search={search_sanitized}')
+        if search_type == 'brand':
+            return request.redirect(f'/brand_search_redirect?search={search_sanitized}')
+        elif search_type == 'category':
+            return request.redirect(f'/category_search?search={search_sanitized}')
+        elif search_type == 'model':
+            Product = request.env['product.template'].sudo()
+            product = Product.search([('product_model', '=', search)], limit=1)
+            if product:
+                return request.redirect(f'/shop/{product.slug()}?product=product.template({product.id},)')
+            else:
+                return request.redirect(f'/subcategory?search={search_sanitized}')
+        else:
+            Brand = request.env['brand.type'].sudo()
+            brand = Brand.search([('name', 'ilike', search), ('active', '=', True)], limit=1)
+            if brand:
+                return request.redirect(f'/subcategory?brand_id={brand.id}')
+            Category = request.env['product.category'].sudo()
+            category = Category.search([('name', 'ilike', search)], limit=1)
+            if category:
+                return request.redirect(f'/subcategory?category_id={category.id}')
+            return request.redirect(f'/subcategory?search={search_sanitized}')
 
     @http.route('/search_live', type='http', auth='public', website=True)
-    def search_live(self, query=None, **kw):
-        q = (query or '').strip()
-        q_norm = self._normalize(q)
-        Product = request.env['product.template'].sudo()
-        Brand = request.env['brand.type'].sudo()
-        Category = request.env['product.category'].sudo()
+    def search_live(self, query):
+        query_sanitized = self._sanitize_search(query)
+        products = request.env['product.template'].sudo().search([
+            '|',
+            ('name', 'ilike', query),
+            ('product_model', 'ilike', query)
+        ], limit=10)
 
-        results = []
+        results = [{
+            'id': product.id,
+            'name': product.name.replace(' ', '-'),
+            'price': product.list_price,
+        } for product in products]
 
-        if not q:
-            return request.make_response(json.dumps({'results': results}), headers=[('Content-Type', 'application/json')])
-
-        # Brands (top)
-        brands = Brand.search([('name', 'ilike', q)], limit=3)
-        for b in brands:
-            results.append({
-                'id': b.id,
-                'name': b.name,
-                'type': 'brand',
-                'url': f'/subcategory?brand_id={b.id}',
-                'image': f'/web/image/brand.type/{b.id}/icon'
-            })
-
-        # Categories
-        categories = Category.search([('name', 'ilike', q)], limit=3)
-        for c in categories:
-            results.append({
-                'id': c.id,
-                'name': c.name,
-                'type': 'category',
-                'url': f'/subcategory?category_id={c.id}',
-                'image': f'/web/image/product.category/{c.id}/icon'
-            })
-
-        # Products by code (priority)
-        products = Product.search([('default_code', 'ilike', q + '%')], order='list_price asc', limit=5)
-
-        # If none by code, search by name/model (startswith/contains)
-        if not products:
-            products = Product.search([
-                '|',
-                ('name', 'ilike', q + '%'),
-                ('product_model', 'ilike', q + '%')
-            ], order='list_price asc', limit=8)
-
-            # if still few results, broaden to contains
-            if not products:
-                products = Product.search([
-                    '|',
-                    ('name', 'ilike', q),
-                    ('product_model', 'ilike', q)
-                ], order='list_price asc', limit=8)
-
-        for p in products:
-            results.append({
-                'id': p.id,
-                'name': p.name,
-                'type': 'product',
-                'url': p.website_url or f'/shop/product/{p.id}',
-                'image': f'/web/image/product.template/{p.id}/image_1024'
-            })
-
-        # Deduplicate by url (keep first occurrence)
-        seen = set()
-        dedup = []
-        for r in results:
-            if r['url'] in seen:
-                continue
-            seen.add(r['url'])
-            dedup.append(r)
-
-        return request.make_response(json.dumps({'results': dedup}), headers=[('Content-Type', 'application/json')])
+        return request.make_response(json.dumps({'results': results}), headers=[('Content-Type', 'application/json')])
