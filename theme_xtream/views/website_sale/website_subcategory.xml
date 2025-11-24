@@ -635,8 +635,313 @@
                         <!-- Filtrar: desplegable -->
                         <div id="filterMobilePanel" style="display:none; padding:16px 0;">
                             <!-- Aquí va TODO el contenido de filtros de desktop, puedes copiar el bloque de filtros-sidebar -->
-                            <div class="filters-sidebar" style="padding: 0;">
-                                <!-- ...copiar aquí el contenido de filtros de desktop... -->
+<div class="filters-sidebar" style="padding: 20px;">
+                                <!-- Product Count -->
+                                <div class="filter-section mb-4">
+                                    <div class="d-flex flex-column">
+                                        <h4 class="mb-1">
+                                            <t t-if="selected_subcategory">
+                                                <t t-esc="selected_subcategory.name" />
+                                            </t>
+                                            <t t-elif="selected_category">
+                                                <t t-esc="selected_category.name" />
+                                            </t>
+                                            <t t-else="">
+                                                Todos los productos
+                                            </t>
+                                        </h4>
+                                        <span class="text-muted small">
+                                            <t t-esc="product_count" /> productos </span>
+                                    </div>
+                                </div>
+
+                                <!-- Categorías -->
+                                <!-- <div class="filter-section mb-4">
+                                    <div>
+                                        <t t-if="selected_category">
+                                            <div class="mb-1">
+                                                <a t-att-href="'/subcategory?category_id=' + str(selected_category.id)"
+                                                   class="fw-bold"
+                                                   t-att-style="'color: #007bff;'">
+                                                    <t t-esc="selected_category.name"/>
+                                                </a>
+                                            </div>
+                                            <t t-if="selected_subcategory">
+                                                <div class="ms-3 mb-1">
+                                                    <a t-att-href="'/subcategory?category_id=' + str(selected_category.id) + '&amp;subcategory_id=' +
+                                str(selected_subcategory.id)"
+                                                       class="fw-bold"
+                                                       t-att-style="'color: #FF5207;'">
+                                                        <t t-esc="selected_subcategory.name"/>
+                                                    </a>
+                                                </div>
+                                                <t t-if="selected_subcategory_children">
+                                                    <div class="ms-4">
+                                                        <t t-foreach="selected_subcategory_children" t-as="child" t-key="child.id">
+                                                            <div class="mb-1">
+                                                                <a t-att-href="'/subcategory?category_id=' + str(selected_category.id) + '&amp;subcategory_id=' +
+                                str(child.id)"
+                                                                   t-att-style="'color: #6c757d;'">
+                                                                    <t t-esc="child.name"/>
+                                                                </a>
+                                                            </div>
+                                                        </t>
+                                                    </div>
+                                                </t>
+                                            </t>
+                                        </t>
+                                    </div>
+                                </div> -->
+
+                                <!-- Free Shipping Toggle -->
+                                <div class="mb-3 p-3 border rounded-3 bg-white">
+                                    <h5 class="text-orange fw-bold"
+                                        style="color: #FF5207; font-size: 16px; font-style: italic; background-color: white;">Envío
+                                        gratis</h5>
+
+                                    <div class="form-check form-switch bg-white">
+                                        <input class="form-check-input" type="checkbox"
+                                            id="freeShippingToggle"
+                                            t-att-checked="'checked' if str(current_filters.get('free_shipping', '')).lower() == 'true' else None" />
+                                        <label class="form-check-label" for="freeShippingToggle"
+                                            style="background-color: white; font-size: 12px;">
+                                            Solo productos con envío gratis
+                                        </label>
+                                    </div>
+                                </div>
+                                <script> document.addEventListener('DOMContentLoaded', function() {
+                                    var toggle = document.getElementById('freeShippingToggle'); if
+                                    (toggle) { // Establecer el estado inicial del checkbox basado
+                                    en current_filters var currentFreeShipping = '<t
+                                        t-esc="str(current_filters.get(&apos;free_shipping&apos;) or &apos;&apos;).lower()" />';
+                                    toggle.checked = (currentFreeShipping === 'true');
+                                    toggle.addEventListener('change', function() { // Obtener
+                                    parámetros actuales de la URL var urlParams = new
+                                    URLSearchParams(window.location.search); // Mantener todos los
+                                    filtros existentes var newUrl = '/subcategory?'; var params =
+                                    []; // Mantener categoría if (urlParams.get('category_id')) {
+                                    params.push('category_id=' + urlParams.get('category_id')); } //
+                                    Mantener subcategoría if (urlParams.get('subcategory_id')) {
+                                    params.push('subcategory_id=' +
+                                    urlParams.get('subcategory_id')); } // Mantener marca if
+                                    (urlParams.get('brand_id')) { params.push('brand_id=' +
+                                    urlParams.get('brand_id')); } // Mantener rango de precio if
+                                    (urlParams.get('price_range')) { params.push('price_range=' +
+                                    urlParams.get('price_range')); } // Mantener descuento if
+                                    (urlParams.get('discount_id')) { params.push('discount_id=' +
+                                    urlParams.get('discount_id')); } // Mantener promoción if
+                                    (urlParams.get('promotion_id')) { params.push('promotion_id=' +
+                                    urlParams.get('promotion_id')); } // Mantener ordenamiento if
+                                    (urlParams.get('sort')) { params.push('sort=' +
+                                    urlParams.get('sort')); } // Agregar envío gratis solo si está
+                                    marcado if (this.checked) { params.push('free_shipping=true'); }
+                                    // Construir URL final if (params.length > 0) { newUrl +=
+                                    params.join('&amp;'); } else { newUrl = '/subcategory'; }
+                                    console.log('Redirecting to:', newUrl); window.location.href =
+                                    newUrl; }); } }); </script>
+
+                                <!-- Brands (Marca) -->
+                                <div class="filter-section mb-4"
+                                    t-if="forced_brands or other_brands">
+                                    <h6 class="mb-2">Marca</h6>
+                                    <div class="brands-list" id="brands-list">
+                                        <!-- Mostrar primero las 5 marcas forzadas -->
+                                        <t t-foreach="forced_brands" t-as="brand_data"
+                                            t-key="brand_data.id">
+                                            <div class="mb-1 brand-item">
+                                                <a
+                                                    t-att-href="'/subcategory?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'brand_id=' + str(brand_data.id)"
+                                                    class="text-decoration-none small"
+                                                    t-att-style="'color: #007bff; font-weight: bold;' if current_filters.get('brand_id') == brand_data.id else 'color: #6c757d;'">
+                                                    <t t-esc="brand_data.name" /> (<t
+                                                        t-esc="brand_counts.get(brand_data.id, 0)" />
+                                                    )
+                                                </a>
+                                            </div>
+                                        </t>
+                                        <!-- Mostrar el resto de marcas ocultas inicialmente -->
+                                        <t t-foreach="other_brands" t-as="brand_data"
+                                            t-key="brand_data.id">
+                                            <div class="mb-1 brand-item extra-brand"
+                                                style="display:none;">
+                                                <a
+                                                    t-att-href="'/subcategory?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'brand_id=' + str(brand_data.id)"
+                                                    class="text-decoration-none small"
+                                                    t-att-style="'color: #007bff; font-weight: bold;' if current_filters.get('brand_id') == brand_data.id else 'color: #6c757d;'">
+                                                    <t t-esc="brand_data.name" /> (<t
+                                                        t-esc="brand_counts.get(brand_data.id, 0)" />
+                                                    )
+                                                </a>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <t t-if="other_brands">
+                                        <button id="show-all-brands" class="btn btn-link p-0 small"
+                                            type="button" style="color: #007bff;">Ver todas</button>
+                                    </t>
+                                </div>
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                    var btn = document.getElementById('show-all-brands');
+                                    if (btn) {
+                                    btn.addEventListener('click', function() {
+                                    var items = document.querySelectorAll('.extra-brand');
+                                    items.forEach(function(item) {
+                                    item.style.display = '';
+                                    });
+                                    btn.style.display = 'none';
+                                    });
+                                    }
+                                    });
+                                </script>
+
+                                <!-- Price Range -->
+                                <div class="filter-section mb-4">
+                                    <h6 class="mb-2">Precio</h6>
+                                    <div class="price-options mb-2">
+                                        <div class="mb-1">
+                                            <a
+                                                t-att-href="'/subcategory?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('brand_id') and ('brand_id=' + str(current_filters.get('brand_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'price_range=0_500'"
+                                                class="text-decoration-none small"
+                                                t-att-style="'color: #007bff; font-weight: bold;' if current_filters.get('price_range') == '0_500' else 'color: #6c757d;'">
+                                                Hasta $500 (<t t-esc="price_ranges.get('0_500', 0)" />
+                                                )
+                                            </a>
+                                        </div>
+                                        <div class="mb-1">
+                                            <a
+                                                t-att-href="'/subcategory?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('brand_id') and ('brand_id=' + str(current_filters.get('brand_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'price_range=500_1000'"
+                                                class="text-decoration-none small"
+                                                t-att-style="'color: #007bff; font-weight: bold;' if current_filters.get('price_range') == '500_1000' else 'color: #6c757d;'">
+                                                De $500 a $1000 (<t
+                                                    t-esc="price_ranges.get('500_1000', 0)" />) </a>
+                                        </div>
+                                        <div class="mb-1">
+                                            <a
+                                                t-att-href="'/subcategory?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('brand_id') and ('brand_id=' + str(current_filters.get('brand_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'price_range=1000_plus'"
+                                                class="text-decoration-none small"
+                                                t-att-style="'color: #007bff; font-weight: bold;' if current_filters.get('price_range') == '1000_plus' else 'color: #6c757d;'">
+                                                Más de $1000 (<t
+                                                    t-esc="price_ranges.get('1000_plus', 0)" />) </a>
+                                        </div>
+                                    </div>
+                                    <!-- Rango personalizado -->
+                                    <form id="custom-price-form"
+                                        class="d-flex align-items-center flex-wrap flex-md-nowrap"
+                                        style="gap: 8px;" onsubmit="return customPriceSearch(event)">
+                                        <input type="number" min="0"
+                                            class="form-control form-control-sm mb-2 mb-md-0"
+                                            id="min-price" placeholder="Mín"
+                                            style="width: 80px; min-width: 0;"
+                                            t-att-value="current_filters.get('min_price', '')" />
+                                        <span class="mx-1" style="color: #888;">-</span>
+                                        <input type="number" min="0"
+                                            class="form-control form-control-sm mb-2 mb-md-0"
+                                            id="max-price" placeholder="Máx"
+                                            style="width: 80px; min-width: 0;"
+                                            t-att-value="current_filters.get('max_price', '')" />
+                                        <button type="submit" class="btn w-100 w-md-auto"
+                                            style="background-color: #5a5a5a; color: white; min-width: 80px;">
+                                            Buscar</button>
+                                    </form>
+                                    <style>
+                                        @media (max-width: 767.98px) {
+                                        #custom-price-form {
+                                        flex-direction: column !important;
+                                        align-items: stretch !important;
+                                        gap: 4px !important;
+                                        }
+                                        #custom-price-form input,
+                                        #custom-price-form button {
+                                        width: 100% !important;
+                                        min-width: 0 !important;
+                                        }
+                                        #custom-price-form .mx-1 {
+                                        display: none !important;
+                                        }
+                                        }
+                                    </style>
+                                    <script type="text/javascript">
+                                        function customPriceSearch(e) {
+                                        e.preventDefault();
+                                        var min = document.getElementById('min-price').value;
+                                        var max = document.getElementById('max-price').value;
+                                        var urlParams = new URLSearchParams(window.location.search);
+                                        // Remove any existing price_range
+                                        urlParams.delete('price_range');
+
+                                        // Set min_price and max_price if present
+                                        if (min) urlParams.set('min_price', min);
+                                        else urlParams.delete('min_price');
+                                        if (max) urlParams.set('max_price', max);
+                                        else urlParams.delete('max_price');
+
+                                        // Keep other filters
+                                        var newUrl = '/subcategory?' + urlParams.toString();
+                                        window.location.href = newUrl;
+                                        return false;
+                                        }
+                                    </script>
+                                </div>
+
+                                <!-- Discounts -->
+                                <div class="filter-section mb-4" t-if="promotion_tags">
+                                    <h6 class="mb-2">Tipo de promoción</h6>
+                                    <div class="promotion-options">
+                                        <t t-foreach="promotion_tags" t-as="tag" t-key="tag.id">
+                                            <div class="mb-1">
+                                                <t t-if="promotion_tag_counts.get(tag.id, 0) > 0">
+                                                    <!-- Hay productos, muestra el enlace con los
+                                                    filtros actuales -->
+                                                    <a
+                                                        t-att-href="'/subcategory?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('brand_id') and ('brand_id=' + str(current_filters.get('brand_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'promotion_id=' + str(tag.id)"
+                                                        class="text-decoration-none small"
+                                                        t-att-style="'color: #007bff; font-weight: bold;' if current_filters.get('promotion_id') == tag.id else 'color: #6c757d;'">
+                                                        <t t-esc="tag.name" /> (<t
+                                                            t-esc="promotion_tag_counts.get(tag.id, 0)" />
+                                                        )
+                                                    </a>
+                                                </t>
+                                                <t t-else="">
+                                                    <!-- No hay productos, muestra el enlace general -->
+                                                    <a
+                                                        t-att-href="'/subcategory?promotion_id=' + str(tag.id)"
+                                                        class="text-decoration-none small"
+                                                        style="color: #6c757d;">
+                                                        <t t-esc="tag.name" /> (0) </a>
+                                                </t>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+
+                                <!-- Promotion Type -->
+                                <div class="filter-section mb-4" t-if="discount_tags">
+                                    <h6 class="mb-2">Descuentos</h6>
+                                    <div class="discount-options">
+                                        <t t-foreach="discount_tags" t-as="tag" t-key="tag['id']">
+                                            <div class="mb-1">
+                                                <t t-if="discount_tag_counts.get(tag['id'], 0) > 0">
+                                                    <a
+                                                        t-att-href="'/subcategory?' + (current_filters.get('category_id') and ('category_id=' + str(current_filters.get('category_id')) + '&amp;') or '') + (current_filters.get('subcategory_id') and ('subcategory_id=' + str(current_filters.get('subcategory_id')) + '&amp;') or '') + (current_filters.get('brand_id') and ('brand_id=' + str(current_filters.get('brand_id')) + '&amp;') or '') + (current_filters.get('free_shipping') and 'free_shipping=true&amp;' or '') + 'discount_id=' + str(tag['id'])"
+                                                        class="text-decoration-none small"
+                                                        t-att-style="'color: #007bff; font-weight: bold;' if current_filters.get('discount_id') == tag['id'] else 'color: #6c757d;'">
+                                                        <t t-esc="tag['name']" /> (<t
+                                                            t-esc="discount_tag_counts.get(tag['id'], 0)" />
+                                                        )
+                                                    </a>
+                                                </t>
+                                                <t t-else="">
+                                                    <a
+                                                        t-att-href="'/subcategory?discount_id=' + str(tag['id'])"
+                                                        class="text-decoration-none small"
+                                                        style="color: #6c757d;">
+                                                        <t t-esc="tag['name']" /> (0) </a>
+                                                </t>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
                             </div>
                             <button id="btnFilterApplyMobile" class="btn btn-primary w-100 mt-2">Buscar</button>
                         </div>
