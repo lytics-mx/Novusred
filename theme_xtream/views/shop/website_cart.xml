@@ -521,21 +521,20 @@
                         <!-- Carrito móvil -->
                         <div id="cart-tab-content-mobile" class="tab-content">
                             <t t-set="order" t-value="website_sale_order"/>
-                            <t t-if="order and order.order_line">
-                                <t t-foreach="order.order_line" t-as="line">
-                                    <div class="d-flex align-items-center px-2 py-2 border-bottom">
+                            <t t-foreach="order.order_line" t-as="line">
+                                <div class="d-flex flex-column px-2 py-2 border-bottom">
+                                    <div class="d-flex align-items-start">
                                         <img t-att-src="'/web/image/product.product/%d/image_128' % line.product_id.id"
                                             class="rounded me-2" style="width:70px; height:70px; object-fit:cover;"/>
-                                        <div class="flex-grow-1">
-                                            <!-- Nombre (limitado a 27 caracteres con '..' y tooltip con nombre completo) -->
-                                            <div class="fw-semibold" style="font-size:14px; line-height:1.2;">
-                                                <span class="d-block text-truncate" t-att-title="line.product_id.display_name">
-                                                    <t t-esc="(line.product_id.display_name[:27] + ('..' if len(line.product_id.display_name) &gt; 27 else ''))"/>
+                                        <div class="flex-grow-1 ms-2">
+                                            <!-- Nombre en 2 líneas, máx 54 caracteres + ".." si excede -->
+                                            <div class="fw-semibold" style="font-size:14px; line-height:1.2; max-width:180px;">
+                                                <span class="d-block text-truncate" t-att-title="line.product_id.display_name" style="white-space:normal;">
+                                                    <t t-esc="(line.product_id.display_name[:54] + ('..' if len(line.product_id.display_name) > 54 else ''))"/>
                                                 </span>
                                             </div>
-
-                                            <!-- Cantidad (input) y precio a la derecha -->
-                                            <div class="d-flex align-items-center mt-2">
+                                            <!-- Cantidad -->
+                                            <div class="mt-2">
                                                 <form t-att-action="'/shop/cart/update'" method="post" class="cart-quantity-input d-inline-flex align-items-center">
                                                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                                                     <input type="hidden" name="line_id" t-att-value="line.id"/>
@@ -559,35 +558,31 @@
                                                             onclick="var qtyInput=this.parentNode.querySelector('[name=\'set_qty\']'); qtyInput.value=Math.min(parseInt(qtyInput.getAttribute('max'))||999,parseInt(qtyInput.value)+1); qtyInput.dispatchEvent(new Event('input'));">+</button>
                                                     </span>
                                                 </form>
-
-                                                <!-- Precio (derecha) -->
-                                                <div class="text-end ms-2" style="min-width:70px;">
-                                                    <span class="fw-bold line-price" style="font-size:16px;">
-                                                        $<t t-esc="'%.2f' % ((line.product_id.discounted_price or line.product_id.list_price) * line.product_uom_qty)"/>
-                                                    </span>
-                                                </div>
                                             </div>
-
-                                            <!-- Acciones: caja separada debajo con fuente 10px y menú de 3 puntos -->
-                                            <div class="mt-2" style="font-size:10px;">
-                                                <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
-                                                    <div>
-                                                        <a t-att-href="'/shop/cart/remove?line_id=%d' % line.id" style="color:#0009ED;" class="me-2">Eliminar</a>
-                                                        <a t-att-href="'/brand/%s' % (line.product_id.product_tmpl_id.brand_type_id.slug if line.product_id.product_tmpl_id.brand_type_id and line.product_id.product_tmpl_id.brand_type_id.slug else '')" style="color:#0009ED;" class="me-2">Ver más productos de la misma marca</a>
-                                                    </div>
-
-                                                    <!-- Botón 3 puntos que despliega "Guardar para después" -->
-                                                    <div style="position:relative;">
-                                                        <button type="button" class="btn btn-sm btn-light border" style="font-size:12px; padding:2px 6px;" onclick="(function(btn){ var menu=btn.parentNode.querySelector('.more-actions'); if(menu) menu.classList.toggle('d-none'); })(this);">⋯</button>
-                                                        <div class="more-actions d-none" style="position:absolute; right:0; top:26px; background:#fff; border:1px solid #eee; box-shadow:0 2px 8px rgba(0,0,0,0.05); padding:6px; z-index:20; min-width:150px;">
-                                                            <a t-att-href="'/shop/cart/move_to_saved?line_id=%d' % line.id" style="display:block; color:#000; font-size:12px; padding:4px 6px;">Guardar para después</a>
-                                                        </div>
-                                                    </div>
+                                        </div>
+                                        <!-- Precio alineado a la derecha, pegado -->
+                                        <div class="ms-auto text-end" style="min-width:70px;">
+                                            <span class="fw-bold line-price" style="font-size:16px;">
+                                                $<t t-esc="'%.2f' % ((line.product_id.discounted_price or line.product_id.list_price) * line.product_uom_qty)"/>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <!-- Acciones en columna debajo -->
+                                    <div class="mt-2" style="font-size:10px;">
+                                        <div style="display:flex; flex-direction:column; align-items:flex-start; gap:4px;">
+                                            <div>
+                                                <a t-att-href="'/shop/cart/remove?line_id=%d' % line.id" style="color:#0009ED;" class="me-2">Eliminar</a>
+                                                <a t-att-href="'/brand/%s' % (line.product_id.product_tmpl_id.brand_type_id.slug if line.product_id.product_tmpl_id.brand_type_id and line.product_id.product_tmpl_id.brand_type_id.slug else '')" style="color:#0009ED;" class="me-2">Ver más productos de la misma marca</a>
+                                            </div>
+                                            <div style="position:relative;">
+                                                <button type="button" class="btn btn-sm btn-light border" style="font-size:12px; padding:2px 6px;" onclick="(function(btn){ var menu=btn.parentNode.querySelector('.more-actions'); if(menu) menu.classList.toggle('d-none'); })(this);">⋯</button>
+                                                <div class="more-actions d-none" style="position:absolute; right:0; top:26px; background:#fff; border:1px solid #eee; box-shadow:0 2px 8px rgba(0,0,0,0.05); padding:6px; z-index:20; min-width:150px;">
+                                                    <a t-att-href="'/shop/cart/move_to_saved?line_id=%d' % line.id" style="display:block; color:#000; font-size:12px; padding:4px 6px;">Guardar para después</a>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </t>
+                                </div>
                             </t>
                             <t t-else="">
                                 <div class="p-5 text-center text-muted">
