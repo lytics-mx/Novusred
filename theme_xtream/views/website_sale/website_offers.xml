@@ -759,19 +759,17 @@
                                             <t t-foreach="discounted_products" t-as="product">
                                                 <div class="col-6" style="padding-left: 2px; padding-right: 2px;">
                                                     <a t-att-href="product.website_url" style="text-decoration: none;">
-                                                        <div class="custom-offer-card" style="border: 1px solid #e5e5e5; border-radius: 0; margin: 0; background: transparent;">
+                                                        <div class="custom-offer-card" style="border-radius: 0; margin: 0;">
                                                             <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
                                                                 class="card-img-top custom-offer-img" style="background: transparent; border-radius: 0;" />
                                                             <div class="card-body custom-offer-body" style="padding: 8px;">
                                                                 <!-- Tira de tag azul -->
                                                                 <t t-if="product.product_tag_ids">
-                                                                    <div style="background: #1976d2; color: #fff; font-size: 13px; font-weight: 600; padding: 2px 8px; margin-bottom: 6px; display: inline-block; border-radius: 0; letter-spacing: 0.5px; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                                                        <t t-esc="product.product_tag_ids[0].name" />
+                                                                    <div style="background: #3483FA; color: #fff; font-size: 13px; font-weight: 600; padding: 2px 8px; margin-bottom: 6px; display: inline-block; border-radius: 0; letter-spacing: 0.5px; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                                        <t t-esc="product.product_tag_ids[0].name.upper()" />
                                                                     </div>
                                                                 </t>
-                                                                <div class="custom-offer-title" style="font-size: 14px;">
-                                                                    <t t-esc="product.name" />
-                                                                </div>
+
                                                                 <div class="d-flex align-items-center mt-1 mb-1">
                                                                     <span class="fw-bold custom-offer-price" style="font-size: 16px;">
                                                                         $<t t-esc="'{:,}'.format(int(product.discounted_price if product.discounted_price &lt; product.list_price else product.list_price))" />
@@ -794,10 +792,13 @@
                                                                     </div>
                                                                 </t>
                                                                 <t t-if="product.free_shipping">
-                                                                    <div class="custom-offer-envio" style="font-size: 12px; color: #FF5207; font-weight: bold;">
+                                                                    <div class="custom-offer-envio" style="font-size: 12px; color: #28a745;">
                                                                         Envío gratis
                                                                     </div>
                                                                 </t>
+                                                                <div class="custom-offer-title" style="font-size: 14px;">
+                                                                    <t t-esc="product.name" />
+                                                                </div>                                                                
                                                             </div>
                                                         </div>
                                                     </a>
