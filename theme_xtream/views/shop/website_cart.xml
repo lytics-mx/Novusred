@@ -657,23 +657,20 @@
                         <div id="cart-footer-mobile" class="bg-white px-3 py-3" t-if="order and order.order_line" style="position:fixed; left:0; right:0; bottom:0; z-index:100; box-shadow:0 -2px 8px rgba(0,0,0,0.04);">
                             <div style="font-size:12px; color:#4285f4; margin-bottom:8px;">
                                 <t t-if="order.partner_shipping_id and order.partner_shipping_id.contact_address_complete">
-                                    <span id="shipping-row-mobile">
-                                        <span style="font-size:12px;">Envío a: </span>
-                                        <span id="shipping-address-mobile" style="max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; cursor:pointer; display:inline-block; color:#4285f4;">
-                                            <t t-esc="order.partner_shipping_id.contact_address_complete"/>
-                                        </span>
+                                    <span style="font-size:12px;">Envío a: </span>
+                                    <span id="shipping-address-mobile" style="max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; cursor:pointer; display:inline-block; color:#4285f4;">
+                                        <t t-esc="order.partner_shipping_id.contact_address_complete"/>
                                     </span>
-                                    <div id="shipping-details-mobile" class="d-none mt-2" style="font-size:13px; color:#4285f4;">
-                                        <!-- Aquí se muestra la dirección completa solo al hacer click -->
+                                    <div id="shipping-details-mobile" class="d-none mt-2" style="font-size:12px; color:#4285f4;">
+                                        <t t-esc="order.partner_shipping_id.contact_address_complete"/>
                                     </div>
                                     <script type="text/javascript">
                                         document.addEventListener('DOMContentLoaded', function() {
-                                            const shippingRowMobile = document.getElementById('shipping-row-mobile');
                                             const shippingAddressMobile = document.getElementById('shipping-address-mobile');
                                             const shippingDetailsMobile = document.getElementById('shipping-details-mobile');
                                             const fullAddress = shippingAddressMobile.textContent;
                                             shippingAddressMobile.addEventListener('click', function() {
-                                                shippingRowMobile.style.display = 'none';
+                                                shippingAddressMobile.style.display = 'none';
                                                 shippingDetailsMobile.textContent = fullAddress;
                                                 shippingDetailsMobile.classList.remove('d-none');
                                             });
