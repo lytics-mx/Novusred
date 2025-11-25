@@ -99,11 +99,10 @@
                 </div>
             </div>
 
-            <div id="wrap-mobile" class="oe_structure oe_empty d-block d-md-none"
-style="background:#fff;min-height:100vh;">
+                        <div id="wrap-mobile" class="oe_structure oe_empty d-block d-md-none" style="background:#fff;min-height:100vh;">
                 <div class="container py-5 d-flex flex-column align-items-center justify-content-center" style="min-height:100vh;">
-                    <h2 class="mb-4 text-center" style="font-size:20px;">Ingresa tu información</h2>
-                    <div class="card shadow-sm p-4 mb-4 w-100" style="max-width:400px;background:#fff;border:none;">
+                    <div class="p-4 mb-4 w-100" style="max-width:400px;background:#fff;">
+                        <h2 class="mb-4 text-center" style="font-size:20px;">Ingresa tu información</h2>
                         <t t-if="error">
                             <div class="alert alert-danger" role="alert">
                                 <t t-esc="error" />
@@ -149,6 +148,14 @@ style="background:#fff;min-height:100vh;">
                                     })
                                     .then(response => {
                                         if (response.ok) {
+                                            // Actualizar el ícono de notificación
+                                            const notificationCounter = document.getElementById('notificationCounter');
+                                            const notificationMessage = document.getElementById('notificationMessage');
+                                            if (notificationCounter && notificationMessage) {
+                                                notificationCounter.style.display = 'inline-block';
+                                                notificationMessage.style.display = 'block';
+                                            }
+                                            // Mostrar notificación de éxito centrada
                                             const notification = document.createElement('div');
                                             notification.textContent = '¡Registro exitoso!';
                                             notification.style.position = 'fixed';
