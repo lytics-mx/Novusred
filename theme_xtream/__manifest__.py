@@ -89,15 +89,23 @@
           '/theme_xtream/static/src/css/owl.theme.default.min.css',
           '/theme_xtream/static/src/css/style.css',
           '/theme_xtream/static/src/css/views_products.css',
+          '/theme_xtream/static/src/css/offers.css',
+          '/theme_xtream/static/src/css/category.css',
+          '/theme_xtream/static/src/css/category_search.css',
+          '/theme_xtream/static/src/css/brand.css',
+          '/theme_xtream/static/src/css/brand_search.css',
+
+          '/theme_xtream/static/src/css/custom.css',
+          '/theme_xtream/static/src/css/home.css',          
+          '/theme_xtream/static/src/css/navbar.css',            
+
           
           '/theme_xtream/static/src/js/owl.carousel.js',
           '/theme_xtream/static/src/js/owl.carousel.min.js',
           '/theme_xtream/static/src/js/new_arrivals.js',
           '/theme_xtream/static/src/js/testimonials.js',
           '/theme_xtream/static/src/js/custom.js',
-          '/theme_xtream/static/src/css/custom.css',
-          '/theme_xtream/static/src/css/home.css',          
-          '/theme_xtream/static/src/css/navbar.css',
+
           '/theme_xtream/static/src/js/navbar.js',        
 
 
