@@ -672,82 +672,79 @@
 
             <div id="wrap-mobile" class="oe_structure oe_empty d-block d-md-none"
                 style="font-family: 'Questrial', sans-serif;">
-                <div class="d-flex align-items-center justify-content-between p-4 mb-4"
-                    style="background-color: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-top: 0; margin-bottom: 24px; width: 100%; position: relative; max-width: 100%;">
-                    <!-- Iconos de tags -->
-                    <div class="d-flex align-items-center justify-content-center" style="flex: 2;">
-                        <div class="tags-container w-100">
-                            <div style="height: 25px;"></div>
-                            <t t-if="product_tags">
-                                <div
-                                    class="tags-wrapper d-flex justify-content-center align-items-center">
-                                    <t t-foreach="product_tags" t-as="tag">
-                                        <div
-                                            class="text-center position-relative tag-item clickable-tag"
-                                            t-att-data-tag-id="tag.id"
-                                            t-att-data-tag-name="tag.name"
-                                            style="cursor: pointer; padding: 10px;">
-
-                                            <!-- Imagen del tag -->
-                                            <div class="tag-icon-container">
-                                                <img
-                                                    t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
-                                                    t-att-alt="tag.name"
-                                                    class="tag-icon"
-                                                    style="width: 40px; height: 40px;" />
-                                            </div>
-
-                                            <!-- Nombre del tag -->
-                                            <div class="tag-name" style="font-size: 12px; margin-top: 5px; word-wrap: break-word; text-align: center; white-space: normal;">
-                                                <t t-esc="tag.name" />
-                                            </div>
-
-                                            <!-- Línea azul (visible al hover) -->
-                                            <div class="tag-underline"
-                                                style="height: 2px; background-color: #007bff; width: 0; transition: width 0.3s ease; opacity: 0;"></div>
-                                        </div>
-                                    </t>
-                                </div>
-                            </t>
-
-                            <t t-else="">
-                                <div style="color: #666; font-size: 14px; padding: 10px;">
-                                    No hay categorías disponibles
+                <div class="d-flex align-items-center justify-content-center" style="flex: 2;">
+                    <div class="tags-container w-100 position-relative" style="overflow: hidden;">
+                        <button id="tagLeftBtn" class="btn btn-light position-absolute start-0 top-50 translate-middle-y" style="z-index:2; height:40px; width:40px; display:none;">
+                            &#8592;
+                        </button>
+                        <div id="tagsScroll" class="tags-wrapper d-flex flex-row overflow-auto" style="scroll-behavior: smooth; gap: 8px; padding: 0 48px;">
+                            <t t-foreach="product_tags" t-as="tag">
+                                <div class="text-center position-relative tag-item clickable-tag"
+                                    t-att-data-tag-id="tag.id"
+                                    t-att-data-tag-name="tag.name"
+                                    style="cursor: pointer; padding: 10px; min-width: 90px;">
+                                    <!-- Imagen del tag -->
+                                    <div class="tag-icon-container">
+                                        <img
+                                            t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
+                                            t-att-alt="tag.name"
+                                            class="tag-icon"
+                                            style="width: 40px; height: 40px;" />
+                                    </div>
+                                    <!-- Nombre del tag -->
+                                    <div class="tag-name" style="font-size: 12px; margin-top: 5px; word-wrap: break-word; text-align: center; white-space: normal;">
+                                        <t t-esc="tag.name" />
+                                    </div>
+                                    <!-- Línea azul (visible al hover) -->
+                                    <div class="tag-underline"
+                                        style="height: 2px; background-color: #007bff; width: 0; transition: width 0.3s ease; opacity: 0;"></div>
                                 </div>
                             </t>
                         </div>
+                        <button id="tagRightBtn" class="btn btn-light position-absolute end-0 top-50 translate-middle-y" style="z-index:2; height:40px; width:40px;">
+                            &#8594;
+                        </button>
                     </div>
                 </div>
 
                 <!-- JavaScript para manejo de clicks y hover en móvil -->
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
+                        const tagsScroll = document.getElementById('tagsScroll');
+                        const leftBtn = document.getElementById('tagLeftBtn');
+                        const rightBtn = document.getElementById('tagRightBtn');
+
+                        function updateButtons() {
+                            leftBtn.style.display = tagsScroll.scrollLeft > 0 ? 'block' : 'none';
+                            rightBtn.style.display = (tagsScroll.scrollLeft + tagsScroll.offsetWidth) < tagsScroll.scrollWidth ? 'block' : 'none';
+                        }
+
+                        leftBtn.addEventListener('click', function() {
+                            tagsScroll.scrollBy({ left: -tagsScroll.offsetWidth, behavior: 'smooth' });
+                        });
+                        rightBtn.addEventListener('click', function() {
+                            tagsScroll.scrollBy({ left: tagsScroll.offsetWidth, behavior: 'smooth' });
+                        });
+                        tagsScroll.addEventListener('scroll', updateButtons);
+                        updateButtons();
+
+                        // Tag click and hover logic (igual que antes)
                         const tagItems = document.querySelectorAll('.tag-item');
                         tagItems.forEach(function(item) {
-                            // Manejo de clicks en tags
                             item.addEventListener('click', function() {
                                 const tagId = this.getAttribute('data-tag-id');
-
-                                // Construir la URL con el filtro de tag
                                 let params = new URLSearchParams();
                                 params.append('tag_id', tagId);
-
-                                // Mantener el filtro de envío gratis si está activo
                                 const currentUrl = new URL(window.location);
                                 if (currentUrl.searchParams.get('free_shipping') === 'true') {
                                     params.append('free_shipping', 'true');
                                 }
-
-                                // Redirigir a la nueva URL
                                 window.location.href = '/offers?' + params.toString();
                             });
-
-                            // Manejo de hover para mostrar la línea azul
                             item.addEventListener('mouseenter', function() {
                                 this.querySelector('.tag-underline').style.width = '100%';
                                 this.querySelector('.tag-underline').style.opacity = '1';
                             });
-
                             item.addEventListener('mouseleave', function() {
                                 this.querySelector('.tag-underline').style.width = '0';
                                 this.querySelector('.tag-underline').style.opacity = '0';
