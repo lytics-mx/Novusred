@@ -501,7 +501,7 @@
             <div id="wrap-mobile" class="oe_structure oe_empty d-block d-md-none"
                 style="font-family: 'Questrial', sans-serif;">
                 <div class="container-fluid px-0" style="background:#ededed; min-height:100vh;">
-                    <div class="bg-white" style="width:100vw; margin:auto; overflow-x:hidden;">
+                    <div class="bg-white" style="max-width:100vw; margin:auto;">
                         <div class="pt-3 pb-2 px-2" style="border-bottom:1px solid #eee;">
                             <ul class="nav nav-tabs border-0 justify-content-center">
                                 <li class="nav-item flex-fill text-center">
@@ -523,12 +523,12 @@
                             <t t-set="order" t-value="website_sale_order"/>
                             <t t-if="order and order.order_line">
                                 <t t-foreach="order.order_line" t-as="line">
-                                    <div class="d-flex align-items-center px-2 py-2 border-bottom flex-wrap" style="width:100%;">
+                                    <div class="d-flex align-items-center px-2 py-2 border-bottom">
                                         <img t-att-src="'/web/image/product.product/%d/image_128' % line.product_id.id"
-                                            class="rounded me-2 flex-shrink-0" style="width:60px; height:60px; object-fit:cover;"/>
-                                        <div class="flex-grow-1" style="min-width:0;">
-                                            <div class="fw-semibold" style="font-size:14px; line-height:1.2; word-break:break-word;">
-                                                <span class="d-block text-truncate" style="max-width:100%;" t-att-title="line.product_id.display_name">
+                                            class="rounded me-2" style="width:70px; height:70px; object-fit:cover;"/>
+                                        <div class="flex-grow-1">
+                                            <div class="fw-semibold" style="font-size:14px; line-height:1.2;">
+                                                <span class="d-block text-truncate" t-att-title="line.product_id.display_name">
                                                     <t t-esc="line.product_id.display_name"/>
                                                 </span>
                                             </div>
@@ -570,7 +570,7 @@
                                                 <span class="small text-muted ms-2"><t t-esc="int(line.product_id.qty_available)"/> disponibles</span>
                                             </div>
                                         </div>
-                                        <div class="text-end ms-2 flex-shrink-0" style="min-width:70px;">
+                                        <div class="text-end ms-2" style="min-width:70px;">
                                             <span class="fw-bold" style="font-size:16px;">
                                                 $<t t-esc="'%.2f' % ((line.product_id.discounted_price or line.product_id.list_price) * line.product_uom_qty)"/>
                                             </span>
@@ -591,12 +591,12 @@
                             <t t-set="saved_items" t-value="request.env['saved.items'].search([('user_id', '=', request.env.user.id)])"/>
                             <t t-if="saved_items">
                                 <t t-foreach="saved_items" t-as="item">
-                                    <div class="d-flex align-items-center px-2 py-2 border-bottom flex-wrap" style="width:100%;">
+                                    <div class="d-flex align-items-center px-2 py-2 border-bottom">
                                         <img t-att-src="'/web/image/product.product/%d/image_128' % item.product_id.id"
-                                            class="rounded me-2 flex-shrink-0" style="width:60px; height:60px; object-fit:cover;"/>
-                                        <div class="flex-grow-1" style="min-width:0;">
-                                            <div class="fw-semibold" style="font-size:14px; line-height:1.2; word-break:break-word;">
-                                                <span class="d-block text-truncate" style="max-width:100%;" t-att-title="item.name">
+                                            class="rounded me-2" style="width:70px; height:70px; object-fit:cover;"/>
+                                        <div class="flex-grow-1">
+                                            <div class="fw-semibold" style="font-size:14px; line-height:1.2;">
+                                                <span class="d-block text-truncate" t-att-title="item.name">
                                                     <t t-esc="item.name"/>
                                                 </span>
                                             </div>
@@ -638,7 +638,7 @@
                                                 <span class="small text-muted ms-2"><t t-esc="int(item.quantity_available)"/> disponibles</span>
                                             </div>
                                         </div>
-                                        <div class="text-end ms-2 flex-shrink-0" style="min-width:70px;">
+                                        <div class="text-end ms-2" style="min-width:70px;">
                                             <span class="fw-bold" style="font-size:16px;">
                                                 $<t t-esc="'%.2f' % (item.price)"/>
                                             </span>
@@ -746,20 +746,8 @@
                         updateTotalsMobile('#cart-tab-content-mobile', 'cart-total-amount-mobile', 'cart_qty_mobile');
                         updateTotalsMobile('#saved-tab-content-mobile', 'saved-total-amount-mobile', 'saved_qty_mobile');
                     });
-                </script>                
-                <style>
-                    @media (max-width: 576px) {
-                        #wrap-mobile .d-flex {flex-direction: row; flex-wrap: wrap;}
-                        #wrap-mobile .flex-grow-1 {min-width: 0;}
-                        #wrap-mobile .text-end {text-align: right !important;}
-                        #wrap-mobile img {max-width: 60px; height: 60px;}
-                        #wrap-mobile .fw-semibold, #wrap-mobile .text-muted, #wrap-mobile .mt-1, #wrap-mobile .small {font-size: 13px;}
-                        #wrap-mobile .fw-bold {font-size: 15px;}
-                        #wrap-mobile .input-group {max-width: 100px;}
-                    }
-                </style>
+                </script>
             </div>
-            <!-- ...existing code... -->
             <!-- ...existing code... -->
 
 
