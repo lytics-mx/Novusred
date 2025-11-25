@@ -102,205 +102,7 @@
                     </script>
 
                 </div>
-                <!-- Filtro móvil (solo visible en móvil) -->
-                <div class="d-block d-md-none mb-3">
-
-                    <div class="mobile-filters-container">
-                        <!-- Botón para abrir filtros con ícono de líneas -->
-                        <button
-                            class="btn btn-outline-dark w-100 d-flex justify-content-between align-items-center"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#mobileFilters"
-                            aria-expanded="false"
-                            aria-controls="mobileFilters"
-                            style="border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 16px; background: white; font-family: 'Questrial', sans-serif;">
-                            <div class="d-flex align-items-center">
-                                <span style="font-size: 14px; color: #848484;"><t
-                                        t-esc="total_products" /> productos</span>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <span style="font-size: 14px; color: #333;">Filtros</span>
-                                <div class="filter-icon ms-2">
-                                    <div
-                                        style="width: 16px; height: 2px; background: #333; margin: 2px 0;"></div>
-                                    <div
-                                        style="width: 16px; height: 2px; background: #333; margin: 2px 0;"></div>
-                                    <div
-                                        style="width: 16px; height: 2px; background: #333; margin: 2px 0;"></div>
-                                </div>
-                            </div>
-                        </button>
-
-                        <!-- Panel de filtros colapsable -->
-                        <div class="collapse" id="mobileFilters">
-                            <div class="card card-body mobile-filters-panel"
-                                style="margin-top: 10px; font-family: 'Questrial', sans-serif;">
-
-                                <!-- Envío gratis -->
-                                <div class="mb-3">
-                                    <h6 class="text-orange fw-bold mb-2"
-                                        style="color: #FF5207; font-size: 14px; font-family: 'Questrial', sans-serif;">Envío
-                                        gratis</h6>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox"
-                                            id="mobileFreeShippingToggle"
-                                            t-att-checked="'checked' if free_shipping else None" />
-                                        <label class="form-check-label"
-                                            for="mobileFreeShippingToggle"
-                                            style="font-size: 13px; font-family: 'Questrial', sans-serif;">
-                                            Solo productos con envío gratis
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- Tipos de oferta -->
-                                <div class="mb-3">
-                                    <h6
-                                        style="font-size: 14px; color: #333; margin-bottom: 8px; font-family: 'Questrial', sans-serif;">Tipos
-                                        de oferta</h6>
-                                    <div class="d-flex flex-wrap gap-2">
-                                        <t t-foreach="tags_with_discount" t-as="tag">
-                                            <a
-                                                t-att-href="'/offers?tag_id=%s%s%s%s%s%s' % (
-                                                tag.id,
-                                                '&amp;brand_type_id=%s' % selected_brand_type_id if selected_brand_type_id else '',
-                                                '&amp;category_id=%s' % selected_category_id if selected_category_id else '',
-                                                '&amp;free_shipping=true' if free_shipping else '',
-                                                '&amp;min_price=%s' % min_price if min_price else '',
-                                                '&amp;max_price=%s' % max_price if max_price else ''
-                                            )"
-                                                class="btn btn-sm btn-outline-secondary"
-                                                style="font-size: 12px; padding: 4px 8px; font-family: 'Questrial', sans-serif;">
-                                                <t t-esc="tag.name" />
-                                            </a>
-                                        </t>
-                                    </div>
-                                </div>
-
-                                <!-- Categorías -->
-                                <div class="mb-3">
-                                    <h6
-                                        style="font-size: 14px; color: #333; margin-bottom: 8px; font-family: 'Questrial', sans-serif;">
-                                        Categorías</h6>
-                                    <div class="mobile-categories-grid">
-                                        <t t-foreach="categories_with_count" t-as="cat">
-                                            <a
-                                                t-att-href="'/offers?category_id=%s%s%s%s%s%s' % (
-                                                cat['id'],
-                                                '&amp;brand_type_id=%s' % selected_brand_type_id if selected_brand_type_id else '',
-                                                '&amp;tag_id=%s' % selected_tag_id if selected_tag_id else '',
-                                                '&amp;free_shipping=true' if free_shipping else '',
-                                                '&amp;min_price=%s' % min_price if min_price else '',
-                                                '&amp;max_price=%s' % max_price if max_price else ''
-                                            )"
-                                                class="btn btn-sm btn-outline-secondary mb-2"
-                                                style="font-size: 12px; padding: 4px 8px; font-family: 'Questrial', sans-serif;">
-                                                <span t-esc="cat['name']" /> (<span
-                                                    t-esc="cat['product_count']" />) </a>
-                                        </t>
-                                    </div>
-                                </div>
-
-                                <!-- Filtro por precio -->
-                                <div class="mb-3">
-                                    <h6
-                                        style="font-size: 14px; color: #333; margin-bottom: 8px; font-family: 'Questrial', sans-serif;">
-                                        Precio</h6>
-                                    <div class="d-flex flex-wrap gap-2 mb-3">
-                                        <a
-                                            t-att-href="'/offers?min_price=0&amp;max_price=500%s%s%s%s' % (
-                                            '&amp;brand_type_id=%s' % selected_brand_type_id if selected_brand_type_id else '',
-                                            '&amp;tag_id=%s' % selected_tag_id if selected_tag_id else '',
-                                            '&amp;category_id=%s' % selected_category_id if selected_category_id else '',
-                                            '&amp;free_shipping=true' if free_shipping else ''
-                                        )"
-                                            class="btn btn-sm btn-outline-secondary"
-                                            style="font-size: 12px; padding: 4px 8px; font-family: 'Questrial', sans-serif;">
-                                            Hasta $500 (<t t-esc="price_ranges['0_500']" />) </a>
-                                        <a
-                                            t-att-href="'/offers?min_price=500&amp;max_price=1000%s%s%s%s' % (
-                                            '&amp;brand_type_id=%s' % selected_brand_type_id if selected_brand_type_id else '',
-                                            '&amp;tag_id=%s' % selected_tag_id if selected_tag_id else '',
-                                            '&amp;category_id=%s' % selected_category_id if selected_category_id else '',
-                                            '&amp;free_shipping=true' if free_shipping else ''
-                                        )"
-                                            class="btn btn-sm btn-outline-secondary"
-                                            style="font-size: 12px; padding: 4px 8px; font-family: 'Questrial', sans-serif;">
-                                            $500-$1000 (<t t-esc="price_ranges['500_1000']" />) </a>
-                                        <a
-                                            t-att-href="'/offers?min_price=1000%s%s%s%s' % (
-                                            '&amp;brand_type_id=%s' % selected_brand_type_id if selected_brand_type_id else '',
-                                            '&amp;tag_id=%s' % selected_tag_id if selected_tag_id else '',
-                                            '&amp;category_id=%s' % selected_category_id if selected_category_id else '',
-                                            '&amp;free_shipping=true' if free_shipping else ''
-                                        )"
-                                            class="btn btn-sm btn-outline-secondary"
-                                            style="font-size: 12px; padding: 4px 8px; font-family: 'Questrial', sans-serif;">
-                                            +$1000 (<t t-esc="price_ranges['1000_plus']" />) </a>
-                                    </div>
-
-                                    <!-- Filtro personalizado de precio -->
-                                    <form method="get" action="/offers" class="mobile-price-form">
-                                        <div class="row g-2">
-                                            <div class="col-5">
-                                                <input type="number"
-                                                    class="form-control form-control-sm"
-                                                    name="min_price" placeholder="Desde"
-                                                    style="font-size: 13px; font-family: 'Questrial', sans-serif;" />
-                                            </div>
-                                            <div class="col-2 text-center pt-1"
-                                                style="font-size: 13px;">—</div>
-                                            <div class="col-5">
-                                                <input type="number"
-                                                    class="form-control form-control-sm"
-                                                    name="max_price" placeholder="Hasta"
-                                                    style="font-size: 13px; font-family: 'Questrial', sans-serif;" />
-                                            </div>
-                                            <div class="col-12 mt-2">
-                                                <t t-if="selected_brand_type_id">
-                                                    <input type="hidden" name="brand_type_id"
-                                                        t-att-value="selected_brand_type_id" />
-                                                </t>
-                                                <t t-if="selected_tag_id">
-                                                    <input type="hidden" name="tag_id"
-                                                        t-att-value="selected_tag_id" />
-                                                </t>
-                                                <t t-if="selected_category_id">
-                                                    <input type="hidden" name="category_id"
-                                                        t-att-value="selected_category_id" />
-                                                </t>
-                                                <t t-if="free_shipping">
-                                                    <input type="hidden" name="free_shipping"
-                                                        value="true" />
-                                                </t>
-                                                <button type="submit"
-                                                    class="btn btn-primary btn-sm w-100"
-                                                    style="font-size: 13px; padding: 8px; font-family: 'Questrial', sans-serif;">
-                                                    Aplicar filtro
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <script> document.addEventListener('DOMContentLoaded', function() { // Toggle de
-                    envío gratis desktop var toggle = document.getElementById('freeShippingToggle');
-                    if (toggle) { toggle.checked = <t t-esc="'true' if free_shipping else 'false'" />;
-                    toggle.addEventListener('change', function() { var newUrl =
-                    '/offers?free_shipping=' + (this.checked ? 'true' : 'false');
-                    window.location.href = newUrl; }); } // Toggle de envío gratis móvil var
-                    mobileToggle = document.getElementById('mobileFreeShippingToggle'); if
-                    (mobileToggle) { mobileToggle.checked = <t
-                        t-esc="'true' if free_shipping else 'false'" />;
-                    mobileToggle.addEventListener('change', function() { var newUrl =
-                    '/offers?free_shipping=' + (this.checked ? 'true' : 'false');
-                    window.location.href = newUrl; }); } }); </script>
-
+            
                 <div class="row">
                     <!-- Filtros de la izquierda -->
                     <div class="col-lg-3 col-md-4 d-none d-md-block">
@@ -672,6 +474,193 @@
 
             <div id="wrap-mobile" class="oe_structure oe_empty d-block d-md-none"
                 style="font-family: 'Questrial', sans-serif;">
+                <div class="d-block d-md-none mb-3">
+
+                    <div class="d-block d-md-none mb-3">
+                        <div class="mobile-filters-header d-flex justify-content-between align-items-center px-3 py-2" style="background: #fff; border-bottom: 1px solid #e5e5e5;">
+                            <span style="font-size: 14px; color: #b3b3b3;"><t t-esc="total_products" /> productos</span>
+                            <button
+                                class="btn btn-link p-0"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#mobileFilters"
+                                aria-expanded="false"
+                                aria-controls="mobileFilters"
+                                style="font-size: 14px; color: #b3b3b3; text-decoration: none;">
+                                Filtrar <span style="font-size: 16px;">^</span>
+                            </button>
+                        </div>
+                        <div class="collapse" id="mobileFilters">
+                            <div class="card card-body mobile-filters-panel"
+                                style="margin-top: 0; font-family: 'Questrial', sans-serif;">
+
+                                <!-- Envío gratis -->
+                                <div class="mb-3">
+                                    <h6 class="text-orange fw-bold mb-2"
+                                        style="color: #FF5207; font-size: 14px; font-family: 'Questrial', sans-serif;">Envío
+                                        gratis</h6>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox"
+                                            id="mobileFreeShippingToggle"
+                                            t-att-checked="'checked' if free_shipping else None" />
+                                        <label class="form-check-label"
+                                            for="mobileFreeShippingToggle"
+                                            style="font-size: 13px; font-family: 'Questrial', sans-serif;">
+                                            Solo productos con envío gratis
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Tipos de oferta -->
+                                <div class="mb-3">
+                                    <h6
+                                        style="font-size: 14px; color: #333; margin-bottom: 8px; font-family: 'Questrial', sans-serif;">Tipos
+                                        de oferta</h6>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <t t-foreach="tags_with_discount" t-as="tag">
+                                            <a
+                                                t-att-href="'/offers?tag_id=%s%s%s%s%s%s' % (
+                                                tag.id,
+                                                '&amp;brand_type_id=%s' % selected_brand_type_id if selected_brand_type_id else '',
+                                                '&amp;category_id=%s' % selected_category_id if selected_category_id else '',
+                                                '&amp;free_shipping=true' if free_shipping else '',
+                                                '&amp;min_price=%s' % min_price if min_price else '',
+                                                '&amp;max_price=%s' % max_price if max_price else ''
+                                            )"
+                                                class="btn btn-sm btn-outline-secondary"
+                                                style="font-size: 12px; padding: 4px 8px; font-family: 'Questrial', sans-serif;">
+                                                <t t-esc="tag.name" />
+                                            </a>
+                                        </t>
+                                    </div>
+                                </div>
+
+                                <!-- Categorías -->
+                                <div class="mb-3">
+                                    <h6
+                                        style="font-size: 14px; color: #333; margin-bottom: 8px; font-family: 'Questrial', sans-serif;">
+                                        Categorías</h6>
+                                    <div class="mobile-categories-grid">
+                                        <t t-foreach="categories_with_count" t-as="cat">
+                                            <a
+                                                t-att-href="'/offers?category_id=%s%s%s%s%s%s' % (
+                                                cat['id'],
+                                                '&amp;brand_type_id=%s' % selected_brand_type_id if selected_brand_type_id else '',
+                                                '&amp;tag_id=%s' % selected_tag_id if selected_tag_id else '',
+                                                '&amp;free_shipping=true' if free_shipping else '',
+                                                '&amp;min_price=%s' % min_price if min_price else '',
+                                                '&amp;max_price=%s' % max_price if max_price else ''
+                                            )"
+                                                class="btn btn-sm btn-outline-secondary mb-2"
+                                                style="font-size: 12px; padding: 4px 8px; font-family: 'Questrial', sans-serif;">
+                                                <span t-esc="cat['name']" /> (<span
+                                                    t-esc="cat['product_count']" />) </a>
+                                        </t>
+                                    </div>
+                                </div>
+
+                                <!-- Filtro por precio -->
+                                <div class="mb-3">
+                                    <h6
+                                        style="font-size: 14px; color: #333; margin-bottom: 8px; font-family: 'Questrial', sans-serif;">
+                                        Precio</h6>
+                                    <div class="d-flex flex-wrap gap-2 mb-3">
+                                        <a
+                                            t-att-href="'/offers?min_price=0&amp;max_price=500%s%s%s%s' % (
+                                            '&amp;brand_type_id=%s' % selected_brand_type_id if selected_brand_type_id else '',
+                                            '&amp;tag_id=%s' % selected_tag_id if selected_tag_id else '',
+                                            '&amp;category_id=%s' % selected_category_id if selected_category_id else '',
+                                            '&amp;free_shipping=true' if free_shipping else ''
+                                        )"
+                                            class="btn btn-sm btn-outline-secondary"
+                                            style="font-size: 12px; padding: 4px 8px; font-family: 'Questrial', sans-serif;">
+                                            Hasta $500 (<t t-esc="price_ranges['0_500']" />) </a>
+                                        <a
+                                            t-att-href="'/offers?min_price=500&amp;max_price=1000%s%s%s%s' % (
+                                            '&amp;brand_type_id=%s' % selected_brand_type_id if selected_brand_type_id else '',
+                                            '&amp;tag_id=%s' % selected_tag_id if selected_tag_id else '',
+                                            '&amp;category_id=%s' % selected_category_id if selected_category_id else '',
+                                            '&amp;free_shipping=true' if free_shipping else ''
+                                        )"
+                                            class="btn btn-sm btn-outline-secondary"
+                                            style="font-size: 12px; padding: 4px 8px; font-family: 'Questrial', sans-serif;">
+                                            $500-$1000 (<t t-esc="price_ranges['500_1000']" />) </a>
+                                        <a
+                                            t-att-href="'/offers?min_price=1000%s%s%s%s' % (
+                                            '&amp;brand_type_id=%s' % selected_brand_type_id if selected_brand_type_id else '',
+                                            '&amp;tag_id=%s' % selected_tag_id if selected_tag_id else '',
+                                            '&amp;category_id=%s' % selected_category_id if selected_category_id else '',
+                                            '&amp;free_shipping=true' if free_shipping else ''
+                                        )"
+                                            class="btn btn-sm btn-outline-secondary"
+                                            style="font-size: 12px; padding: 4px 8px; font-family: 'Questrial', sans-serif;">
+                                            +$1000 (<t t-esc="price_ranges['1000_plus']" />) </a>
+                                    </div>
+
+                                    <!-- Filtro personalizado de precio -->
+                                    <form method="get" action="/offers" class="mobile-price-form">
+                                        <div class="row g-2">
+                                            <div class="col-5">
+                                                <input type="number"
+                                                    class="form-control form-control-sm"
+                                                    name="min_price" placeholder="Desde"
+                                                    style="font-size: 13px; font-family: 'Questrial', sans-serif;" />
+                                            </div>
+                                            <div class="col-2 text-center pt-1"
+                                                style="font-size: 13px;">—</div>
+                                            <div class="col-5">
+                                                <input type="number"
+                                                    class="form-control form-control-sm"
+                                                    name="max_price" placeholder="Hasta"
+                                                    style="font-size: 13px; font-family: 'Questrial', sans-serif;" />
+                                            </div>
+                                            <div class="col-12 mt-2">
+                                                <t t-if="selected_brand_type_id">
+                                                    <input type="hidden" name="brand_type_id"
+                                                        t-att-value="selected_brand_type_id" />
+                                                </t>
+                                                <t t-if="selected_tag_id">
+                                                    <input type="hidden" name="tag_id"
+                                                        t-att-value="selected_tag_id" />
+                                                </t>
+                                                <t t-if="selected_category_id">
+                                                    <input type="hidden" name="category_id"
+                                                        t-att-value="selected_category_id" />
+                                                </t>
+                                                <t t-if="free_shipping">
+                                                    <input type="hidden" name="free_shipping"
+                                                        value="true" />
+                                                </t>
+                                                <button type="submit"
+                                                    class="btn btn-primary btn-sm w-100"
+                                                    style="font-size: 13px; padding: 8px; font-family: 'Questrial', sans-serif;">
+                                                    Aplicar filtro
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <script> document.addEventListener('DOMContentLoaded', function() { // Toggle de
+                    envío gratis desktop var toggle = document.getElementById('freeShippingToggle');
+                    if (toggle) { toggle.checked = <t t-esc="'true' if free_shipping else 'false'" />;
+                    toggle.addEventListener('change', function() { var newUrl =
+                    '/offers?free_shipping=' + (this.checked ? 'true' : 'false');
+                    window.location.href = newUrl; }); } // Toggle de envío gratis móvil var
+                    mobileToggle = document.getElementById('mobileFreeShippingToggle'); if
+                    (mobileToggle) { mobileToggle.checked = <t
+                        t-esc="'true' if free_shipping else 'false'" />;
+                    mobileToggle.addEventListener('change', function() { var newUrl =
+                    '/offers?free_shipping=' + (this.checked ? 'true' : 'false');
+                    window.location.href = newUrl; }); } }); </script>
+
+
+
+
                 <div class="d-flex align-items-center justify-content-center" style="flex: 2;">
                     <div class="tags-container w-100 position-relative" style="overflow: hidden;">
                         <button id="tagLeftBtn" class="btn btn-light position-absolute start-0 top-50 translate-middle-y" style="z-index:2; height:40px; width:40px; display:none;">
@@ -752,6 +741,10 @@
                         });
                     });
                 </script>
+
+
+
+
             </div>
 
         </t>
