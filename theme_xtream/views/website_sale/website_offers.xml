@@ -60,39 +60,39 @@
                     <!-- JavaScript para manejo de clicks y hover en móvil -->
                     <script>
                         document.addEventListener('DOMContentLoaded', function() {
-                        const tagItems = document.querySelectorAll('.tag-item');
-                        tagItems.forEach(function(item) {
-                        // Manejo de clicks en tags
-                        item.addEventListener('click', function() {
-                        const tagId = this.getAttribute('data-tag-id');
+                            const tagItems = document.querySelectorAll('.tag-item');
+                            tagItems.forEach(function(item) {
+                                // Manejo de clicks en tags
+                                item.addEventListener('click', function() {
+                                    const tagId = this.getAttribute('data-tag-id');
 
-                        // Construir la URL con el filtro de tag
-                        let params = new URLSearchParams();
-                        params.append('tag_id', tagId);
+                                    // Construir la URL con el filtro de tag
+                                    let params = new URLSearchParams();
+                                    params.append('tag_id', tagId);
 
-                        // Mantener el filtro de envío gratis si está activo
-                        const currentUrl = new URL(window.location);
-                        if (currentUrl.searchParams.get('free_shipping') === 'true') {
-                        params.append('free_shipping', 'true');
-                        }
+                                    // Mantener el filtro de envío gratis si está activo
+                                    const currentUrl = new URL(window.location);
+                                    if (currentUrl.searchParams.get('free_shipping') === 'true') {
+                                        params.append('free_shipping', 'true');
+                                    }
 
-                        // Redirigir a la nueva URL
-                        window.location.href = '/offers?' + params.toString();
-                        });
+                                    // Redirigir a la nueva URL
+                                    window.location.href = '/offers?' + params.toString();
+                                });
 
-                        // Manejo de eventos touch para móvil
-                        item.addEventListener('touchstart', function() {
-                        this.querySelector('.tag-underline').style.width = '100%';
-                        this.querySelector('.tag-underline').style.opacity = '1';
-                        });
+                                // Manejo de eventos touch para móvil
+                                item.addEventListener('touchstart', function() {
+                                    this.querySelector('.tag-underline').style.width = '100%';
+                                    this.querySelector('.tag-underline').style.opacity = '1';
+                                });
 
-                        item.addEventListener('touchend', function() {
-                        setTimeout(() => {
-                        this.querySelector('.tag-underline').style.width = '0';
-                        this.querySelector('.tag-underline').style.opacity = '0';
-                        }, 300);
-                        });
-                        });
+                                item.addEventListener('touchend', function() {
+                                    setTimeout(() => {
+                                        this.querySelector('.tag-underline').style.width = '0';
+                                        this.querySelector('.tag-underline').style.opacity = '0';
+                                    }, 300);
+                                });
+                            });
                         });
                     </script>
 
@@ -148,13 +148,19 @@
                                     </label>
                                 </div>
                             </div>
-                            <script> document.addEventListener('DOMContentLoaded', function() { var
-                                toggle = document.getElementById('freeShippingToggle'); if (toggle)
-                                { // Establecer el estado inicial del checkbox toggle.checked = <t
-                                    t-esc="'true' if free_shipping else 'false'" />;
-                                toggle.addEventListener('change', function() { var newUrl =
-                                '/offers?free_shipping=' + (this.checked ? 'true' : 'false');
-                                window.location.href = newUrl; }); } }); </script>
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    var toggle = document.getElementById('freeShippingToggle');
+                                    if (toggle) {
+                                        // Establecer el estado inicial del checkbox
+                                        toggle.checked = <t t-esc="'true' if free_shipping else 'false'" />;
+                                        toggle.addEventListener('change', function() {
+                                            var newUrl = '/offers?free_shipping=' + (this.checked ? 'true' : 'false');
+                                            window.location.href = newUrl;
+                                        });
+                                    }
+                                });
+                            </script>
 
                             <!-- Tipos de oferta -->
                             <div class="mb-3">
@@ -641,18 +647,29 @@
                         </div>
                     </div>
                 </div>
-                <script> document.addEventListener('DOMContentLoaded', function() { // Toggle de
-                    envío gratis desktop var toggle = document.getElementById('freeShippingToggle');
-                    if (toggle) { toggle.checked = <t t-esc="'true' if free_shipping else 'false'" />;
-                    toggle.addEventListener('change', function() { var newUrl =
-                    '/offers?free_shipping=' + (this.checked ? 'true' : 'false');
-                    window.location.href = newUrl; }); } // Toggle de envío gratis móvil var
-                    mobileToggle = document.getElementById('mobileFreeShippingToggle'); if
-                    (mobileToggle) { mobileToggle.checked = <t
-                        t-esc="'true' if free_shipping else 'false'" />;
-                    mobileToggle.addEventListener('change', function() { var newUrl =
-                    '/offers?free_shipping=' + (this.checked ? 'true' : 'false');
-                    window.location.href = newUrl; }); } }); </script>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        // Toggle de envío gratis desktop
+                        var toggle = document.getElementById('freeShippingToggle');
+                        if (toggle) {
+                            toggle.checked = <t t-esc="'true' if free_shipping else 'false'" />;
+                            toggle.addEventListener('change', function() {
+                                var newUrl = '/offers?free_shipping=' + (this.checked ? 'true' : 'false');
+                                window.location.href = newUrl;
+                            });
+                        }
+
+                        // Toggle de envío gratis móvil
+                        var mobileToggle = document.getElementById('mobileFreeShippingToggle');
+                        if (mobileToggle) {
+                            mobileToggle.checked = <t t-esc="'true' if free_shipping else 'false'" />;
+                            mobileToggle.addEventListener('change', function() {
+                                var newUrl = '/offers?free_shipping=' + (this.checked ? 'true' : 'false');
+                                window.location.href = newUrl;
+                            });
+                        }
+                    });
+                </script>
 
 
 

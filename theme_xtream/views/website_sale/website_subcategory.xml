@@ -153,37 +153,78 @@
                                         </label>
                                     </div>
                                 </div>
-                                <script> document.addEventListener('DOMContentLoaded', function() {
-                                    var toggle = document.getElementById('freeShippingToggle'); if
-                                    (toggle) { // Establecer el estado inicial del checkbox basado
-                                    en current_filters var currentFreeShipping = '<t
-                                        t-esc="str(current_filters.get(&apos;free_shipping&apos;) or &apos;&apos;).lower()" />';
-                                    toggle.checked = (currentFreeShipping === 'true');
-                                    toggle.addEventListener('change', function() { // Obtener
-                                    parámetros actuales de la URL var urlParams = new
-                                    URLSearchParams(window.location.search); // Mantener todos los
-                                    filtros existentes var newUrl = '/subcategory?'; var params =
-                                    []; // Mantener categoría if (urlParams.get('category_id')) {
-                                    params.push('category_id=' + urlParams.get('category_id')); } //
-                                    Mantener subcategoría if (urlParams.get('subcategory_id')) {
-                                    params.push('subcategory_id=' +
-                                    urlParams.get('subcategory_id')); } // Mantener marca if
-                                    (urlParams.get('brand_id')) { params.push('brand_id=' +
-                                    urlParams.get('brand_id')); } // Mantener rango de precio if
-                                    (urlParams.get('price_range')) { params.push('price_range=' +
-                                    urlParams.get('price_range')); } // Mantener descuento if
-                                    (urlParams.get('discount_id')) { params.push('discount_id=' +
-                                    urlParams.get('discount_id')); } // Mantener promoción if
-                                    (urlParams.get('promotion_id')) { params.push('promotion_id=' +
-                                    urlParams.get('promotion_id')); } // Mantener ordenamiento if
-                                    (urlParams.get('sort')) { params.push('sort=' +
-                                    urlParams.get('sort')); } // Agregar envío gratis solo si está
-                                    marcado if (this.checked) { params.push('free_shipping=true'); }
-                                    // Construir URL final if (params.length > 0) { newUrl +=
-                                    params.join('&amp;'); } else { newUrl = '/subcategory'; }
-                                    console.log('Redirecting to:', newUrl); window.location.href =
-                                    newUrl; }); } }); </script>
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        var toggle = document.getElementById('freeShippingToggle');
 
+                                        if (toggle) {
+
+                                            // Establecer el estado inicial del checkbox basado en current_filters
+                                            var currentFreeShipping = '<t t-esc="str(current_filters.get(&apos;free_shipping&apos;) or &apos;&apos;).lower()" />';
+                                            toggle.checked = (currentFreeShipping === 'true');
+
+                                            toggle.addEventListener('change', function() {
+
+                                                // Obtener parámetros actuales de la URL
+                                                var urlParams = new URLSearchParams(window.location.search);
+
+                                                // Mantener todos los filtros existentes
+                                                var newUrl = '/subcategory?';
+                                                var params = [];
+
+                                                // Mantener categoría
+                                                if (urlParams.get('category_id')) {
+                                                    params.push('category_id=' + urlParams.get('category_id'));
+                                                }
+
+                                                // Mantener subcategoría
+                                                if (urlParams.get('subcategory_id')) {
+                                                    params.push('subcategory_id=' + urlParams.get('subcategory_id'));
+                                                }
+
+                                                // Mantener marca
+                                                if (urlParams.get('brand_id')) {
+                                                    params.push('brand_id=' + urlParams.get('brand_id'));
+                                                }
+
+                                                // Mantener rango de precio
+                                                if (urlParams.get('price_range')) {
+                                                    params.push('price_range=' + urlParams.get('price_range'));
+                                                }
+
+                                                // Mantener descuento
+                                                if (urlParams.get('discount_id')) {
+                                                    params.push('discount_id=' + urlParams.get('discount_id'));
+                                                }
+
+                                                // Mantener promoción
+                                                if (urlParams.get('promotion_id')) {
+                                                    params.push('promotion_id=' + urlParams.get('promotion_id'));
+                                                }
+
+                                                // Mantener ordenamiento
+                                                if (urlParams.get('sort')) {
+                                                    params.push('sort=' + urlParams.get('sort'));
+                                                }
+
+                                                // Agregar envío gratis solo si está marcado
+                                                if (this.checked) {
+                                                    params.push('free_shipping=true');
+                                                }
+
+                                                // Construir URL final
+                                                if (params.length > 0) {
+                                                    newUrl += params.join('&amp;');
+                                                } else {
+                                                    newUrl = '/subcategory';
+                                                }
+
+                                                console.log('Redirecting to:', newUrl);
+                                                window.location.href = newUrl;
+                                            });
+                                        }
+                                    });
+                                </script>
                                 <!-- Brands (Marca) -->
                                 <div class="filter-section mb-4"
                                     t-if="forced_brands or other_brands">
@@ -226,16 +267,19 @@
                                 </div>
                                 <script>
                                     document.addEventListener('DOMContentLoaded', function() {
-                                    var btn = document.getElementById('show-all-brands');
-                                    if (btn) {
-                                    btn.addEventListener('click', function() {
-                                    var items = document.querySelectorAll('.extra-brand');
-                                    items.forEach(function(item) {
-                                    item.style.display = '';
-                                    });
-                                    btn.style.display = 'none';
-                                    });
-                                    }
+                                        var btn = document.getElementById('show-all-brands');
+
+                                        if (btn) {
+                                            btn.addEventListener('click', function() {
+                                                var items = document.querySelectorAll('.extra-brand');
+
+                                                items.forEach(function(item) {
+                                                    item.style.display = '';
+                                                });
+
+                                                btn.style.display = 'none';
+                                            });
+                                        }
                                     });
                                 </script>
 
@@ -307,25 +351,30 @@
                                     </style>
                                     <script type="text/javascript">
                                         function customPriceSearch(e) {
-                                        e.preventDefault();
-                                        var min = document.getElementById('min-price').value;
-                                        var max = document.getElementById('max-price').value;
-                                        var urlParams = new URLSearchParams(window.location.search);
-                                        // Remove any existing price_range
-                                        urlParams.delete('price_range');
+                                            e.preventDefault();
 
-                                        // Set min_price and max_price if present
-                                        if (min) urlParams.set('min_price', min);
-                                        else urlParams.delete('min_price');
-                                        if (max) urlParams.set('max_price', max);
-                                        else urlParams.delete('max_price');
+                                            var min = document.getElementById('min-price').value;
+                                            var max = document.getElementById('max-price').value;
+                                            var urlParams = new URLSearchParams(window.location.search);
 
-                                        // Keep other filters
-                                        var newUrl = '/subcategory?' + urlParams.toString();
-                                        window.location.href = newUrl;
-                                        return false;
+                                            // Remove any existing price_range
+                                            urlParams.delete('price_range');
+
+                                            // Set min_price and max_price if present
+                                            if (min) urlParams.set('min_price', min);
+                                            else urlParams.delete('min_price');
+
+                                            if (max) urlParams.set('max_price', max);
+                                            else urlParams.delete('max_price');
+
+                                            // Keep other filters
+                                            var newUrl = '/subcategory?' + urlParams.toString();
+                                            window.location.href = newUrl;
+
+                                            return false;
                                         }
                                     </script>
+
                                 </div>
 
                                 <!-- Discounts -->
@@ -703,36 +752,79 @@
                                         </label>
                                     </div>
                                 </div>
-                                <script> document.addEventListener('DOMContentLoaded', function() {
-                                    var toggle = document.getElementById('freeShippingToggle'); if
-                                    (toggle) { // Establecer el estado inicial del checkbox basado
-                                    en current_filters var currentFreeShipping = '<t
-                                        t-esc="str(current_filters.get(&apos;free_shipping&apos;) or &apos;&apos;).lower()" />';
-                                    toggle.checked = (currentFreeShipping === 'true');
-                                    toggle.addEventListener('change', function() { // Obtener
-                                    parámetros actuales de la URL var urlParams = new
-                                    URLSearchParams(window.location.search); // Mantener todos los
-                                    filtros existentes var newUrl = '/subcategory?'; var params =
-                                    []; // Mantener categoría if (urlParams.get('category_id')) {
-                                    params.push('category_id=' + urlParams.get('category_id')); } //
-                                    Mantener subcategoría if (urlParams.get('subcategory_id')) {
-                                    params.push('subcategory_id=' +
-                                    urlParams.get('subcategory_id')); } // Mantener marca if
-                                    (urlParams.get('brand_id')) { params.push('brand_id=' +
-                                    urlParams.get('brand_id')); } // Mantener rango de precio if
-                                    (urlParams.get('price_range')) { params.push('price_range=' +
-                                    urlParams.get('price_range')); } // Mantener descuento if
-                                    (urlParams.get('discount_id')) { params.push('discount_id=' +
-                                    urlParams.get('discount_id')); } // Mantener promoción if
-                                    (urlParams.get('promotion_id')) { params.push('promotion_id=' +
-                                    urlParams.get('promotion_id')); } // Mantener ordenamiento if
-                                    (urlParams.get('sort')) { params.push('sort=' +
-                                    urlParams.get('sort')); } // Agregar envío gratis solo si está
-                                    marcado if (this.checked) { params.push('free_shipping=true'); }
-                                    // Construir URL final if (params.length > 0) { newUrl +=
-                                    params.join('&amp;'); } else { newUrl = '/subcategory'; }
-                                    console.log('Redirecting to:', newUrl); window.location.href =
-                                    newUrl; }); } }); </script>
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        var toggle = document.getElementById('freeShippingToggle');
+
+                                        if (toggle) {
+
+                                            // Establecer el estado inicial del checkbox basado en current_filters
+                                            var currentFreeShipping = '<t t-esc="str(current_filters.get(&apos;free_shipping&apos;) or &apos;&apos;).lower()" />';
+                                            toggle.checked = (currentFreeShipping === 'true');
+
+                                            toggle.addEventListener('change', function() {
+
+                                                // Obtener parámetros actuales de la URL
+                                                var urlParams = new URLSearchParams(window.location.search);
+
+                                                // Mantener todos los filtros existentes
+                                                var newUrl = '/subcategory?';
+                                                var params = [];
+
+                                                // Mantener categoría
+                                                if (urlParams.get('category_id')) {
+                                                    params.push('category_id=' + urlParams.get('category_id'));
+                                                }
+
+                                                // Mantener subcategoría
+                                                if (urlParams.get('subcategory_id')) {
+                                                    params.push('subcategory_id=' + urlParams.get('subcategory_id'));
+                                                }
+
+                                                // Mantener marca
+                                                if (urlParams.get('brand_id')) {
+                                                    params.push('brand_id=' + urlParams.get('brand_id'));
+                                                }
+
+                                                // Mantener rango de precio
+                                                if (urlParams.get('price_range')) {
+                                                    params.push('price_range=' + urlParams.get('price_range'));
+                                                }
+
+                                                // Mantener descuento
+                                                if (urlParams.get('discount_id')) {
+                                                    params.push('discount_id=' + urlParams.get('discount_id'));
+                                                }
+
+                                                // Mantener promoción
+                                                if (urlParams.get('promotion_id')) {
+                                                    params.push('promotion_id=' + urlParams.get('promotion_id'));
+                                                }
+
+                                                // Mantener ordenamiento
+                                                if (urlParams.get('sort')) {
+                                                    params.push('sort=' + urlParams.get('sort'));
+                                                }
+
+                                                // Agregar envío gratis solo si está marcado
+                                                if (this.checked) {
+                                                    params.push('free_shipping=true');
+                                                }
+
+                                                // Construir URL final
+                                                if (params.length > 0) {
+                                                    newUrl += params.join('&amp;');
+                                                } else {
+                                                    newUrl = '/subcategory';
+                                                }
+
+                                                console.log('Redirecting to:', newUrl);
+                                                window.location.href = newUrl;
+                                            });
+                                        }
+                                    });
+                                </script>
+
 
                                 <!-- Brands (Marca) -->
                                 <div class="filter-section mb-4"
