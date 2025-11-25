@@ -655,19 +655,37 @@
                         </div>
                         <!-- Pie móvil -->
                         <div id="cart-footer-mobile" class="bg-white px-3 py-3" t-if="order and order.order_line">
-                            <div class="mb-2" style="font-size:14px; color:#4285f4;">
+                            <div class="mb-2" style="font-size:10px; color:#4285f4;">
                                 <t t-if="order.partner_shipping_id and order.partner_shipping_id.contact_address_complete">
-                                    Envío a: <span style="max-width:120px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; vertical-align:middle; cursor:pointer;" id="shipping-address-mobile">
+                                    Envío a: 
+                                    <span style="max-width:120px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; vertical-align:middle; cursor:pointer;" id="shipping-address-mobile">
                                         <t t-esc="order.partner_shipping_id.contact_address_complete"/>
                                     </span>
+                                    <div id="shipping-details-mobile" class="d-none mt-2" style="font-size:10px; color:#000;">
+                                        <t t-esc="order.partner_shipping_id.contact_address_complete"/>
+                                    </div>
+                                    <script type="text/javascript">
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                            const shippingAddressMobile = document.getElementById('shipping-address-mobile');
+                                            const shippingDetailsMobile = document.getElementById('shipping-details-mobile');
+                                            
+                                            shippingAddressMobile.addEventListener('click', function() {
+                                                if (shippingDetailsMobile.classList.contains('d-none')) {
+                                                    shippingDetailsMobile.classList.remove('d-none');
+                                                } else {
+                                                    shippingDetailsMobile.classList.add('d-none');
+                                                }
+                                            });
+                                        });
+                                    </script>
                                 </t>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span style="font-size:15px;">Total:</span>
-                                <span class="fw-bold" style="font-size:18px;">$<span id="cart-total-amount-mobile">0.00</span></span>
+                                <span style="font-size:10px;">Total:</span>
+                                <span class="fw-bold" style="font-size:14px;">$<span id="cart-total-amount-mobile">0.00</span></span>
                             </div>
                             <button type="button" class="btn btn-primary w-100"
-                                style="height:44px; border-radius:6px; font-size:16px; font-weight:500;"
+                                style="height:44px; border-radius:6px; font-size:14px; font-weight:500;"
                                 onclick="window.location.href='/shop/checkout';">
                                 Continuar compra
                             </button>
