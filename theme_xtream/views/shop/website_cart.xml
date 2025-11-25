@@ -654,18 +654,20 @@
                             </t>
                         </div>
                         <!-- Pie móvil -->
-                        <div id="cart-footer-mobile" class="bg-white px-3 py-3" t-if="order and order.order_line">
-                            <div class="mb-2" style="font-size:10px; color:#4285f4;">
+                        <div id="cart-footer-mobile" class="bg-white px-3 py-3" t-if="order and order.order_line" style="position:fixed; left:0; right:0; bottom:0; z-index:100; box-shadow:0 -2px 8px rgba(0,0,0,0.04);">
+                            <div style="font-size:12px; color:#4285f4; margin-bottom:8px;">
                                 <t t-if="order.partner_shipping_id and order.partner_shipping_id.contact_address_complete">
-                                    Envío a: 
-                                    <div id="shipping-details-mobile" class="d-none mt-2" style="font-size:11px; color:#0009ED;">
+                                    <span style="font-size:12px;">Envío a: </span>
+                                    <span id="shipping-address-mobile" style="max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; cursor:pointer; display:inline-block;">
+                                        <t t-esc="order.partner_shipping_id.contact_address_complete"/>
+                                    </span>
+                                    <div id="shipping-details-mobile" class="d-none mt-2" style="font-size:12px; color:#0009ED;">
                                         <t t-esc="order.partner_shipping_id.contact_address_complete"/>
                                     </div>
                                     <script type="text/javascript">
                                         document.addEventListener('DOMContentLoaded', function() {
                                             const shippingAddressMobile = document.getElementById('shipping-address-mobile');
                                             const shippingDetailsMobile = document.getElementById('shipping-details-mobile');
-                                            
                                             shippingAddressMobile.addEventListener('click', function() {
                                                 if (shippingDetailsMobile.classList.contains('d-none')) {
                                                     shippingDetailsMobile.classList.remove('d-none');
@@ -677,16 +679,22 @@
                                     </script>
                                 </t>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span style="font-size:10px;">Total:</span>
-                                <span class="fw-bold" style="font-size:14px;">$<span id="cart-total-amount-mobile">0.00</span></span>
+                            <div class="d-flex justify-content-between align-items-center mb-2" style="font-size:15px;">
+                                <span style="font-size:15px;">Total:</span>
+                                <span class="fw-bold" style="font-size:15px;">$<span id="cart-total-amount-mobile">0.00</span></span>
                             </div>
-                            <button type="button" class="btn btn-primary w-100"
-                                style="height:44px; border-radius:6px; font-size:14px; font-weight:500;"
-                                onclick="window.location.href='/shop/checkout';">
+                            <button type="button" class="btn w-100" style="height:44px; border-radius:6px; font-size:15px; font-weight:500; background:#338af4; color:#fff; border:none;" onclick="window.location.href='/shop/checkout';">
                                 Continuar compra
                             </button>
                         </div>
+                        <style>
+                            /* Espacio para el footer fijo en móvil */
+                            @media (max-width: 767px) {
+                                .container-fluid {
+                                    padding-bottom: 110px !important;
+                                }
+                            }
+                        </style>
                     </div>
                 </div>
                 <script type="text/javascript">
