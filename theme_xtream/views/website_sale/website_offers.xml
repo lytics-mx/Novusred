@@ -672,65 +672,48 @@
 
             <div id="wrap-mobile" class="oe_structure oe_empty d-block d-md-none"
                 style="font-family: 'Questrial', sans-serif;">
-                <div class="d-flex align-items-center justify-content-between p-4 mb-4"
-                    style="background-color: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-top: 0; margin-bottom: 24px; width: 100%; position: relative; max-width: 100%;">
-                    <!-- Texto Ofertas -->
-                    <div class="d-flex align-items-center justify-content-center"
-                        style="flex: 1;">
-                        <div class="text-center">
-                            <h2 class="mb-1"
-                                style="font-family: 'Questrial', sans-serif; font-size: 24px; font-weight: bold; letter-spacing: 0.5px;">
-                                Ofertas</h2>
-                            <p class="mb-0" style="font-size: 12px; color: #6c757d;">¡Aquí verás
-                                las mejores ofertas!</p>
-                        </div>
-                    </div>
+                <div class="d-flex align-items-center overflow-auto p-4 mb-4"
+                    style="background-color: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-top: 0; margin-bottom: 24px; width: 100%; position: relative; max-width: 100%; white-space: nowrap;">
                     <!-- Iconos de tags -->
-                    <div class="d-flex align-items-center justify-content-center" style="flex: 2;">
-                        <div class="tags-container w-100">
-                            <div style="height: 25px;"></div>
-                            <t t-if="product_tags">
+                    <t t-if="product_tags">
+                        <div class="tags-wrapper d-flex align-items-center">
+                            <t t-foreach="product_tags" t-as="tag">
                                 <div
-                                    class="tags-wrapper d-flex justify-content-center align-items-center">
-                                    <t t-foreach="product_tags" t-as="tag">
-                                        <div
-                                            class="text-center position-relative tag-item clickable-tag"
-                                            t-att-data-tag-id="tag.id"
-                                            t-att-data-tag-name="tag.name"
-                                            style="cursor: pointer; padding: 10px;">
+                                    class="text-center position-relative tag-item clickable-tag mx-2"
+                                    t-att-data-tag-id="tag.id"
+                                    t-att-data-tag-name="tag.name"
+                                    style="cursor: pointer; padding: 10px; display: inline-block; width: 120px; border: 1px solid #ddd; border-radius: 8px; background-color: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                                    
+                                    <!-- Imagen del tag -->
+                                    <div class="tag-icon-container mb-2">
+                                        <img
+                                            t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
+                                            t-att-alt="tag.name"
+                                            class="tag-icon"
+                                            style="width: 40px; height: 40px;" />
+                                    </div>
 
-                                            <!-- Imagen del tag -->
-                                            <div class="tag-icon-container">
-                                                <img
-                                                    t-att-src="'/web/image/product.tag/' + str(tag.id) + '/image'"
-                                                    t-att-alt="tag.name"
-                                                    class="tag-icon"
-                                                    style="width: 40px; height: 40px;" />
-                                            </div>
+                                    <!-- Nombre del tag -->
+                                    <div class="tag-name" style="font-size: 14px; font-weight: bold; color: #333;">
+                                        <t t-esc="tag.name" />
+                                    </div>
 
-                                            <!-- Nombre del tag -->
-                                            <div class="tag-name" style="font-size: 12px; margin-top: 5px;">
-                                                <t t-esc="tag.name" />
-                                            </div>
-
-                                            <!-- Línea azul (visible al hover) -->
-                                            <div class="tag-underline"
-                                                style="height: 2px; background-color: #007bff; width: 0; transition: width 0.3s ease; opacity: 0;"></div>
-                                        </div>
-                                    </t>
-                                </div>
-                            </t>
-
-                            <t t-else="">
-                                <div style="color: #666; font-size: 14px; padding: 10px;">
-                                    No hay categorías disponibles
+                                    <!-- Línea azul (visible al hover) -->
+                                    <div class="tag-underline"
+                                        style="height: 2px; background-color: #007bff; width: 0; transition: width 0.3s ease; opacity: 0;"></div>
                                 </div>
                             </t>
                         </div>
-                    </div>
+                    </t>
+
+                    <t t-else="">
+                        <div style="color: #666; font-size: 14px; padding: 10px;">
+                            No hay categorías disponibles
+                        </div>
+                    </t>
                 </div>
 
-                <!-- JavaScript para manejo de clicks y hover en móvil -->
+                <!-- JavaScript para manejo de clicks y hover -->
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
                         const tagItems = document.querySelectorAll('.tag-item');
