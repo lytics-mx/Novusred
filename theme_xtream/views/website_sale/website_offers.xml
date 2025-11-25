@@ -757,38 +757,38 @@
 
                                         <div class="row g-2">
                                             <t t-foreach="discounted_products" t-as="product">
-                                                <div class="col-6" style="padding-left: 4px; padding-right: 4px;">
+                                                <div class="col-6" style="padding-left: 2px; padding-right: 2px;">
                                                     <a t-att-href="product.website_url" style="text-decoration: none;">
-                                                        <div class="custom-offer-card">
+                                                        <div class="custom-offer-card" style="border-radius: 0; margin: 0;">
                                                             <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                                                                class="card-img-top custom-offer-img" style="background: transparent;" />
-                                                            <div class="card-body custom-offer-body">
-                                                                <div class="custom-offer-title">
+                                                                class="card-img-top custom-offer-img" style="background: transparent; border-radius: 0;" />
+                                                            <div class="card-body custom-offer-body" style="padding: 8px;">
+                                                                <div class="custom-offer-title" style="font-size: 14px;">
                                                                     <t t-esc="product.name" />
                                                                 </div>
                                                                 <div class="d-flex align-items-center mt-1 mb-1">
-                                                                    <span class="fw-bold custom-offer-price">
+                                                                    <span class="fw-bold custom-offer-price" style="font-size: 16px;">
                                                                         $<t t-esc="'{:,}'.format(int(product.discounted_price if product.discounted_price &lt; product.list_price else product.list_price))" />
                                                                     </span>
                                                                     <t t-if="product.discounted_price &lt; product.list_price and product.discount_percentage">
-                                                                        <span class="ms-2 custom-offer-discount">
+                                                                        <span class="ms-2 custom-offer-discount" style="font-size: 14px; color: #FF5207;">
                                                                             <t t-esc="int(product.discount_percentage)" />% OFF
                                                                         </span>
                                                                     </t>
                                                                     <t t-elif="product.fixed_discount">
-                                                                        <span class="ms-2 custom-offer-discount">
+                                                                        <span class="ms-2 custom-offer-discount" style="font-size: 14px; color: #FF5207;">
                                                                             -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
                                                                         </span>
                                                                     </t>
                                                                 </div>
                                                                 <t t-if="product.discounted_price &lt; product.list_price">
-                                                                    <div class="custom-offer-descuento">
+                                                                    <div class="custom-offer-descuento" style="font-size: 12px; color: #6c757d;">
                                                                         $<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" />
                                                                         de descuento
                                                                     </div>
                                                                 </t>
                                                                 <t t-if="product.free_shipping">
-                                                                    <div class="custom-offer-envio">
+                                                                    <div class="custom-offer-envio" style="font-size: 12px; color: #28a745;">
                                                                         Envío gratis
                                                                     </div>
                                                                 </t>
@@ -805,7 +805,7 @@
                                                         <!-- Botón anterior -->
                                                         <li class="page-item" t-att-class="'disabled' if current_page == 1 else ''">
                                                             <a class="page-link"
-                                                                style="border-radius: 4px; background: #ccc; color: #888; border: none; margin-right: 2px; min-width: 32px; text-align: center;"
+                                                                style="background: #ccc; color: #888; border: none; margin-right: 2px; min-width: 32px; text-align: center;"
                                                                 t-att-href="'/offers?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in (current_filters or {}).items() if v and k != 'page'] + ['page=%s' % (current_page-1)]) if current_page &gt; 1 else '#'"
                                                                 aria-label="Anterior">
                                                                 <span aria-hidden="true">&#171;</span>
@@ -820,7 +820,7 @@
                                                         <t t-if="start_page &gt; 1">
                                                             <li class="page-item">
                                                                 <a class="page-link"
-                                                                    style="border-radius: 4px; background: transparent; color: #888; border: none; margin-right: 2px; min-width: 32px; text-align: center;"
+                                                                    style="background: transparent; color: #888; border: none; margin-right: 2px; min-width: 32px; text-align: center;"
                                                                     t-att-href="'/offers?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=1'])">
                                                                     1</a>
                                                             </li>
@@ -833,7 +833,7 @@
                                                         <t t-foreach="range(start_page, end_page+1)" t-as="page">
                                                             <li class="page-item" t-att-class="'active' if page == current_page else ''">
                                                                 <a class="page-link"
-                                                                    t-att-style="'border-radius: 4px; margin-right: 2px; min-width: 32px; text-align: center; background: #ccc; color: #fff; border: none;' if page == current_page else 'border-radius: 4px; background: transparent; color: #888; border: none; margin-right: 2px; min-width: 32px; text-align: center;'"
+                                                                    t-att-style="'margin-right: 2px; min-width: 32px; text-align: center; background: #ccc; color: #fff; border: none;' if page == current_page else 'background: transparent; color: #888; border: none; margin-right: 2px; min-width: 32px; text-align: center;'"
                                                                     t-att-href="'/offers?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % page]) if page != current_page else '#'">
                                                                     <t t-esc="page" />
                                                                 </a>
@@ -847,7 +847,7 @@
                                                             </li>
                                                             <li class="page-item">
                                                                 <a class="page-link"
-                                                                    style="border-radius: 4px; background: transparent; color: #888; border: none; margin-right: 2px; min-width: 32px; text-align: center;"
+                                                                    style="background: transparent; color: #888; border: none; margin-right: 2px; min-width: 32px; text-align: center;"
                                                                     t-att-href="'/offers?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % total_pages])">
                                                                     <t t-esc="total_pages" />
                                                                 </a>
@@ -856,7 +856,7 @@
                                                         <!-- Botón siguiente -->
                                                         <li class="page-item" t-att-class="'disabled' if current_page == total_pages else ''">
                                                             <a class="page-link"
-                                                                style="border-radius: 4px; background: #ccc; color: #888; border: none; margin-left: 2px; min-width: 32px; text-align: center;"
+                                                                style="background: #ccc; color: #888; border: none; margin-left: 2px; min-width: 32px; text-align: center;"
                                                                 t-att-href="'/offers?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in current_filters.items() if v and k != 'page'] + ['page=%s' % (current_page+1)]) if current_page &lt; total_pages else '#'"
                                                                 aria-label="Siguiente">
                                                                 <span aria-hidden="true">&#187;</span>
