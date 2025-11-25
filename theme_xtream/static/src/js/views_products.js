@@ -169,3 +169,35 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+document.querySelectorAll('.o_add_wishlist').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        var productId = btn.getAttribute('data-product-product-id');
+        if (!productId) {
+            alert('No se encontró el producto.');
+            return;
+        }
+        fetch('/shop/wishlist/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ product_id: parseInt(productId) })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                btn.classList.add('active');
+                alert('¡Agregado a tu wishlist!');
+            } else {
+                alert('No se pudo agregar a wishlist.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Hubo un error al agregar a wishlist.');
+        });
+    });
+});
