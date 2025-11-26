@@ -130,7 +130,7 @@
 
                     <!-- Productos pendientes -->
                     <t t-foreach="pending_products" t-as="product">
-                        <t t-if="product['state'] != 'done' and product['state'] != 'draft'">
+                        <t t-if="product['state'] != 'assigned' and product['state'] != 'draft'">
                             <div class="col-12 mb-3">
                                 <div class="card p-3 shadow-sm" style="background-color:rgb(255, 255, 255); border: none;">
                                     <!-- Fecha de compra -->
@@ -146,18 +146,13 @@
                                         </div>
                                         <!-- Detalles del producto -->
                                         <div class="flex-grow-1 me-3">
-                                            <t t-if="product['state'] == 'draft'">
-                                                <p class="mb-1" style="color: #FF5207; font-size: 16px;">En espera</p>
-                                            </t>
-                                            <t t-else="">
-                                                <p class="mb-1" style="color: #FF5207; font-size: 16px;">En camino</p>
-                                            </t>
+                                            <p class="mb-1" style="color: #FF5207; font-size: 16px;">En camino</p>
                                     
-                                            <!-- Estado de fecha estimada de entrega -->
+                                        <!-- Estado de fecha estimada de entrega -->
                                             <p class="mb-1" style="color: #000; font-size: 16px;">
                                                 <t t-esc="product['deadline_date']"/>
                                             </p>
-                                            <!-- Envío gratis -->
+                                        <!-- Envío gratis -->
                                             <t t-if="product.get('free_shipping')">
                                                 <p class="mb-1" style="color: #FF5207; font-size: 18px; font-style: italic; font-weight: bold;">
                                                     Envío gratis
