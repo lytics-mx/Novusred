@@ -303,13 +303,13 @@
                             <span>Total</span>
                             <span>$<t t-esc="purchase_details[0]['total']"/></span>
                         </div>
-                        <a href="javascript:void(0);" class="text-primary mt-2 d-block" onclick="toggleShippingDetails()" style="font-size: 14px;">
-                            Detalles del pago y envío <span id="toggle-icon">▽</span>
+                        <a href="javascript:void(0);" class="text-primary mt-2 d-block" onclick="toggleShippingDetailsMobile()" style="font-size: 14px;">
+                            Detalles del pago y envío <span id="toggle-icon-mobile">▽</span>
                         </a>
                         <script>
-                            function toggleShippingDetails() {
-                                const details = document.getElementById('shipping-details');
-                                const icon = document.getElementById('toggle-icon');
+                            function toggleShippingDetailsMobile() {
+                                const details = document.getElementById('shipping-details-mobile');
+                                const icon = document.getElementById('toggle-icon-mobile');
                                 if (details.style.display === 'none' || details.style.display === '') {
                                     details.style.display = 'block';
                                     icon.textContent = '△';
@@ -319,6 +319,34 @@
                                 }
                             }
                         </script>
+                        <div id="shipping-details-mobile" style="display: none; margin-top: 10px;">
+                            <t t-if="shipping_details">
+                                <ul style="padding-left: 0; list-style: none;">
+                                    <li style="font-size: 14px;">
+                                        <strong>Domicilio:</strong>
+                                        <span t-esc="shipping_details['partner_address']"/>
+                                    </li>
+                                    <t t-if="shipping_details.get('responsible')">
+                                        <li style="font-size: 14px;">
+                                            <strong>Responsable:</strong>
+                                            <span t-esc="shipping_details['responsible']"/>
+                                        </li>
+                                    </t>
+                                    <t t-if="shipping_details.get('carrier')">
+                                        <li style="font-size: 14px;">
+                                            <strong>Transportista:</strong>
+                                            <span t-esc="shipping_details['carrier']"/>
+                                        </li>
+                                    </t>
+                                    <t t-if="shipping_details.get('shipping_weight')">
+                                        <li style="font-size: 14px;">
+                                            <strong>Peso del Paquete:</strong>
+                                            <span t-esc="shipping_details['shipping_weight']"/> kg
+                                        </li>
+                                    </t>
+                                </ul>
+                            </t>
+                        </div>
                         <div id="shipping-details" style="display: none; margin-top: 10px;">
                             <t t-if="shipping_details">
                                 <ul style="padding-left: 0; list-style: none;">
