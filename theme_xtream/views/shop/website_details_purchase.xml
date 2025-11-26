@@ -250,28 +250,22 @@
                                     <t t-esc="product_info['name'][:28].upper() + ('..' if len(product_info['name']) > 28 else '')"/>
                                 </a>
                             </h5>
-
-                            <div class="d-flex justify-content-between align-items-center" style="font-size: 14px; margin-top: 4px;">
-                                <!-- Precio (muestra precio con descuento si existe product_info['discount_price']) -->
-                                <div>
-                                    <t t-if="product_info.get('discount_price')">
-                                        <span style="text-decoration: line-through; color: #777; margin-right: 6px;" t-esc="product_info['price']"/>
-                                        <span style="font-weight: 600; color: #000;" t-esc="product_info['discount_price']"/>
-                                    </t>
-                                    <t t-else="">
-                                        <span style="font-weight: 600; color: #000;" t-esc="purchase_details[0].get('price', product_info.get('price', ''))"/>
-                                    </t>
-                                </div>
-
-                                <!-- Cantidad / unidad -->
-                                <div style="color: #777;">
+                            <div style="font-size: 14px; color: #888; margin-top: 4px;">
+                                <t t-if="product_info.get('discount_price')">
+                                    <span style="text-decoration: line-through; margin-right: 6px;">$<t t-esc="product_info['price']"/></span>
+                                    <span>$<t t-esc="product_info['discount_price']"/></span>
+                                </t>
+                                <t t-else="">
+                                    <span>$<t t-esc="purchase_details[0].get('price', product_info.get('price', ''))"/></span>
+                                </t>
+                                <span style="margin-left: 8px;">
                                     <t t-if="int(purchase_details[0]['quantity']) == 1">
                                         | 1 unidad
                                     </t>
                                     <t t-else="">
                                         <t t-esc="'| %s unidades' % str(int(purchase_details[0]['quantity']))"/>
                                     </t>
-                                </div>
+                                </span>
                             </div>
                         </div>
                     </div>
