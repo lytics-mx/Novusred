@@ -4,7 +4,14 @@ from odoo.http import request
 class WishlistController(http.Controller):
     @http.route('/shop/wishlist', type='http', auth='public', website=True)
     def wishlist_page(self, **kwargs):
-        return request.render('theme_xtream.wishlist_template')
+        # Obtener los productos de la wishlist (sin filtrar por partner)
+        wishlist_items = request.env['product.wishlist'].sudo().search([])
+
+        context = {
+            'wishlist_items': wishlist_items,
+            'csrf_token': request.csrf_token(),
+        }
+        return request.render('theme_xtream.wishlist_template', context)
 
     @http.route('/shop/wishlist/clear', type='http', auth='public', methods=['POST'], website=True)
     def clear_wishlist(self):
