@@ -280,20 +280,20 @@ class ProductTemplate(models.Model):
                vals['type'] = 'product'  # Internamente almacenable
           return super().create(vals)
 
-     def apply_route_to_all_products(self):
-         """Aplica la ruta 'Triangular' a todos los productos."""
-         # Usa el ID directamente si el XML ID no está disponible
-         triangular_route_id = 7  # ID de la ruta Triangular en tu base de datos
+     # def apply_route_to_all_products(self):
+     #     """Aplica la ruta 'Triangular' a todos los productos."""
+     #     # Usa el ID directamente si el XML ID no está disponible
+     #     triangular_route_id = 7  # ID de la ruta Triangular en tu base de datos
      
-         # Aplica la ruta a todos los productos
-         products = self.search([])
-         for product in products:
-             product.route_ids = [(4, triangular_route_id)]  # Agrega la ruta 'Triangular' usando el ID
+     #     # Aplica la ruta a todos los productos
+     #     products = self.search([])
+     #     for product in products:
+     #         product.route_ids = [(4, triangular_route_id)]  # Agrega la ruta 'Triangular' usando el ID
 
-     @api.model
-     def create(self, vals):
-          res = super(ProductTemplate, self).create(vals)
-          triangular_route = self.env.ref('stock.route_triangular')
-          if triangular_route:
-               res.route_ids = [(4, triangular_route.id)]
-          return res
+     # @api.model
+     # def create(self, vals):
+     #      res = super(ProductTemplate, self).create(vals)
+     #      triangular_route = self.env.ref('stock.route_triangular')
+     #      if triangular_route:
+     #           res.route_ids = [(4, triangular_route.id)]
+     #      return res
