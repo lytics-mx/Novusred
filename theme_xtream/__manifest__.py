@@ -105,6 +105,7 @@
           '/theme_xtream/static/src/js/new_arrivals.js',
           '/theme_xtream/static/src/js/testimonials.js',
           '/theme_xtream/static/src/js/custom.js',
+          '/theme_xtream/static/src/js/views_products.js',
 
           '/theme_xtream/static/src/js/navbar.js',        
 

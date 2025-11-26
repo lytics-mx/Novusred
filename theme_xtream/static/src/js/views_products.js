@@ -170,10 +170,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-document.querySelectorAll('.o_add_wishlist').forEach(function(btn) {
+document.querySelectorAll('.xtream_add_wishlist').forEach(function(btn) {
     btn.addEventListener('click', function(e) {
         e.preventDefault();
-        var productId = btn.getAttribute('data-product-product-id');
+        var productId = btn.getAttribute('data-product-id');
         if (!productId) {
             alert('No se encontró el producto.');
             return;
