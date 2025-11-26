@@ -187,7 +187,7 @@
             </div>
             <div class="container d-block d-lg-none" style="padding: 0 8px;">
                 <!-- Buscador y filtrado móvil -->
-                <div class="d-flex align-items-center mb-3" style="gap: 12px;">
+                <div class="d-flex align-items-center mb-3" style="gap: 12px; position: relative;">
                     <form method="get" action="/delivered" class="d-flex align-items-center w-100" style="gap: 8px;">
                         <div class="input-group" style="background: #ededed; border-radius: 20px; padding: 0 10px; height: 36px; align-items: center; flex: 1;">
                             <span class="input-group-text bg-transparent border-0" style="padding-right: 0;">
@@ -195,20 +195,34 @@
                             </span>
                             <input type="text" name="search" t-att-value="search" placeholder="Buscar..." class="form-control border-0 bg-transparent" style="box-shadow: none; font-family: 'Questrial', sans-serif; font-size: 14px; width: 100%;" />
                         </div>
-                        <div class="input-group" style="background: #ededed; border-radius: 20px; padding: 0 10px; height: 36px; align-items: center;">
+                        <div id="filterDropdown" class="input-group" style="background: #ededed; border-radius: 20px; padding: 0 10px; height: 36px; align-items: center; cursor:pointer;" onclick="document.getElementById('filterOptions').classList.toggle('d-none');">
                             <span class="input-group-text bg-transparent border-0" style="padding-right: 0;">
                                 <i class="fa fa-filter" style="color: #222;"></i>
                             </span>
-                            <select name="filter_state" class="form-select border-0 bg-transparent" style="box-shadow: none; font-family: 'Questrial', sans-serif; font-size: 14px; width: 80px;"
-                                onchange="this.form.submit()">
-                                <option value="all" t-att-selected="filter_state == 'all'">Todas</option>
-                                <option value="assigned" t-att-selected="filter_state == 'assigned'">En camino</option>
-                                <option value="done" t-att-selected="filter_state == 'done'">Entregado</option>
-                            </select>
+                            <span style="font-family: 'Questrial', sans-serif; font-size: 14px; color: #2267e3; margin-left: 4px;">
+                                <t t-if="filter_state == 'all'">Todas</t>
+                                <t t-elif="filter_state == 'assigned'">En camino</t>
+                                <t t-elif="filter_state == 'done'">Entregado</t>
+                            </span>
+                            <span style="color:#2267e3; font-size:14px; margin-left:2px;">&#94;</span>
+                        </div>
+                        <div id="filterOptions" class="d-none" style="position: absolute; top: 42px; right: 0; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); z-index: 10; min-width: 120px;">
+                            <button type="submit" name="filter_state" value="all" class="dropdown-item" style="width:100%; text-align:left; padding:8px 16px; border:none; background:none; font-family:'Questrial',sans-serif; font-size:14px; color:#222;">Todas</button>
+                            <button type="submit" name="filter_state" value="assigned" class="dropdown-item" style="width:100%; text-align:left; padding:8px 16px; border:none; background:none; font-family:'Questrial',sans-serif; font-size:14px; color:#222;">En camino</button>
+                            <button type="submit" name="filter_state" value="done" class="dropdown-item" style="width:100%; text-align:left; padding:8px 16px; border:none; background:none; font-family:'Questrial',sans-serif; font-size:14px; color:#222;">Entregado</button>
                         </div>
                     </form>
-                    <span style="font-family: 'Questrial', sans-serif; font-size: 14px; color: #222; margin-left: 4px;"><t t-esc="product_count"/> Compras</span>
                 </div>
+                <script>
+                    // Cierra el dropdown si se hace clic fuera
+                    document.addEventListener('click', function(e) {
+                        var filter = document.getElementById('filterDropdown');
+                        var options = document.getElementById('filterOptions');
+                        if (!filter.contains(e.target)) {
+                            options.classList.add('d-none');
+                        }
+                    });
+                </script>
             
                 <!-- Mensaje si no hay productos -->
                 <t t-if="not delivered_products and not pending_products">
