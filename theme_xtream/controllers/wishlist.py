@@ -1,11 +1,22 @@
 from odoo import http
 from odoo.http import request
+import json
 
 class WishlistController(http.Controller):
     @http.route('/shop/wishlist', type='http', auth='public', website=True)
     def wishlist_page(self):
         # Obtener los productos de la wishlist (sin filtrar por partner)
         wishlist_items = request.env['product.wishlist'].sudo().search([])
+
+        # If the request expects JSON (AJAX), return JSON to avoid HTML being parsed as JSON
+        accept = request.httprequest.headers.get('Accept', '')
+        is_xhr = request.httprequest.headers.get('X-Requested-With') == 'XMLHttpRequest'
+        if 'application/json' in accept or is_xhr:
+            data = {
+                'wishlist_ids': wishlist_items.ids,
+                'count': len(wishlist_items),
+            }
+            return request.make_response(json.dumps(data), headers=[('Content-Type', 'application/json')])
 
         context = {
             'wishlist_items': wishlist_items,
