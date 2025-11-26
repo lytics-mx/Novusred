@@ -24,6 +24,7 @@
                                 onchange="this.form.submit()">
                                 <option value="all" t-att-selected="filter_state == 'all'">Todas</option>
                                 <option value="assigned" t-att-selected="filter_state == 'assigned'">En camino</option>
+                                <option value="waiting" t-att-selected="filter_state == 'waiting'">En proceso de facturar</option>
                                 <option value="done" t-att-selected="filter_state == 'done'">Entregado</option>
                             </select>
                         </div>
@@ -133,6 +134,7 @@
                         <t t-if="product['state'] != 'done' and product['state'] != 'draft'">
                             <div class="col-12 mb-3">
                                 <div class="card p-3 shadow-sm" style="background-color:rgb(255, 255, 255); border: none;">
+                                  
                                     <!-- Fecha de compra -->
                                     <div class="d-flex flex-column align-items-start">
                                         <p class="mb-0" style="font-size: 16px; color: #000;">
@@ -185,6 +187,8 @@
                     <div style="height: 45px;"></div>
                 </div>
             </div>
+
+
             <div class="container d-block d-lg-none" style="padding: 0 8px;">
                 <!-- Buscador y filtrado móvil -->
                 <div class="d-flex align-items-center mb-3" style="gap: 12px;">
@@ -203,7 +207,8 @@
                                 onchange="this.form.submit()">
                                 <option value="all" t-att-selected="filter_state == 'all'">Todas</option>
                                 <option value="assigned" t-att-selected="filter_state == 'assigned'">En camino</option>
-                                <option value="done" t-att-selected="filter_state == 'done'">Entregado</option>
+                                <option value="draft" t-att-selected="filter_state == 'draft'">En proceso de validar compra</option>
+                                <option value="done" t-att-selected="filter_state in ('done', 'waiting')">Entregado</option>
                             </select>
                         </div>
                     </form>
@@ -271,7 +276,7 @@
             
                 <!-- Productos pendientes -->
                 <t t-foreach="pending_products" t-as="product">
-                    <t t-if="product['state'] != 'done' and product['state'] != 'draft'">
+                    <t t-if="product['state'] == 'waiting'">
                         <div class="card mb-2 p-2" style="background-color: #fff; border-radius: 12px; border: none;">
                             <div class="d-flex flex-row align-items-start">
                                 <img t-att-src="product['image_url']" alt="Imagen producto" class="img-fluid rounded me-2" style="width: 80px; height: auto;" />
@@ -297,6 +302,37 @@
                         </div>
                     </t>
                 </t>
+                <t t-foreach="draft_products" t-as="product">
+                    <t t-if="product['state'] == 'draft'">
+                        <div class="card mb-2 p-2" style="background-color: #fff; border-radius: 12px; border: none;">
+                            <div class="d-flex flex-row align-items-start">
+                                <img t-att-src="product['image_url']" alt="Imagen producto" class="img-fluid rounded me-2" style="width: 80px; height: auto;" />
+                                <div class="flex-grow-1">
+                                    <div style="font-size: 13px; color: #222; margin-bottom: 2px;">
+                                        <t t-esc="product['purchase_date']"/>
+                                    </div>
+                                    <div style="color: #FF5207; font-size: 14px; font-weight: 500;">En proceso de validar la compra</div>
+                                    <div style="color: #000; font-size: 13px;">
+                                        <t t-esc="product.get('deadline_date', '')"/>
+                                    </div>
+                                    <t t-if="product.get('free_shipping')">
+                                        <div style="color: #FF5207; font-size: 15px; font-style: italic; font-weight: bold;">Envío gratis</div>
+                                    </t>
+                                    <div class="text-muted" style="font-size: 13px; margin-bottom: 2px;">
+                                        <a t-att-href="product['website_url']" style="text-decoration: none; color: inherit;">
+                                            <t t-esc="product['product_name'][:50] + ('...' if len(product['product_name']) > 53 else '')"/>
+                                        </a>
+                                    </div>
+                                    <div class="text-muted" style="font-size: 13px;"><t t-esc="product['quantity']"/> Unidad</div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+                
+
+
+
                 <div style="height: 30px;"></div>
             </div>
 
