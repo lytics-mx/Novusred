@@ -48,7 +48,7 @@ class WebsiteAuth(Home):
 
     
     
-    @http.route(['/user_record'], type='http', auth="public", website=True)
+    @http.route(['/user'], type='http', auth="public", website=True)
     def shop_signup(self, redirect=None, **post):
         """Custom signup page for website users"""
         if request.httprequest.method == 'POST':
