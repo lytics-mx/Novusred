@@ -247,7 +247,7 @@
                         <div class="flex-grow-1">
                             <h5 class="mb-1" style="font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0;">
                                 <a t-att-href="product_info['website_url']" class="text-decoration-none" style="color: #000; display: inline-block; max-width: 100%;">
-                                    <t t-esc="product_info['name'][:28].upper() + ('..' if len(product_info['name']) > 28 else '')"/>
+                                    <t t-esc="product_info['name'][:29].upper() + ('..' if len(product_info['name']) > 29 else '')"/>
                                 </a>
                             </h5>
                             <div style="font-size: 14px; color: #888; margin-top: 4px;">
@@ -279,7 +279,7 @@
                         <hr/>
                         <div class="d-flex justify-content-between" style="font-size: 14px;">
                             <span>Producto</span>
-                            <span t-esc="purchase_details[0]['price']"></span>
+                            <span>$<t t-esc="purchase_details[0]['price']"/></span>
                         </div>
                         <div class="d-flex justify-content-between" style="font-size: 14px;">
                             <span>Cantidad</span>
@@ -301,11 +301,24 @@
                         <hr/>
                         <div class="d-flex justify-content-between" style="font-size: 14px;">
                             <span>Total</span>
-                            <span t-esc="purchase_details[0]['total']"></span>
+                            <span>$<t t-esc="purchase_details[0]['total']"/></span>
                         </div>
                         <a href="javascript:void(0);" class="text-primary mt-2 d-block" onclick="toggleShippingDetails()" style="font-size: 14px;">
                             Detalles del pago y envío <span id="toggle-icon">▽</span>
                         </a>
+                        <script>
+                            function toggleShippingDetails() {
+                                const details = document.getElementById('shipping-details');
+                                const icon = document.getElementById('toggle-icon');
+                                if (details.style.display === 'none' || details.style.display === '') {
+                                    details.style.display = 'block';
+                                    icon.textContent = '△';
+                                } else {
+                                    details.style.display = 'none';
+                                    icon.textContent = '▽';
+                                }
+                            }
+                        </script>
                         <div id="shipping-details" style="display: none; margin-top: 10px;">
                             <t t-if="shipping_details">
                                 <ul style="padding-left: 0; list-style: none;">
