@@ -247,7 +247,7 @@
                     <div style="height: 30px;"></div>
                 </t>
             
-                <!-- Productos entregados -->
+                <!-- Productos entregados (móvil) -->
                 <t t-foreach="delivered_products" t-as="product">
                     <t t-if="product['state'] == 'done'">
                         <div class="card mb-2 p-2" style="background-color: #fff; border-radius: 12px; border: none;">
@@ -260,23 +260,37 @@
                                     <div style="color: #FF5207; font-size: 14px; font-weight: 500;">Entregado</div>
                                     <div style="color: #000; font-size: 13px;">Entregado el <t t-esc="product['delivery_date']"/></div>
                                     <t t-if="product.get('free_shipping')">
-                                        <div style="color: #FF5207; font-size: 15px; font-style: italic; font-weight: bold;">Envío gratis</div>
+                                        <div style="color: #FF5207; font-size: 14px; font-style: italic; font-weight: bold; margin-top:4px;">Envío gratis</div>
                                     </t>
-                                    <div class="text-muted" style="font-size: 13px; margin-bottom: 2px;">
+                                    <div class="text-muted" style="font-size: 13px; margin: 6px 0;">
                                         <a t-att-href="product['website_url']" style="text-decoration: none; color: inherit;">
                                             <t t-esc="product['product_name'][:50] + ('...' if len(product['product_name']) > 53 else '')"/>
                                         </a>
                                     </div>
-                                    <div class="text-muted" style="font-size: 13px;"><t t-esc="product['quantity']"/> Unidad</div>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="text-muted" style="font-size: 13px;"><t t-esc="product['quantity']"/> Unidad</div>
+                                        <div class="d-flex" style="gap:8px;">
+                                            <a t-att-href="'/product_details/%d/%s' % (product['product_id'], product['picking_origin'])"
+                                               class="btn btn-sm"
+                                               style="background-color: #3483FA; border: none; color: #fff; font-size: 13px; border-radius: 8px; padding: 6px 10px;">
+                                                Ingresar
+                                            </a>
+                                            <a t-att-href="product['website_url']"
+                                               class="btn btn-sm"
+                                               style="background-color: #a5c8fa; border: none; color: #2267e3; font-size: 13px; border-radius: 8px; padding: 6px 10px;">
+                                                Volver a comprar
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </t>
                 </t>
-            
-                <!-- Productos pendientes -->
+
+                <!-- Productos en camino / pendientes (móvil) -->
                 <t t-foreach="pending_products" t-as="product">
-                    <t t-if="product['state'] == 'waiting'">
+                    <t t-if="product['state'] != 'done' and product['state'] != 'draft'">
                         <div class="card mb-2 p-2" style="background-color: #fff; border-radius: 12px; border: none;">
                             <div class="d-flex flex-row align-items-start">
                                 <img t-att-src="product['image_url']" alt="Imagen producto" class="img-fluid rounded me-2" style="width: 80px; height: auto;" />
@@ -286,22 +300,33 @@
                                     </div>
                                     <div style="color: #FF5207; font-size: 14px; font-weight: 500;">En camino</div>
                                     <div style="color: #000; font-size: 13px;">
-                                        <t t-esc="product['deadline_date']"/>
+                                        <t t-esc="product.get('deadline_date', '')"/>
                                     </div>
                                     <t t-if="product.get('free_shipping')">
-                                        <div style="color: #FF5207; font-size: 15px; font-style: italic; font-weight: bold;">Envío gratis</div>
+                                        <div style="color: #FF5207; font-size: 14px; font-style: italic; font-weight: bold; margin-top:4px;">Envío gratis</div>
                                     </t>
-                                    <div class="text-muted" style="font-size: 13px; margin-bottom: 2px;">
+                                    <div class="text-muted" style="font-size: 13px; margin: 6px 0;">
                                         <a t-att-href="product['website_url']" style="text-decoration: none; color: inherit;">
                                             <t t-esc="product['product_name'][:50] + ('...' if len(product['product_name']) > 53 else '')"/>
                                         </a>
                                     </div>
-                                    <div class="text-muted" style="font-size: 13px;"><t t-esc="product['quantity']"/> Unidad</div>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="text-muted" style="font-size: 13px;"><t t-esc="product['quantity']"/> Unidad</div>
+                                        <div>
+                                            <a t-att-href="'/product_details/%d/%s' % (product['product_id'], product['picking_origin'])"
+                                               class="btn btn-sm"
+                                               style="background-color: #3483FA; border: none; color: #fff; font-size: 13px; border-radius: 8px; padding: 6px 10px;">
+                                                Ingresar
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </t>
                 </t>
+
+                <!-- Productos en borrador / validación (móvil) -->
                 <t t-foreach="draft_products" t-as="product">
                     <t t-if="product['state'] == 'draft'">
                         <div class="card mb-2 p-2" style="background-color: #fff; border-radius: 12px; border: none;">
@@ -316,20 +341,28 @@
                                         <t t-esc="product.get('deadline_date', '')"/>
                                     </div>
                                     <t t-if="product.get('free_shipping')">
-                                        <div style="color: #FF5207; font-size: 15px; font-style: italic; font-weight: bold;">Envío gratis</div>
+                                        <div style="color: #FF5207; font-size: 14px; font-style: italic; font-weight: bold; margin-top:4px;">Envío gratis</div>
                                     </t>
-                                    <div class="text-muted" style="font-size: 13px; margin-bottom: 2px;">
+                                    <div class="text-muted" style="font-size: 13px; margin: 6px 0;">
                                         <a t-att-href="product['website_url']" style="text-decoration: none; color: inherit;">
                                             <t t-esc="product['product_name'][:50] + ('...' if len(product['product_name']) > 53 else '')"/>
                                         </a>
                                     </div>
-                                    <div class="text-muted" style="font-size: 13px;"><t t-esc="product['quantity']"/> Unidad</div>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="text-muted" style="font-size: 13px;"><t t-esc="product['quantity']"/> Unidad</div>
+                                        <div>
+                                            <a t-att-href="'/product_details/%d/%s' % (product['product_id'], product['picking_origin'])"
+                                               class="btn btn-sm"
+                                               style="background-color: #3483FA; border: none; color: #fff; font-size: 13px; border-radius: 8px; padding: 6px 10px;">
+                                                Ingresar
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </t>
                 </t>
-                
 
 
 
