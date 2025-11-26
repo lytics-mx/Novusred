@@ -1,6 +1,5 @@
 from odoo import http
 from odoo.http import request
-import json
 
 class WishlistController(http.Controller):
     @http.route('/shop/wishlist', type='http', auth='public', website=True)
@@ -8,21 +7,8 @@ class WishlistController(http.Controller):
         # Obtener los productos de la wishlist (sin filtrar por partner)
         wishlist_items = request.env['product.wishlist'].sudo().search([])
 
-        # If the request expects JSON (AJAX), return JSON to avoid HTML being parsed as JSON
-        accept = request.httprequest.headers.get('Accept', '')
-        is_xhr = request.httprequest.headers.get('X-Requested-With') == 'XMLHttpRequest'
-        if 'application/json' in accept or is_xhr:
-            data = {
-                'wishlist_ids': wishlist_items.ids,
-                'count': len(wishlist_items),
-            }
-            return request.make_response(json.dumps(data), headers=[('Content-Type', 'application/json')])
 
-        context = {
-            'wishlist_items': wishlist_items,
-            'csrf_token': request.csrf_token(),
-        }
-        return request.render('theme_xtream.wishlist_template', context)
+        return request.render('theme_xtream.wishlist_template')
 
     @http.route('/shop/wishlist/clear', type='http', auth='public', methods=['POST'], website=True)
     def clear_wishlist(self):
