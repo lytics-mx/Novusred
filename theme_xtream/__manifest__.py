@@ -51,7 +51,7 @@
         'views/website_sale/website_home.xml',
         'views/website_sale/website_login.xml',
         'views/website_sale/website_user_record.xml',
-        # 'views/website_sale/website_whislist.xml',
+        'views/website_sale/website_whislist.xml',
         'views/website_sale/website_discover.xml',
         'views/website_sale/website_signup_success.xml',
 
