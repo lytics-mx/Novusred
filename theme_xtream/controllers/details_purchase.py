@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from babel.dates import format_date
 
 class ProductDetails(http.Controller):
-    @http.route(['/product_details/<int:product_id>/<string:pick_origin>'], type='http', auth='user', website=True)
+    @http.route(['/details/<int:product_id>/<string:pick_origin>'], type='http', auth='user', website=True)
     def product_details(self, product_id, pick_origin):
         user = request.env.user
 
