@@ -4,7 +4,7 @@ from babel.dates import format_date
 from datetime import datetime
 
 class WebsiteCheckout(http.Controller):
-    @http.route(['/delivered_products'], type='http', auth='user', website=True)
+    @http.route(['/delivered'], type='http', auth='user', website=True)
     def delivered_products(self, search=None, filter_state='all'):
         today = datetime.now().date()
         user = request.env.user
