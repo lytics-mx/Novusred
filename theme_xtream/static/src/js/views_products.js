@@ -186,13 +186,19 @@ document.querySelectorAll('.o_add_wishlist').forEach(function(btn) {
             },
             body: JSON.stringify({ product_id: parseInt(productId) })
         })
-        .then(response => response.json())
-        .then(data => {
+        .then(async response => {
+            let data;
+            try {
+                data = await response.json();
+            } catch (err) {
+                alert('No se pudo agregar a wishlist. ¿Estás logueado?');
+                return;
+            }
             if (data.success) {
                 btn.classList.add('active');
                 alert('¡Agregado a tu wishlist!');
             } else {
-                alert('No se pudo agregar a wishlist.');
+                alert('No se pudo agregar a wishlist: ' + (data.error || 'Error desconocido'));
             }
         })
         .catch(error => {
