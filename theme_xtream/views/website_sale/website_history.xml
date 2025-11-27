@@ -1,17 +1,53 @@
 <odoo>
     <template id="history_template" name="Historial">
         <t t-call="website.layout">
-                <t t-set="head">
-                    <link rel="stylesheet" href="/theme_xtream/static/src/css/history.css" />
-                </t>  
-
             <t t-if="request.env.user and request.env.user.id != request.env.ref('base.public_user').id">
-                <div class="container mt-4 d-none d-md-block">
+                <div class="container mt-4">
                     <div class="row">
                         <div class="col-8">
                             <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Historial</h2>
                         </div>
+                    </div>
                     
+                    <!-- Navegación móvil para meses -->
+                    <div class="d-block d-md-none mb-4">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-primary dropdown-toggle w-100" type="button" id="monthSelector" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa fa-calendar me-2"></i>
+                                <t t-if="current_filter">
+                                    <t t-esc="current_filter" />
+                                </t>
+                                <t t-else="">
+                                    Seleccionar período
+                                </t>
+                            </button>
+                            <ul class="dropdown-menu w-100" aria-labelledby="monthSelector">
+                                <!-- Opción para mostrar todos -->
+                                <li>
+                                    <a class="dropdown-item" href="/shop/history">
+                                        Todos los períodos
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider" /></li>
+                                
+                                <!-- Lista de períodos disponibles -->
+                                <t t-if="available_periods">
+                                    <t t-foreach="available_periods" t-as="period">
+                                        <li>
+                                            <a class="dropdown-item" 
+                                               t-att-href="'/shop/history/' + str(period)"
+                                               t-att-class="'dropdown-item' + (' active' if current_filter == period else '')">
+                                                <t t-esc="period" />
+                                                <t t-if="grouped_history.get(period)">
+                                                    <span class="text-muted ms-2">(<t t-esc="len(grouped_history[period])" />)</span>
+                                                </t>
+                                            </a>
+                                        </li>
+                                    </t>
+                                </t>
+                            </ul>
+                        </div>
+                    </div>
                     
                     <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
                         <t t-if="grouped_history">
@@ -243,182 +279,9 @@
                             </div>
                         </t>
                     </div>
-                    </div>
-
                 </div>
                 
-            <div id="wrap-mobile" class="oe_structure oe_empty d-block d-md-none"
-                style="font-family: 'Questrial', sans-serif;">
-                    <div class="row">
-                        <div class="col-8">
-                            <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Historial</h2>
-                        </div>
-                    </div>
-                    
-                    <!-- Navegación móvil para meses -->
-                    <div class="d-block d-md-none mb-4">
-                        <div class="dropdown">
-                            <button class="btn btn-outline-primary dropdown-toggle w-100" type="button" id="monthSelector" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fa fa-calendar me-2"></i>
-                                <t t-if="current_filter">
-                                    <t t-esc="current_filter" />
-                                </t>
-                                <t t-else="">
-                                    Seleccionar período
-                                </t>
-                            </button>
-                            <ul class="dropdown-menu w-100" aria-labelledby="monthSelector">
-                                <!-- Opción para mostrar todos -->
-                                <li>
-                                    <a class="dropdown-item" href="/shop/history">
-                                        Todos los períodos
-                                    </a>
-                                </li>
-                                <li><hr class="dropdown-divider" /></li>
-                                
-                                <!-- Lista de períodos disponibles -->
-                                <t t-if="available_periods">
-                                    <t t-foreach="available_periods" t-as="period">
-                                        <li>
-                                            <a class="dropdown-item" 
-                                               t-att-href="'/shop/history/' + str(period)"
-                                               t-att-class="'dropdown-item' + (' active' if current_filter == period else '')">
-                                                <t t-esc="period" />
-                                                <t t-if="grouped_history.get(period)">
-                                                    <span class="text-muted ms-2">(<t t-esc="len(grouped_history[period])" />)</span>
-                                                </t>
-                                            </a>
-                                        </li>
-                                    </t>
-                                </t>
-                            </ul>
-                        </div>
-                    </div>
-                    
-                    <div class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
-                        <t t-if="grouped_history">
-                            <!-- Iterar por cada período -->
-                            <t t-foreach="grouped_history.items()" t-as="period_data">
-                                <t t-set="period_name" t-value="period_data[0]" />
-                                <t t-set="period_products" t-value="period_data[1]" />
-                                <t t-set="period_id" t-value="period_name.replace(' ', '-').lower()" />
-                                
-                                <!-- Sección del período -->
-                                <div class="period-section mb-5" t-att-id="'period-' + period_id">
-                                    <!-- Título del período (sin controles) -->
-                                    <div class="mb-3 mt-4">
-                                        <h4 style="font-family: 'Questrial', sans-serif; font-size: 18px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 8px;">
-                                            <t t-esc="period_name" />
-                                        </h4>
-                                    </div>
-                                    <!-- MÓVIL: Card vertical de productos (estilo destacado) -->
-                                    <div class="d-block d-md-none mobile-list">
-                                        <t t-foreach="period_products" t-as="item">
-                                            <t t-set="product" t-value="item['product']" />
-                                            <div class="product-item-mobile mb-3" style="background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: 1px solid #e9ecef;">
-                                                <div class="d-flex align-items-start" style="gap: 12px; padding: 12px;">
-                                                    <!-- Imagen del producto -->
-                                                    <div style="flex: 0 0 80px; max-width: 80px;">
-                                                        <a t-att-href="product.website_url">
-                                                            <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
-                                                                 class="img-fluid mobile-product-image"
-                                                                 style="width: 80px; height: 80px; object-fit: contain; background: #f8f9fa; border-radius: 8px; border: 1px solid #eee;" 
-                                                                 loading="lazy" />
-                                                        </a>
-                                                    </div>
-                                                    <!-- Información del producto -->
-                                                    <div class="flex-grow-1 ps-1">
-                                                        <!-- Nombre del producto -->
-                                                        <h6 class="card-title namehistory mb-1" style="font-size: 0.92rem; line-height: 1.15; color: #222; font-weight: 500; margin-bottom: 2px;">
-                                                            <a t-att-href="product.website_url" style="color: #222; text-decoration: none;">
-                                                                <t t-esc="product.name" />
-                                                            </a>
-                                                        </h6>
-                                                        <!-- Precios y descuentos -->
-                                                        <div class="d-flex align-items-center mb-1" style="gap: 8px;">
-                                                            <span class="text-dark fw-bold" style="font-size: 1.05rem;">
-                                                                <t t-if="product.discounted_price &lt; product.list_price">
-                                                                    $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
-                                                                </t>
-                                                                <t t-else="">
-                                                                    $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                                                </t>
-                                                            </span>
-                                                            <span class="mobile-discount" style="font-size: 0.98rem; font-weight: bold; color: #FF5207;">
-                                                                <t t-if="product.discount_percentage">
-                                                                    <t t-esc="int(product.discount_percentage)" />% OFF
-                                                                </t>
-                                                                <t t-elif="product.fixed_discount">
-                                                                    -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
-                                                                </t>
-                                                            </span>
-                                                        </div>
-                                                        <t t-if="product.discounted_price &lt; product.list_price">
-                                                            <div class="text-muted mb-1" style="font-size: 0.85rem;">
-                                                                <span style="text-decoration: line-through;">
-                                                                    $<t t-esc="'{:,}'.format(int(product.list_price))" />
-                                                                </span>
-                                                                <span class="ms-1" style="font-size: 0.85em;">
-                                                                    (<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" /> de descuento)
-                                                                </span>
-                                                            </div>
-                                                        </t>
-                                                        <!-- Envío gratis -->
-                                                        <t t-if="product.free_shipping">
-                                                            <div class="mb-1">
-                                                                <span class="text-orange" style="color: #FF5207; font-size: 0.85rem; font-weight: bold; font-style: italic;">
-                                                                    Envío gratis
-                                                                </span>
-                                                            </div>
-                                                        </t>
-                                                        <!-- Marca -->
-                                                        <p class="text-muted mb-1" style="font-size: 0.85rem;">
-                                                            Por <t t-esc="product.brand_type_id.name"/>
-                                                        </p>
-                                                        <!-- Botón eliminar -->
-                                                        <a t-att-href="'/shop/history/remove/' + str(product.id)" 
-                                                           t-att-data-product-id="product.id"
-                                                           class="text-blue delete-history-item-mobile" 
-                                                           style="font-size: 0.85rem; color: #007bff; text-decoration: none;"
-                                                           onclick="event.preventDefault(); event.stopPropagation();
-                                                                   if(confirm('¿Eliminar del historial?')) {
-                                                                       fetch('/shop/history/remove/' + this.getAttribute('data-product-id'))
-                                                                       .then(response => {
-                                                                           if (response.ok) {
-                                                                               this.closest('.product-item-mobile').style.transition = 'opacity 0.3s, transform 0.3s';
-                                                                               this.closest('.product-item-mobile').style.opacity = '0';
-                                                                               this.closest('.product-item-mobile').style.transform = 'translateX(-100%)';
-                                                                               setTimeout(() => {
-                                                                                   location.reload();
-                                                                               }, 300);
-                                                                           }
-                                                                       });
-                                                                   }">
-                                                            Eliminar
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </t>
-                                    </div>
-                                </div>
-                            </t>
-                        </t>
-                        
-                        <!-- Mensaje si no hay productos -->
-                        <t t-else="">
-                            <div class="text-center mt-5">
-                                <h4 style="font-family: 'Questrial', sans-serif; color: #666;">No hay productos en tu historial.</h4>
-                                <p class="text-muted">Empieza a explorar nuestros productos para ver tu historial aquí.</p>
-                                <a href="/subcategory" class="btn btn-primary mt-3">Ir a la tienda</a>
-                            </div>
-                        </t>
-                </div>                
-            
-            
-            
-            </div>
-                
+
 
             </t>
             
