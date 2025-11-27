@@ -134,36 +134,23 @@ class ProductHistoryController(http.Controller):
             track_entries.unlink()
         return request.redirect('/shop/history')
     
-    @http.route('/shop/track_product/<int:product_tmpl_id>', type='http', auth='public', website=True)
+    @http.route('/shop/track_product/<int:product_tmpl_id>', type='http', auth='user', website=True)
     def track_product(self, product_tmpl_id, **kw):
-        """
-        Beacon endpoint: crea website.track para el visitor actual y asigna user_id
-        si el usuario está logueado. No usar sudo() para que request.env.user sea el real.
-        """
-        visitor = request.env['website.visitor']._get_visitor_from_request()
-        if not visitor:
+        user = request.env.user
+        if user._is_public():
+            return ''  # Solo usuarios logueados
+    
+        product = request.env['product.product'].search([('product_tmpl_id', '=', product_tmpl_id)], limit=1)
+        if not product:
             return ''
-
-        product_variant = request.env['product.product'].search([('product_tmpl_id', '=', product_tmpl_id)], limit=1)
-        if not product_variant:
-            return ''
-        print("visitor:", visitor.id if visitor else None)
-        print("product_variant:", product_variant.id if product_variant else None)
-        print("user:", request.env.user.id)
-
-        vals = {
-            'visitor_id': visitor.id,
-            'product_id': product_variant.id,
-        }
-        if not request.env.user._is_public():
-            # usuario logueado: pasamos user_id explícito
-            vals['user_id'] = request.env.user.id
-
-        try:
-            request.env['website.track'].create(vals)
-            # Registrar también en product.view.history si el usuario está logueado
-            if not request.env.user._is_public():
-                request.env['product.view.history'].sudo().add_product_to_history(product_variant.id)
-        except Exception:
-            # no romper la carga de la página por errores de tracking
-            pass
+    
+        url = request.httprequest.url  # Obtiene el URL actual
+    
+        # Guarda el historial
+        request.env['product.view.history'].sudo().create({
+            'user_id': user.id,
+            'product_id': product.id,
+            'url': url,
+        })
+    
+        return 'OK'
