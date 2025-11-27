@@ -1212,7 +1212,7 @@
                                                 style="min-width:28px; font-size:20px; padding:0; background:transparent; border:none; color:#222;">
                                         -</button>
                                             <input id="qty-input" type="number" name="add_qty"
-                                                value="1" min="1" t-att-max="int(product.qty_available)" 
+                                                value="1" min="1" t-att-max="product.qty_available"
                                                 class="form-control text-center"
                                                 style="width:2.5em; min-width:32px; max-width:3em; padding:0 4px; border:none; box-shadow:none; background:transparent; outline:none; font-size:14px;"
                                                 onwheel="return false;"
@@ -1257,9 +1257,9 @@
                                             var minusBtn = document.getElementById('qty-minus');
                                             var plusBtn = document.getElementById('qty-plus');
                                             if (qtyInput && minusBtn && plusBtn) {
-                                                var max = parseInt(qtyInput.getAttribute('max')) || 0;                                                                                               
-                                                minusBtn.addEventListener('click', function() {                                                   
-                                                var val = parseInt(qtyInput.value) || 1;
+                                                var max = parseInt(qtyInput.getAttribute('max')) || 9999;
+                                                minusBtn.addEventListener('click', function() {
+                                                    var val = parseInt(qtyInput.value) || 1;
                                                     if (val > 1) qtyInput.value = val - 1;
                                                 });
                                                 plusBtn.addEventListener('click', function() {
@@ -1268,26 +1268,8 @@
                                                 });
                                                 qtyInput.addEventListener('input', function() {
                                                     var val = parseInt(qtyInput.value) || 1;
-                                                    if (val < 1) val = 1;
-                                                    if (val > max) val = max;
-                                                    qtyInput.value = val;
-                                                    updateToggleText();
-                                                });
-                                                
-                                                minusBtn && minusBtn.addEventListener('click', function() {
-                                                    var val = parseInt(qtyInput.value) || 1;
-                                                    if (val > 1) {
-                                                        qtyInput.value = val - 1;
-                                                        updateToggleText();
-                                                    }
-                                                });
-                                                
-                                                plusBtn && plusBtn.addEventListener('click', function() {
-                                                    var val = parseInt(qtyInput.value) || 1;
-                                                    if (val < max) {
-                                                        qtyInput.value = val + 1;
-                                                        updateToggleText();
-                                                    }
+                                                    if (val < 1) qtyInput.value = 1;
+                                                    if (val > max) qtyInput.value = max;
                                                 });
                                             }
                                         });
@@ -1717,7 +1699,7 @@
                                 style="min-width:36px; height:36px; font-size:20px; padding:0; background:transparent; border:1px solid #e0e0e0; color:#222; border-radius:6px;">
                                 -</button>
                             <input id="qty-input" type="number" name="add_qty" value="1" min="1"
-                                t-att-max="int(product.qty_available)"                                
+                                t-att-max="product.qty_available"
                                 class="form-control text-center"
                                 style="width:3.5em; min-width:48px; max-width:4.5em; padding:0 4px; border:1px solid #e0e0e0; box-shadow:none; background:transparent; outline:none; font-size:16px; border-radius:6px;"
                                 onwheel="return false;"
@@ -1736,18 +1718,18 @@
                         /* Oculta las flechas de los inputs type number en todos los navegadores */
                         input[type=number]::-webkit-inner-spin-button,
                         input[type=number]::-webkit-outer-spin-button {
-                            -webkit-appearance: none;
-                            margin: 0;
+                        -webkit-appearance: none;
+                        margin: 0;
                         }
                         input[type=number] {
-                            -moz-appearance: textfield;
+                        -moz-appearance: textfield;
                         }
                         /* Ajusta el ancho del input según el número de dígitos */
                         #qty-input {
-                            width: 3.5em !important;
-                            min-width: 48px !important;
-                            max-width: 4.5em !important;
-                            text-align: center;
+                        width: 3.5em !important;
+                        min-width: 48px !important;
+                        max-width: 4.5em !important;
+                        text-align: center;
                         }
                     </style>
                 </t>
@@ -1765,7 +1747,8 @@
 
                             if (!toggleBtn || !container || !qtyInput) return;
 
-                            var max = parseInt(qtyInput.getAttribute('max')) || 0;
+                            var max = parseInt(qtyInput.getAttribute('max')) || 9999;
+
                             function updateToggleText() {
                                 // Always hide the selected quantity number and show only available stock
                                 toggleValue.textContent = '';
@@ -1804,22 +1787,6 @@
                                 if (val > max) val = max;
                                 qtyInput.value = val;
                                 updateToggleText();
-                            });
-                            
-                            minusBtn && minusBtn.addEventListener('click', function() {
-                                var val = parseInt(qtyInput.value) || 1;
-                                if (val > 1) {
-                                    qtyInput.value = val - 1;
-                                    updateToggleText();
-                                }
-                            });
-                            
-                            plusBtn && plusBtn.addEventListener('click', function() {
-                                var val = parseInt(qtyInput.value) || 1;
-                                if (val < max) {
-                                    qtyInput.value = val + 1;
-                                    updateToggleText();
-                                }
                             });
 
                             // prevent mouse wheel changing number on focused input
