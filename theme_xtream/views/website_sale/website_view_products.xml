@@ -1252,54 +1252,28 @@
                                     </div>
                                     <t t-jquery="body" t-operation="append">
                                         <script type="text/javascript"><![CDATA[
-                                            document.addEventListener('DOMContentLoaded', function() {
-                                                var qtyInput = document.getElementById('qty-input');
-                                                var minusBtn = document.getElementById('qty-minus');
-                                                var plusBtn = document.getElementById('qty-plus');
-                                                var cartQty = document.getElementById('cart-qty');
-                                                var buyQty = document.getElementById('buy-qty');
-                                                var availableText = document.querySelector('.mb-3 span[style*="color:#888"]');
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                            var qtyInput = document.getElementById('qty-input');
+                                            var minusBtn = document.getElementById('qty-minus');
+                                            var plusBtn = document.getElementById('qty-plus');
+                                            if (qtyInput && minusBtn && plusBtn) {
                                                 var max = parseInt(qtyInput.getAttribute('max')) || 9999;
-                                    
-                                                function syncQtyInputs() {
-                                                    if (cartQty) cartQty.value = qtyInput.value;
-                                                    if (buyQty) buyQty.value = qtyInput.value;
-                                                }
-                                    
-                                                function updateAvailableText() {
-                                                    if (availableText) {
-                                                        availableText.textContent = '(' + max + ' disponibles)';
-                                                    }
-                                                }
-                                    
-                                                if (minusBtn && qtyInput) {
-                                                    minusBtn.addEventListener('click', function() {
-                                                        var val = parseInt(qtyInput.value) || 1;
-                                                        if (val > 1) qtyInput.value = val - 1;
-                                                        syncQtyInputs();
-                                                    });
-                                                }
-                                                if (plusBtn && qtyInput) {
-                                                    plusBtn.addEventListener('click', function() {
-                                                        var val = parseInt(qtyInput.value) || 1;
-                                                        if (val < max) qtyInput.value = val + 1;
-                                                        syncQtyInputs();
-                                                    });
-                                                }
-                                                if (qtyInput) {
-                                                    qtyInput.addEventListener('input', function() {
-                                                        var val = parseInt(qtyInput.value) || 1;
-                                                        if (val < 1) val = 1;
-                                                        if (val > max) val = max;
-                                                        qtyInput.value = val;
-                                                        syncQtyInputs();
-                                                    });
-                                                    qtyInput.addEventListener('wheel', function(e){ e.preventDefault(); });
-                                                }
-                                    
-                                                updateAvailableText();
-                                            });
-                                        ]]></script>
+                                                minusBtn.addEventListener('click', function() {
+                                                    var val = parseInt(qtyInput.value, 10) || 1;
+                                                    if (val > 1) qtyInput.value = val - 1;
+                                                });
+                                                plusBtn.addEventListener('click', function() {
+                                                    var val = parseInt(qtyInput.value, 10) || 1;
+                                                    if (val < max) qtyInput.value = val + 1;
+                                                });
+                                                qtyInput.addEventListener('input', function() {
+                                                    var val = parseInt(qtyInput.value, 10) || 1;
+                                                    if (val < 1) qtyInput.value = 1;
+                                                    if (val > max) qtyInput.value = max;
+                                                });
+                                            }
+                                        });
+                                    ]]></script>
                                     </t>
                                 </div>
                                 <!-- Métodos de pago -->
