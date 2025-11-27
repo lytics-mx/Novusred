@@ -1316,6 +1316,26 @@
                                                     <div style="font-size: 22px; font-weight: bold; color: #222; margin-bottom: 0;">
                                                         $<t t-esc="'{:,}'.format(int(producto.discounted_price if producto.discounted_price &lt; producto.list_price else producto.list_price))" />
                                                     </div>
+                                                    <t t-if="producto.discounted_price &lt; producto.list_price and producto.discount_percentage">
+                                                        <span style="color: #FF5207; font-size: 15px; font-weight: bold; margin-left: 10px;">
+                                                            <t t-esc="int(producto.discount_percentage)" />% OFF
+                                                        </span>
+                                                    </t>
+                                                    <t t-if="producto.discounted_price &lt; producto.list_price">
+                                                        <div style="font-size: 13px; color: #888; margin-bottom: 4px; text-align: left;">
+                                                            <t t-if="producto.fixed_discount">
+                                                                <t t-esc="'{:,}'.format(int(producto.fixed_discount))" /> de descuento
+                                                            </t>
+                                                            <t t-elif="producto.list_price - producto.discounted_price > 0">
+                                                                <t t-esc="'{:,}'.format(int(producto.list_price - producto.discounted_price))" /> de descuento
+                                                            </t>
+                                                        </div>
+                                                    </t>
+                                                    <t t-if="producto.free_shipping">
+                                                        <div style="color: #FF7B00; font-size: 15px; font-weight: 600; text-align: left;">
+                                                            Envío gratis
+                                                        </div>
+                                                    </t>
                                                 </div>
                                             </a>
                                         </div>
