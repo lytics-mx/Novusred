@@ -18,12 +18,17 @@ class ProductHistoryController(http.Controller):
 
     @http.route(['/shop/history', '/shop/history/<string:period_filter>'], type='http', auth='user', website=True)
     def view_history(self, period_filter=None):
+        """Obtiene el historial de productos vistos por el usuario actual agrupado por períodos."""
         user_id = request.env.user.id
-        tracks = request.env['product.view.history'].sudo().search([
+        
+
+        # Buscar registros de website.track creados por nuestro beacon (tienen user_id)
+        tracks = request.env['website.track'].search([
             ('user_id', '=', user_id),
             ('product_id', '!=', False),
-        ], order='viewed_at desc')
-    
+        ], order='visit_datetime desc')
+
+
         # Configurar zona horaria
         user_tz = pytz.timezone('America/Mexico_City')
         now = datetime.now(user_tz)
@@ -136,19 +141,33 @@ class ProductHistoryController(http.Controller):
         # Redirigir de vuelta al historial
         return request.redirect('/shop/history')
     
-    @http.route('/shop/track_product/<int:product_tmpl_id>', type='http', auth='user', website=True)
+    @http.route('/shop/track_product/<int:product_tmpl_id>', type='http', auth='public', website=True)
     def track_product(self, product_tmpl_id, **kw):
-        user = request.env.user
-        if user._is_public():
+        """
+        Beacon endpoint: crea website.track para el visitor actual y asigna user_id
+        si el usuario está logueado. No usar sudo() para que request.env.user sea el real.
+        """
+        visitor = request.env['website.visitor']._get_visitor_from_request()
+        if not visitor:
             return ''
-        product = request.env['product.product'].search([('product_tmpl_id', '=', product_tmpl_id)], limit=1)
-        if not product:
+
+        product_variant = request.env['product.product'].search([('product_tmpl_id', '=', product_tmpl_id)], limit=1)
+        if not product_variant:
             return ''
-        url = request.httprequest.url
-        # Guarda el historial
-        request.env['product.view.history'].sudo().create({
-            'user_id': 1,  # Usa un ID de usuario real
-            'product_id': 1,  # Usa un ID de producto real
-            'url': '/shop/product/1',
-        })
-        return 'OK'
+
+        vals = {
+            'visitor_id': visitor.id,
+            'product_id': product_variant.id,
+        }
+
+        if not request.env.user._is_public():
+            # usuario logueado: pasamos user_id explícito
+            vals['user_id'] = request.env.user.id
+
+        try:
+            request.env['website.track'].create(vals)
+        except Exception:
+            # no romper la carga de la página por errores de tracking
+            pass
+
+        return ''
