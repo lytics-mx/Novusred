@@ -125,20 +125,13 @@ class ProductHistoryController(http.Controller):
 
     @http.route('/shop/history/remove/<int:product_id>', type='http', auth='user', website=True)
     def remove_from_history(self, product_id):
-        """Elimina un producto del historial del usuario actual."""
         user_id = request.env.user.id
-    
-        # Buscar todos los registros de este producto para este usuario (filtrando por user)
         track_entries = request.env['website.track'].sudo().search([
-            ('visitor_id.user_id', '=', user_id),
+            ('user_id', '=', user_id),
             ('product_id.product_tmpl_id', '=', product_id),
-            ('product_id', '=', product_id)
         ])
-        # Eliminar todos los registros
         if track_entries:
             track_entries.unlink()
-    
-        # Redirigir de vuelta al historial
         return request.redirect('/shop/history')
     
     @http.route('/shop/track_product/<int:product_tmpl_id>', type='http', auth='public', website=True)
@@ -154,20 +147,23 @@ class ProductHistoryController(http.Controller):
         product_variant = request.env['product.product'].search([('product_tmpl_id', '=', product_tmpl_id)], limit=1)
         if not product_variant:
             return ''
+        print("visitor:", visitor.id if visitor else None)
+        print("product_variant:", product_variant.id if product_variant else None)
+        print("user:", request.env.user.id)
 
         vals = {
             'visitor_id': visitor.id,
             'product_id': product_variant.id,
         }
-
         if not request.env.user._is_public():
             # usuario logueado: pasamos user_id explícito
             vals['user_id'] = request.env.user.id
 
         try:
             request.env['website.track'].create(vals)
+            # Registrar también en product.view.history si el usuario está logueado
+            if not request.env.user._is_public():
+                request.env['product.view.history'].sudo().add_product_to_history(product_variant.id)
         except Exception:
             # no romper la carga de la página por errores de tracking
             pass
-
-        return ''
