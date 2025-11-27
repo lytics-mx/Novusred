@@ -1681,12 +1681,10 @@
                 </div>
                 <!-- Selector de cantidad -->
                 <div class="my-3">
-                    <button type="button" class="btn btn-light w-100" id="qty-toggle-btn"
-                        style="border-radius:8px; border:1px solid #e0e0e0; text-align:left; display:flex; align-items:center; justify-content:space-between; padding:0.5rem;">
+                    <button type="button" class="btn btn-light w-100" id="qty-toggle-btn">
                         <span id="qty-toggle-text">
                             <span id="qty-toggle-value"></span>
-                            <span id="qty-available-text"
-                                style="color:#888; font-size:14px; margin-left:6px;"></span>
+                            <span id="qty-available-text" style="color:#888; font-size:14px; margin-left:6px;"></span>
                         </span>
                         <span class="float-end">&gt;</span>
                     </button>
@@ -1695,10 +1693,10 @@
                         style="display:none; margin-top:8px; align-items:center;">
                         <div
                             style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px;">
-                            <button type="button" class="btn" id="qty-minus"
+                            <button type="button" class="btn" id="qty-minus-mobile"
                                 style="min-width:36px; height:36px; font-size:20px; padding:0; background:transparent; border:1px solid #e0e0e0; color:#222; border-radius:6px;">
                                 -</button>
-                            <input id="qty-input" type="number" name="add_qty" value="1" min="1"
+                            <input id="qty-input-mobile" type="number" name="add_qty" value="1" min="1"
                                 t-att-max="product.qty_available"
                                 class="form-control text-center"
                                 style="width:3.5em; min-width:48px; max-width:4.5em; padding:0 4px; border:1px solid #e0e0e0; box-shadow:none; background:transparent; outline:none; font-size:16px; border-radius:6px;"
@@ -1706,7 +1704,7 @@
                                 inputmode="numeric"
                                 maxlength="4"
                             />
-                            <button type="button" class="btn" id="qty-plus"
+                            <button type="button" class="btn" id="qty-plus-mobile"
                                 style="min-width:36px; height:36px; font-size:20px; padding:0; background:transparent; border:1px solid #e0e0e0; color:#222; border-radius:6px;">
                                 +</button>
                         </div>
@@ -1737,36 +1735,33 @@
                 <t t-jquery="body" t-operation="append">
                     <script type="text/javascript"><![CDATA[
                         document.addEventListener('DOMContentLoaded', function() {
+                        
                             var toggleBtn = document.getElementById('qty-toggle-btn');
                             var container = document.getElementById('mobile-qty-container');
-                            var qtyInput = document.getElementById('qty-input');
-                            var minusBtn = document.getElementById('qty-minus');
-                            var plusBtn = document.getElementById('qty-plus');
+                            var qtyInput = document.getElementById('qty-input-mobile');
+                            var minusBtn = document.getElementById('qty-minus-mobile');
+                            var plusBtn = document.getElementById('qty-plus-mobile');
                             var toggleValue = document.getElementById('qty-toggle-value');
                             var availableText = document.getElementById('qty-available-text');
-
+                        
                             if (!toggleBtn || !container || !qtyInput) return;
-
+                        
                             var max = parseInt(qtyInput.getAttribute('max')) || 9999;
-
+                        
                             function updateToggleText() {
-                                // Always hide the selected quantity number and show only available stock
-                                toggleValue.textContent = '';
+                                toggleValue.textContent = qtyInput.value;
                                 availableText.textContent = '(' + max + ' disponibles)';
                             }
-
+                        
                             toggleBtn.addEventListener('click', function() {
                                 var isOpen = container.style.display === 'flex' || container.style.display === 'block';
                                 container.style.display = isOpen ? 'none' : 'flex';
                                 if (!isOpen) {
-                                    // show -> focus input
                                     qtyInput.focus();
-                                    // select text for quick typing on mobile
                                     try { qtyInput.select(); } catch (e) {}
                                 }
                             });
-
-                            // Quantity control logic
+                        
                             minusBtn && minusBtn.addEventListener('click', function() {
                                 var val = parseInt(qtyInput.value) || 1;
                                 if (val > 1) {
@@ -1788,28 +1783,10 @@
                                 qtyInput.value = val;
                                 updateToggleText();
                             });
-
-                            // prevent mouse wheel changing number on focused input
+                        
                             qtyInput.addEventListener('wheel', function(e){ e.preventDefault(); });
-
-                            // initialize
+                        
                             updateToggleText();
-
-                            // Update hidden cart inputs when forms submit
-                            var addToCartForm = document.getElementById('add-to-cart-form-mobile');
-                            var buyNowForm = document.getElementById('buy-now-form-mobile');
-                            if (addToCartForm) {
-                                addToCartForm.addEventListener('submit', function() {
-                                    var cartQty = document.getElementById('cart-qty');
-                                    if (cartQty) cartQty.value = qtyInput.value;
-                                });
-                            }
-                            if (buyNowForm) {
-                                buyNowForm.addEventListener('submit', function() {
-                                    var buyQty = document.getElementById('buy-qty');
-                                    if (buyQty) buyQty.value = qtyInput.value;
-                                });
-                            }
                         });
                     ]]></script>
                 </t>
