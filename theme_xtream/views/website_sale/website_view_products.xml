@@ -1896,6 +1896,36 @@
                         <span style="font-size:16px; font-weight:600;">Comprar</span>
                     </button>
                 </form>
+                <!-- ...después de los formularios móviles... -->
+                <t t-jquery="body" t-operation="append">
+                    <script type="text/javascript"><![CDATA[
+                        document.addEventListener('DOMContentLoaded', function() {
+                            var qtyInputMobile = document.getElementById('qty-input-mobile');
+                            var cartQtyMobile = document.getElementById('cart-qty');
+                            var buyQtyMobile = document.getElementById('buy-qty');
+                            var cartFormMobile = document.getElementById('add-to-cart-form-mobile');
+                            var buyFormMobile = document.getElementById('buy-now-form-mobile');
+                
+                            function syncMobileQty() {
+                                var val = qtyInputMobile ? qtyInputMobile.value : 1;
+                                if (cartQtyMobile) cartQtyMobile.value = val;
+                                if (buyQtyMobile) buyQtyMobile.value = val;
+                            }
+                
+                            if (cartFormMobile) {
+                                cartFormMobile.addEventListener('submit', function(e) {
+                                    syncMobileQty();
+                                });
+                            }
+                            if (buyFormMobile) {
+                                buyFormMobile.addEventListener('submit', function(e) {
+                                    syncMobileQty();
+                                });
+                            }
+                        });
+                    ]]></script>
+                </t>
+
                 <!-- Separator between buttons and next section -->
                 <div style="height:5px;"></div>
 
