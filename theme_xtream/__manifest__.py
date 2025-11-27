@@ -94,6 +94,7 @@
           '/theme_xtream/static/src/css/category_search.css',
           '/theme_xtream/static/src/css/brand.css',
           '/theme_xtream/static/src/css/brand_search.css',
+          '/theme_xtream/static/src/css/history.css',
 
           '/theme_xtream/static/src/css/custom.css',
           '/theme_xtream/static/src/css/home.css',          
