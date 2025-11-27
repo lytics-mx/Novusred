@@ -201,42 +201,48 @@
             </nav>
             <script>
                 <![CDATA[
-                // Buscador móvil (igual lógica que desktop, ajustado)
-                document.addEventListener('DOMContentLoaded', function() {
-                    const searchInput = document.getElementById('searchInputMobile');
-                    const searchResults = document.getElementById('searchResultsMobile');
-                    if (searchInput && searchResults) {
-                        let lastQuery = '';
+                (function(){
+                    function initMobileSearch() {
+                        // Localizar solo elementos dentro del navbar móvil para evitar conflicto con desktop
+                        var mobileNav = document.querySelector('nav.mobile-navbar.d-flex.d-lg-none');
+                        if (!mobileNav) return;
+
+                        var searchInput = mobileNav.querySelector('#searchInputMobile');
+                        var searchResults = mobileNav.querySelector('#searchResultsMobile');
+                        if (!searchInput || !searchResults) return;
+
+                        var lastMobileQuery = '';
+                        // Manejo del input específico del móvil
                         searchInput.addEventListener('input', function() {
-                            const query = searchInput.value.trim();
+                            var query = searchInput.value.trim();
                             if (query.length === 0) {
                                 searchResults.style.display = 'none';
                                 searchResults.innerHTML = '';
+                                lastMobileQuery = '';
                                 return;
                             }
-                            if (query === lastQuery) return;
-                            lastQuery = query;
-                            fetch(`/search_live?query=${encodeURIComponent(query)}`)
-                                .then(response => response.json())
-                                .then(data => {
+                            if (query === lastMobileQuery) return;
+                            lastMobileQuery = query;
+
+                            // Petición para autocompletar (misma URL que desktop o distinta según backend)
+                            fetch('/search_live?query=' + encodeURIComponent(query))
+                                .then(function(response){ return response.json(); })
+                                .then(function(data){
                                     searchResults.innerHTML = '';
                                     if (data.results && data.results.length) {
                                         searchResults.style.display = 'block';
                                         var seenIds = new Set();
-                                        data.results.slice(0, 7).forEach(function(result) {
-                                            var name = result.name || '';
-                                            // Evitar duplicados si la API devuelve repetidos y proteger contra name indefinido
+                                        data.results.slice(0, 7).forEach(function(result){
                                             if (result.id && seenIds.has(result.id)) return;
                                             if (result.id) seenIds.add(result.id);
-
-                                            var truncatedName = name.length > 30 ? name.substring(0, 30) + '...' : name;
+                                            var name = result.name || '';
+                                            var truncatedName = name.length > 30 ? name.substring(0,30) + '...' : name;
                                             var item = document.createElement('a');
                                             item.className = 'dropdown-item d-flex align-items-center';
                                             item.href = result.url || '#';
                                             item.title = name || 'Producto';
                                             var imgSrc = result.image || '/theme_xtream/static/src/img/placeholder.png';
                                             var imgAlt = name || 'Producto';
-                                            // Usar concatenación para evitar posibles conflictos con plantillas en XML/CDATA
                                             item.innerHTML = '<img src="' + imgSrc + '" alt="' + imgAlt + '" style="width:32px;height:32px;object-fit:contain;margin-right:10px;"/>' +
                                                              '<div style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:120px;">' + truncatedName + '</div>';
                                             searchResults.appendChild(item);
@@ -251,17 +257,28 @@
                                         searchResults.style.display = 'none';
                                     }
                                 })
-                                .catch(() => {
+                                .catch(function(){
                                     searchResults.style.display = 'none';
                                 });
                         });
-                        document.addEventListener('click', function(e) {
-                            if (!searchResults.contains(e.target) && e.target !== searchInput) {
-                                setTimeout(() => { searchResults.style.display = 'none'; }, 150);
+
+                        // Cerrar dropdown solo si el click no fue dentro del navbar móvil (no afectar desktop)
+                        function onDocClickMobile(e) {
+                            if (!mobileNav.contains(e.target)) {
+                                if (searchResults && searchResults.style.display !== 'none') {
+                                    setTimeout(function(){ searchResults.style.display = 'none'; }, 150);
+                                }
                             }
-                        });
+                        }
+                        document.addEventListener('click', onDocClickMobile);
                     }
-                });
+
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', initMobileSearch);
+                    } else {
+                        initMobileSearch();
+                    }
+                })();
                 ]]>
             </script>
                 <!-- Menú lateral móvil -->
