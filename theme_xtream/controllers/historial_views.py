@@ -18,17 +18,12 @@ class ProductHistoryController(http.Controller):
 
     @http.route(['/shop/history', '/shop/history/<string:period_filter>'], type='http', auth='user', website=True)
     def view_history(self, period_filter=None):
-        """Obtiene el historial de productos vistos por el usuario actual agrupado por períodos."""
         user_id = request.env.user.id
-        
-
-        # Buscar registros de website.track creados por nuestro beacon (tienen user_id)
-        tracks = request.env['website.track'].search([
+        tracks = request.env['product.view.history'].sudo().search([
             ('user_id', '=', user_id),
             ('product_id', '!=', False),
-        ], order='visit_datetime desc')
-
-
+        ], order='viewed_at desc')
+    
         # Configurar zona horaria
         user_tz = pytz.timezone('America/Mexico_City')
         now = datetime.now(user_tz)
@@ -125,32 +120,35 @@ class ProductHistoryController(http.Controller):
 
     @http.route('/shop/history/remove/<int:product_id>', type='http', auth='user', website=True)
     def remove_from_history(self, product_id):
+        """Elimina un producto del historial del usuario actual."""
         user_id = request.env.user.id
+    
+        # Buscar todos los registros de este producto para este usuario (filtrando por user)
         track_entries = request.env['website.track'].sudo().search([
-            ('user_id', '=', user_id),
+            ('visitor_id.user_id', '=', user_id),
             ('product_id.product_tmpl_id', '=', product_id),
+            ('product_id', '=', product_id)
         ])
+        # Eliminar todos los registros
         if track_entries:
             track_entries.unlink()
+    
+        # Redirigir de vuelta al historial
         return request.redirect('/shop/history')
     
     @http.route('/shop/track_product/<int:product_tmpl_id>', type='http', auth='user', website=True)
     def track_product(self, product_tmpl_id, **kw):
         user = request.env.user
         if user._is_public():
-            return ''  # Solo usuarios logueados
-    
+            return ''
         product = request.env['product.product'].search([('product_tmpl_id', '=', product_tmpl_id)], limit=1)
         if not product:
             return ''
-    
-        url = request.httprequest.url  # Obtiene el URL actual
-    
+        url = request.httprequest.url
         # Guarda el historial
         request.env['product.view.history'].sudo().create({
             'user_id': user.id,
             'product_id': product.id,
             'url': url,
         })
-    
         return 'OK'
