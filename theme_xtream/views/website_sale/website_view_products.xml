@@ -1259,15 +1259,15 @@
                                             if (qtyInput && minusBtn && plusBtn) {
                                                 var max = parseInt(qtyInput.getAttribute('max')) || 9999;
                                                 minusBtn.addEventListener('click', function() {
-                                                    var val = parseInt(qtyInput.value, 10) || 1;
+                                                    var val = parseInt(qtyInput.value) || 1;
                                                     if (val > 1) qtyInput.value = val - 1;
                                                 });
                                                 plusBtn.addEventListener('click', function() {
-                                                    var val = parseInt(qtyInput.value, 10) || 1;
+                                                    var val = parseInt(qtyInput.value) || 1;
                                                     if (val < max) qtyInput.value = val + 1;
                                                 });
                                                 qtyInput.addEventListener('input', function() {
-                                                    var val = parseInt(qtyInput.value, 10) || 1;
+                                                    var val = parseInt(qtyInput.value) || 1;
                                                     if (val < 1) qtyInput.value = 1;
                                                     if (val > max) qtyInput.value = max;
                                                 });
@@ -1737,6 +1737,9 @@
                 <t t-jquery="body" t-operation="append">
                     <script type="text/javascript"><![CDATA[
                         document.addEventListener('DOMContentLoaded', function() {
+                            // Solo ejecutar en móvil (menos de 768px)
+                            if (window.innerWidth >= 768) return;
+                
                             var toggleBtn = document.getElementById('qty-toggle-btn');
                             var container = document.getElementById('mobile-qty-container');
                             var qtyInput = document.getElementById('qty-input');
@@ -1744,58 +1747,51 @@
                             var plusBtn = document.getElementById('qty-plus');
                             var toggleValue = document.getElementById('qty-toggle-value');
                             var availableText = document.getElementById('qty-available-text');
-
+                
                             if (!toggleBtn || !container || !qtyInput) return;
-
+                
                             var max = parseInt(qtyInput.getAttribute('max')) || 9999;
-
+                
                             function updateToggleText() {
-                                // Always hide the selected quantity number and show only available stock
-                                toggleValue.textContent = '';
+                                toggleValue.textContent = qtyInput.value;
                                 availableText.textContent = '(' + max + ' disponibles)';
                             }
-
+                
                             toggleBtn.addEventListener('click', function() {
                                 var isOpen = container.style.display === 'flex' || container.style.display === 'block';
                                 container.style.display = isOpen ? 'none' : 'flex';
                                 if (!isOpen) {
-                                    // show -> focus input
                                     qtyInput.focus();
-                                    // select text for quick typing on mobile
                                     try { qtyInput.select(); } catch (e) {}
                                 }
                             });
-
-                            // Quantity control logic
+                
                             minusBtn && minusBtn.addEventListener('click', function() {
-                                var val = parseInt(qtyInput.value) || 1;
+                                var val = parseInt(qtyInput.value, 10) || 1;
                                 if (val > 1) {
                                     qtyInput.value = val - 1;
                                     updateToggleText();
                                 }
                             });
                             plusBtn && plusBtn.addEventListener('click', function() {
-                                var val = parseInt(qtyInput.value) || 1;
+                                var val = parseInt(qtyInput.value, 10) || 1;
                                 if (val < max) {
                                     qtyInput.value = val + 1;
                                     updateToggleText();
                                 }
                             });
                             qtyInput.addEventListener('input', function() {
-                                var val = parseInt(qtyInput.value) || 1;
+                                var val = parseInt(qtyInput.value, 10) || 1;
                                 if (val < 1) val = 1;
                                 if (val > max) val = max;
                                 qtyInput.value = val;
                                 updateToggleText();
                             });
-
-                            // prevent mouse wheel changing number on focused input
+                
                             qtyInput.addEventListener('wheel', function(e){ e.preventDefault(); });
-
-                            // initialize
+                
                             updateToggleText();
-
-                            // Update hidden cart inputs when forms submit
+                
                             var addToCartForm = document.getElementById('add-to-cart-form-mobile');
                             var buyNowForm = document.getElementById('buy-now-form-mobile');
                             if (addToCartForm) {
