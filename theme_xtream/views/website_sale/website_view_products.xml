@@ -1737,77 +1737,52 @@
                 <t t-jquery="body" t-operation="append">
                     <script type="text/javascript"><![CDATA[
                         document.addEventListener('DOMContentLoaded', function() {
-                            var toggleBtn = document.getElementById('qty-toggle-btn');
-                            var container = document.getElementById('mobile-qty-container');
                             var qtyInput = document.getElementById('qty-input');
                             var minusBtn = document.getElementById('qty-minus');
                             var plusBtn = document.getElementById('qty-plus');
-                            var toggleValue = document.getElementById('qty-toggle-value');
-                            var availableText = document.getElementById('qty-available-text');
-
-                            if (!toggleBtn || !container || !qtyInput) return;
-
-                            var max = parseInt(qtyInput.getAttribute('max')) || 9999;
-
-                            function updateToggleText() {
-                                // Always hide the selected quantity number and show only available stock
-                                toggleValue.textContent = '';
-                                availableText.textContent = '(' + max + ' disponibles)';
-                            }
-
-                            toggleBtn.addEventListener('click', function() {
-                                var isOpen = container.style.display === 'flex' || container.style.display === 'block';
-                                container.style.display = isOpen ? 'none' : 'flex';
-                                if (!isOpen) {
-                                    // show -> focus input
-                                    qtyInput.focus();
-                                    // select text for quick typing on mobile
-                                    try { qtyInput.select(); } catch (e) {}
-                                }
-                            });
-
-                            // Quantity control logic
-                            minusBtn && minusBtn.addEventListener('click', function() {
-                                var val = parseInt(qtyInput.value) || 1;
-                                if (val > 1) {
-                                    qtyInput.value = val - 1;
-                                    updateToggleText();
-                                }
-                            });
-                            plusBtn && plusBtn.addEventListener('click', function() {
-                                var val = parseInt(qtyInput.value) || 1;
-                                if (val < max) {
-                                    qtyInput.value = val + 1;
-                                    updateToggleText();
-                                }
-                            });
-                            qtyInput.addEventListener('input', function() {
-                                var val = parseInt(qtyInput.value) || 1;
-                                if (val < 1) val = 1;
-                                if (val > max) val = max;
-                                qtyInput.value = val;
-                                updateToggleText();
-                            });
-
-                            // prevent mouse wheel changing number on focused input
-                            qtyInput.addEventListener('wheel', function(e){ e.preventDefault(); });
-
-                            // initialize
-                            updateToggleText();
-
-                            // Update hidden cart inputs when forms submit
+                            var cartQty = document.getElementById('cart-qty');
+                            var buyQty = document.getElementById('buy-qty');
                             var addToCartForm = document.getElementById('add-to-cart-form-mobile');
                             var buyNowForm = document.getElementById('buy-now-form-mobile');
+                
+                            function syncQtyInputs() {
+                                if (cartQty) cartQty.value = qtyInput.value;
+                                if (buyQty) buyQty.value = qtyInput.value;
+                            }
+                
+                            if (minusBtn && qtyInput) {
+                                minusBtn.addEventListener('click', function() {
+                                    var val = parseInt(qtyInput.value) || 1;
+                                    if (val > 1) qtyInput.value = val - 1;
+                                    syncQtyInputs();
+                                });
+                            }
+                            if (plusBtn && qtyInput) {
+                                plusBtn.addEventListener('click', function() {
+                                    var max = parseInt(qtyInput.getAttribute('max')) || 9999;
+                                    var val = parseInt(qtyInput.value) || 1;
+                                    if (val < max) qtyInput.value = val + 1;
+                                    syncQtyInputs();
+                                });
+                            }
+                            if (qtyInput) {
+                                qtyInput.addEventListener('input', function() {
+                                    var max = parseInt(qtyInput.getAttribute('max')) || 9999;
+                                    var val = parseInt(qtyInput.value) || 1;
+                                    if (val < 1) val = 1;
+                                    if (val > max) val = max;
+                                    qtyInput.value = val;
+                                    syncQtyInputs();
+                                });
+                            }
                             if (addToCartForm) {
                                 addToCartForm.addEventListener('submit', function() {
-                                    var cartQty = document.getElementById('cart-qty');
-                                    if (cartQty) cartQty.value = qtyInput.value;
+                                    syncQtyInputs();
                                 });
                             }
                             if (buyNowForm) {
                                 buyNowForm.addEventListener('submit', function() {
-                                    var buyQty = document.getElementById('buy-qty');
-                                    if (buyQty) buyQty.value = qtyInput.value;
+                                    syncQtyInputs();
                                 });
                             }
                         });
