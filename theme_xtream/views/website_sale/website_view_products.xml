@@ -1688,7 +1688,6 @@
                         </span>
                         <span class="float-end">&gt;</span>
                     </button>
-
                     <div id="mobile-qty-container"
                         style="display:none; margin-top:8px; align-items:center;">
                         <div
@@ -1715,7 +1714,7 @@
                         document.addEventListener('DOMContentLoaded', function() {
                             // Solo ejecutar en móvil (menos de 768px)
                             if (window.innerWidth >= 768) return;
-                        
+
                             var toggleBtn = document.getElementById('qty-toggle-btn');
                             var container = document.getElementById('mobile-qty-container');
                             var qtyInput = document.getElementById('qty-input-mobile');
@@ -1723,16 +1722,16 @@
                             var plusBtn = document.getElementById('qty-plus-mobile');
                             var toggleValue = document.getElementById('qty-toggle-value');
                             var availableText = document.getElementById('qty-available-text');
-                        
+
                             if (!toggleBtn || !container || !qtyInput) return;
-                        
+
                             var max = parseInt(qtyInput.getAttribute('max')) || 9999;
-                        
+
                             function updateToggleText() {
                                 toggleValue.textContent = qtyInput.value;
                                 availableText.textContent = '(' + max + ' disponibles)';
                             }
-                        
+
                             toggleBtn.addEventListener('click', function() {
                                 var isOpen = container.style.display === 'flex' || container.style.display === 'block';
                                 container.style.display = isOpen ? 'none' : 'flex';
@@ -1741,7 +1740,7 @@
                                     try { qtyInput.select(); } catch (e) {}
                                 }
                             });
-                        
+
                             minusBtn && minusBtn.addEventListener('click', function() {
                                 var val = parseInt(qtyInput.value, 10) || 1;
                                 if (val > 1) {
@@ -1763,9 +1762,9 @@
                                 qtyInput.value = val;
                                 updateToggleText();
                             });
-                        
+
                             qtyInput.addEventListener('wheel', function(e){ e.preventDefault(); });
-                        
+
                             updateToggleText();
                         });
                     ]]></script>
@@ -1809,7 +1808,7 @@
                     <button type="submit"
                         class="btn w-100 mb-2"
                         style="height:48px; border-radius:8px; background:#2979ff; color:#fff; border:none; font-weight:600; font-family:inherit; letter-spacing:0.5px;"
-                        onclick="document.getElementById('cart-qty').value = (document.getElementById('qty-input') &amp;&amp; document.getElementById('qty-input').value) ? document.getElementById('qty-input').value : 1;">
+                        onclick="document.getElementById('cart-qty').value = (document.getElementById('qty-input-mobile') && document.getElementById('qty-input-mobile').value) ? document.getElementById('qty-input-mobile').value : 1;">
                         <span style="font-size:16px; font-weight:600;">Agregar al carrito</span>
                     </button>
                 </form>
@@ -1825,7 +1824,7 @@
                         class="btn w-100"
                         id="buy-now-btn-mobile"
                         style="height:48px; border-radius:8px; background:#82b1ff; color:#1757e6; border:none; font-weight:600; font-family:inherit; letter-spacing:0.5px;"
-                        onclick="document.getElementById('buy-qty').value = (document.getElementById('qty-input') &amp;&amp; document.getElementById('qty-input').value) ? document.getElementById('qty-input').value : 1;">
+                        onclick="document.getElementById('buy-qty').value = (document.getElementById('qty-input-mobile') && document.getElementById('qty-input-mobile').value) ? document.getElementById('qty-input-mobile').value : 1;">
                         <span style="font-size:16px; font-weight:600;">Comprar</span>
                     </button>
                 </form>
