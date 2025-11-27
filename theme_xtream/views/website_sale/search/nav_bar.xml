@@ -222,22 +222,28 @@
                                     searchResults.innerHTML = '';
                                     if (data.results && data.results.length) {
                                         searchResults.style.display = 'block';
-                                        data.results.slice(0, 7).forEach(result => {
-                                            const truncatedName = result.name.length > 10 ? result.name.substring(0, 10) + '...' : result.name;
-                                            const item = document.createElement('a');
+                                        var seenIds = new Set();
+                                        data.results.slice(0, 7).forEach(function(result) {
+                                            var name = result.name || '';
+                                            // Evitar duplicados si la API devuelve repetidos y proteger contra name indefinido
+                                            if (result.id && seenIds.has(result.id)) return;
+                                            if (result.id) seenIds.add(result.id);
+
+                                            var truncatedName = name.length > 30 ? name.substring(0, 30) + '...' : name;
+                                            var item = document.createElement('a');
                                             item.className = 'dropdown-item d-flex align-items-center';
                                             item.href = result.url || '#';
-                                            item.title = result.name;
-                                            const imgSrc = result.image || '/theme_xtream/static/src/img/placeholder.png';
-                                            item.innerHTML = `
-                                                <img src="${imgSrc}" alt="${truncatedName}" style="width:32px;height:32px;object-fit:contain;margin-right:10px;"/>
-                                                <div style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:120px;">${truncatedName}</div>
-                                            `;
+                                            item.title = name || 'Producto';
+                                            var imgSrc = result.image || '/theme_xtream/static/src/img/placeholder.png';
+                                            var imgAlt = name || 'Producto';
+                                            // Usar concatenación para evitar posibles conflictos con plantillas en XML/CDATA
+                                            item.innerHTML = '<img src="' + imgSrc + '" alt="' + imgAlt + '" style="width:32px;height:32px;object-fit:contain;margin-right:10px;"/>' +
+                                                             '<div style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:120px;">' + truncatedName + '</div>';
                                             searchResults.appendChild(item);
                                         });
-                                        const allResultsLink = document.createElement('a');
+                                        var allResultsLink = document.createElement('a');
                                         allResultsLink.className = 'dropdown-item text-center';
-                                        allResultsLink.href = `/subcategory?search=${encodeURIComponent(query)}`;
+                                        allResultsLink.href = '/subcategory?search=' + encodeURIComponent(query);
                                         allResultsLink.textContent = 'Ver todos los resultados';
                                         allResultsLink.style.padding = '8px 0';
                                         searchResults.appendChild(allResultsLink);
