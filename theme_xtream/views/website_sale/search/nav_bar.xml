@@ -188,14 +188,89 @@
                             <i class="fa fa-times"></i>
                         </button>
                     </div>
+                    <!-- ...existing code... -->
                     <ul class="list-unstyled px-3 py-2">
-                        <li><a href="/category" class="d-block py-2 text-dark"><i class="fa fa-list me-2"></i> Categorías</a></li>
+                        <li>
+                            <a href="#" class="d-block py-2 text-dark" id="mobileCategoriesBtn">
+                                <i class="fa fa-list me-2"></i> Categorías
+                                <i class="fa fa-chevron-down float-end"></i>
+                            </a>
+                            <ul id="mobileCategoriesMenu" class="ps-3" style="display:none;">
+                                <t t-set="parent_categories" t-value="request.env['product.category'].search([('parent_id', '=', False)])"/>
+                                <t t-foreach="parent_categories" t-as="category">
+                                    <li>
+                                        <a href="#" class="d-block py-2 text-dark mobile-parent-cat" t-att-data-cat-id="category.id">
+                                            <t t-esc="category.name"/>
+                                            <t t-if="category.child_id">
+                                                <i class="fa fa-chevron-right float-end"></i>
+                                            </t>
+                                        </a>
+                                        <t t-if="category.child_id">
+                                            <ul class="ps-3 mobile-subcat-list" style="display:none;" t-att-id="'mobileSubcat'+str(category.id)">
+                                                <t t-foreach="category.child_id" t-as="subcat">
+                                                    <li>
+                                                        <a href="#" class="d-block py-2 text-dark mobile-child-cat" t-att-data-cat-id="subcat.id">
+                                                            <t t-esc="subcat.name"/>
+                                                            <t t-if="subcat.child_id">
+                                                                <i class="fa fa-chevron-right float-end"></i>
+                                                            </t>
+                                                        </a>
+                                                        <t t-if="subcat.child_id">
+                                                            <ul class="ps-3 mobile-subsubcat-list" style="display:none;" t-att-id="'mobileSubsubcat'+str(subcat.id)">
+                                                                <t t-foreach="subcat.child_id" t-as="subsubcat">
+                                                                    <li>
+                                                                        <a href="/subcategory?category_id=<t t-esc="subsubcat.id"/>" class="d-block py-2 text-dark">
+                                                                            <t t-esc="subsubcat.name"/>
+                                                                        </a>
+                                                                    </li>
+                                                                </t>
+                                                            </ul>
+                                                        </t>
+                                                    </li>
+                                                </t>
+                                            </ul>
+                                        </t>
+                                    </li>
+                                </t>
+                            </ul>
+                        </li>
                         <li><a href="/offers" class="d-block py-2 text-dark"><i class="fa fa-tags me-2"></i> Ofertas</a></li>
                         <li><a href="/brand" class="d-block py-2 text-dark"><i class="fa fa-star me-2"></i> Marcas</a></li>
                         <li><a href="/shop/history" class="d-block py-2 text-dark"><i class="fa fa-history me-2"></i> Historial</a></li>
                         <li><a href="/about" class="d-block py-2 text-dark"><i class="fa fa-info-circle me-2"></i> Sobre Nosotros</a></li>
                         <li><a href="/my" class="d-block py-2 text-dark"><i class="fa fa-user me-2"></i> Perfil de Usuario</a></li>
                     </ul>
+                    <!-- ...existing code... -->
+                    <script>
+                        <![CDATA[
+                        document.addEventListener('DOMContentLoaded', function() {
+                            // ...existing code...
+                            var catBtn = document.getElementById('mobileCategoriesBtn');
+                            var catMenu = document.getElementById('mobileCategoriesMenu');
+                            if (catBtn && catMenu) {
+                                catBtn.addEventListener('click', function(e){
+                                    e.preventDefault();
+                                    catMenu.style.display = catMenu.style.display === 'none' ? 'block' : 'none';
+                                });
+                            }
+                            document.querySelectorAll('.mobile-parent-cat').forEach(function(el){
+                                el.addEventListener('click', function(e){
+                                    e.preventDefault();
+                                    var subMenu = document.getElementById('mobileSubcat'+el.dataset.catId);
+                                    if (subMenu) subMenu.style.display = subMenu.style.display === 'none' ? 'block' : 'none';
+                                });
+                            });
+                            document.querySelectorAll('.mobile-child-cat').forEach(function(el){
+                                el.addEventListener('click', function(e){
+                                    e.preventDefault();
+                                    var subMenu = document.getElementById('mobileSubsubcat'+el.dataset.catId);
+                                    if (subMenu) subMenu.style.display = subMenu.style.display === 'none' ? 'block' : 'none';
+                                });
+                            });
+                        });
+                        ]]>
+                    </script>
+                    <!-- ...existing code... -->
                 </aside>
                 <!-- ...existing code... -->
                 <script>
