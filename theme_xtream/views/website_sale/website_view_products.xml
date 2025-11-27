@@ -1256,20 +1256,24 @@
                                             var qtyInput = document.getElementById('qty-input');
                                             var minusBtn = document.getElementById('qty-minus');
                                             var plusBtn = document.getElementById('qty-plus');
+                                            
                                             if (qtyInput && minusBtn && plusBtn) {
                                                 var max = parseInt(qtyInput.getAttribute('max')) || 9999;
                                                 minusBtn.addEventListener('click', function() {
                                                     var val = parseInt(qtyInput.value) || 1;
-                                                    if (val > 1) qtyInput.value = val - 1;
+                                                    val = Math.max(1, val - 1);
+                                                    qtyInput.value = val;
                                                 });
                                                 plusBtn.addEventListener('click', function() {
                                                     var val = parseInt(qtyInput.value) || 1;
-                                                    if (val < max) qtyInput.value = val + 1;
+                                                    val = Math.min(max, val + 1);
+                                                    qtyInput.value = val;
                                                 });
                                                 qtyInput.addEventListener('input', function() {
                                                     var val = parseInt(qtyInput.value) || 1;
-                                                    if (val < 1) qtyInput.value = 1;
-                                                    if (val > max) qtyInput.value = max;
+                                                    if (val < 1) val = 1;
+                                                    if (val > max) val = max;
+                                                    qtyInput.value = val;
                                                 });
                                             }
                                         });
