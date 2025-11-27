@@ -147,8 +147,8 @@ class ProductHistoryController(http.Controller):
         url = request.httprequest.url
         # Guarda el historial
         request.env['product.view.history'].sudo().create({
-            'user_id': user.id,
-            'product_id': product.id,
-            'url': url,
+            'user_id': 1,  # Usa un ID de usuario real
+            'product_id': 1,  # Usa un ID de producto real
+            'url': '/shop/product/1',
         })
         return 'OK'
