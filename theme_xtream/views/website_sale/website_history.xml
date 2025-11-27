@@ -5,47 +5,46 @@
                 <div class="container mt-4">
                     <div class="row">
                         <div class="col-8">
-                            <h2 style="font-family: 'Questrial', sans-serif; font-size: 25px;">Historial</h2>
+                            <!-- Desktop -->
+                            <h2 class="d-none d-md-block" style="font-family: 'Questrial', sans-serif; font-size: 25px; margin-bottom: 0;">
+                                Historial
+                            </h2>
                         </div>
                     </div>
                     
                     <!-- Navegación móvil para meses -->
-                    <div class="d-block d-md-none mb-4">
-                        <div class="dropdown">
-                            <button class="btn btn-outline-primary dropdown-toggle w-100" type="button" id="monthSelector" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fa fa-calendar me-2"></i>
-                                <t t-if="current_filter">
-                                    <t t-esc="current_filter" />
-                                </t>
-                                <t t-else="">
-                                    Seleccionar período
-                                </t>
-                            </button>
-                            <ul class="dropdown-menu w-100" aria-labelledby="monthSelector">
-                                <!-- Opción para mostrar todos -->
-                                <li>
-                                    <a class="dropdown-item" href="/shop/history">
-                                        Todos los períodos
+                    <div class="d-block d-md-none mb-2">
+                        <div class="row align-items-center">
+                            <div class="col-6">
+                                <span style="font-size: 1.1rem; color: #222; font-weight: 500;">Tu historial</span>
+                            </div>
+                            <div class="col-6 text-end">
+                                <div class="dropdown">
+                                    <a class="text-primary" href="#" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 1rem; font-weight: 500;">
+                                        Administrar
                                     </a>
-                                </li>
-                                <li><hr class="dropdown-divider" /></li>
-                                
-                                <!-- Lista de períodos disponibles -->
-                                <t t-if="available_periods">
-                                    <t t-foreach="available_periods" t-as="period">
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">
                                         <li>
-                                            <a class="dropdown-item" 
-                                               t-att-href="'/shop/history/' + str(period)"
-                                               t-att-class="'dropdown-item' + (' active' if current_filter == period else '')">
-                                                <t t-esc="period" />
-                                                <t t-if="grouped_history.get(period)">
-                                                    <span class="text-muted ms-2">(<t t-esc="len(grouped_history[period])" />)</span>
-                                                </t>
-                                            </a>
+                                            <a class="dropdown-item" href="/shop/history">Todos los períodos</a>
                                         </li>
-                                    </t>
-                                </t>
-                            </ul>
+                                        <li><hr class="dropdown-divider" /></li>
+                                        <t t-if="available_periods">
+                                            <t t-foreach="available_periods" t-as="period">
+                                                <li>
+                                                    <a class="dropdown-item"
+                                                       t-att-href="'/shop/history/' + str(period)"
+                                                       t-att-class="'dropdown-item' + (' active' if current_filter == period else '')">
+                                                        <t t-esc="period" />
+                                                        <t t-if="grouped_history.get(period)">
+                                                            <span class="text-muted ms-2">(<t t-esc="len(grouped_history[period])" />)</span>
+                                                        </t>
+                                                    </a>
+                                                </li>
+                                            </t>
+                                        </t>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
