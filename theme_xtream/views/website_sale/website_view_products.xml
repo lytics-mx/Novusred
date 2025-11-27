@@ -1742,49 +1742,16 @@
                             var qtyInput = document.getElementById('qty-input');
                             var minusBtn = document.getElementById('qty-minus');
                             var plusBtn = document.getElementById('qty-plus');
-                            var cartQty = document.getElementById('cart-qty');
-                            var buyQty = document.getElementById('buy-qty');
-                            var addToCartForm = document.getElementById('add-to-cart-form-mobile');
-                            var buyNowForm = document.getElementById('buy-now-form-mobile');
                             var toggleValue = document.getElementById('qty-toggle-value');
                             var availableText = document.getElementById('qty-available-text');
 
-                            function syncQtyInputs() {
-                                if (cartQty) cartQty.value = qtyInput.value;
-                                if (buyQty) buyQty.value = qtyInput.value;
-                            }
-
                             if (!toggleBtn || !container || !qtyInput) return;
+
                             var max = parseInt(qtyInput.getAttribute('max')) || 9999;
 
-                            if (minusBtn && qtyInput) {
-                                minusBtn.addEventListener('click', function() {
-                                    var val = parseInt(qtyInput.value) || 1;
-                                    if (val > 1) qtyInput.value = val - 1;
-                                    syncQtyInputs();
-                                });
-                            }
-                            if (plusBtn && qtyInput) {
-                                plusBtn.addEventListener('click', function() {
-                                    var max = parseInt(qtyInput.getAttribute('max')) || 9999;
-                                    var val = parseInt(qtyInput.value) || 1;
-                                    if (val < max) qtyInput.value = val + 1;
-                                    syncQtyInputs();
-                                });
-                            }
-                            if (qtyInput) {
-                                qtyInput.addEventListener('input', function() {
-                                    var max = parseInt(qtyInput.getAttribute('max')) || 9999;
-                                    var val = parseInt(qtyInput.value) || 1;
-                                    if (val < 1) val = 1;
-                                    if (val > max) val = max;
-                                    qtyInput.value = val;
-                                    syncQtyInputs();
-                                });
-                                qtyInput.addEventListener('wheel', function(e){ e.preventDefault(); });                            var max = parseInt(qtyInput.getAttribute('max')) || 9999;
-
                             function updateToggleText() {
-                                toggleValue.textContent = qtyInput.value;
+                                // Always hide the selected quantity number and show only available stock
+                                toggleValue.textContent = '';
                                 availableText.textContent = '(' + max + ' disponibles)';
                             }
 
@@ -1833,36 +1800,16 @@
                             var buyNowForm = document.getElementById('buy-now-form-mobile');
                             if (addToCartForm) {
                                 addToCartForm.addEventListener('submit', function() {
-                                    syncQtyInputs();
-
                                     var cartQty = document.getElementById('cart-qty');
                                     if (cartQty) cartQty.value = qtyInput.value;
                                 });
                             }
                             if (buyNowForm) {
                                 buyNowForm.addEventListener('submit', function() {
-                                    syncQtyInputs();
                                     var buyQty = document.getElementById('buy-qty');
                                     if (buyQty) buyQty.value = qtyInput.value;
                                 });
                             }
-                            // Toggle quantity selector for mobile
-                            if (toggleBtn && container && qtyInput) {
-                                var max = parseInt(qtyInput.getAttribute('max')) || 9999;
-                                function updateToggleText() {
-                                    toggleValue.textContent = '';
-                                    availableText.textContent = '(' + max + ' disponibles)';
-                                }
-                                toggleBtn.addEventListener('click', function() {
-                                    var isOpen = container.style.display === 'flex' || container.style.display === 'block';
-                                    container.style.display = isOpen ? 'none' : 'flex';
-                                    if (!isOpen) {
-                                        qtyInput.focus();
-                                        try { qtyInput.select(); } catch (e) {}
-                                    }
-                                });
-                                updateToggleText();
-                            }                                
                         });
                     ]]></script>
                 </t>
