@@ -1713,9 +1713,8 @@
                 <t t-jquery="body" t-operation="append">
                     <script type="text/javascript"><![CDATA[
                         document.addEventListener('DOMContentLoaded', function() {
-                            // Solo ejecutar en móvil (menos de 768px)
                             if (window.innerWidth >= 768) return;
-
+                        
                             var toggleBtn = document.getElementById('qty-toggle-btn');
                             var container = document.getElementById('mobile-qty-container');
                             var qtyInput = document.getElementById('qty-input-mobile');
@@ -1723,16 +1722,21 @@
                             var plusBtn = document.getElementById('qty-plus-mobile');
                             var toggleValue = document.getElementById('qty-toggle-value');
                             var availableText = document.getElementById('qty-available-text');
-
+                        
+                            var cartQty = document.getElementById('cart-qty');
+                            var buyQty = document.getElementById('buy-qty');
+                            var addToCartForm = document.getElementById('add-to-cart-form-mobile');
+                            var buyNowForm = document.getElementById('buy-now-form-mobile');
+                        
                             if (!toggleBtn || !container || !qtyInput) return;
-
+                        
                             var max = parseInt(qtyInput.getAttribute('max')) || 9999;
-
+                        
                             function updateToggleText() {
                                 toggleValue.textContent = qtyInput.value;
                                 availableText.textContent = '(' + max + ' disponibles)';
                             }
-
+                        
                             toggleBtn.addEventListener('click', function() {
                                 var isOpen = container.style.display === 'flex' || container.style.display === 'block';
                                 container.style.display = isOpen ? 'none' : 'flex';
@@ -1741,7 +1745,7 @@
                                     try { qtyInput.select(); } catch (e) {}
                                 }
                             });
-
+                        
                             minusBtn && minusBtn.addEventListener('click', function() {
                                 var val = parseInt(qtyInput.value, 10) || 1;
                                 if (val > 1) {
@@ -1763,9 +1767,21 @@
                                 qtyInput.value = val;
                                 updateToggleText();
                             });
-
+                        
                             qtyInput.addEventListener('wheel', function(e){ e.preventDefault(); });
-
+                        
+                            // Actualiza el input oculto antes de enviar el formulario
+                            if (addToCartForm) {
+                                addToCartForm.addEventListener('submit', function() {
+                                    if (cartQty) cartQty.value = qtyInput.value;
+                                });
+                            }
+                            if (buyNowForm) {
+                                buyNowForm.addEventListener('submit', function() {
+                                    if (buyQty) buyQty.value = qtyInput.value;
+                                });
+                            }
+                        
                             updateToggleText();
                         });
                     ]]></script>
