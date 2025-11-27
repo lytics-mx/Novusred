@@ -1734,6 +1734,7 @@
                     </style>
                 </t>
 
+                <!-- ...existing code... -->
                 <t t-jquery="body" t-operation="append">
                     <script type="text/javascript"><![CDATA[
                         document.addEventListener('DOMContentLoaded', function() {
@@ -1744,12 +1745,16 @@
                             var buyQty = document.getElementById('buy-qty');
                             var addToCartForm = document.getElementById('add-to-cart-form-mobile');
                             var buyNowForm = document.getElementById('buy-now-form-mobile');
-                
+                            var toggleBtn = document.getElementById('qty-toggle-btn');
+                            var container = document.getElementById('mobile-qty-container');
+                            var toggleValue = document.getElementById('qty-toggle-value');
+                            var availableText = document.getElementById('qty-available-text');
+
                             function syncQtyInputs() {
                                 if (cartQty) cartQty.value = qtyInput.value;
                                 if (buyQty) buyQty.value = qtyInput.value;
                             }
-                
+
                             if (minusBtn && qtyInput) {
                                 minusBtn.addEventListener('click', function() {
                                     var val = parseInt(qtyInput.value) || 1;
@@ -1774,6 +1779,7 @@
                                     qtyInput.value = val;
                                     syncQtyInputs();
                                 });
+                                qtyInput.addEventListener('wheel', function(e){ e.preventDefault(); });
                             }
                             if (addToCartForm) {
                                 addToCartForm.addEventListener('submit', function() {
@@ -1785,9 +1791,28 @@
                                     syncQtyInputs();
                                 });
                             }
+
+                            // Toggle quantity selector for mobile
+                            if (toggleBtn && container && qtyInput) {
+                                var max = parseInt(qtyInput.getAttribute('max')) || 9999;
+                                function updateToggleText() {
+                                    toggleValue.textContent = '';
+                                    availableText.textContent = '(' + max + ' disponibles)';
+                                }
+                                toggleBtn.addEventListener('click', function() {
+                                    var isOpen = container.style.display === 'flex' || container.style.display === 'block';
+                                    container.style.display = isOpen ? 'none' : 'flex';
+                                    if (!isOpen) {
+                                        qtyInput.focus();
+                                        try { qtyInput.select(); } catch (e) {}
+                                    }
+                                });
+                                updateToggleText();
+                            }
                         });
                     ]]></script>
                 </t>
+                <!-- ...existing code... -->
                 <!-- Métodos de pago -->
                 <div style="font-size:13px; color:#888;">Puedes pagar con:</div>
                 <div class="d-flex flex-wrap align-items-center mb-3" style="gap:8px;">
