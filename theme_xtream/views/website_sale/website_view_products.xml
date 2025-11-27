@@ -1257,8 +1257,9 @@
                                             var minusBtn = document.getElementById('qty-minus');
                                             var plusBtn = document.getElementById('qty-plus');
                                             if (qtyInput && minusBtn && plusBtn) {
-                                                var max = parseInt(qtyInput.getAttribute('max')) || 0;                                                minusBtn.addEventListener('click', function() {
-                                                    var val = parseInt(qtyInput.value) || 1;
+                                                var max = parseInt(qtyInput.getAttribute('max')) || 0;                                                                                               
+                                                minusBtn.addEventListener('click', function() {                                                   
+                                                var val = parseInt(qtyInput.value) || 1;
                                                     if (val > 1) qtyInput.value = val - 1;
                                                 });
                                                 plusBtn.addEventListener('click', function() {
@@ -1267,8 +1268,26 @@
                                                 });
                                                 qtyInput.addEventListener('input', function() {
                                                     var val = parseInt(qtyInput.value) || 1;
-                                                    if (val < 1) qtyInput.value = 1;
-                                                    if (val > max) qtyInput.value = max;
+                                                    if (val < 1) val = 1;
+                                                    if (val > max) val = max;
+                                                    qtyInput.value = val;
+                                                    updateToggleText();
+                                                });
+                                                
+                                                minusBtn && minusBtn.addEventListener('click', function() {
+                                                    var val = parseInt(qtyInput.value) || 1;
+                                                    if (val > 1) {
+                                                        qtyInput.value = val - 1;
+                                                        updateToggleText();
+                                                    }
+                                                });
+                                                
+                                                plusBtn && plusBtn.addEventListener('click', function() {
+                                                    var val = parseInt(qtyInput.value) || 1;
+                                                    if (val < max) {
+                                                        qtyInput.value = val + 1;
+                                                        updateToggleText();
+                                                    }
                                                 });
                                             }
                                         });
@@ -1785,6 +1804,22 @@
                                 if (val > max) val = max;
                                 qtyInput.value = val;
                                 updateToggleText();
+                            });
+                            
+                            minusBtn && minusBtn.addEventListener('click', function() {
+                                var val = parseInt(qtyInput.value) || 1;
+                                if (val > 1) {
+                                    qtyInput.value = val - 1;
+                                    updateToggleText();
+                                }
+                            });
+                            
+                            plusBtn && plusBtn.addEventListener('click', function() {
+                                var val = parseInt(qtyInput.value) || 1;
+                                if (val < max) {
+                                    qtyInput.value = val + 1;
+                                    updateToggleText();
+                                }
                             });
 
                             // prevent mouse wheel changing number on focused input
