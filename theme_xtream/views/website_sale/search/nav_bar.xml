@@ -168,18 +168,89 @@
                 <!-- Solo visible en móvil -->
                 <!-- ...existing code... -->
                 <!-- NAVBAR SOLO PARA MOVIL -->
-                <nav class="mobile-navbar d-flex d-lg-none align-items-center px-3 py-2"
-                    style="background:#fff; height:56px; box-shadow:0 2px 12px 0 rgba(0,0,0,0.10);">                    
-                    <button id="mobileMenuBtn" style="background:none; border:none; font-size:28px; color:#EDEDED;">
-                        <i class="fa fa-bars"></i>
-                    </button>
-                    <a href="/" class="ms-3">
-                        <img src="/theme_xtream/static/src/img/logos/logo.png" alt="Logo" style="height:36px;" />                    
-                    </a>
-                    <a href="/shop/cart" class="ms-auto" style="color:#EDEDED; font-size:24px;">
-                        <i class="fa fa-shopping-cart"></i>
-                    </a>
-                </nav>
+            <nav class="mobile-navbar d-flex d-lg-none align-items-center px-3 py-2"
+                style="background:#fff; height:56px; box-shadow:0 2px 12px 0 rgba(0,0,0,0.10);">
+                <!-- Logo -->
+                <a href="/" class="me-2">
+                    <img src="/theme_xtream/static/src/img/home/logomobil.png" alt="Logo" style="height:36px;" />
+                </a>
+                <!-- Buscador -->
+                <form class="flex-grow-1 mx-2" action="/search_redirect" method="get" style="max-width: 100%;">
+                    <div class="input-group w-100" style="height:36px;">
+                        <input type="search" name="search" id="searchInputMobile" class="form-control"
+                            placeholder="Buscar productos, marcas o categorías..." aria-label="Buscar"
+                            style="border-radius: 20px; font-size: 14px; height: 36px;" autocomplete="off"/>
+                        <input type="hidden" name="search_type" value="all"/>
+                        <div id="searchResultsMobile" class="dropdown-menu" style="display: none; position: absolute; z-index: 1000; width: 100%; top: 100%; left: 0; background-color: white; border: 1px solid #ccc; padding: 10px;"></div>
+                        <button class="btn btn-outline-secondary" type="submit"
+                            style="border-radius: 20px; height: 36px;">
+                            <i class="fa fa-search" style="color:#888;"></i>
+                        </button>
+                    </div>
+                </form>
+                <!-- Menú y carrito -->
+                <button id="mobileMenuBtn" style="background:none; border:none; font-size:28px; color:#888; margin-left:8px;">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <a href="/shop/cart" class="ms-2" style="color:#888; font-size:24px;">
+                    <i class="fa fa-shopping-cart"></i>
+                </a>
+            </nav>
+                <script><![CDATA[
+                    // Buscador móvil (igual lógica que desktop)
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const searchInput = document.getElementById('searchInputMobile');
+                        const searchResults = document.getElementById('searchResultsMobile');
+                        if (searchInput && searchResults) {
+                            let lastQuery = '';
+                            searchInput.addEventListener('input', function() {
+                                const query = searchInput.value.trim();
+                                if (query.length === 0) {
+                                    searchResults.style.display = 'none';
+                                    searchResults.innerHTML = '';
+                                    return;
+                                }
+                                if (query === lastQuery) return;
+                                lastQuery = query;
+                                fetch(`/search_live?query=${encodeURIComponent(query)}`)
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        searchResults.innerHTML = '';
+                                        if (data.results && data.results.length) {
+                                            searchResults.style.display = 'block';
+                                            data.results.slice(0, 7).forEach(result => {
+                                                const truncatedName = result.name.length > 80 ? result.name.substring(0, 80) + '...' : result.name;
+                                                const item = document.createElement('a');
+                                                item.className = 'dropdown-item d-flex align-items-center';
+                                                item.href = result.url || '#';
+                                                const imgSrc = result.image || '/theme_xtream/static/src/img/placeholder.png';
+                                                item.innerHTML = `
+                                                    <img src="${imgSrc}" alt="${truncatedName}" style="width:40px;height:40px;object-fit:contain;margin-right:10px;"/>
+                                                    <div style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">${truncatedName}</div>
+                                                `;
+                                                searchResults.appendChild(item);
+                                            });
+                                            const allResultsLink = document.createElement('a');
+                                            allResultsLink.className = 'dropdown-item text-center';
+                                            allResultsLink.href = `/subcategory?search=${encodeURIComponent(query)}`;
+                                            allResultsLink.textContent = 'Ver todos los resultados';
+                                            searchResults.appendChild(allResultsLink);
+                                        } else {
+                                            searchResults.style.display = 'none';
+                                        }
+                                    })
+                                    .catch(() => {
+                                        searchResults.style.display = 'none';
+                                    });
+                            });
+                            document.addEventListener('click', function(e) {
+                                if (!searchResults.contains(e.target) && e.target !== searchInput) {
+                                    setTimeout(() => { searchResults.style.display = 'none'; }, 150);
+                                }
+                            });
+                        }
+                    });
+                ]]></script>
                 <!-- Menú lateral móvil -->
                 <div id="mobileSideMenuBackdrop" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:1049;"></div>
                 <aside id="mobileSideMenu" style="display:none; position:fixed; top:0; left:0; width:80vw; max-width:320px; height:100vh; background:#fff; z-index:1050; box-shadow:2px 0 12px rgba(0,0,0,0.15); transform:translateX(-100%); transition:transform 0.3s; overflow-y:auto;">        
