@@ -1691,15 +1691,14 @@
                         <span class="float-end">&gt;</span>
                     </button>
 
-                    <!-- Reemplaza los IDs en el selector de cantidad móvil -->
                     <div id="mobile-qty-container"
                         style="display:none; margin-top:8px; align-items:center;">
                         <div
                             style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px;">
-                            <button type="button" class="btn" id="qty-minus-mobile"
+                            <button type="button" class="btn" id="qty-minus"
                                 style="min-width:36px; height:36px; font-size:20px; padding:0; background:transparent; border:1px solid #e0e0e0; color:#222; border-radius:6px;">
                                 -</button>
-                            <input id="qty-input-mobile" type="number" name="add_qty" value="1" min="1"
+                            <input id="qty-input" type="number" name="add_qty" value="1" min="1"
                                 t-att-max="product.qty_available"
                                 class="form-control text-center"
                                 style="width:3.5em; min-width:48px; max-width:4.5em; padding:0 4px; border:1px solid #e0e0e0; box-shadow:none; background:transparent; outline:none; font-size:16px; border-radius:6px;"
@@ -1707,56 +1706,11 @@
                                 inputmode="numeric"
                                 maxlength="4"
                             />
-                            <button type="button" class="btn" id="qty-plus-mobile"
+                            <button type="button" class="btn" id="qty-plus"
                                 style="min-width:36px; height:36px; font-size:20px; padding:0; background:transparent; border:1px solid #e0e0e0; color:#222; border-radius:6px;">
                                 +</button>
                         </div>
                     </div>
-                    
-                    <!-- Agrega este script al final del body o usando t-jquery="body" t-operation="append" -->
-                    <t t-jquery="body" t-operation="append">
-                        <script type="text/javascript"><![CDATA[
-                            document.addEventListener('DOMContentLoaded', function() {
-                                var qtyInput = document.getElementById('qty-input-mobile');
-                                var minusBtn = document.getElementById('qty-minus-mobile');
-                                var plusBtn = document.getElementById('qty-plus-mobile');
-                                var cartQty = document.getElementById('cart-qty');
-                                var buyQty = document.getElementById('buy-qty');
-                    
-                                function syncQtyInputs() {
-                                    if (cartQty) cartQty.value = qtyInput.value;
-                                    if (buyQty) buyQty.value = qtyInput.value;
-                                }
-                    
-                                if (minusBtn && qtyInput) {
-                                    minusBtn.addEventListener('click', function() {
-                                        var val = parseInt(qtyInput.value) || 1;
-                                        if (val > 1) qtyInput.value = val - 1;
-                                        syncQtyInputs();
-                                    });
-                                }
-                                if (plusBtn && qtyInput) {
-                                    plusBtn.addEventListener('click', function() {
-                                        var max = parseInt(qtyInput.getAttribute('max')) || 9999;
-                                        var val = parseInt(qtyInput.value) || 1;
-                                        if (val < max) qtyInput.value = val + 1;
-                                        syncQtyInputs();
-                                    });
-                                }
-                                if (qtyInput) {
-                                    qtyInput.addEventListener('input', function() {
-                                        var max = parseInt(qtyInput.getAttribute('max')) || 9999;
-                                        var val = parseInt(qtyInput.value) || 1;
-                                        if (val < 1) val = 1;
-                                        if (val > max) val = max;
-                                        qtyInput.value = val;
-                                        syncQtyInputs();
-                                    });
-                                    qtyInput.addEventListener('wheel', function(e){ e.preventDefault(); });
-                                }
-                            });
-                        ]]></script>
-                    </t>
                 </div>
 
                 <t t-jquery="body" t-operation="append">
@@ -1876,11 +1830,11 @@
                     <button type="submit"
                         class="btn w-100 mb-2"
                         style="height:48px; border-radius:8px; background:#2979ff; color:#fff; border:none; font-weight:600; font-family:inherit; letter-spacing:0.5px;"
-                        onclick="document.getElementById('cart-qty').value = (document.getElementById('qty-input-mobile') &amp; document.getElementById('qty-input-mobile').value) ? document.getElementById('qty-input-mobile').value : 1;">
+                        onclick="document.getElementById('cart-qty').value = (document.getElementById('qty-input') &amp;&amp; document.getElementById('qty-input').value) ? document.getElementById('qty-input').value : 1;">
                         <span style="font-size:16px; font-weight:600;">Agregar al carrito</span>
                     </button>
                 </form>
-                
+
                 <form id="buy-now-form-mobile" action="/shop/cart/update" method="POST"
                     class="w-100">
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"
@@ -1892,40 +1846,10 @@
                         class="btn w-100"
                         id="buy-now-btn-mobile"
                         style="height:48px; border-radius:8px; background:#82b1ff; color:#1757e6; border:none; font-weight:600; font-family:inherit; letter-spacing:0.5px;"
-                        onclick="document.getElementById('buy-qty').value = (document.getElementById('qty-input-mobile') &amp; document.getElementById('qty-input-mobile').value) ? document.getElementById('qty-input-mobile').value : 1;">
+                        onclick="document.getElementById('buy-qty').value = (document.getElementById('qty-input') &amp;&amp; document.getElementById('qty-input').value) ? document.getElementById('qty-input').value : 1;">
                         <span style="font-size:16px; font-weight:600;">Comprar</span>
                     </button>
                 </form>
-                <!-- ...después de los formularios móviles... -->
-                <t t-jquery="body" t-operation="append">
-                    <script type="text/javascript"><![CDATA[
-                        document.addEventListener('DOMContentLoaded', function() {
-                            var qtyInputMobile = document.getElementById('qty-input-mobile');
-                            var cartQtyMobile = document.getElementById('cart-qty');
-                            var buyQtyMobile = document.getElementById('buy-qty');
-                            var cartFormMobile = document.getElementById('add-to-cart-form-mobile');
-                            var buyFormMobile = document.getElementById('buy-now-form-mobile');
-                
-                            function syncMobileQty() {
-                                var val = qtyInputMobile ? qtyInputMobile.value : 1;
-                                if (cartQtyMobile) cartQtyMobile.value = val;
-                                if (buyQtyMobile) buyQtyMobile.value = val;
-                            }
-                
-                            if (cartFormMobile) {
-                                cartFormMobile.addEventListener('submit', function(e) {
-                                    syncMobileQty();
-                                });
-                            }
-                            if (buyFormMobile) {
-                                buyFormMobile.addEventListener('submit', function(e) {
-                                    syncMobileQty();
-                                });
-                            }
-                        });
-                    ]]></script>
-                </t>
-
                 <!-- Separator between buttons and next section -->
                 <div style="height:5px;"></div>
 
