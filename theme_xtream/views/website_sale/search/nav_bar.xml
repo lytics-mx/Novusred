@@ -241,7 +241,13 @@
                                             item.className = 'dropdown-item d-flex align-items-center';
                                             item.href = result.url || '#';
                                             item.title = name || 'Producto';
-                                            var imgSrc = result.image || '/theme_xtream/static/src/img/placeholder.png';
+                                            // Build image URL: prefer returned image, otherwise use Odoo web image route for product.template
+                                            var imgSrc = '/theme_xtream/static/src/img/placeholder.png';
+                                            if (result.image) {
+                                                imgSrc = result.image;
+                                            } else if (result.id) {
+                                                imgSrc = '/web/image/product.template/' + result.id + '/image_1920';
+                                            }
                                             var imgAlt = name || 'Producto';
                                             item.innerHTML = '<img src="' + imgSrc + '" alt="' + imgAlt + '" style="width:32px;height:32px;object-fit:contain;margin-right:10px;"/>' +
                                                              '<div style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:120px;">' + truncatedName + '</div>';
