@@ -1691,14 +1691,15 @@
                         <span class="float-end">&gt;</span>
                     </button>
 
+                    <!-- Reemplaza los IDs en el selector de cantidad móvil -->
                     <div id="mobile-qty-container"
                         style="display:none; margin-top:8px; align-items:center;">
                         <div
                             style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px;">
-                            <button type="button" class="btn" id="qty-minus"
+                            <button type="button" class="btn" id="qty-minus-mobile"
                                 style="min-width:36px; height:36px; font-size:20px; padding:0; background:transparent; border:1px solid #e0e0e0; color:#222; border-radius:6px;">
                                 -</button>
-                            <input id="qty-input" type="number" name="add_qty" value="1" min="1"
+                            <input id="qty-input-mobile" type="number" name="add_qty" value="1" min="1"
                                 t-att-max="product.qty_available"
                                 class="form-control text-center"
                                 style="width:3.5em; min-width:48px; max-width:4.5em; padding:0 4px; border:1px solid #e0e0e0; box-shadow:none; background:transparent; outline:none; font-size:16px; border-radius:6px;"
@@ -1706,11 +1707,56 @@
                                 inputmode="numeric"
                                 maxlength="4"
                             />
-                            <button type="button" class="btn" id="qty-plus"
+                            <button type="button" class="btn" id="qty-plus-mobile"
                                 style="min-width:36px; height:36px; font-size:20px; padding:0; background:transparent; border:1px solid #e0e0e0; color:#222; border-radius:6px;">
                                 +</button>
                         </div>
                     </div>
+                    
+                    <!-- Agrega este script al final del body o usando t-jquery="body" t-operation="append" -->
+                    <t t-jquery="body" t-operation="append">
+                        <script type="text/javascript"><![CDATA[
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var qtyInput = document.getElementById('qty-input-mobile');
+                                var minusBtn = document.getElementById('qty-minus-mobile');
+                                var plusBtn = document.getElementById('qty-plus-mobile');
+                                var cartQty = document.getElementById('cart-qty');
+                                var buyQty = document.getElementById('buy-qty');
+                    
+                                function syncQtyInputs() {
+                                    if (cartQty) cartQty.value = qtyInput.value;
+                                    if (buyQty) buyQty.value = qtyInput.value;
+                                }
+                    
+                                if (minusBtn && qtyInput) {
+                                    minusBtn.addEventListener('click', function() {
+                                        var val = parseInt(qtyInput.value) || 1;
+                                        if (val > 1) qtyInput.value = val - 1;
+                                        syncQtyInputs();
+                                    });
+                                }
+                                if (plusBtn && qtyInput) {
+                                    plusBtn.addEventListener('click', function() {
+                                        var max = parseInt(qtyInput.getAttribute('max')) || 9999;
+                                        var val = parseInt(qtyInput.value) || 1;
+                                        if (val < max) qtyInput.value = val + 1;
+                                        syncQtyInputs();
+                                    });
+                                }
+                                if (qtyInput) {
+                                    qtyInput.addEventListener('input', function() {
+                                        var max = parseInt(qtyInput.getAttribute('max')) || 9999;
+                                        var val = parseInt(qtyInput.value) || 1;
+                                        if (val < 1) val = 1;
+                                        if (val > max) val = max;
+                                        qtyInput.value = val;
+                                        syncQtyInputs();
+                                    });
+                                    qtyInput.addEventListener('wheel', function(e){ e.preventDefault(); });
+                                }
+                            });
+                        ]]></script>
+                    </t>
                 </div>
 
                 <t t-jquery="body" t-operation="append">
