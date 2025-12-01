@@ -39,6 +39,26 @@
                                 </form>
                                 <script>
                                     <![CDATA[
+                                    const searchType = document.getElementById('searchType');
+                                    const searchInput = document.getElementById('searchInputDesktop');
+                                    if (searchType && searchInput) {
+                                        function updatePlaceholder() {
+                                            if (searchInput.value.trim().length > 0) return; // No cambiar si hay texto
+                                            if (searchType.value === 'all') {
+                                                searchInput.placeholder = 'Buscar productos, marcas o categorías...';
+                                            } else if (searchType.value === 'brand') {
+                                                searchInput.placeholder = 'Buscar marca...';
+                                            } else if (searchType.value === 'category') {
+                                                searchInput.placeholder = 'Buscar categoría...';
+                                            } else if (searchType.value === 'model') {
+                                                searchInput.placeholder = 'Buscar modelo...';
+                                            }
+                                        }
+                                        searchType.addEventListener('change', updatePlaceholder);
+                                        searchInput.addEventListener('input', updatePlaceholder);
+                                        updatePlaceholder();
+                                    }
+                                    // ...existing code...
                                     (function(){
                                         function initDesktopSearch() {
                                             var desktopNav = document.querySelector('.custom-navbar nav.navbar.d-lg-block');
@@ -47,6 +67,7 @@
                                             var searchInput = desktopNav.querySelector('#searchInputDesktop');
                                             var searchResults = desktopNav.querySelector('#searchResultsDesktop');
                                             var searchType = desktopNav.querySelector('#searchTypeDesktop');
+                                            
                                             if (!searchInput || !searchResults || !searchType) return;
 
                                             var lastDesktopQuery = '';
@@ -71,12 +92,35 @@
                                                 lastDesktopQuery = query;
                                                 lastDesktopType = type;
 
-                                                fetch('/search_live?query=' + encodeURIComponent(query))
+                                                // Enviar el tipo de búsqueda al backend
+                                                fetch('/search_live?query=' + encodeURIComponent(query) + '&type=' + encodeURIComponent(type))
                                                     .then(function(response){ return response.json(); })
                                                     .then(function(data){
                                                         searchResults.innerHTML = '';
-                                                        // Solo mostrar imágenes si el filtro es producto (type === 'all')
-                                                        if (data.results && data.results.length && (type === 'all' || type === 'model')) {
+                                                        if ((type === 'category' || type === 'brand') && data.results && data.results.length) {
+                                                            searchResults.style.display = 'block';
+                                                            data.results.slice(0, 7).forEach(function(result){
+                                                                var name = result.name || '';
+                                                                var item = document.createElement('a');
+                                                                item.className = 'dropdown-item';
+                                                                item.href = result.url;
+                                                                item.title = name || '';
+                                                                item.textContent = name;
+                                                                searchResults.appendChild(item);
+                                                            });
+                                                            var allResultsLink = document.createElement('a');
+                                                            allResultsLink.className = 'dropdown-item text-center';
+                                                            if (type === 'category') {
+                                                                allResultsLink.href = '/category_search?search=' + encodeURIComponent(query);
+                                                            } else if (type === 'brand') {
+                                                                allResultsLink.href = '/brand_search_redirect?search=' + encodeURIComponent(query);
+                                                            }
+                                                            allResultsLink.textContent = 'Ver todos los resultados';
+                                                            allResultsLink.style.fontSize = '15px';
+                                                            allResultsLink.style.padding = '8px 0';
+                                                            searchResults.appendChild(allResultsLink);
+                                                        } else if (data.results && data.results.length && (type === 'all' || type === 'model')) {
+                                                            // Mostrar productos con imagen
                                                             searchResults.style.display = 'block';
                                                             var seenIds = new Set();
                                                             data.results.slice(0, 7).forEach(function(result){
@@ -85,7 +129,7 @@
                                                                 var name = result.name || '';
                                                                 var item = document.createElement('a');
                                                                 item.className = 'dropdown-item d-flex align-items-center';
-                                                                // Usar product.website_url si está disponible
+                                                                // Usar siempre product.website_url si existe
                                                                 var url = result.website_url ? result.website_url : ('/shop/' + name + '?product=product.template(' + result.id + ',)');
                                                                 item.href = url;
                                                                 item.title = name || 'Producto';
@@ -104,37 +148,6 @@
                                                             var allResultsLink = document.createElement('a');
                                                             allResultsLink.className = 'dropdown-item text-center';
                                                             allResultsLink.href = '/subcategory?search=' + encodeURIComponent(query);
-                                                            allResultsLink.textContent = 'Ver todos los resultados';
-                                                            allResultsLink.style.fontSize = '15px';
-                                                            allResultsLink.style.padding = '8px 0';
-                                                            searchResults.appendChild(allResultsLink);
-                                                        } else if (data.results && data.results.length) {
-                                                            // Si es categoría o marca, solo mostrar texto sin imagen
-                                                            searchResults.style.display = 'block';
-                                                            data.results.slice(0, 7).forEach(function(result){
-                                                                var name = result.name || '';
-                                                                var item = document.createElement('a');
-                                                                item.className = 'dropdown-item';
-                                                                if (type === 'category') {
-                                                                    item.href = '/category_search?search=' + encodeURIComponent(name);
-                                                                } else if (type === 'brand') {
-                                                                    item.href = '/brand_search_redirect?search=' + encodeURIComponent(name);
-                                                                } else {
-                                                                    item.href = '#';
-                                                                }
-                                                                item.title = name || '';
-                                                                item.textContent = name;
-                                                                searchResults.appendChild(item);
-                                                            });
-                                                            var allResultsLink = document.createElement('a');
-                                                            allResultsLink.className = 'dropdown-item text-center';
-                                                            if (type === 'category') {
-                                                                allResultsLink.href = '/category_search?search=' + encodeURIComponent(query);
-                                                            } else if (type === 'brand') {
-                                                                allResultsLink.href = '/brand_search_redirect?search=' + encodeURIComponent(query);
-                                                            } else {
-                                                                allResultsLink.href = '#';
-                                                            }
                                                             allResultsLink.textContent = 'Ver todos los resultados';
                                                             allResultsLink.style.fontSize = '15px';
                                                             allResultsLink.style.padding = '8px 0';
