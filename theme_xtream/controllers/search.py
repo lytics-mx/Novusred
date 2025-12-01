@@ -35,20 +35,36 @@ class WebsiteSearch(http.Controller):
             return request.redirect(f'/subcategory?search={search_sanitized}')
 
     @http.route('/search_live', type='http', auth='public', website=True)
-    def search_live(self, query):
+    def search_live(self, query, type='all'):
         query_sanitized = self._sanitize_search(query)
-        products = request.env['product.template'].sudo().search([
-            '|',
-            ('name', 'ilike', query),
-            ('product_model', 'ilike', query)
-        ], limit=10)
-
-        results = [{
-            'id': product.id,
-            'name': product.name.replace(' ', '-'),
-            'price': product.list_price,
-            'website_url': product.website_url,  # <-- Agrega esto
-        } for product in products]
-
-
+        results = []
+    
+        if type == 'category':
+            categories = request.env['product.category'].sudo().search([('name', 'ilike', query)], limit=10)
+            results = [{
+                'id': cat.id,
+                'name': cat.name,
+                'url': f'/category_search?search={cat.name.replace(" ", "-")}'
+            } for cat in categories]
+        elif type == 'brand':
+            brands = request.env['brand.type'].sudo().search([('name', 'ilike', query), ('active', '=', True)], limit=10)
+            results = [{
+                'id': brand.id,
+                'name': brand.name,
+                'url': f'/brand_search_redirect?search={brand.name.replace(" ", "-")}'
+            } for brand in brands]
+        else:  # productos y modelos
+            products = request.env['product.template'].sudo().search([
+                '|',
+                ('name', 'ilike', query),
+                ('product_model', 'ilike', query)
+            ], limit=10)
+            results = [{
+                'id': product.id,
+                'name': product.name,
+                'image': product.image_1920 and f'/web/image/product.template/{product.id}/image_1920' or '',
+                'url': product.website_url or f'/shop/{product.name.replace(" ", "-")}?product=product.template({product.id},)'
+            } for product in products]
+    
         return request.make_response(json.dumps({'results': results}), headers=[('Content-Type', 'application/json')])
+    # ...existing code...

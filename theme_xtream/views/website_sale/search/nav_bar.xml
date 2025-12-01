@@ -97,17 +97,12 @@
                                                     .then(function(data){
                                                         searchResults.innerHTML = '';
                                                         if ((type === 'category' || type === 'brand') && data.results && data.results.length) {
-                                                            // Mostrar solo nombres de categorías o marcas
                                                             searchResults.style.display = 'block';
                                                             data.results.slice(0, 7).forEach(function(result){
                                                                 var name = result.name || '';
                                                                 var item = document.createElement('a');
                                                                 item.className = 'dropdown-item';
-                                                                if (type === 'category') {
-                                                                    item.href = '/category_search?search=' + encodeURIComponent(name);
-                                                                } else if (type === 'brand') {
-                                                                    item.href = '/brand_search_redirect?search=' + encodeURIComponent(name);
-                                                                }
+                                                                item.href = result.url;
                                                                 item.title = name || '';
                                                                 item.textContent = name;
                                                                 searchResults.appendChild(item);
