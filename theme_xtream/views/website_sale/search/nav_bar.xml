@@ -18,18 +18,103 @@
                                 </a>
                                 <!-- Search bar after logo -->
                                 <form class="d-flex flex-grow-1" action="/search_redirect" method="get" style="width: 100%;">
-                                    <div class="input-group w-100">
-                                        <input type="search" name="search" id="searchInput" class="form-control" placeholder="Buscar productos, marcas o categorías..." />
-                                        <div id="searchResults" class="dropdown-menu"></div>
+                                    <div class="input-group w-100" style="position:relative;">
+                                        <input type="search" name="search" id="searchInputDesktop" class="form-control"
+                                            placeholder="Buscar productos, marcas o categorías..." aria-label="Buscar"
+                                            style="border-radius: 20px; font-size: 14px; height: 36px;" autocomplete="off"/>
                                         <input type="hidden" name="search_type" value="all"/>
-                                        <div id="searchResults" class="dropdown-menu" style="display: none; position: absolute; z-index: 1000; width: 100%; top: 100%; left: 0; background-color: white; border: 1px solid #ccc; padding: 10px;"></div>                                                                            
-
+                                        <div id="searchResultsDesktop" class="dropdown-menu"
+                                             style="display: none; position: absolute; z-index: 1000; width: 100%; top: 100%; left: 0; background-color: white; border: 1px solid #ccc; padding: 10px;"></div>
                                         <button class="btn btn-outline-secondary" type="submit"
                                                 style="border-radius: 20px; height: 36px;">
                                             <i class="fa fa-search"></i>
                                         </button>
                                     </div>
                                 </form>
+                                <script>
+                                    <![CDATA[
+                                    (function(){
+                                        function initDesktopSearch() {
+                                            var desktopNav = document.querySelector('.custom-navbar nav.navbar.d-lg-block');
+                                            if (!desktopNav) return;
+
+                                            var searchInput = desktopNav.querySelector('#searchInputDesktop');
+                                            var searchResults = desktopNav.querySelector('#searchResultsDesktop');
+                                            if (!searchInput || !searchResults) return;
+
+                                            var lastDesktopQuery = '';
+                                            searchInput.addEventListener('input', function() {
+                                                var query = searchInput.value.trim();
+                                                if (query.length === 0) {
+                                                    searchResults.style.display = 'none';
+                                                    searchResults.innerHTML = '';
+                                                    lastDesktopQuery = '';
+                                                    return;
+                                                }
+                                                if (query === lastDesktopQuery) return;
+                                                lastDesktopQuery = query;
+
+                                                fetch('/search_live?query=' + encodeURIComponent(query))
+                                                    .then(function(response){ return response.json(); })
+                                                    .then(function(data){
+                                                        searchResults.innerHTML = '';
+                                                        if (data.results && data.results.length) {
+                                                            searchResults.style.display = 'block';
+                                                            var seenIds = new Set();
+                                                            data.results.slice(0, 7).forEach(function(result){
+                                                                if (result.id && seenIds.has(result.id)) return;
+                                                                if (result.id) seenIds.add(result.id);
+                                                                var name = result.name || '';
+                                                                var truncatedName = name.length > 30 ? name.substring(0,30) + '...' : name;
+                                                                var item = document.createElement('a');
+                                                                item.className = 'dropdown-item d-flex align-items-center';
+                                                                item.href = result.url || '#';
+                                                                item.title = name || 'Producto';
+                                                                var imgSrc = '/theme_xtream/static/src/img/placeholder.png';
+                                                                if (result.image) {
+                                                                    imgSrc = result.image;
+                                                                } else if (result.id) {
+                                                                    imgSrc = '/web/image/product.template/' + result.id + '/image_1920';
+                                                                }
+                                                                var imgAlt = name || 'Producto';
+                                                                item.innerHTML = '<img src="' + imgSrc + '" alt="' + imgAlt + '" style="width:32px;height:32px;object-fit:contain;margin-right:10px;"/>' +
+                                                                                 '<div style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:120px;font-size:10px;">' + truncatedName + '</div>';
+                                                                searchResults.appendChild(item);
+                                                            });
+                                                            var allResultsLink = document.createElement('a');
+                                                            allResultsLink.className = 'dropdown-item text-center';
+                                                            allResultsLink.href = '/subcategory?search=' + encodeURIComponent(query);
+                                                            allResultsLink.textContent = 'Ver todos los resultados';
+                                                            allResultsLink.style.fontSize = '10px';
+                                                            allResultsLink.style.padding = '8px 0';
+                                                            searchResults.appendChild(allResultsLink);
+                                                        } else {
+                                                            searchResults.style.display = 'none';
+                                                        }
+                                                    })
+                                                    .catch(function(){
+                                                        searchResults.style.display = 'none';
+                                                    });
+                                            });
+
+                                            function onDocClickDesktop(e) {
+                                                if (!desktopNav.contains(e.target)) {
+                                                    if (searchResults && searchResults.style.display !== 'none') {
+                                                        setTimeout(function(){ searchResults.style.display = 'none'; }, 150);
+                                                    }
+                                                }
+                                            }
+                                            document.addEventListener('click', onDocClickDesktop);
+                                        }
+
+                                        if (document.readyState === 'loading') {
+                                            document.addEventListener('DOMContentLoaded', initDesktopSearch);
+                                        } else {
+                                            initDesktopSearch();
+                                        }
+                                    })();
+                                    ]]>
+                                </script>
 
                             </div>
                         </div>
@@ -177,11 +262,11 @@
                 <!-- Buscador -->
                 <form class="flex-grow-1 mx-2" action="/search_redirect" method="get" style="max-width: 100%;">
                     <div class="input-group w-100" style="height:36px;">
-                        <input type="search" name="search" id="mobileSearchInput" class="form-control" placeholder="Buscar productos, marcas o categorías..." />
-                        <div id="mobileSearchResults" class="dropdown-menu"></div>
-                        
+                        <input type="search" name="search" id="searchInputMobile" class="form-control"
+                            placeholder="Buscar productos, marcas o categorías..." aria-label="Buscar"
+                            style="border-radius: 20px; font-size: 14px; height: 36px;" autocomplete="off"/>
                         <input type="hidden" name="search_type" value="all"/>
-                        <div id="mobileSearchResults" class="dropdown-menu"
+                        <div id="searchResultsMobile" class="dropdown-menu"
                              style="display: none; position: absolute; z-index: 1000; width: 100%; top: 100%; left: 0; background-color: white; border: 1px solid #ccc; padding: 10px;">
                         </div>
                         <button class="btn btn-outline-secondary" type="submit"
@@ -198,6 +283,95 @@
                     <i class="fa fa-shopping-cart"></i>
                 </a>
             </nav>
+            <script>
+                <![CDATA[
+                (function(){
+                    function initMobileSearch() {
+                        // Localizar solo elementos dentro del navbar móvil para evitar conflicto con desktop
+                        var mobileNav = document.querySelector('nav.mobile-navbar.d-flex.d-lg-none');
+                        if (!mobileNav) return;
+
+                        var searchInput = mobileNav.querySelector('#searchInputMobile');
+                        var searchResults = mobileNav.querySelector('#searchResultsMobile');
+                        if (!searchInput || !searchResults) return;
+
+                        var lastMobileQuery = '';
+                        // Manejo del input específico del móvil
+                        searchInput.addEventListener('input', function() {
+                            var query = searchInput.value.trim();
+                            if (query.length === 0) {
+                                searchResults.style.display = 'none';
+                                searchResults.innerHTML = '';
+                                lastMobileQuery = '';
+                                return;
+                            }
+                            if (query === lastMobileQuery) return;
+                            lastMobileQuery = query;
+
+                            // Petición para autocompletar (misma URL que desktop o distinta según backend)
+                            fetch('/search_live?query=' + encodeURIComponent(query))
+                                .then(function(response){ return response.json(); })
+                                .then(function(data){
+                                    searchResults.innerHTML = '';
+                                    if (data.results && data.results.length) {
+                                        searchResults.style.display = 'block';
+                                        var seenIds = new Set();
+                                        data.results.slice(0, 7).forEach(function(result){
+                                            if (result.id && seenIds.has(result.id)) return;
+                                            if (result.id) seenIds.add(result.id);
+                                            var name = result.name || '';
+                                            var truncatedName = name.length > 30 ? name.substring(0,30) + '...' : name;
+                                            var item = document.createElement('a');
+                                            item.className = 'dropdown-item d-flex align-items-center';
+                                            item.href = result.url || '#';
+                                            item.title = name || 'Producto';
+                                            // Build image URL: prefer returned image, otherwise use Odoo web image route for product.template
+                                            var imgSrc = '/theme_xtream/static/src/img/placeholder.png';
+                                            if (result.image) {
+                                                imgSrc = result.image;
+                                            } else if (result.id) {
+                                                imgSrc = '/web/image/product.template/' + result.id + '/image_1920';
+                                            }
+                                            var imgAlt = name || 'Producto';
+                                            item.innerHTML = '<img src="' + imgSrc + '" alt="' + imgAlt + '" style="width:32px;height:32px;object-fit:contain;margin-right:10px;"/>' +
+                                                             '<div style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:120px;font-size:10px;">' + truncatedName + '</div>';
+                                            searchResults.appendChild(item);
+                                        });
+                                        var allResultsLink = document.createElement('a');
+                                        allResultsLink.className = 'dropdown-item text-center';
+                                        allResultsLink.href = '/subcategory?search=' + encodeURIComponent(query);
+                                        allResultsLink.textContent = 'Ver todos los resultados';
+                                        allResultsLink.style.fontSize = '10px';
+                                        allResultsLink.style.padding = '8px 0';
+                                        searchResults.appendChild(allResultsLink);
+                                    } else {
+                                        searchResults.style.display = 'none';
+                                    }
+                                })
+                                .catch(function(){
+                                    searchResults.style.display = 'none';
+                                });
+                        });
+
+                        // Cerrar dropdown solo si el click no fue dentro del navbar móvil (no afectar desktop)
+                        function onDocClickMobile(e) {
+                            if (!mobileNav.contains(e.target)) {
+                                if (searchResults && searchResults.style.display !== 'none') {
+                                    setTimeout(function(){ searchResults.style.display = 'none'; }, 150);
+                                }
+                            }
+                        }
+                        document.addEventListener('click', onDocClickMobile);
+                    }
+
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', initMobileSearch);
+                    } else {
+                        initMobileSearch();
+                    }
+                })();
+                ]]>
+            </script>
                 <!-- Menú lateral móvil -->
                 <div id="mobileSideMenuBackdrop" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:1049;"></div>
                 <aside id="mobileSideMenu" style="display:none; position:fixed; top:0; left:0; width:80vw; max-width:320px; height:100vh; background:#fff; z-index:1050; box-shadow:2px 0 12px rgba(0,0,0,0.15); transform:translateX(-100%); transition:transform 0.3s; overflow-y:auto;">        
