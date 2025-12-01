@@ -21,8 +21,9 @@
                                     <div class="input-group w-100" style="position:relative;">
                                         <input type="search" name="search" id="searchInputDesktop" class="form-control"
                                             placeholder="Buscar productos, marcas o categorías..." aria-label="Buscar"
-                                            style="border-radius: 20px; font-size: 14px; height: 36px;" autocomplete="off"/>
-                                        <select name="search_type" id="searchTypeDesktop" class="form-select" style="width:auto; border-radius:20px; margin-left:8px; font-size:14px; height:36px;">
+                                            style="border-radius: 20px; font-size: 14px; height: 36px; flex: 1 1 0%; min-width: 0;"/>
+                                        <select name="search_type" id="searchType" class="form-select"
+                                            style="width: 90px; min-width: 70px; max-width: 110px; border-radius:20px; margin-left:8px; font-size:14px; height:36px; padding:0 8px;">
                                             <option value="all">Todo</option>
                                             <option value="category">Categoría</option>
                                             <option value="brand">Marca</option>
@@ -36,135 +37,6 @@
                                         </button>
                                     </div>
                                 </form>
-                                <script>
-                                    <![CDATA[
-                                    (function(){
-                                        function initDesktopSearch() {
-                                            var desktopNav = document.querySelector('.custom-navbar nav.navbar.d-lg-block');
-                                            if (!desktopNav) return;
-
-                                            var searchInput = desktopNav.querySelector('#searchInputDesktop');
-                                            var searchResults = desktopNav.querySelector('#searchResultsDesktop');
-                                            var searchType = desktopNav.querySelector('#searchTypeDesktop');
-                                            if (!searchInput || !searchResults || !searchType) return;
-
-                                            var lastDesktopQuery = '';
-                                            var lastDesktopType = searchType.value;
-
-                                            searchType.addEventListener('change', function() {
-                                                searchResults.style.display = 'none';
-                                                searchResults.innerHTML = '';
-                                                lastDesktopType = searchType.value;
-                                            });
-
-                                            searchInput.addEventListener('input', function() {
-                                                var query = searchInput.value.trim();
-                                                var type = searchType.value;
-                                                if (query.length === 0) {
-                                                    searchResults.style.display = 'none';
-                                                    searchResults.innerHTML = '';
-                                                    lastDesktopQuery = '';
-                                                    return;
-                                                }
-                                                if (query === lastDesktopQuery && type === lastDesktopType) return;
-                                                lastDesktopQuery = query;
-                                                lastDesktopType = type;
-
-                                                fetch('/search_live?query=' + encodeURIComponent(query))
-                                                    .then(function(response){ return response.json(); })
-                                                    .then(function(data){
-                                                        searchResults.innerHTML = '';
-                                                        // Solo mostrar imágenes si el filtro es producto (type === 'all')
-                                                        if (data.results && data.results.length && (type === 'all' || type === 'model')) {
-                                                            searchResults.style.display = 'block';
-                                                            var seenIds = new Set();
-                                                            data.results.slice(0, 7).forEach(function(result){
-                                                                if (result.id && seenIds.has(result.id)) return;
-                                                                if (result.id) seenIds.add(result.id);
-                                                                var name = result.name || '';
-                                                                var item = document.createElement('a');
-                                                                item.className = 'dropdown-item d-flex align-items-center';
-                                                                // Usar product.website_url si está disponible
-                                                                var url = result.website_url ? result.website_url : ('/shop/' + name + '?product=product.template(' + result.id + ',)');
-                                                                item.href = url;
-                                                                item.title = name || 'Producto';
-                                                                var imgSrc = '/theme_xtream/static/src/img/placeholder.png';
-                                                                if (result.image) {
-                                                                    imgSrc = result.image;
-                                                                } else if (result.id) {
-                                                                    imgSrc = '/web/image/product.template/' + result.id + '/image_1920';
-                                                                }
-                                                                var imgAlt = name || 'Producto';
-                                                                item.innerHTML = '<img src="' + imgSrc + '" alt="' + imgAlt + '" style="width:32px;height:32px;object-fit:contain;margin-right:10px;"/>' +
-                                                                                 '<div style="overflow:auto;white-space:normal;text-overflow:unset;max-width:none;font-size:15px;">' + name + '</div>';
-                                                                searchResults.appendChild(item);
-                                                            });
-
-                                                            var allResultsLink = document.createElement('a');
-                                                            allResultsLink.className = 'dropdown-item text-center';
-                                                            allResultsLink.href = '/subcategory?search=' + encodeURIComponent(query);
-                                                            allResultsLink.textContent = 'Ver todos los resultados';
-                                                            allResultsLink.style.fontSize = '15px';
-                                                            allResultsLink.style.padding = '8px 0';
-                                                            searchResults.appendChild(allResultsLink);
-                                                        } else if (data.results && data.results.length) {
-                                                            // Si es categoría o marca, solo mostrar texto sin imagen
-                                                            searchResults.style.display = 'block';
-                                                            data.results.slice(0, 7).forEach(function(result){
-                                                                var name = result.name || '';
-                                                                var item = document.createElement('a');
-                                                                item.className = 'dropdown-item';
-                                                                if (type === 'category') {
-                                                                    item.href = '/category_search?search=' + encodeURIComponent(name);
-                                                                } else if (type === 'brand') {
-                                                                    item.href = '/brand_search_redirect?search=' + encodeURIComponent(name);
-                                                                } else {
-                                                                    item.href = '#';
-                                                                }
-                                                                item.title = name || '';
-                                                                item.textContent = name;
-                                                                searchResults.appendChild(item);
-                                                            });
-                                                            var allResultsLink = document.createElement('a');
-                                                            allResultsLink.className = 'dropdown-item text-center';
-                                                            if (type === 'category') {
-                                                                allResultsLink.href = '/category_search?search=' + encodeURIComponent(query);
-                                                            } else if (type === 'brand') {
-                                                                allResultsLink.href = '/brand_search_redirect?search=' + encodeURIComponent(query);
-                                                            } else {
-                                                                allResultsLink.href = '#';
-                                                            }
-                                                            allResultsLink.textContent = 'Ver todos los resultados';
-                                                            allResultsLink.style.fontSize = '15px';
-                                                            allResultsLink.style.padding = '8px 0';
-                                                            searchResults.appendChild(allResultsLink);
-                                                        } else {
-                                                            searchResults.style.display = 'none';
-                                                        }
-                                                    })
-                                                    .catch(function(){
-                                                        searchResults.style.display = 'none';
-                                                    });
-                                            });
-
-                                            function onDocClickDesktop(e) {
-                                                if (!desktopNav.contains(e.target)) {
-                                                    if (searchResults && searchResults.style.display !== 'none') {
-                                                        setTimeout(function(){ searchResults.style.display = 'none'; }, 150);
-                                                    }
-                                                }
-                                            }
-                                            document.addEventListener('click', onDocClickDesktop);
-                                        }
-
-                                        if (document.readyState === 'loading') {
-                                            document.addEventListener('DOMContentLoaded', initDesktopSearch);
-                                        } else {
-                                            initDesktopSearch();
-                                        }
-                                    })();
-                                    ]]>
-                                </script>
 
                             </div>
                         </div>
@@ -333,95 +205,6 @@
                     <i class="fa fa-shopping-cart"></i>
                 </a>
             </nav>
-            <script>
-                <![CDATA[
-                (function(){
-                    function initMobileSearch() {
-                        // Localizar solo elementos dentro del navbar móvil para evitar conflicto con desktop
-                        var mobileNav = document.querySelector('nav.mobile-navbar.d-flex.d-lg-none');
-                        if (!mobileNav) return;
-
-                        var searchInput = mobileNav.querySelector('#searchInputMobile');
-                        var searchResults = mobileNav.querySelector('#searchResultsMobile');
-                        if (!searchInput || !searchResults) return;
-
-                        var lastMobileQuery = '';
-                        // Manejo del input específico del móvil
-                        searchInput.addEventListener('input', function() {
-                            var query = searchInput.value.trim();
-                            if (query.length === 0) {
-                                searchResults.style.display = 'none';
-                                searchResults.innerHTML = '';
-                                lastMobileQuery = '';
-                                return;
-                            }
-                            if (query === lastMobileQuery) return;
-                            lastMobileQuery = query;
-
-                            // Petición para autocompletar (misma URL que desktop o distinta según backend)
-                            fetch('/search_live?query=' + encodeURIComponent(query))
-                                .then(function(response){ return response.json(); })
-                                .then(function(data){
-                                    searchResults.innerHTML = '';
-                                    if (data.results && data.results.length) {
-                                        searchResults.style.display = 'block';
-                                        var seenIds = new Set();
-                                        data.results.slice(0, 7).forEach(function(result){
-                                            if (result.id && seenIds.has(result.id)) return;
-                                            if (result.id) seenIds.add(result.id);
-                                            var name = result.name || '';
-                                            var truncatedName = name.length > 30 ? name.substring(0,30) + '...' : name;
-                                            var item = document.createElement('a');
-                                            item.className = 'dropdown-item d-flex align-items-center';
-                                            item.href = result.url || '#';
-                                            item.title = name || 'Producto';
-                                            // Build image URL: prefer returned image, otherwise use Odoo web image route for product.template
-                                            var imgSrc = '/theme_xtream/static/src/img/placeholder.png';
-                                            if (result.image) {
-                                                imgSrc = result.image;
-                                            } else if (result.id) {
-                                                imgSrc = '/web/image/product.template/' + result.id + '/image_1920';
-                                            }
-                                            var imgAlt = name || 'Producto';
-                                            item.innerHTML = '<img src="' + imgSrc + '" alt="' + imgAlt + '" style="width:32px;height:32px;object-fit:contain;margin-right:10px;"/>' +
-                                                             '<div style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:120px;font-size:10px;">' + truncatedName + '</div>';
-                                            searchResults.appendChild(item);
-                                        });
-                                        var allResultsLink = document.createElement('a');
-                                        allResultsLink.className = 'dropdown-item text-center';
-                                        allResultsLink.href = '/subcategory?search=' + encodeURIComponent(query);
-                                        allResultsLink.textContent = 'Ver todos los resultados';
-                                        allResultsLink.style.fontSize = '10px';
-                                        allResultsLink.style.padding = '8px 0';
-                                        searchResults.appendChild(allResultsLink);
-                                    } else {
-                                        searchResults.style.display = 'none';
-                                    }
-                                })
-                                .catch(function(){
-                                    searchResults.style.display = 'none';
-                                });
-                        });
-
-                        // Cerrar dropdown solo si el click no fue dentro del navbar móvil (no afectar desktop)
-                        function onDocClickMobile(e) {
-                            if (!mobileNav.contains(e.target)) {
-                                if (searchResults && searchResults.style.display !== 'none') {
-                                    setTimeout(function(){ searchResults.style.display = 'none'; }, 150);
-                                }
-                            }
-                        }
-                        document.addEventListener('click', onDocClickMobile);
-                    }
-
-                    if (document.readyState === 'loading') {
-                        document.addEventListener('DOMContentLoaded', initMobileSearch);
-                    } else {
-                        initMobileSearch();
-                    }
-                })();
-                ]]>
-            </script>
                 <!-- Menú lateral móvil -->
                 <div id="mobileSideMenuBackdrop" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:1049;"></div>
                 <aside id="mobileSideMenu" style="display:none; position:fixed; top:0; left:0; width:80vw; max-width:320px; height:100vh; background:#fff; z-index:1050; box-shadow:2px 0 12px rgba(0,0,0,0.15); transform:translateX(-100%); transition:transform 0.3s; overflow-y:auto;">        
@@ -526,69 +309,11 @@
                         </li>
                     </ul>
                     <!-- ...existing code... -->
-                    <script>
-                        <![CDATA[
-                        document.addEventListener('DOMContentLoaded', function() {
-                            // ...existing code...
-                            var catBtn = document.getElementById('mobileCategoriesBtn');
-                            var catMenu = document.getElementById('mobileCategoriesMenu');
-                            if (catBtn && catMenu) {
-                                catBtn.addEventListener('click', function(e){
-                                    e.preventDefault();
-                                    catMenu.style.display = catMenu.style.display === 'none' ? 'block' : 'none';
-                                });
-                            }
-                            document.querySelectorAll('.mobile-parent-cat').forEach(function(el){
-                                el.addEventListener('click', function(e){
-                                    e.preventDefault();
-                                    var subMenu = document.getElementById('mobileSubcat'+el.dataset.catId);
-                                    if (subMenu) subMenu.style.display = subMenu.style.display === 'none' ? 'block' : 'none';
-                                });
-                            });
-                            document.querySelectorAll('.mobile-child-cat').forEach(function(el){
-                                el.addEventListener('click', function(e){
-                                    e.preventDefault();
-                                    var subMenu = document.getElementById('mobileSubsubcat'+el.dataset.catId);
-                                    if (subMenu) subMenu.style.display = subMenu.style.display === 'none' ? 'block' : 'none';
-                                });
-                            });
-                        });
-                        ]]>
-                    </script>
+
                     <!-- ...existing code... -->
                 </aside>
                 <!-- ...existing code... -->
-                <script>
-                    <![CDATA[
-                    document.addEventListener('DOMContentLoaded', function() {
-                        var menuBtn = document.getElementById('mobileMenuBtn');
-                        var sideMenu = document.getElementById('mobileSideMenu');
-                        var closeBtn = document.getElementById('closeMobileMenu');
-                        var backdrop = document.getElementById('mobileSideMenuBackdrop');
 
-                        function openMenu() {
-                            if (sideMenu && backdrop) {
-                                sideMenu.style.transform = 'translateX(0)';
-                                sideMenu.style.display = 'block';
-                                backdrop.style.display = 'block';
-                            }
-                        }
-                        function closeMenu() {
-                            if (sideMenu && backdrop) {
-                                sideMenu.style.transform = 'translateX(-100%)';
-                                setTimeout(function() {
-                                    sideMenu.style.display = 'none';
-                                    backdrop.style.display = 'none';
-                                }, 300);
-                            }
-                        }
-
-                        if (menuBtn) menuBtn.addEventListener('click', openMenu);
-                        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
-                        if (backdrop) backdrop.addEventListener('click', closeMenu);
-                    });
-                    ]]>
-                </script>
                 
 
                
@@ -627,11 +352,11 @@
     <template id="notification_popup" name="Notification Popup">
         <div id="notificationPopup" class="notification-popup shadow" style="display:none; position:fixed; top:20px; right:20px; z-index:1050; background:#fff; border-radius:12px; box-shadow:0 4px 16px rgba(0,0,0,0.15); padding:20px; min-width:320px; max-width:400px;">
             <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="fw-bold" style="font-size:16px;">Artículos agregados a su carritos</span>
+                <span class="fw-bold" style="font-size:16px;">Producto agregado al carrito</span>
                 <button type="button" class="btn-close" aria-label="Cerrar" onclick="document.getElementById('notificationPopup').style.display='none';"></button>
             </div>
             <div id="notificationPopupContent">
-                <!-- Aquí se inserta el contenido dinámico del producto -->
+                <div class="d-flex align-items-center"></div>
             </div>
             <a href="/shop/cart" class="btn btn-primary w-100 mt-3" style="background:#7c5c8a; border:none;">Ver carrito</a>
         </div>
