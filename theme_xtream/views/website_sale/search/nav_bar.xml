@@ -385,9 +385,10 @@
                                             var truncatedName = name.length > 30 ? name.substring(0,30) + '...' : name;
                                             var item = document.createElement('a');
                                             item.className = 'dropdown-item d-flex align-items-center';
-                                            item.href = result.url || '#';
+                                            // Usar product.website_url si existe, si no, fallback
+                                            var url = result.website_url ? result.website_url : (result.url || '#');
+                                            item.href = url;
                                             item.title = name || 'Producto';
-                                            // Build image URL: prefer returned image, otherwise use Odoo web image route for product.template
                                             var imgSrc = '/theme_xtream/static/src/img/placeholder.png';
                                             if (result.image) {
                                                 imgSrc = result.image;
