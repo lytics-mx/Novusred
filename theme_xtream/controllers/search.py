@@ -45,7 +45,7 @@ class WebsiteSearch(http.Controller):
 
         results = [{
             'id': product.id,
-            'name': product.name.replace(' ', '-'),
+            'name': product.name,  # <-- Mostrar el nombre original
             'price': product.list_price,
         } for product in products]
 
