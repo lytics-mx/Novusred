@@ -47,6 +47,8 @@ class WebsiteSearch(http.Controller):
             'id': product.id,
             'name': product.name.replace(' ', '-'),
             'price': product.list_price,
+            'website_url': product.website_url,  # <-- Agrega esto
         } for product in products]
+
 
         return request.make_response(json.dumps({'results': results}), headers=[('Content-Type', 'application/json')])
