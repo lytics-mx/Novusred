@@ -61,8 +61,8 @@
 # Búsqueda de productos en la web (incluye marcas y categorías)
         'views/website_sale/search/brand_search.xml',
         'views/website_sale/search/category_search.xml',
-        # 'views/website_sale/search/nav_bar.xml',
-        # 'views/website_sale/search/notificacion.xml',
+        'views/website_sale/search/nav_bar.xml',
+        'views/website_sale/search/notificacion.xml',
         
 
 
@@ -108,7 +108,7 @@
           '/theme_xtream/static/src/js/custom.js',
           '/theme_xtream/static/src/js/views_products.js',
 
-          '/theme_xtream/static/src/js/navbar.js',        
+        #   '/theme_xtream/static/src/js/navbar.js',        
 
 
       ]
