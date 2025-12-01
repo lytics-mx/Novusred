@@ -22,7 +22,12 @@
                                         <input type="search" name="search" id="searchInputDesktop" class="form-control"
                                             placeholder="Buscar productos, marcas o categorías..." aria-label="Buscar"
                                             style="border-radius: 20px; font-size: 14px; height: 36px;" autocomplete="off"/>
-                                        <input type="hidden" name="search_type" value="all"/>
+                                        <select name="search_type" id="searchTypeDesktop" class="form-select" style="width:auto; border-radius:20px; margin-left:8px; font-size:14px; height:36px;">
+                                            <option value="all">Todo</option>
+                                            <option value="category">Categoría</option>
+                                            <option value="brand">Marca</option>
+                                            <option value="model">Modelo</option>
+                                        </select>
                                         <div id="searchResultsDesktop" class="dropdown-menu"
                                              style="display: none; position: absolute; z-index: 1000; width: 100%; top: 100%; left: 0; background-color: white; border: 1px solid #ccc; padding: 10px;"></div>
                                         <button class="btn btn-outline-secondary" type="submit"
@@ -40,19 +45,30 @@
 
                                             var searchInput = desktopNav.querySelector('#searchInputDesktop');
                                             var searchResults = desktopNav.querySelector('#searchResultsDesktop');
-                                            if (!searchInput || !searchResults) return;
+                                            var searchType = desktopNav.querySelector('#searchTypeDesktop');
+                                            if (!searchInput || !searchResults || !searchType) return;
 
                                             var lastDesktopQuery = '';
+                                            var lastDesktopType = searchType.value;
+
+                                            searchType.addEventListener('change', function() {
+                                                searchResults.style.display = 'none';
+                                                searchResults.innerHTML = '';
+                                                lastDesktopType = searchType.value;
+                                            });
+
                                             searchInput.addEventListener('input', function() {
                                                 var query = searchInput.value.trim();
+                                                var type = searchType.value;
                                                 if (query.length === 0) {
                                                     searchResults.style.display = 'none';
                                                     searchResults.innerHTML = '';
                                                     lastDesktopQuery = '';
                                                     return;
                                                 }
-                                                if (query === lastDesktopQuery) return;
+                                                if (query === lastDesktopQuery && type === lastDesktopType) return;
                                                 lastDesktopQuery = query;
+                                                lastDesktopType = type;
 
                                                 fetch('/search_live?query=' + encodeURIComponent(query))
                                                     .then(function(response){ return response.json(); })
@@ -65,10 +81,18 @@
                                                                 if (result.id && seenIds.has(result.id)) return;
                                                                 if (result.id) seenIds.add(result.id);
                                                                 var name = result.name || '';
-                                                                // No truncar el nombre
                                                                 var item = document.createElement('a');
                                                                 item.className = 'dropdown-item d-flex align-items-center';
-                                                                item.href = result.url || '#';
+                                                                // Si el filtro es producto, ir al producto; si es categoría o marca, ir al redirect
+                                                                if (type === 'category') {
+                                                                    item.href = '/category_search?search=' + encodeURIComponent(name);
+                                                                } else if (type === 'brand') {
+                                                                    item.href = '/brand_search_redirect?search=' + encodeURIComponent(name);
+                                                                } else if (type === 'model') {
+                                                                    item.href = '/shop/' + name + '?product=product.template(' + result.id + ',)';
+                                                                } else {
+                                                                    item.href = '/shop/' + name + '?product=product.template(' + result.id + ',)';
+                                                                }
                                                                 item.title = name || 'Producto';
                                                                 var imgSrc = '/theme_xtream/static/src/img/placeholder.png';
                                                                 if (result.image) {
@@ -81,13 +105,19 @@
                                                                                  '<div style="overflow:auto;white-space:normal;text-overflow:unset;max-width:none;font-size:15px;">' + name + '</div>';
                                                                 searchResults.appendChild(item);
                                                             });
-                                                            item.addEventListener('click', function() {
-                                                                searchResults.style.display = 'none';
-                                                            });                                                            
-                                                            
+
                                                             var allResultsLink = document.createElement('a');
                                                             allResultsLink.className = 'dropdown-item text-center';
-                                                            allResultsLink.href = '/subcategory?search=' + encodeURIComponent(query);
+                                                            // El link general depende del filtro
+                                                            if (type === 'category') {
+                                                                allResultsLink.href = '/category_search?search=' + encodeURIComponent(query);
+                                                            } else if (type === 'brand') {
+                                                                allResultsLink.href = '/brand_search_redirect?search=' + encodeURIComponent(query);
+                                                            } else if (type === 'model') {
+                                                                allResultsLink.href = '/subcategory?search=' + encodeURIComponent(query);
+                                                            } else {
+                                                                allResultsLink.href = '/subcategory?search=' + encodeURIComponent(query);
+                                                            }
                                                             allResultsLink.textContent = 'Ver todos los resultados';
                                                             allResultsLink.style.fontSize = '15px';
                                                             allResultsLink.style.padding = '8px 0';
