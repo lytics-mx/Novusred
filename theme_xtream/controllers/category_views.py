@@ -7,7 +7,7 @@ class CategoryController(http.Controller):
     def home(self):
         return http.request.render('theme_xtream.website_category')  
 
-    @http.route('/subcategory', auth='public', website=True)
+    @http.route(['/subcategory', '/shop'], auth='public', website=True)
     def category(self, category_id=None, subcategory_id=None, brand_id=None, 
                  free_shipping=None, min_price=None, max_price=None, price_range=None,
                  discount_id=None, promotion_id=None, sort=None, search=None, **kw):
