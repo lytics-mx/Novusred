@@ -283,3 +283,14 @@
                         if (closeBtn) closeBtn.addEventListener('click', closeMenu);
                         if (backdrop) backdrop.addEventListener('click', closeMenu);
                     });
+
+
+                    function showCartNotification(product) {
+                        document.getElementById('notificationProductImage').src = product.image || '/theme_xtream/static/src/img/placeholder.png';
+                        document.getElementById('notificationProductName').textContent = product.name || 'Producto';
+                        document.getElementById('notificationProductQty').textContent = 'Cantidad: ' + (product.qty || 1);
+                        document.getElementById('notificationPopup').style.display = 'block';
+                        setTimeout(function() {
+                            document.getElementById('notificationPopup').style.display = 'none';
+                        }, 4000); // Oculta después de 4 segundos
+                    }                   
