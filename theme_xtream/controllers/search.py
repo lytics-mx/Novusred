@@ -45,10 +45,8 @@ class WebsiteSearch(http.Controller):
 
         results = [{
             'id': product.id,
-            'name': product.name,
+            'name': product.name.replace(' ', '-'),
             'price': product.list_price,
-            'url': f'/shop/{product.slug()}?product=product.template({product.id},)',  # Agrega la URL
-            'image': f'/web/image/product.template/{product.id}/image_1920' if product.image_1920 else None  # Agrega la imagen si existe
         } for product in products]
 
         return request.make_response(json.dumps({'results': results}), headers=[('Content-Type', 'application/json')])

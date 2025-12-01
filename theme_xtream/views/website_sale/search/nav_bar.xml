@@ -74,7 +74,8 @@
                                                     .then(function(response){ return response.json(); })
                                                     .then(function(data){
                                                         searchResults.innerHTML = '';
-                                                        if (data.results && data.results.length) {
+                                                        // Solo mostrar imágenes si el filtro es producto (type === 'all')
+                                                        if (data.results && data.results.length && (type === 'all' || type === 'model')) {
                                                             searchResults.style.display = 'block';
                                                             var seenIds = new Set();
                                                             data.results.slice(0, 7).forEach(function(result){
@@ -83,16 +84,7 @@
                                                                 var name = result.name || '';
                                                                 var item = document.createElement('a');
                                                                 item.className = 'dropdown-item d-flex align-items-center';
-                                                                // Si el filtro es producto, ir al producto; si es categoría o marca, ir al redirect
-                                                                if (type === 'category') {
-                                                                    item.href = '/category_search?search=' + encodeURIComponent(name);
-                                                                } else if (type === 'brand') {
-                                                                    item.href = '/brand_search_redirect?search=' + encodeURIComponent(name);
-                                                                } else if (type === 'model') {
-                                                                    item.href = '/shop/' + name + '?product=product.template(' + result.id + ',)';
-                                                                } else {
-                                                                    item.href = '/shop/' + name + '?product=product.template(' + result.id + ',)';
-                                                                }
+                                                                item.href = '/shop/' + name + '?product=product.template(' + result.id + ',)';
                                                                 item.title = name || 'Producto';
                                                                 var imgSrc = '/theme_xtream/static/src/img/placeholder.png';
                                                                 if (result.image) {
@@ -108,15 +100,37 @@
 
                                                             var allResultsLink = document.createElement('a');
                                                             allResultsLink.className = 'dropdown-item text-center';
-                                                            // El link general depende del filtro
+                                                            allResultsLink.href = '/subcategory?search=' + encodeURIComponent(query);
+                                                            allResultsLink.textContent = 'Ver todos los resultados';
+                                                            allResultsLink.style.fontSize = '15px';
+                                                            allResultsLink.style.padding = '8px 0';
+                                                            searchResults.appendChild(allResultsLink);
+                                                        } else if (data.results && data.results.length) {
+                                                            // Si es categoría o marca, solo mostrar texto sin imagen
+                                                            searchResults.style.display = 'block';
+                                                            data.results.slice(0, 7).forEach(function(result){
+                                                                var name = result.name || '';
+                                                                var item = document.createElement('a');
+                                                                item.className = 'dropdown-item';
+                                                                if (type === 'category') {
+                                                                    item.href = '/category_search?search=' + encodeURIComponent(name);
+                                                                } else if (type === 'brand') {
+                                                                    item.href = '/brand_search_redirect?search=' + encodeURIComponent(name);
+                                                                } else {
+                                                                    item.href = '#';
+                                                                }
+                                                                item.title = name || '';
+                                                                item.textContent = name;
+                                                                searchResults.appendChild(item);
+                                                            });
+                                                            var allResultsLink = document.createElement('a');
+                                                            allResultsLink.className = 'dropdown-item text-center';
                                                             if (type === 'category') {
                                                                 allResultsLink.href = '/category_search?search=' + encodeURIComponent(query);
                                                             } else if (type === 'brand') {
                                                                 allResultsLink.href = '/brand_search_redirect?search=' + encodeURIComponent(query);
-                                                            } else if (type === 'model') {
-                                                                allResultsLink.href = '/subcategory?search=' + encodeURIComponent(query);
                                                             } else {
-                                                                allResultsLink.href = '/subcategory?search=' + encodeURIComponent(query);
+                                                                allResultsLink.href = '#';
                                                             }
                                                             allResultsLink.textContent = 'Ver todos los resultados';
                                                             allResultsLink.style.fontSize = '15px';
