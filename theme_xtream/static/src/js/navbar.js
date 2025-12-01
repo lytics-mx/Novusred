@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // elementos de búsqueda
     const searchInput = document.querySelector('#searchInput') || document.querySelector('input[name="search"]');
     const searchResults = document.querySelector('#searchResults') || document.querySelector('.search-results-dropdown');
     const searchTypeInput = document.querySelector('#searchType'); // opcional
@@ -16,11 +15,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            // evitar peticiones idénticas seguidas
             if (query === lastQuery) return;
             lastQuery = query;
 
-            // solo live search para tipo 'all'
             if (searchType === 'all') {
                 fetch(`/search_live?query=${encodeURIComponent(query)}`)
                     .then(response => {
@@ -33,10 +30,10 @@ document.addEventListener('DOMContentLoaded', function() {
                             searchResults.style.display = 'block';
                             data.results.slice(0, 7).forEach(result => {
                                 const truncatedName = result.name.length > 80 ? result.name.substring(0, 80) + '...' : result.name;
+                                const imgSrc = result.image || '/theme_xtream/static/src/img/placeholder.png'; // Usar placeholder si no hay imagen
                                 const item = document.createElement('a');
                                 item.className = 'dropdown-item d-flex align-items-center';
                                 item.href = result.url || '#';
-                                const imgSrc = result.image || '/theme_xtream/static/src/img/placeholder.png';
                                 item.innerHTML = `
                                     <img src="${imgSrc}" alt="${truncatedName}" style="width:40px;height:40px;object-fit:contain;margin-right:10px;"/>
                                     <div style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">${truncatedName}</div>
@@ -57,18 +54,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         searchResults.style.display = 'none';
                     });
             } else {
-                // para otros tipos puede redirigir al submit
                 searchResults.style.display = 'none';
             }
         });
 
-        // ocultar al perder foco (pequeño delay para permitir click)
         document.addEventListener('click', function(e) {
             if (!searchResults.contains(e.target) && e.target !== searchInput) {
                 setTimeout(() => { searchResults.style.display = 'none'; }, 150);
             }
         });
     }
-
-    // ...otros códigos existentes (menus, notifications)...
-});             
+});        
