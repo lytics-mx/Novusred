@@ -38,21 +38,25 @@
                                 </form>
                                 <script>
                                     <![CDATA[
-                                    // ...existing code...
+                                    // Actualiza el placeholder según el tipo de búsqueda seleccionado
                                     const searchType = document.getElementById('searchType');
                                     const searchInput = document.getElementById('searchInputDesktop');
                                     if (searchType && searchInput) {
-                                        searchType.addEventListener('change', function() {
-                                            if (this.value === 'all') {
+                                        function updatePlaceholder() {
+                                            if (searchInput.value.trim().length > 0) return; // No cambiar si hay texto
+                                            if (searchType.value === 'all') {
                                                 searchInput.placeholder = 'Buscar productos, marcas o categorías...';
-                                            } else if (this.value === 'brand') {
+                                            } else if (searchType.value === 'brand') {
                                                 searchInput.placeholder = 'Buscar marca...';
-                                            } else if (this.value === 'category') {
+                                            } else if (searchType.value === 'category') {
                                                 searchInput.placeholder = 'Buscar categoría...';
-                                            } else if (this.value === 'model') {
+                                            } else if (searchType.value === 'model') {
                                                 searchInput.placeholder = 'Buscar modelo...';
                                             }
-                                        });
+                                        }
+                                        searchType.addEventListener('change', updatePlaceholder);
+                                        searchInput.addEventListener('input', updatePlaceholder);
+                                        updatePlaceholder();
                                     }
                                     // ...existing code...
                                     (function(){
@@ -62,7 +66,7 @@
 
                                             var searchInput = desktopNav.querySelector('#searchInputDesktop');
                                             var searchResults = desktopNav.querySelector('#searchResultsDesktop');
-                                            var searchType = desktopNav.querySelector('#searchTypeDesktop')                                            
+                                            var searchType = desktopNav.querySelector('#searchType')
                                             if (!searchInput || !searchResults || !searchType) return;
 
                                             var lastDesktopQuery = '';
@@ -101,7 +105,6 @@
                                                                 var name = result.name || '';
                                                                 var item = document.createElement('a');
                                                                 item.className = 'dropdown-item d-flex align-items-center';
-                                                                // Usar product.website_url si está disponible
                                                                 var url = result.website_url ? result.website_url : ('/shop/' + name + '?product=product.template(' + result.id + ',)');
                                                                 item.href = url;
                                                                 item.title = name || 'Producto';
