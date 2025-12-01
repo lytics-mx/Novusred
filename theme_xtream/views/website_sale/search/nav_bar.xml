@@ -91,12 +91,13 @@
                                                 lastDesktopQuery = query;
                                                 lastDesktopType = type;
 
-                                                fetch('/search_live?query=' + encodeURIComponent(query))
+                                                // Enviar el tipo de búsqueda al backend
+                                                fetch('/search_live?query=' + encodeURIComponent(query) + '&type=' + encodeURIComponent(type))
                                                     .then(function(response){ return response.json(); })
                                                     .then(function(data){
                                                         searchResults.innerHTML = '';
                                                         if ((type === 'category' || type === 'brand') && data.results && data.results.length) {
-                                                            // Solo mostrar nombres de categorías o marcas
+                                                            // Mostrar solo nombres de categorías o marcas
                                                             searchResults.style.display = 'block';
                                                             data.results.slice(0, 7).forEach(function(result){
                                                                 var name = result.name || '';
