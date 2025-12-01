@@ -22,7 +22,7 @@
                                         <input type="search" name="search" id="searchInputDesktop" class="form-control"
                                             placeholder="Buscar productos, marcas o categorías..." aria-label="Buscar"
                                             style="border-radius: 20px; font-size: 14px; height: 36px;" autocomplete="off"/>
-                                        <select name="search_type" id="searchTypeDesktop" class="form-select" style="width:auto; border-radius:20px; margin-left:8px; font-size:14px; height:36px;">
+                                        <select name="search_type" id="searchType" class="form-select" style="width:auto; border-radius:20px; margin-left:8px; font-size:14px; height:36px;">
                                             <option value="all">Todo</option>
                                             <option value="category">Categoría</option>
                                             <option value="brand">Marca</option>
@@ -38,6 +38,23 @@
                                 </form>
                                 <script>
                                     <![CDATA[
+                                    // ...existing code...
+                                    const searchType = document.getElementById('searchType');
+                                    const searchInput = document.getElementById('searchInputDesktop');
+                                    if (searchType && searchInput) {
+                                        searchType.addEventListener('change', function() {
+                                            if (this.value === 'all') {
+                                                searchInput.placeholder = 'Buscar productos, marcas o categorías...';
+                                            } else if (this.value === 'brand') {
+                                                searchInput.placeholder = 'Buscar marca...';
+                                            } else if (this.value === 'category') {
+                                                searchInput.placeholder = 'Buscar categoría...';
+                                            } else if (this.value === 'model') {
+                                                searchInput.placeholder = 'Buscar modelo...';
+                                            }
+                                        });
+                                    }
+                                    // ...existing code...
                                     (function(){
                                         function initDesktopSearch() {
                                             var desktopNav = document.querySelector('.custom-navbar nav.navbar.d-lg-block');
@@ -45,7 +62,7 @@
 
                                             var searchInput = desktopNav.querySelector('#searchInputDesktop');
                                             var searchResults = desktopNav.querySelector('#searchResultsDesktop');
-                                            var searchType = desktopNav.querySelector('#searchTypeDesktop');
+                                            var searchType = desktopNav.querySelector('#searchType');
                                             if (!searchInput || !searchResults || !searchType) return;
 
                                             var lastDesktopQuery = '';
