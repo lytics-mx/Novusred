@@ -63,6 +63,7 @@ class WebsiteSearch(http.Controller):
                 'id': product.id,
                 'name': product.name,
                 'image': product.image_1920 and f'/web/image/product.template/{product.id}/image_1920' or '',
+                'website_url': product.website_url,
                 'url': product.website_url or f'/shop/{product.name.replace(" ", "-")}?product=product.template({product.id},)'
             } for product in products]
     

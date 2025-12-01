@@ -88,6 +88,7 @@
                                                                 var name = result.name || '';
                                                                 var item = document.createElement('a');
                                                                 item.className = 'dropdown-item d-flex align-items-center';
+                                                                // Usar siempre product.website_url si existe
                                                                 var url = result.website_url ? result.website_url : ('/shop/' + name + '?product=product.template(' + result.id + ',)');
                                                                 item.href = url;
                                                                 item.title = name || 'Producto';
