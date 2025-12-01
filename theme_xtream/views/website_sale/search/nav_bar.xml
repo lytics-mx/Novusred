@@ -178,11 +178,11 @@
                 <!-- Buscador -->
                 <form class="flex-grow-1 mx-2" action="/search_redirect" method="get" style="max-width: 100%;">
                     <div class="input-group w-100" style="height:36px;">
-                        <input type="search" name="search" id="searchInputMobile" class="form-control"
+                        <input type="search" name="search" id="mobileSearchInput" class="form-control"
                             placeholder="Buscar productos, marcas o categorías..." aria-label="Buscar"
                             style="border-radius: 20px; font-size: 14px; height: 36px;" autocomplete="off"/>
                         <input type="hidden" name="search_type" value="all"/>
-                        <div id="searchResultsMobile" class="dropdown-menu"
+                        <div id="mobileSearchResults" class="dropdown-menu"
                              style="display: none; position: absolute; z-index: 1000; width: 100%; top: 100%; left: 0; background-color: white; border: 1px solid #ccc; padding: 10px;">
                         </div>
                         <button class="btn btn-outline-secondary" type="submit"
@@ -207,8 +207,8 @@
                         var mobileNav = document.querySelector('nav.mobile-navbar.d-flex.d-lg-none');
                         if (!mobileNav) return;
 
-                        var searchInput = mobileNav.querySelector('#searchInputMobile');
-                        var searchResults = mobileNav.querySelector('#searchResultsMobile');
+                        var searchInput = mobileNav.querySelector('#mobileSearchInput');
+                        var searchResults = mobileNav.querySelector('#mobileSearchResults');
                         if (!searchInput || !searchResults) return;
 
                         var lastMobileQuery = '';
@@ -251,7 +251,7 @@
                                             var imgAlt = name || 'Producto';
                                             item.innerHTML = '<img src="' + imgSrc + '" alt="' + imgAlt + '" style="width:32px;height:32px;object-fit:contain;margin-right:10px;"/>' +
                                                              '<div style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:120px;font-size:10px;">' + truncatedName + '</div>';
-                                            searchResults.appendChild(item);
+                                            mobileSearchResults.appendChild(item);
                                         });
                                         var allResultsLink = document.createElement('a');
                                         allResultsLink.className = 'dropdown-item text-center';
@@ -259,13 +259,13 @@
                                         allResultsLink.textContent = 'Ver todos los resultados';
                                         allResultsLink.style.fontSize = '10px';
                                         allResultsLink.style.padding = '8px 0';
-                                        searchResults.appendChild(allResultsLink);
+                                        mobileSearchResults.appendChild(allResultsLink);
                                     } else {
-                                        searchResults.style.display = 'none';
+                                        mobileSearchResults.style.display = 'none';
                                     }
                                 })
                                 .catch(function(){
-                                    searchResults.style.display = 'none';
+                                    mobileSearchResults.style.display = 'none';
                                 });
                         });
 
