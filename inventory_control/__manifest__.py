@@ -27,7 +27,7 @@
         'views/product_category.xml',
         'views/product_tag.xml',
         'views/product_product.xml',
-        'views/sale_order.xml',
+        # 'views/sale_order.xml',
         # 'views/product_model.xml',
         # 'views/sale_order_note.xml',
         'views/sale_orde_pdf.xml',
