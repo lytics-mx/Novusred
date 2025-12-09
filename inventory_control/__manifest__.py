@@ -29,7 +29,7 @@
 
         #Vista de cotización del módulo CRM
         'views/product_product.xml',
-        # 'views/sale_order.xml',
+        'views/sale_order.xml',
         'views/sale_order_pdf.xml',
         'views/report_invoice.xml',
         
