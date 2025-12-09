@@ -11,7 +11,7 @@ class UpdateSaleOrderSequence(models.Model):
             # Actualizar el prefijo y el número inicial
             sequence.write({
                 'prefix': 'S',
-                'number_next': 23500
+                'number_next': 25000  # <-- Aquí el nuevo consecutivo
             })
 
     def action_update_sequence(self):
