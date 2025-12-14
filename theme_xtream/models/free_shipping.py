@@ -17,20 +17,27 @@ class ShoppingFree(models.Model):
     is_active = fields.Boolean(string='Activo', default=False)
     
     def action_update_products(self):
-        """Actualiza el campo free_shipping en los productos relacionados"""
-        # Resetear todos los productos
-        self.env['product.template'].sudo().search([]).write({'free_shipping': False})
-        
-        # Marcar los relacionados
-        if self.product_ids:
-            self.product_ids.write({'free_shipping': True})
-        
+        """Actualiza el campo free_shipping en los productos relacionados evitando conflictos de concurrencia"""
+        Product = self.env['product.template'].sudo()
+        # Solo desactiva los productos que actualmente tienen free_shipping=True y no están en la selección
+        to_disable = Product.search([
+            ('free_shipping', '=', True),
+            ('id', 'not in', self.product_ids.ids)
+        ])
+        if to_disable:
+            to_disable.write({'free_shipping': False})
+
+        # Solo activa los productos seleccionados que no lo tengan ya activo
+        to_enable = self.product_ids.filtered(lambda p: not p.free_shipping)
+        if to_enable:
+            to_enable.write({'free_shipping': True})
+
         # Actualizar estado
         self.write({
             'state': 'active',
             'is_active': True
         })
-        
+
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
