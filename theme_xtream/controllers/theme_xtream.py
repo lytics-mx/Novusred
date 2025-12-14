@@ -127,7 +127,6 @@ class WebsiteProduct(http.Controller):
         """
         Renderiza la página de inicio con el nuevo template.
         """
-        return http.request.render('theme_xtream.xtream_inicio')     
-
+        return http.request.render('theme_xtream.xtream_inicio')
 
 
