@@ -1,0 +1,229 @@
+<odoo>
+    <template id="wishlist_template" name="Favoritos">
+        <t t-call="website.layout">
+            <t t-if="wishlist_items">
+                <div class="container d-none d-lg-block">
+                    <div style="height: 30px;"></div>
+                    <div style="margin-bottom: 10px;">
+                        <a href="/checkout"
+                            style="font-size:16px; color:#656565; text-decoration:none;">Compras</a>
+                        &#160;&gt;&#160; <a href="/wishlist"
+                            style="font-size:16px; color:#656565; text-decoration:none;">Favoritos</a>
+                    </div>
+                    <div
+                        style="font-size:22px; color:#000000; font-weight:normal; margin-bottom: 20px;">
+                        Favoritos
+                    </div>
+                    <!-- Formulario principal para eliminar seleccionados -->
+                    <form method="post" action="/wishlist/clear" id="wishlist_bulk_remove_form">
+                        <t t-call="theme_xtream.csrf_token" />
+                        <div
+                            style="background: #fff; border: 1px solid #dee2e6; border-radius: 8px; padding: 16px 24px; margin-bottom: 20px;">
+                            <label
+                                style="display: flex; align-items: center; cursor: pointer; margin-bottom: 0;">
+                                <input type="checkbox" id="select_all"
+                                    onchange="toggleCheckboxes(this)"
+                                    style="margin-right: 5px; width: 22px; height: 22px; accent-color: #0009ED; border-radius: 7px;" />
+                                <!-- <span style="margin-right: 8px;"> Eliminar todos los productos
+                                seleccionados</span> -->
+                                <button type="submit"
+                                    style="background: none; border: none; padding: 0; cursor: pointer; font-size: 16px; color: #777777;"
+                                    onclick="return confirm('¿Estás seguro de que deseas eliminar todos los productos seleccionados?');">
+                                    Eliminar favoritos seleccionados
+
+                                </button>
+                            </label>
+                        </div>
+                        <div class="products-list">
+                            <t t-foreach="wishlist_items" t-as="item" t-key="item.id">
+                                <div class="product-list-item p-3"
+                                    style="border: 1px solid #dee2e6; border-radius: 0; background: #fff; margin-bottom: 0;">
+                                    <div class="row align-items-center">
+                                        <!-- Checkbox para seleccionar el producto -->
+                                        <div class="col-auto pr-0" style="max-width: 20px;">
+                                            <input type="checkbox" name="wishlist_select[]"
+                                                t-att-value="item.id" class="wishlist-checkbox"
+                                                style="margin-right: 0; width: 22px; height: 22px; accent-color: #0009ED;" />
+                                        </div>
+                                        <!-- Imagen del producto -->
+                                        <div class="col-2">
+                                            <img
+                                                t-att-src="'/web/image/product.product/%s/image_1024' % item.product_id.id"
+                                                class="img-fluid d-block mx-auto"
+                                                alt="Product Image"
+                                                style="max-height: 120px; object-fit: contain;" />
+                                        </div>
+                                        <!-- Detalles del producto -->
+                                        <div class="col-9">
+                                            <t t-set="product" t-value="item.product_id" />
+                                            <h6>
+                                                <t t-esc="product.name" />
+                                            </h6>
+                                            <t t-if="product.brand_type_id">
+                                                <span style="color: #777777;"> Por <t
+                                                        t-esc="product.brand_type_id.name" />
+                                                </span>
+                                            </t>
+                                            <t
+                                                t-if="product.discounted_price &lt; product.list_price">
+                                                <div>
+                                                    <span style="font-weight:bold; font-size:24px;">
+                                                        $<t
+                                                            t-esc="'{:,}'.format(int(product.discounted_price))" />
+                                                    </span>
+                                                    <t t-if="product.discount_percentage">
+                                                        <span
+                                                            style="color:#FF5207; margin-left: 10px;">
+                                                            <t
+                                                                t-esc="int(product.discount_percentage)" />%
+                                                            OFF </span>
+                                                    </t>
+                                                    <t t-elif="product.fixed_discount">
+                                                        <span
+                                                            style="color:#FF5207; margin-left: 10px;">
+                                                            -$<t
+                                                                t-esc="'{:,}'.format(int(product.fixed_discount))" />
+                                                            MXN </span>
+                                                    </t>
+                                                </div>
+                                                <div>
+                                                    <span> $<t
+                                                            t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" />
+                                                        de descuento </span>
+                                                </div>
+                                            </t>
+                                            <t t-else="">
+                                                <div>
+                                                    <span style="font-weight:bold; font-size:24px;">
+                                                        $<t
+                                                            t-esc="'{:,}'.format(int(product.list_price))" />
+                                                    </span>
+                                                </div>
+                                            </t>
+                                            <t t-if="product.free_shipping">
+                                                <div>
+                                                    <span style="color:#FF5207; font-weight:bold;">
+                                                        Envío gratis
+                                                    </span>
+                                                </div>
+                                            </t>
+                                            <form method="post"
+                                                t-att-action="'/wishlist/remove/%s' % item.id"
+                                                style="display:inline;">
+                                                <t t-call="theme_xtream.csrf_token" />
+                                                <button type="submit"
+                                                    style="background: none; border: none; padding: 0; cursor: pointer; color: #0009ED; font-size: 16px;"
+                                                    onclick="return confirm('¿Estás seguro de que deseas eliminar este producto de tus favoritos?');">
+                                                    Eliminar
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </form>
+                    <div style="height: 30px;"></div>
+                </div>
+            </t>
+
+
+
+            
+            <t t-else="">
+                <div class="container" style="text-align:center; padding: 40px 0;">
+                    <p style="font-size: 20px; color: #555;">No tienes productos en tu lista de
+                        favoritos.</p>
+                    <a href="/subcategory" class="btn btn-primary"
+                        style="margin-top: 20px; background: #FF5207; border: none; font-size: 16px;">
+                        Ir a ver productos
+                    </a>
+                </div>
+
+            </t>
+                   <div class="container d-block d-lg-none" style="padding: 0 8px;">
+
+                <div class="products-list">
+                <t t-if="wishlist_items">
+                    <div style="font-size:16px; color:#000000; font-weight:normal; margin: 20px 0 16px 0;">
+                        Favoritos
+                    </div>
+                </t>
+                    <t t-foreach="wishlist_items" t-as="item" t-key="item.id">
+                      
+                        <div class="product-list-item p-2" style="border: 1px solid #dee2e6; border-radius: 8px; background: #fff; margin-bottom: 0;">
+                            <div class="row no-gutters align-items-center">
+                                <!-- Imagen del producto -->
+                                <div class="col-4">
+                                    <img t-att-src="'/web/image/product.product/%s/image_1024' % item.product_id.id"
+                                         class="img-fluid d-block mx-auto"
+                                         alt="Product Image"
+                                         style="max-height: 80px; object-fit: contain;" />
+                                </div>
+                                <!-- Detalles del producto -->
+                                <div class="col-8">
+                                    <t t-set="product" t-value="item.product_id" />
+                                    <div style="font-size:12px; font-weight:normal; text-transform:uppercase; line-height:1.2; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; text-overflow:ellipsis;">
+                                        <t t-esc="product.name" />
+                                    </div>
+                                    <t t-if="product.brand_type_id">
+                                        <div style="color:#777; font-size:12px;">por <t t-esc="product.brand_type_id.name" /></div>
+                                    </t>
+                                    <t t-if="product.discounted_price &lt; product.list_price">
+                                        <div>
+                                            <span style="font-weight:bold; font-size:18px;">
+                                                $<t t-esc="'{:,}'.format(int(product.discounted_price))" />
+                                            </span>
+                                            <t t-if="product.discount_percentage">
+                                                <span style="color:#FF5207; margin-left: 8px; font-size:14px;">
+                                                    <t t-esc="int(product.discount_percentage)" />% OFF
+                                                </span>
+                                            </t>
+                                            <t t-elif="product.fixed_discount">
+                                                <span style="color:#FF5207; margin-left: 8px; font-size:14px;">
+                                                    -$<t t-esc="'{:,}'.format(int(product.fixed_discount))" /> MXN
+                                                </span>
+                                            </t>
+                                        </div>
+                                        <div style="font-size:12px;">
+                                            <span>$<t t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" /> de descuento</span>
+                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <div>
+                                            <span style="font-weight:bold; font-size:18px;">
+                                                $<t t-esc="'{:,}'.format(int(product.list_price))" />
+                                            </span>
+                                        </div>
+                                    </t>
+                                    <t t-if="product.free_shipping">
+                                        <div style="color:#FF5207; font-weight:bold; font-size:13px;">
+                                            Envío gratis
+                                        </div>
+                                    </t>
+                                    <form method="post" t-att-action="'/wishlist/remove/%s' % item.id" style="display:inline;">
+                                        <t t-call="theme_xtream.csrf_token" />
+                                        <button type="submit"
+                                            style="background: none; border: none; padding: 0; cursor: pointer; color: #0009ED; font-size: 12px;">
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+                <div style="height: 45px;"></div>                
+            </div> 
+            
+        </t>
+        <script>
+            function toggleCheckboxes(selectAllCheckbox) {
+            const checkboxes = document.querySelectorAll('.wishlist-checkbox');
+            checkboxes.forEach(checkbox => {
+            checkbox.checked = selectAllCheckbox.checked;
+            });
+            }
+        </script>
+    </template>
+</odoo>
