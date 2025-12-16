@@ -1,0 +1,120 @@
+<odoo>
+    <!-- To inherit footer -->
+    <template id="theme_xtream_footer" inherit_id="website.layout" name="Xtream Footer">
+        <xpath expr="//footer" position="replace">
+            <footer style="background-color: #f5f5f5; font-family: 'Questrial', sans-serif; font-size: 14px; color: #333;">
+                <!-- Header Section -->
+                <!-- <div style="background-color: #f5f5f5; padding: 10px 0; text-align: center; border-bottom: 1px solid #ddd;">
+                    <h4 style="font-size: 18px; font-weight: bold; margin: 0;">Más información...</h4>
+                </div> -->
+                <!-- Main Footer Content -->
+                <div class="container" style="padding: 40px 0;">
+                    <!-- Desktop Version -->
+                    <div class="row d-none d-md-flex">
+                        <!-- Clientes Section -->
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <h5 style="font-size: 16px; font-weight: bold; margin-bottom: 15px;">Clientes</h5>
+                            <ul style="list-style: none; padding: 0; margin: 0;">
+                                <li><a href="/web/login" style="text-decoration: none; color: inherit;">Mi cuenta</a></li>
+                                <li><a href="/contactus" style="text-decoration: none; color: inherit;">Contacto</a></li>
+                                <li><a href="/portal/facturacliente/" style="text-decoration: none; color: inherit;">Facturas fiscales</a></li>
+                                <li><a href="/shop/cart" style="text-decoration: none; color: inherit;">Pedidos</a></li>
+                                <li><a href="/shop/address" style="text-decoration: none; color: inherit;">Direcciones</a></li>
+                            </ul>
+                        </div>
+                        <!-- Categorías Section -->
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <h5 style="font-size: 16px; font-weight: bold; margin-bottom: 15px;">Categorías</h5>
+                            <ul style="list-style: none; padding: 0; margin: 0;">
+                                <t t-set="all_categories" t-value="request.env['product.category'].search([('parent_id', '!=', False)])" />
+                                <t t-set="timestamp" t-value="int(time.time())" />
+                                <t t-set="random_offset" t-value="timestamp % (len(all_categories) or 1)" />
+                                <t t-foreach="all_categories[random_offset:random_offset+10] if len(all_categories) > 10 else all_categories" t-as="category">
+                                    <li>
+                                        <a t-att-href="'/category_search?search=' + category.name.replace(' ', '-')" style="text-decoration: none; color: inherit;">
+                                            <t t-esc="category.name"/>
+                                        </a>
+                                    </li>
+                                </t>
+                            </ul>
+                        </div>
+                        <!-- Información Section -->
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <h5 style="font-size: 16px; font-weight: bold; margin-bottom: 15px;">Información</h5>
+                            <ul style="list-style: none; padding: 0; margin: 0;">
+                                <li><a href="/delivery_policies" style="text-decoration: none; color: inherit;">Envío</a></li>
+                                <li><a href="/refund_policies" style="text-decoration: none; color: inherit;">Devoluciones</a></li>
+                                <li><a href="/purchasing_policies" style="text-decoration: none; color: inherit;">Términos y Condiciones</a></li>
+                                <li><a href="/privacy_policy" style="text-decoration: none; color: inherit;">Aviso de Privacidad</a></li>
+                                <li><a href="/payment_policies" style="text-decoration: none; color: inherit;">Pago Seguro</a></li>
+                            </ul>
+                        </div>
+                        <!-- Beneficios Section -->
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <h5 style="font-size: 16px; font-weight: bold; margin-bottom: 15px;">Beneficios Novusred</h5>
+                            <ul style="list-style: none; padding: 0; margin: 0;">
+                                <li><a href="/rewards" style="text-decoration: none; color: inherit;">Recompensas</a></li>
+                                <li><a href="/warranty_policies" style="text-decoration: none; color: inherit;">Política de Garantías</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Version - Two Columns -->
+                    <!-- Mobile Version - Two Columns -->
+                    <div class="row d-block d-md-none" style="font-size: 12px;">
+                        <div class="col-12">
+                            <div class="row">
+                                <!-- Columna Izquierda - Clientes -->
+                                <div class="col-6 pe-3">
+                                    <h6 style="font-size: 14px; font-weight: bold; margin-bottom: 10px; color: #000;">Clientes</h6>
+                                    <ul style="list-style: none; padding: 0; margin: 0; line-height: 1.2;">
+                                        <li style="margin-bottom: 2px;"><a href="/web/login" style="text-decoration: none; color: #666; font-size: 12px;">Mi cuenta</a></li>
+                                        <li style="margin-bottom: 2px;"><a href="/contactus" style="text-decoration: none; color: #666; font-size: 12px;">Contacto</a></li>
+                                        <li style="margin-bottom: 2px;"><a href="/portal/facturacliente/" style="text-decoration: none; color: #666; font-size: 12px;">Facturación Fiscal</a></li>
+                                        <li style="margin-bottom: 2px;"><a href="/shop/cart" style="text-decoration: none; color: #666; font-size: 12px;">Preguntas frecuentes</a></li>
+                                        <li style="margin-bottom: 2px;"><a href="/shop/address" style="text-decoration: none; color: #666; font-size: 12px;">Solicitud de proyecto</a></li>
+                                        <li style="margin-bottom: 2px;"><a href="/rewards" style="text-decoration: none; color: #666; font-size: 12px;">Recompensas</a></li>
+                                        <li style="margin-bottom: 2px;"><a href="#" style="text-decoration: none; color: #666; font-size: 12px;">Pedidos</a></li>
+                                    </ul>
+                                </div>
+
+                                <!-- Columna Derecha - Información -->
+                                <div class="col-6 ps-3">
+                                    <h6 style="font-size: 14px; font-weight: bold; margin-bottom: 10px; color: #000;">Información</h6>
+                                    <ul style="list-style: none; padding: 0; margin: 0; line-height: 1.2;">
+                                        <li style="margin-bottom: 2px;"><a href="/delivery_policies" style="text-decoration: none; color: #666; font-size: 12px;">Envío</a></li>
+                                        <li style="margin-bottom: 2px;"><a href="/refund_policies" style="text-decoration: none; color: #666; font-size: 12px;">Devoluciones y Conformidades</a></li>
+                                        <li style="margin-bottom: 2px;"><a href="/purchasing_policies" style="text-decoration: none; color: #666; font-size: 12px;">Términos y Condiciones</a></li>
+                                        <li style="margin-bottom: 2px;"><a href="/privacy_policy" style="text-decoration: none; color: #666; font-size: 12px;">Políticas de Garantía</a></li>
+                                        <li style="margin-bottom: 2px;"><a href="/privacy_policy" style="text-decoration: none; color: #666; font-size: 12px;">Aviso de Privacidad</a></li>
+                                        <li style="margin-bottom: 2px;"><a href="/payment_policies" style="text-decoration: none; color: #666; font-size: 12px;">Pago Seguro</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Full-width Footer Bottom -->
+                <div style="background-color: #ffffff; padding: 10px 0; text-align: center; width: 100%;">
+                    <p style="font-size: 12px; color: #333; margin: 0; line-height: 1.4; word-break: break-word;">
+                        Novusred © 2025 Todos los derechos reservados, operado por Novusred Sinergia en Tecnología SAPI de CV
+                    </p>
+                    <p style="font-size: 12px; color: #333; margin: 0; line-height: 1.4; word-break: break-word;">
+                        Novusred es una empresa 100% Mexicana, fundada en el año 2011, líder en la distribución de soluciones de Tecnologías de la Información a nivel nacional.
+                    </p>
+                    <style>
+                        @media (max-width: 576px) {
+                            footer p {
+                                font-size: 10px !important;
+                                padding-left: 8px;
+                                padding-right: 8px;
+                            }
+                        }
+                    </style>
+                </div>
+
+                
+            </footer>
+        </xpath>
+    </template>
+</odoo>

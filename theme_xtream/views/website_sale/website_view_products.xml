@@ -1,0 +1,1862 @@
+<odoo>
+    <template id="website_view_product_xtream" inherit_id="website_sale.product">
+        <xpath expr="//div[@id='wrap']" position="replace">
+
+            <t t-call-assets="website.assets_frontend" t-js="true" />
+            <t t-call-assets="website_sale.assets_frontend" t-js="true" />
+            <t t-call-assets="'theme_xtream.views_products_css'" t-css="true" />
+
+            <div id="wrap" class="oe_structure oe_website_sale text-center"
+                style="padding:40px 16px;">
+                <style>
+                    @media (min-width: 768px) {
+                    #wrap.oe_website_sale {
+                    padding-left: 180px !important;
+                    padding-right: 180px !important;
+                    }
+                    }
+                </style>
+
+                <div class="product-breadcrumb-bar"
+                    style="background:#D2D2D2; padding:10px 20px; border-radius:6px; margin-bottom:0; display:flex; align-items:center; gap:10px; justify-content:flex-start;">
+                    <t t-set="referer" t-value="request.httprequest.headers.get('Referer')" />
+                    <t t-if="not referer or referer == request.httprequest.url">
+                        <t t-set="referer" t-value="'/subcategory'" />
+                    </t>
+                    <a t-att-href="referer" style="color:#333;">Volver</a>
+                    <span style="margin: 0 8px;">|</span>
+                    <span t-if="product.categ_id">
+                        <t t-set="parent_cat" t-value="product.categ_id.parent_id" />
+                        <t t-if="parent_cat and parent_cat.parent_id">
+                            <!-- Grandparent > Parent > Child -->
+                            <a t-att-href="'/subcategory?category_id=%s' % parent_cat.parent_id.id"
+                                t-esc="parent_cat.parent_id.name" style="color:#337ab7;" />
+                            <span style="margin: 0 4px;">&gt;</span>
+                            <a t-att-href="'/subcategory?category_id=%s' % parent_cat.id"
+                                t-esc="parent_cat.name" style="color:#337ab7;" />
+                            <span style="margin: 0 4px;">&gt;</span>
+                            <a t-att-href="'/subcategory?category_id=%s' % product.categ_id.id"
+                                t-esc="product.categ_id.name" style="color:#337ab7;" />
+                        </t>
+                        <t t-elif="parent_cat">
+                            <!-- Parent > Child -->
+                            <a t-att-href="'/subcategory?category_id=%s' % parent_cat.id"
+                                t-esc="parent_cat.name" style="color:#337ab7;" />
+                            <span style="margin: 0 4px;">&gt;</span>
+                            <a t-att-href="'/subcategory?category_id=%s' % product.categ_id.id"
+                                t-esc="product.categ_id.name" style="color:#337ab7;" />
+                        </t>
+                        <t t-else="">
+                            <!-- Only Child -->
+                            <a t-att-href="'/subcategory?category_id=%s' % product.categ_id.id"
+                                t-esc="product.categ_id.name" style="color:#337ab7;" />
+                        </t>
+                    </span>
+                </div>
+
+
+                <!-- ...resto del contenido (imagen, nombre, etc)... -->
+                <div class="row d-none d-md-flex"
+                    style="align-items: flex-start; background: #fff; margin: 0; padding: 0; display: flex; flex-wrap: nowrap;">
+                    <!-- Columna izquierda -->
+                    <div class="col-12 col-md-8"
+                        style="background:#fff; min-height:200px; display: flex; flex-direction: column; border-radius: 0; margin-left: 24px; overflow: hidden;">
+                        <div class="card"
+                            style="width: 100%; min-height: 300px; margin-bottom: 20px; background:#fff; border:none;">
+                            <div class="card-body" style="background-color: #fff;">
+                                <div class="d-flex flex-row align-items-start justify-content-start"
+                                    style="width:100%; gap:24px; padding:0; background:#fff;">
+                                    <!-- Galería de miniaturas a la izquierda -->
+                                    <div
+                                        class="d-flex flex-column align-items-center justify-content-start"
+                                        id="product-thumbs" style="gap: 8px; margin-right: 18px;">
+                                        <!-- Siempre la imagen principal como primer miniatura -->
+                                        <img
+                                            t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                                            class="img-thumbnail product-thumb active thumb-mini"
+                                            t-att-data-img="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                                            style="cursor:pointer;" />
+                                        <!-- Después, solo las imágenes adicionales -->
+                                        <t t-if="product.product_image_ids">
+                                            <t t-foreach="product.product_image_ids" t-as="img">
+                                                <img
+                                                    t-att-src="'/web/image/product.image/' + str(img.id) + '/image_1920'"
+                                                    class="img-thumbnail product-thumb thumb-mini"
+                                                    t-att-data-img="'/web/image/product.image/' + str(img.id) + '/image_1920'"
+                                                    style="cursor:pointer;" />
+                                            </t>
+                                        </t>
+                                    </div>
+                                    <!-- Imagen principal al centro, ocupa todo el espacio
+                                    disponible -->
+                                    <div
+                                        class="flex-grow-1 d-flex flex-column align-items-center justify-content-start"
+                                        style="min-width:0;">
+                                        <img id="main-product-img"
+                                            t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                                            class="img-fluid main-img-large"
+                                            style="max-height:500px;cursor:pointer; margin-bottom: 18px; width:100%; object-fit:contain;" />
+                                    </div>
+                                    <div style="height:30px;"></div>
+                                    <button type="button"
+                                        class="btn btn-light o_add_wishlist o_editable"
+                                        data-action="o_wishlist"
+                                        title="Agregar a la lista de deseos"
+                                        t-att-data-product-product-id="product.product_variant_id.id"
+                                        style="font-size: 18px; padding: 10px 12px; border-radius: 8px;">
+                                        <span class="fa fa-heart"
+                                            aria-label="Agregar a la lista de deseos"
+                                            style="font-size: 20px;"></span>
+                                    </button>
+
+                                </div>
+                                <!-- Productos que podrían interesarte debajo de toda la galería e
+                                imagen principal, ocupando el mismo ancho -->
+                                
+                                <div class="w-100 mt-3">
+                                    <div style="width: 100%;">
+                                        <!-- ...existing code... -->
+                                        <t t-if="product.optional_product_ids">
+                                            <hr />
+                                            <div class="row" style="padding:18px; margin-bottom:24px;">
+                                                <!-- Accesorios a la izquierda -->
+                                                <div class="col-12 col-md-9">
+                                                    <h5 style="font-weight:600; margin-bottom:12px; font-size:22px; text-align:left;">
+                                                        Productos que podrían interesarte
+                                                    </h5>
+                                                    <t t-set="acc_list" t-value="product.optional_product_ids" />
+                                                    <t t-set="acc_count" t-value="len(acc_list)" />
+                                                    <t t-if="acc_count > 3">
+                                                        <div id="accessory-carousel" class="carousel slide" data-bs-ride="carousel">
+                                                            <div class="carousel-inner">
+                                                                <t t-foreach="range(0, acc_count, 3)" t-as="idx">
+                                                                    <div t-attf-class="carousel-item #{'active' if idx == 0 else ''}">
+                                                                        <div class="d-flex flex-nowrap align-items-stretch justify-content-center" style="gap:8px;">
+                                                                            <t t-foreach="acc_list[idx:idx+3]" t-as="acc" t-index="acc_idx" t-key="acc.id">
+                                                                                <div class="d-flex flex-column align-items-center" style="position:relative;">
+                                                                                    <div t-attf-class="card shadow-sm accessory-card accessory-card-100 #{'not-last' if acc_idx != (min(2, acc_count-idx-1)) else ''}" style="border-radius: 10px; overflow: hidden; width:120px; min-width:120px; max-width:120px;">
+                                                                                        <div style="position: absolute; z-index: 2; left: 8px; top: 8px;">
+                                                                                            <input type="checkbox" name="bundle_product_ids[]" t-att-value="acc.product_variant_id.id" class="bundle-checkbox custom-bundle-checkbox" style="width:30px; height:30px; border-radius:9px; border:1px solid #888; background:#f8f8f8;" />
+                                                                                        </div>
+                                                                                        <a t-att-href="acc.website_url">
+                                                                                            <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%;">
+                                                                                                <img t-att-src="'/web/image/product.template/' + str(acc.id) + '/image_1920'" class="card-img-top accessory-img" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 10px;" />
+                                                                                            </div>
+                                                                                        </a>
+                                                                                        <div class="card-body accessory-card-body accessory-card-100" style="text-align: left; padding: 4px 2px 2px 2px;">
+                                                                                            <t t-if="acc.product_tag_ids">
+                                                                                                <div class="d-flex justify-content-start mb-2 accessory-badge-container">
+                                                                                                    <span class="badge bg-primary accessory-badge" style="border-radius: 0; text-transform: uppercase; font-size:10px; padding:2px 4px; max-width:90px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                                                                                        <t t-esc="acc.product_tag_ids[0].name" />
+                                                                                                    </span>
+                                                                                                </div>
+                                                                                            </t>
+                                                                                            <t t-if="acc.discounted_price &lt; acc.list_price">
+                                                                                                <div class="mt-0 accessory-discount-amount">
+                                                                                                    <span style="font-size: 9px;">
+                                                                                                        $<t t-esc="'{:,}'.format(int(acc.list_price or 0))" />
+                                                                                                    </span>
+                                                                                                </div>
+                                                                                                <div class="d-flex align-items-center accessory-price-container" style="gap: 2px;">
+                                                                                                    <span class="text-dark fw-bold accessory-main-price" style="font-size: 10px; color: #000; font-weight: bold;">
+                                                                                                        $<t t-esc="'{:,}'.format(int(acc.discounted_price or 0))" />
+                                                                                                    </span>
+                                                                                                    <t t-if="acc.discount_percentage or acc.fixed_discount">
+                                                                                                        <span class="accessory-discount" style="font-size: 9px; font-weight: normal; color: #FF5207; margin-left: 2px;">
+                                                                                                            <t t-if="acc.discount_percentage">
+                                                                                                                <t t-esc="int(acc.discount_percentage)" />% OFF
+                                                                                                            </t>
+                                                                                                            <t t-elif="acc.fixed_discount">
+                                                                                                                -$<t t-esc="'{:,}'.format(int(acc.fixed_discount))" /> MXN
+                                                                                                            </t>
+                                                                                                        </span>
+                                                                                                    </t>
+                                                                                                </div>
+                                                                                                <t t-if="acc.list_price and acc.discounted_price and (acc.list_price - acc.discounted_price) &gt; 0">
+                                                                                                    <div class="mt-0 accessory-discount-amount">
+                                                                                                        <span style="font-size: 12px;">
+                                                                                                            $<t t-esc="'{:,}'.format(int(acc.list_price - acc.discounted_price))" /> descuento
+                                                                                                        </span>
+                                                                                                    </div>
+                                                                                                </t>
+                                                                                            </t>
+                                                                                            <t t-elif="acc.list_price">
+                                                                                                <span class="fw-bold d-block accessory-main-price" style="font-size: 16px;">
+                                                                                                    $<t t-esc="'{:,}'.format(int(acc.list_price or 0))" />
+                                                                                                </span>
+                                                                                            </t>
+                                                                                            <t t-if="acc.free_shipping">
+                                                                                                <div class="mt-0 accessory-shipping">
+                                                                                                    <span class="text-orange accessory-shipping-text" style="font-size: 12px;">
+                                                                                                        Envío gratis
+                                                                                                    </span>
+                                                                                                </div>
+                                                                                            </t>
+                                                                                            <h6 class="card-title mb-2" style="font-size: 13px; line-height: 1.1; max-height: 2.2em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; width:100px; text-overflow: clip;">
+                                                                                                <t t-esc="acc.name" />
+                                                                                            </h6>
+                                                                                        </div>
+                                                                                        <t t-if="acc_idx != (min(2, acc_count-idx-1))">
+                                                                                            <span style="position: absolute; right: -20px; top: 50%; transform: translateY(-50%); font-size: 24px; font-weight: bold; color: #888; line-height: 1; pointer-events: none;">
+                                                                                                +
+                                                                                            </span>
+                                                                                        </t>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </t>
+                                                                        </div>
+                                                                    </div>
+                                                                </t>
+                                                            </div>
+                                                            <button class="carousel-control-prev" type="button" data-bs-target="#accessory-carousel" data-bs-slide="prev" style="z-index: 10; width: 48px; height: 48px; top: 50%; left: 0; transform: translateY(-50%); position: absolute; background: rgba(255,255,255,0.7); border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center;">
+                                                                <span aria-hidden="true" style="font-size: 38px; color: #222; display: flex; align-items: center;">
+                                                                    <svg width="32" height="32" viewBox="0 0 48 48" fill="none" style="display:block;" xmlns="http://www.w3.org/2000/svg">
+                                                                        <polyline points="32,8 16,24 32,40" stroke="#222" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                                                                        <polyline points="40,8 24,24 40,40" stroke="#222" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                                                                    </svg>
+                                                                </span>
+                                                                <span class="visually-hidden">Anterior</span>
+                                                            </button>
+                                                            <button class="carousel-control-next" type="button" data-bs-target="#accessory-carousel" data-bs-slide="next" style="z-index: 10; width: 48px; height: 48px; top: 50%; right: 0; transform: translateY(-50%); position: absolute; background: rgba(255,255,255,0.7); border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center;">
+                                                                <span aria-hidden="true" style="font-size: 38px; color: #222; display: flex; align-items: center;">
+                                                                    <svg width="32" height="32" viewBox="0 0 48 48" fill="none" style="display:block;" xmlns="http://www.w3.org/2000/svg">
+                                                                        <polyline points="16,8 32,24 16,40" stroke="#222" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                                                                        <polyline points="8,8 24,24 8,40" stroke="#222" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                                                                    </svg>
+                                                                </span>
+                                                                <span class="visually-hidden">Siguiente</span>
+                                                            </button>
+                                                        </div>
+                                                        <t t-jquery="body" t-operation="append">
+                                                            <script type="text/javascript"><![CDATA[
+                                                                document.addEventListener('DOMContentLoaded', function() {
+                                                                    if (window.bootstrap && window.bootstrap.Carousel) {
+                                                                        var el = document.getElementById('accessory-carousel');
+                                                                        if (el) {
+                                                                            new window.bootstrap.Carousel(el, {interval: 0, wrap: true});
+                                                                        }
+                                                                    }
+                                                                });
+                                                            ]]></script>
+                                                        </t>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <div class="d-flex flex-nowrap align-items-stretch" style="gap:48px;">
+                                                            <t t-foreach="acc_list" t-as="acc" t-index="acc_idx" t-key="acc.id">
+                                                                <div class="d-flex flex-column align-items-center" style="position:relative;">
+                                                                    <div class="card shadow-sm accessory-card accessory-card-100" style="border-radius: 10px; overflow: hidden; width:150px; min-width:150px; max-width:150px;">
+                                                                        <div style="position: absolute; z-index: 2; left: 8px; top: 8px;">
+                                                                            <input type="checkbox" name="bundle_product_ids[]" t-att-value="acc.product_variant_id.id" class="bundle-checkbox custom-bundle-checkbox" style="width:30px; height:30px; border-radius:9px; border:1px solid #888; background:#f8f8f8;" />
+                                                                        </div>
+                                                                        <a t-att-href="acc.website_url">
+                                                                            <div class="image-container" style="position: relative; overflow: hidden; padding-top: 100%;">
+                                                                                <img t-att-src="'/web/image/product.template/' + str(acc.id) + '/image_1920'" class="card-img-top accessory-img" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 10px;" />
+                                                                            </div>
+                                                                        </a>
+                                                                        <div class="card-body accessory-card-body accessory-card-100" style="text-align: left; padding: 4px 2px 2px 2px;">
+                                                                            <t t-if="acc.product_tag_ids">
+                                                                                <div class="d-flex justify-content-start mb-2 accessory-badge-container">
+                                                                                    <span class="badge bg-primary accessory-badge" style="border-radius: 0; text-transform: uppercase; font-size:10px; padding:2px 4px; max-width:90px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                                                                        <t t-esc="acc.product_tag_ids[0].name" />
+                                                                                    </span>
+                                                                                </div>
+                                                                            </t>
+                                                                            <t t-if="acc.discounted_price &lt; acc.list_price">
+                                                                                <div class="mt-0 accessory-discount-amount">
+                                                                                    <span style="font-size: 9px;">
+                                                                                        $<t t-esc="'{:,}'.format(int(acc.list_price or 0))" />
+                                                                                    </span>
+                                                                                </div>
+                                                                                <div class="d-flex align-items-center accessory-price-container" style="gap: 2px;">
+                                                                                    <span class="text-dark fw-bold accessory-main-price" style="font-size: 10px; color: #000; font-weight: bold;">
+                                                                                        $<t t-esc="'{:,}'.format(int(acc.discounted_price or 0))" />
+                                                                                    </span>
+                                                                                    <t t-if="acc.discount_percentage or acc.fixed_discount">
+                                                                                        <span class="accessory-discount" style="font-size: 9px; font-weight: normal; color: #FF5207; margin-left: 2px;">
+                                                                                            <t t-if="acc.discount_percentage">
+                                                                                                <t t-esc="int(acc.discount_percentage)" />% OFF
+                                                                                            </t>
+                                                                                            <t t-elif="acc.fixed_discount">
+                                                                                                -$<t t-esc="'{:,}'.format(int(acc.fixed_discount))" /> MXN
+                                                                                            </t>
+                                                                                        </span>
+                                                                                    </t>
+                                                                                </div>
+                                                                                <t t-if="acc.list_price and acc.discounted_price and (acc.list_price - acc.discounted_price) &gt; 0">
+                                                                                    <div class="mt-0 accessory-discount-amount">
+                                                                                        <span style="font-size: 12px; color: #333;">
+                                                                                            $<t t-esc="'{:,}'.format(int(acc.list_price - acc.discounted_price))" /> descuento
+                                                                                        </span>
+                                                                                    </div>
+                                                                                </t>
+                                                                            </t>
+                                                                            <t t-elif="acc.list_price">
+                                                                                <span class="fw-bold d-block accessory-main-price" style="font-size: 16px;">
+                                                                                    $<t t-esc="'{:,}'.format(int(acc.list_price or 0))" />
+                                                                                </span>
+                                                                            </t>
+                                                                            <t t-if="acc.free_shipping">
+                                                                                <div class="mt-0 accessory-shipping">
+                                                                                    <span class="text-orange accessory-shipping-text" style="font-size: 12px;">
+                                                                                        Envío gratis
+                                                                                    </span>
+                                                                                </div>
+                                                                            </t>
+                                                                            <h6 class="card-title mb-2" style="font-size: 13px; line-height: 1.1; max-height: 2.2em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-transform: uppercase; width:100px;">
+                                                                                <t t-esc="acc.name" />
+                                                                            </h6>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </t>
+                                                        </div>
+                                                    </t>
+                                                </div>
+                                                <!-- Selección y precio a la derecha -->
+                                                <div class="col-12 col-md-3 d-flex flex-column align-items-center justify-content-center" style="padding-top: 30px;">
+                                                    <form id="bundle-form" action="/shop/cart/update_bundle" method="POST" style="width:100%; max-width:320px;">
+                                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" t-nocache="The csrf token must always be up to date." />
+                                                        <input type="hidden" name="add_qty" id="bundle-qty" value="1" />
+                                                        <input type="hidden" name="product_id" t-att-value="product.product_variant_id.id" />
+                                                        <!-- Precio total -->
+                                                        <div id="bundle-total-container" style="margin-bottom: 12px; font-size: 20px; font-weight: bold; color: #000;">
+                                                            Precio total: <span id="bundle-total" style="font-size:20px;">$0.00</span>
+                                                        </div>
+                                                        <!-- Botón para agregar al carrito -->
+                                                        <button type="submit" class="btn" id="bundle-add-to-cart" style="width:100%; height:48px; border-radius:6px; background:#4285f4; color:#fff; border:none; font-weight:500; font-size:18px; letter-spacing:0.5px; font-family:'Questrial', sans-serif;">
+                                                            Agregar al carrito
+                                                        </button>
+                                                        <!-- Botón para comprar directamente -->
+                                                        <button type="button" class="btn" id="bundle-buy-now" style="width:100%; height:48px; border-radius:6px; background:#a8ccff; color:#1757e6; border:none; font-weight:500; font-size:18px; letter-spacing:0.5px; font-family:'Questrial', sans-serif; margin-top: 10px;">
+                                                            Comprar
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            <script type="text/javascript">
+                                                document.addEventListener('DOMContentLoaded', function () {
+                                                    var bundleForm = document.getElementById('bundle-form');
+                                                    var totalPriceElement = document.getElementById('bundle-total');
+                                                    var buyNowButton = document.getElementById('bundle-buy-now');
+                                                    function getPriceFromText(text) {
+                                                        return parseFloat((text || '').replace(/[^0-9.]/g, '')) || 0;
+                                                    }
+                                                    function getRootPrice() {
+                                                        var discounted = document.querySelector('.col-12.col-md-4 .new-main-price');
+                                                        if (discounted) {
+                                                            return getPriceFromText(discounted.textContent);
+                                                        }
+                                                        var list = document.querySelector('.col-12.col-md-4 .fw-bold.d-block.new-main-price');
+                                                        if (list) {
+                                                            return getPriceFromText(list.textContent);
+                                                        }
+                                                        return 0;
+                                                    }
+                                                    function updateTotal() {
+                                                        var total = getRootPrice();
+                                                        document.querySelectorAll('input[name="bundle_product_ids[]"]:checked').forEach(function (cb) {
+                                                            var priceDiv = cb.closest('.accessory-card')?.querySelector('.accessory-main-price');
+                                                            if (priceDiv) {
+                                                                total += getPriceFromText(priceDiv.textContent);
+                                                            }
+                                                        });
+                                                        if (totalPriceElement) {
+                                                            totalPriceElement.textContent = `$${total.toLocaleString('es-MX', { minimumFractionDigits: 2 })}`;
+                                                        }
+                                                    }
+                                                    document.querySelectorAll('input[name="bundle_product_ids[]"]').forEach(function (cb) {
+                                                        cb.addEventListener('change', updateTotal);
+                                                    });
+                                                    updateTotal();
+                                                    if (bundleForm) {
+                                                        bundleForm.addEventListener('submit', function (e) {
+                                                            e.preventDefault();
+                                                            var data = new FormData(bundleForm);
+                                                            var productRoot = document.querySelector('input[name="product_id"]').value;
+                                                            data.append('product_id', productRoot);
+                                                            var selectedProducts = document.querySelectorAll('input[name="bundle_product_ids[]"]:checked');
+                                                            if (selectedProducts.length === 0) {
+                                                                alert('Por favor selecciona al menos un producto para agregar al carrito.');
+                                                                return;
+                                                            }
+                                                            selectedProducts.forEach(function (cb) {
+                                                                data.append('bundle_product_ids[]', cb.value);
+                                                            });
+                                                            fetch(bundleForm.action, {
+                                                                method: 'POST',
+                                                                body: data,
+                                                                credentials: 'same-origin'
+                                                            }).then(function (response) {
+                                                                if (response.ok) {
+                                                                    window.location.href = '/shop/cart';
+                                                                } else {
+                                                                    alert('Hubo un error al agregar los productos al carrito. Por favor intenta nuevamente.');
+                                                                }
+                                                            }).catch(function (error) {
+                                                                console.error('Error:', error);
+                                                                alert('Hubo un error al procesar tu solicitud.');
+                                                            });
+                                                        });
+                                                    }
+                                                    if (buyNowButton) {
+                                                        buyNowButton.addEventListener('click', function () {
+                                                            var data = new FormData(bundleForm);
+                                                            var productRoot = document.querySelector('input[name="product_id"]').value;
+                                                            data.append('product_id', productRoot);
+                                                            var selectedProducts = document.querySelectorAll('input[name="bundle_product_ids[]"]:checked');
+                                                            if (selectedProducts.length === 0) {
+                                                                alert('Por favor selecciona al menos un producto para comprar.');
+                                                                return;
+                                                            }
+                                                            selectedProducts.forEach(function (cb) {
+                                                                data.append('bundle_product_ids[]', cb.value);
+                                                            });
+                                                            fetch(bundleForm.action, {
+                                                                method: 'POST',
+                                                                body: data,
+                                                                credentials: 'same-origin'
+                                                            }).then(function (response) {
+                                                                if (response.ok) {
+                                                                    window.location.href = '/shop/checkout?try_skip_step=true';
+                                                                } else {
+                                                                    alert('Hubo un error al procesar tu compra. Por favor intenta nuevamente.');
+                                                                }
+                                                            }).catch(function (error) {
+                                                                console.error('Error:', error);
+                                                                alert('Hubo un error al procesar tu solicitud.');
+                                                            });
+                                                        });
+                                                    }
+                                                });
+                                            </script>
+                                        </t>
+                                        <!-- ...existing code... -->
+                                        <!-- ...busca la sección donde aparece la descripción... -->
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <hr />
+                                                <h3
+                                                    style="font-weight:600; margin-bottom:12px; margin-top:18px; text-align:left; font-size:23px;">
+                                                    Descripción</h3>
+                                                <div class="product-description"
+                                                    style="text-align:left; font-size:17px;"
+                                                    lang="es">
+                                                    <t t-if="product.website_description">
+                                                        <t t-raw="product.website_description" />
+                                                    </t>
+                                                    <t t-else="">
+                                                        <t t-esc="product.description_sale" />
+                                                    </t>
+                                                </div>
+                                                <hr />
+                                                <div class="product-specifications"
+                                                    style="text-align:left; font-size:17px;"
+                                                    lang="es">
+                                                    <h4
+                                                        style="font-weight:600; margin-bottom:18px; font-size:22px;">Ficha
+                                                        tecnica</h4>
+                                                    <div
+                                                        style="display: flex; flex-wrap: wrap; gap: 16px 0;">
+                                                        <div style="width:100%;">
+                                                            <div
+                                                                style="display: flex; gap: 24px; margin-bottom:10px;">
+                                                                <div
+                                                                    style="flex:1; background: #ecf0f1; border-radius: 8px 0 0 8px; padding: 14px 18px; font-weight:500;">
+                                                                    Modelo
+                                                                </div>
+                                                                <div
+                                                                    style="flex:1; background: #ecf0f1; border-radius: 0 8px 8px 0; padding: 14px 18px;">
+                                                                    <t t-esc="product.product_model" />
+                                                                </div>
+                                                            </div>
+                                                            <div
+                                                                style="display: flex; gap: 24px; margin-bottom:10px;">
+                                                                <div
+                                                                    style="flex:1; background: #ecf0f1; border-radius: 8px 0 0 8px; padding: 14px 18px; font-weight:500;">
+                                                                    Stock
+                                                                </div>
+                                                                <div
+                                                                    style="flex:1; background: #ecf0f1; border-radius: 0 8px 8px 0; padding: 14px 18px;">
+                                                                    <t
+                                                                        t-esc="int(product.qty_available)" />
+                                                                </div>
+                                                            </div>
+                                                            <div
+                                                                style="display: flex; gap: 24px; margin-bottom:10px;">
+                                                                <div
+                                                                    style="flex:1; background: #ecf0f1; border-radius: 8px 0 0 8px; padding: 14px 18px; font-weight:500;">
+                                                                    Referencia
+                                                                </div>
+                                                                <div
+                                                                    style="flex:1; background: #ecf0f1; border-radius: 0 8px 8px 0; padding: 14px 18px;">
+                                                                    <t t-esc="product.default_code" />
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex; gap: 24px;">
+                                                                <div
+                                                                    style="flex:1; background: #ecf0f1; border-radius: 8px 0 0 8px; padding: 14px 18px; font-weight:500;">
+                                                                    Actualizado
+                                                                </div>
+                                                                <div
+                                                                    style="flex:1; background: #ecf0f1; border-radius: 0 8px 8px 0; padding: 14px 18px;">
+                                                                    <t
+                                                                        t-esc="product.write_date and product.write_date.strftime('%Y-%m-%d %H:%M:%S') or ''" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr />
+
+                                            </div>
+                                        </div>
+                                        <!-- ...resto del código... -->
+
+                                        <!-- Sección de productos relacionados compacta -->
+                                        <t t-set="related_products"
+                                            t-value="request.env['product.template'].sudo().search([
+                                        ('website_published', '=', True),
+                                        ('id', '!=', product.id),
+                                        ('brand_type_id', '=', product.brand_type_id.id)
+                                    ], limit=12)" />
+                                        <t t-if="related_products">
+                                            <div style="margin-top:24px;">
+                                                <h4
+                                                    style="font-weight:600; margin-bottom:18px; font-size:22px; text-align:left;">De
+                                                    la misma marca</h4>
+                                                <t t-if="len(related_products) &gt; 3">
+                                                    <div id="related-carousel"
+                                                        class="carousel slide"
+                                                        data-bs-ride="carousel">
+                                                        <div class="carousel-inner">
+                                                            <t
+                                                                t-foreach="range(0, len(related_products), 3)"
+                                                                t-as="idx">
+                                                                <div
+                                                                    t-attf-class="carousel-item #{'active' if idx == 0 else ''}">
+                                                                    <div
+                                                                        class="d-flex flex-row compact-products-grid"
+                                                                        style="gap:12px;">
+                                                                        <t
+                                                                            t-foreach="related_products[idx:idx+3]"
+                                                                            t-as="rel_prod">
+                                                                            <div
+                                                                                class="compact-product-card p-2">
+                                                                                <a
+                                                                                    t-att-href="rel_prod.website_url"
+                                                                                    style="text-decoration: none; color: inherit;">
+                                                                                    <div
+                                                                                        class="image-container"
+                                                                                        style="position: relative; overflow: hidden; padding-top: 100%; background: #fff;">
+                                                                                        <img
+                                                                                            t-att-src="'/web/image/product.template/' + str(rel_prod.id) + '/image_1920'"
+                                                                                            class="card-img-top"
+                                                                                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 10px;" />
+                                                                                    </div>
+                                                                                    <div
+                                                                                        class="card-body mobile-card-body"
+                                                                                        style="background: #fff; text-align: left;">
+                                                                                        <t
+                                                                                            t-if="rel_prod.product_tag_ids">
+                                                                                            <div
+                                                                                                class="d-flex justify-content-start mb-2 mobile-badge-container">
+                                                                                                <span
+                                                                                                    class="badge bg-primary mobile-badge"
+                                                                                                    style="border-radius: 0; text-transform: uppercase;">
+                                                                                                    <t
+                                                                                                        t-esc="rel_prod.product_tag_ids[0].name" />
+                                                                                                </span>
+                                                                                            </div>
+                                                                                        </t>
+                                                                                        <t
+                                                                                            t-if="rel_prod.discounted_price &lt; rel_prod.list_price">
+                                                                                            <div
+                                                                                                class="mt-0 mobile-discount-amount"
+                                                                                                style="text-align: left;">
+                                                                                                <span
+                                                                                                    class="text-muted"
+                                                                                                    style="font-size: 16px;">
+                                                                                                    $<t
+                                                                                                        t-esc="'{:,}'.format(int(rel_prod.list_price))" />
+                                                                                                </span>
+                                                                                            </div>
+                                                                                            <div
+                                                                                                class="d-flex align-items-start mobile-price-container"
+                                                                                                style="text-align: left;">
+                                                                                                <span
+                                                                                                    class="text-dark fw-bold mobile-main-price"
+                                                                                                    style="font-size: 28px; color: #000; font-weight: bold;">
+                                                                                                    $<t
+                                                                                                        t-esc="'{:,}'.format(int(rel_prod.discounted_price))" />
+                                                                                                </span>
+                                                                                                <t
+                                                                                                    t-if="rel_prod.discount_percentage or rel_prod.fixed_discount">
+                                                                                                    <span
+                                                                                                        class="mobile-discount"
+                                                                                                        style="font-size: 16px; font-weight: normal; color: #FF5207; margin-left: 8px;">
+                                                                                                        <t
+                                                                                                            t-if="rel_prod.discount_percentage">
+                                                                                                            <t
+                                                                                                                t-esc="int(rel_prod.discount_percentage)" />
+                                                                                                            %
+                                                                                                            OFF
+                                                                                                    </t>
+                                                                                                        <t
+                                                                                                            t-elif="rel_prod.fixed_discount">
+                                                                                                            -$<t
+                                                                                                                t-esc="'{:,}'.format(int(rel_prod.fixed_discount))" />
+                                                                                                            MXN
+                                                                                                            </t>
+                                                                                                    </span>
+                                                                                                </t>
+                                                                                            </div>
+                                                                                            <t
+                                                                                                t-if="rel_prod.list_price and rel_prod.discounted_price and (rel_prod.list_price - rel_prod.discounted_price) &gt; 0">
+                                                                                                <div
+                                                                                                    class="mt-0 mobile-discount-amount"
+                                                                                                    style="text-align: left;">
+                                                                                                    <span
+                                                                                                        class="text-muted">
+                                                                                                        $<t
+                                                                                                            t-esc="'{:,}'.format(int(rel_prod.list_price - rel_prod.discounted_price))" />
+                                                                                                        descuento
+                                                                                                        </span>
+                                                                                                </div>
+                                                                                            </t>
+                                                                                        </t>
+                                                                                        <t
+                                                                                            t-elif="rel_prod.list_price">
+                                                                                            <span
+                                                                                                class="fw-bold d-block mobile-main-price"
+                                                                                                style="text-align: left;">
+                                                                                                $<t
+                                                                                                    t-esc="'{:,}'.format(int(rel_prod.list_price))" />
+                                                                                            </span>
+                                                                                        </t>
+                                                                                        <t
+                                                                                            t-if="rel_prod.free_shipping">
+                                                                                            <div
+                                                                                                class="mt-0 mobile-shipping"
+                                                                                                style="text-align: left;">
+                                                                                                <span
+                                                                                                    class="text-orange mobile-shipping-text">
+                                                                                                    Envío
+                                                                                                    gratis
+                                                                                                </span>
+                                                                                            </div>
+                                                                                        </t>
+                                                                                        <h6
+                                                                                            class="card-title mb-2"
+                                                                                            style="font-size: 16px; line-height: 1.2; max-height: 2.4em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-align: left; background: #fff;">
+                                                                                            <t
+                                                                                                t-esc="rel_prod.name" />
+                                                                                        </h6>
+                                                                                    </div>
+                                                                                </a>
+                                                                            </div>
+                                                                        </t>
+                                                                    </div>
+                                                                </div>
+                                                            </t>
+                                                        </div>
+                                                        <button class="carousel-control-prev"
+                                                            type="button"
+                                                            data-bs-target="#related-carousel"
+                                                            data-bs-slide="prev">
+                                                            <span class="carousel-control-prev-icon"
+                                                                aria-hidden="true"></span>
+                                                            <span class="visually-hidden">Anterior</span>
+                                                        </button>
+                                                        <button class="carousel-control-next"
+                                                            type="button"
+                                                            data-bs-target="#related-carousel"
+                                                            data-bs-slide="next">
+                                                            <span class="carousel-control-next-icon"
+                                                                aria-hidden="true"></span>
+                                                            <span class="visually-hidden">Siguiente</span>
+                                                        </button>
+                                                    </div>
+                                                    <t t-jquery="body" t-operation="append">
+                                                        <script type="text/javascript"><![CDATA[
+                                                        document.addEventListener('DOMContentLoaded', function() {
+                                                            if (window.bootstrap && window.bootstrap.Carousel) {
+                                                                var el = document.getElementById('related-carousel');
+                                                                if (el) {
+                                                                    new window.bootstrap.Carousel(el, {interval: 0, wrap: true});
+                                                                }
+                                                            }
+                                                        });
+                                                    ]]></script>
+                                                    </t>
+                                                </t>
+                                                <t t-else="">
+                                                    <div
+                                                        class="d-flex flex-row compact-products-grid"
+                                                        style="gap:12px;">
+                                                        <t t-foreach="related_products"
+                                                            t-as="rel_prod">
+                                                            <div class="compact-product-card p-2">
+                                                                <a t-att-href="rel_prod.website_url"
+                                                                    style="text-decoration: none; color: inherit;">
+                                                                    <div class="image-container"
+                                                                        style="position: relative; overflow: hidden; padding-top: 100%; background: #fff;">
+                                                                        <img
+                                                                            t-att-src="'/web/image/product.template/' + str(rel_prod.id) + '/image_1920'"
+                                                                            class="card-img-top"
+                                                                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 10px;" />
+                                                                    </div>
+                                                                    <div
+                                                                        class="card-body mobile-card-body"
+                                                                        style="background: #fff; text-align: left;">
+                                                                        <t
+                                                                            t-if="rel_prod.product_tag_ids">
+                                                                            <div
+                                                                                class="d-flex justify-content-start mb-2 mobile-badge-container">
+                                                                                <span
+                                                                                    class="badge bg-primary mobile-badge"
+                                                                                    style="border-radius: 0; text-transform: uppercase;">
+                                                                                    <t
+                                                                                        t-esc="rel_prod.product_tag_ids[0].name" />
+                                                                                </span>
+                                                                            </div>
+                                                                        </t>
+                                                                        <t
+                                                                            t-if="rel_prod.discounted_price &lt; rel_prod.list_price">
+                                                                            <div
+                                                                                class="mt-0 mobile-discount-amount"
+                                                                                style="text-align: left;">
+                                                                                <span
+                                                                                    class="text-muted"
+                                                                                    style="font-size: 16px;">
+                                                                                    $<t
+                                                                                        t-esc="'{:,}'.format(int(rel_prod.list_price))" />
+                                                                                </span>
+                                                                            </div>
+                                                                            <div
+                                                                                class="d-flex align-items-start mobile-price-container"
+                                                                                style="text-align: left;">
+                                                                                <span
+                                                                                    class="text-dark fw-bold mobile-main-price"
+                                                                                    style="font-size: 28px; color: #000; font-weight: bold;">
+                                                                                    $<t
+                                                                                        t-esc="'{:,}'.format(int(rel_prod.discounted_price))" />
+                                                                                </span>
+                                                                                <t
+                                                                                    t-if="rel_prod.discount_percentage or rel_prod.fixed_discount">
+                                                                                    <span
+                                                                                        class="mobile-discount"
+                                                                                        style="font-size: 16px; font-weight: normal; color: #FF5207; margin-left: 8px;">
+                                                                                        <t
+                                                                                            t-if="rel_prod.discount_percentage">
+                                                                                            <t
+                                                                                                t-esc="int(rel_prod.discount_percentage)" />%
+                                                                                            OFF </t>
+                                                                                        <t
+                                                                                            t-elif="rel_prod.fixed_discount">
+                                                                                            -$<t
+                                                                                                t-esc="'{:,}'.format(int(rel_prod.fixed_discount))" />
+                                                                                            MXN </t>
+                                                                                    </span>
+                                                                                </t>
+                                                                            </div>
+                                                                            <t
+                                                                                t-if="rel_prod.list_price and rel_prod.discounted_price and (rel_prod.list_price - rel_prod.discounted_price) &gt; 0">
+                                                                                <div
+                                                                                    class="mt-0 mobile-discount-amount"
+                                                                                    style="text-align: left;">
+                                                                                    <span
+                                                                                        class="text-muted">
+                                                                                        $<t
+                                                                                            t-esc="'{:,}'.format(int(rel_prod.list_price - rel_prod.discounted_price))" />
+                                                                                        descuento </span>
+                                                                                </div>
+                                                                            </t>
+                                                                        </t>
+                                                                        <t
+                                                                            t-elif="rel_prod.list_price">
+                                                                            <span
+                                                                                class="fw-bold d-block mobile-main-price"
+                                                                                style="text-align: left;">
+                                                                                $<t
+                                                                                    t-esc="'{:,}'.format(int(rel_prod.list_price))" />
+                                                                            </span>
+                                                                        </t>
+                                                                        <t
+                                                                            t-if="rel_prod.free_shipping">
+                                                                            <div
+                                                                                class="mt-0 mobile-shipping"
+                                                                                style="text-align: left;">
+                                                                                <span
+                                                                                    class="text-orange mobile-shipping-text">
+                                                                                    Envío gratis
+                                                                                </span>
+                                                                            </div>
+                                                                        </t>
+                                                                        <h6 class="card-title mb-2"
+                                                                            style="font-size: 16px; line-height: 1.2; max-height: 2.4em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-align: left; background: #fff;">
+                                                                            <t t-esc="rel_prod.name" />
+                                                                        </h6>
+                                                                    </div>
+                                                                </a>
+                                                            </div>
+                                                        </t>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                                <script type="text/javascript">
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        var mainImg = document.getElementById('main-product-img');
+                                        var thumbs = document.querySelectorAll('#product-thumbs .product-thumb');
+                                        // Cambiar imagen principal al hacer click en miniatura
+                                        thumbs.forEach(function(thumb) {
+                                            thumb.addEventListener('click', function() {
+                                                mainImg.src = thumb.getAttribute('data-img');
+                                                thumbs.forEach(function(t) { t.classList.remove('active'); });
+                                                thumb.classList.add('active');
+                                            });
+                                        });
+                                        // Al hacer click en la imagen principal, vuelve a la primera miniatura
+                                        mainImg.addEventListener('click', function() {
+                                            var firstThumb = document.querySelector('#product-thumbs .product-thumb');
+                                            if (firstThumb) {
+                                                mainImg.src = firstThumb.getAttribute('data-img');
+                                                thumbs.forEach(function(t) { t.classList.remove('active'); });
+                                                firstThumb.classList.add('active');
+                                            }
+                                        });
+                                    });
+                                </script>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    <!-- Columna derecha -->
+
+                    <div class="col-12 col-md-4"
+                        style="background:#fff; min-height:200px; display: flex; flex-direction: column; margin-left:-24px;">
+                        <div class="card"
+                            style="width: 100%; min-height: 120px; border: none; background: #fff;">
+                            <div style="height:20px;"></div> <!-- Espacio de 20px agregado -->
+
+                            <div class="card p-4"
+                                style="border-radius:16px; box-shadow:0 2px 8px rgba(0,0,0,0.04); border:2px solid #bdbdbd; background:#fff;">
+                                <!-- Nombre del producto -->
+                                <div style="height:15px;"></div>
+                                <div style="text-align:left;">
+                                    <h2 t-esc="product.name"
+                                        style="font-size:21px; font-weight:600; margin-bottom:6px; line-height:1.2;"></h2>
+                                    <div style="color:#000; font-size:20px; margin-bottom:10px;">
+                                        <b>
+                                            <t t-esc="product.product_model" />
+                                        </b>
+                                    </div>
+                                </div>
+                                <!-- Precios y descuentos -->
+                                <!-- Precios y descuentos alineados a la izquierda junto con la
+                                imagen -->
+                                <div class="d-flex align-items-start" style="gap: 24px;">
+                                    <!-- Texto de precios y descuentos a la derecha de la imagen -->
+                                    <div style="text-align: left;">
+                                        <!-- <t t-if="product.product_tag_ids">
+                                        <div class="d-flex justify-content-start mb-2 mobile-badge-container">
+                                            <span class="badge bg-primary mobile-badge" style="border-radius: 0; text-transform: uppercase;">
+                                                <t t-esc="product.product_tag_ids[0].name"/>
+                                            </span>
+                                        </div>
+                                    </t> -->
+                                        <t t-if="product.discounted_price &lt; product.list_price">
+                                            <div class="mt-0 new-discount-amount">
+                                                <span class="text-muted"
+                                                    style="font-size: 16px; text-decoration: line-through;">
+                                                    $<t
+                                                        t-esc="'{:,}'.format(int(product.list_price or 0))" />
+                                                </span>
+                                            </div>
+                                            <div class="d-flex align-items-center"
+                                                style="gap: 16px;">
+                                                <span class="text-dark fw-bold new-main-price"
+                                                    style="font-size: 30px; color: #000; font-weight: bold;">
+                                                    $<t
+                                                        t-esc="'{:,}'.format(int(product.discounted_price or 0))" />
+                                                </span>
+                                                <t
+                                                    t-if="product.discount_percentage or product.fixed_discount">
+                                                    <span class="new-discount"
+                                                        style="font-size: 18px; font-weight: normal; color: #FF5207;">
+                                                        <t t-if="product.discount_percentage">
+                                                            <t
+                                                                t-esc="int(product.discount_percentage)" />%
+                                                            OFF </t>
+                                                        <t t-elif="product.fixed_discount"> -$<t
+                                                                t-esc="'{:,}'.format(int(product.fixed_discount))" />
+                                                            MXN </t>
+                                                    </span>
+                                                </t>
+                                            </div>
+                                            <t
+                                                t-if="product.list_price and product.discounted_price and (product.list_price - product.discounted_price) &gt; 0">
+                                                <div class="mt-0 new-discount-amount">
+                                                    <span class="text-muted" style="font-size:18px;">
+                                                        $<t
+                                                            t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" />
+                                                        de descuento </span>
+                                                </div>
+                                            </t>
+                                        </t>
+                                        <t t-elif="product.list_price">
+                                            <span class="fw-bold d-block new-main-price"
+                                                style="font-size: 30px;"> $<t
+                                                    t-esc="'{:,}'.format(int(product.list_price or 0))" />
+                                            </span>
+                                        </t>
+                                    </div>
+                                </div>
+                                <!-- Envío gratis -->
+                                <t t-if="product.free_shipping">
+                                    <div class="mt-0 new-shipping text-start">
+                                        <span class="new-shipping-text"
+                                            style="font-size:18px; color:#FF5207; font-weight:bold; font-style:italic;">
+                                            Envío gratis
+                                        </span>
+                                    </div>
+                                </t>
+                                <!-- Oferta del día -->
+                                <t t-if="product.product_tag_ids">
+                                    <div
+                                        class="d-flex justify-content-start mb-2 mobile-badge-container">
+                                        <span class="badge bg-primary mobile-badge"
+                                            style="border-radius: 0; text-transform: uppercase; font-size: 16px;">
+                                            <t t-esc="product.product_tag_ids[0].name" />
+                                        </span>
+                                    </div>
+                                </t>
+                                <!-- Stock -->
+                                <div class="mb-3" style="text-align:left;">
+                                    <div style="color:#222; font-size:16px; margin-bottom:2px;"> En
+                                        Stock: <span>
+                                            <t t-esc="int(product.qty_available)" />
+                                        </span>
+                                        artículos </div>
+                                    <!-- Marca -->
+                                    <div style="color:#222; font-size:16px;"> Marca: <span>
+                                            <t t-esc="product.brand_type_id.name" />
+                                        </span>
+                                    </div>
+                                    <!-- Modelo -->
+                                    <div style="color:#222; font-size:16px; margin-bottom:10px;">
+                                        Modelo: <span>
+                                            <t t-esc="product.product_model" />
+                                        </span>
+                                    </div>
+                                    <!-- Cantidad -->
+                                    <div style="font-size:16px; margin-bottom:10px;"> Cantidad: <span
+                                            class="input-group"
+                                            style="width:auto; display:inline-flex; vertical-align:middle; margin-left:6px;">
+                                            <button type="button" class="btn" id="qty-minus"
+                                                style="min-width:28px; font-size:20px; padding:0; background:transparent; border:none; color:#222;">
+                                        -</button>
+                                            <input id="qty-input" type="number" name="add_qty"
+                                                value="1" min="1" t-att-max="product.qty_available"
+                                                class="form-control text-center"
+                                                style="width:2.5em; min-width:32px; max-width:3em; padding:0 4px; border:none; box-shadow:none; background:transparent; outline:none; font-size:14px;"
+                                                onwheel="return false;"
+                                                inputmode="numeric"
+                                                maxlength="2"
+                                            />
+                                            <button type="button" class="btn" id="qty-plus"
+                                                style="min-width:28px; font-size:20px; padding:0; background:transparent; border:none; color:#222;">
+                                        +</button>
+                                        </span>
+                                    <t
+                                            t-jquery="body" t-operation="append">
+                                            <style>
+                                                /* Oculta las flechas de los inputs type number en
+                                        todos los navegadores */
+                                        input[type=number]::-webkit-inner-spin-button,
+                                        input[type=number]::-webkit-outer-spin-button {
+                                        -webkit-appearance: none;
+                                                margin: 0;
+                                                }
+                                                input[type=number] {
+                                                -moz-appearance: textfield;
+                                                }
+                                                /* Ajusta el ancho del input según el número de
+                                        dígitos */
+                                                #qty-input {
+                                                width: 2.5em !important;
+                                                min-width: 32px !important;
+                                                max-width: 3em !important;
+                                                text-align: center;
+                                                }
+                                            </style>
+                                        </t>
+                                    <span
+                                            style="color:#888; font-size:15.2px;">(<t
+                                                t-esc="int(product.qty_available)" /> disponibles)</span>
+                                    </div>
+                                    <t t-jquery="body" t-operation="append">
+                                        <script type="text/javascript"><![CDATA[
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                            var qtyInput = document.getElementById('qty-input');
+                                            var minusBtn = document.getElementById('qty-minus');
+                                            var plusBtn = document.getElementById('qty-plus');
+                                            if (qtyInput && minusBtn && plusBtn) {
+                                                var max = parseInt(qtyInput.getAttribute('max')) || 9999;
+                                                minusBtn.addEventListener('click', function() {
+                                                    var val = parseInt(qtyInput.value) || 1;
+                                                    if (val > 1) qtyInput.value = val - 1;
+                                                });
+                                                plusBtn.addEventListener('click', function() {
+                                                    var val = parseInt(qtyInput.value) || 1;
+                                                    if (val < max) qtyInput.value = val + 1;
+                                                });
+                                                qtyInput.addEventListener('input', function() {
+                                                    var val = parseInt(qtyInput.value) || 1;
+                                                    if (val < 1) qtyInput.value = 1;
+                                                    if (val > max) qtyInput.value = max;
+                                                });
+                                            }
+                                        });
+                                    ]]></script>
+                                    </t>
+                                </div>
+                                <!-- Métodos de pago -->
+                                <div style="margin-bottom:12px;">
+                                    <div style="color:#222; font-size:0.98em; margin-bottom:4px;">Puedes
+                                        pagar con:</div>
+                                    <t t-set="active_banner"
+                                        t-value="request.env['banner.image.line'].sudo().search([('is_active_carousel', '=', True), ('name', '=', 'metodos')], limit=1)" />
+                                    <t t-if="active_banner and active_banner.general_images">
+                                        <div
+                                            style="position: relative; width: 100%; max-width: 352px; margin: 0 auto;">
+                                            <img
+                                                t-att-src="'/web/image/' + str(active_banner.general_images[0].id)"
+                                                alt="Métodos de pago"
+                                                style="width: 100%; height: auto; max-height: 64px; object-fit: contain; display: block;" />
+                                        </div>
+                                    </t>
+                                </div>
+                                <!-- Botones -->
+                                <div class="d-grid" style="gap: 10px;">
+                                    <form id="add-to-cart-form" action="/shop/cart/update"
+                                        method="POST" class="js_website_sale w-100">
+                                        <input type="hidden" name="csrf_token"
+                                            t-att-value="request.csrf_token()"
+                                            t-nocache="The csrf token must always be up to date." />
+                                        <input type="hidden" name="product_id"
+                                            t-att-value="product.product_variant_id.id" />
+                                        <input type="hidden" name="add_qty" id="cart-qty" />
+                                        <button type="submit"
+                                            class="btn w-100"
+                                            style="width:363px; height:48px; border-radius:5px; background:#4285f4; color:#fff; border:none; font-weight:400; font-family:inherit; letter-spacing:0.5px; margin-bottom:0; display:block; margin-left:auto; margin-right:auto;">
+                                            <span
+                                                style="font-size:18px; font-weight:500; letter-spacing:0.5px;">Agregar
+                                                al carrito</span>
+                                        </button>
+                                    </form>
+                                    <form id="buy-now-form" action="/shop/cart/update" method="POST"
+                                        class="w-100">
+                                        <input type="hidden" name="csrf_token"
+                                            t-att-value="request.csrf_token()"
+                                            t-nocache="The csrf token must always be up to date." />
+                                        <input type="hidden" name="product_id"
+                                            t-att-value="product.product_variant_id.id" />
+                                        <input type="hidden" name="add_qty" id="buy-qty" />
+                                        <button type="submit"
+                                            class="btn w-100"
+                                            id="buy-now-btn"
+                                            style="width:363px; height:48px; border-radius:5px; background:#a8ccff; color:#1757e6; border:none; font-weight:500; font-family:inherit; letter-spacing:0.5px; display:block; margin-left:auto; margin-right:auto;">
+                                            <span
+                                                style="font-size:18px; font-weight:500; letter-spacing:0.5px;">
+                                                Comprar</span>
+                                        </button>
+                                    </form>
+
+
+                                </div>
+                                <script type="text/javascript">
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        var qtyInput = document.getElementById('qty-input');
+                                        var cartQty = document.getElementById('cart-qty');
+                                        var buyQty = document.getElementById('buy-qty');
+                                        var cartForm = document.getElementById('add-to-cart-form');
+                                        var buyForm = document.getElementById('buy-now-form');
+                                        var popup = document.getElementById('cart-popup');
+                                        var closePopup = document.getElementById('close-popup');
+
+                                        cartForm.addEventListener('submit', function(e) {
+                                            e.preventDefault();
+                                            cartQty.value = qtyInput.value;
+                                            var data = new FormData(cartForm);
+                                            fetch(cartForm.action, {
+                                                method: 'POST',
+                                                body: data,
+                                                credentials: 'same-origin'
+                                            })
+                                            .then(response => {
+                                                if (response.ok) {
+                                                    popup.style.display = 'block';
+                                                }
+                                            });
+                                        });
+
+                                        buyForm.addEventListener('submit', function(e) {
+                                            e.preventDefault();
+                                            buyQty.value = qtyInput.value;
+                                            var data = new FormData(buyForm);
+                                            fetch(buyForm.action, {
+                                                method: 'POST',
+                                                body: data,
+                                                credentials: 'same-origin'
+                                            })
+                                            .then(response => {
+                                                if (response.ok) {
+                                                    window.location.href = '/shop/checkout?try_skip_step=true';
+                                                }
+                                            });
+                                        });
+
+                                        closePopup.addEventListener('click', function() {
+                                            popup.style.display = 'none';
+                                        });
+                                    });
+                                </script>
+                            </div>
+
+                            <div style="height:15px;"></div>
+
+                            <!-- Productos relacionados por marca -->
+                            <t t-if="product.brand_type_id and product.brand_type_id.active">
+                                <div
+                                    style="border:2px solid #bdbdbd; border-radius:16px; box-shadow:0 2px 8px rgba(0,0,0,0.04); padding:18px 18px 14px 18px; margin-bottom:24px; text-align:center; background:#fff; width:100%; box-sizing:border-box;">
+                                    <t t-if="product.brand_type_id.icon_image">
+                                        <img
+                                            t-att-src="'/web/image/brand.type/' + str(product.brand_type_id.id) + '/icon_image'"
+                                            alt="Logo de la marca"
+                                            style="max-width:220px; max-height:80px; margin-bottom:12px;" />
+                                    </t>
+                                    <div
+                                        style="font-size:18px; font-weight:600; margin-bottom:2px; text-align:left;">
+                                        <t t-esc="product.brand_type_id.name" />
+                                    </div>
+                                    <t t-set="brand_type_products_count"
+                                        t-value="request.env['product.template'].sudo().search_count([
+                                    ('brand_type_id', '=', product.brand_type_id.id),
+                                    ('website_published', '=', True),
+                                    ('id', '!=', product.id)
+                                ])" />
+                                    <div>
+                                        <span
+                                            style="font-size:18px; color:#222; text-align:left; display:block;">
+                                            Más de <t t-esc="brand_type_products_count" /> productos </span>
+                                    </div>
+                                    <a t-att-href="'/brand/%s' % product.brand_type_id.slug"
+                                        style="display:block; background:#4285f4; color:#fff; font-weight:500; border-radius:6px; padding:14px 0; width:100%; font-size:1.1em; text-decoration:none;">
+                                        Ir a la marca
+                                    </a>
+                                </div>
+                            </t>
+                            <!-- Productos relacionados por etiqueta -->
+                            <t t-set="related_tag_products"
+                                t-value="request.env['product.template'].sudo().search([
+                                ('website_published', '=', True),
+                                ('product_tag_ids', '!=', False)
+                            ], limit=4)" />
+                            <t t-if="related_tag_products">
+                                <div
+                                    style="margin-top:8px; font-size:22px; color:#222; font-weight:bold; text-align:left;">
+                                    Promociones</div>
+                                <div class="products-list">
+                                    <t t-foreach="related_tag_products" t-as="rel_prod"
+                                        t-key="rel_prod.id">
+                                        <a t-att-href="rel_prod.website_url"
+                                            style="text-decoration:none; color:inherit;">
+                                            <div class="product-list-item p-3"
+                                                style="border: 1.5px solid #bdbdbd; border-radius: 8px; background: #fff; margin-bottom: 0;">
+                                                <div class="row align-items-center">
+                                                    <!-- Imagen del producto -->
+                                                    <div class="col-4">
+                                                        <img
+                                                            t-att-src="'/web/image/product.template/%s/image_1024' % rel_prod.id"
+                                                            class="img-fluid d-block mx-auto"
+                                                            alt="Product Image"
+                                                            style="width:92.78px; height:87.74px; object-fit:contain;" />
+                                                    </div>
+                                                    <!-- Detalles del producto -->
+                                                    <div class="col-8 d-flex align-items-center"
+                                                        style="padding-left:0;">
+                                                        <div
+                                                            class="card-body mobile-card-body p-0 w-100"
+                                                            style="background: #fff; border-radius: 8px;">
+                                                            <div class="mt-auto w-100"
+                                                                style="margin-bottom: 0; padding-bottom: 0;">
+                                                                <t t-set="rel_product"
+                                                                    t-value="rel_prod" />
+                                                                <div
+                                                                    class="d-flex align-items-center"
+                                                                    style="min-height: 20px; margin-bottom: 0;">
+                                                                    <h6 class="card-title mb-1"
+                                                                        style="font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0; text-align:left; line-height: 1.1;">
+                                                                        <t t-esc="rel_product.name" />
+                                                                    </h6>
+                                                                </div>
+                                                                <t
+                                                                    t-if="rel_product.discounted_price &lt; rel_product.list_price">
+                                                                    <div
+                                                                        class="d-flex align-items-center new-price-container"
+                                                                        style="gap: 8px; text-align:left;">
+                                                                        <span
+                                                                            class="text-dark fw-bold new-main-price"
+                                                                            style="font-size: 25px;">
+                                                                            $<t
+                                                                                t-esc="'{:,}'.format(int(rel_product.discounted_price))" />
+                                                                        </span>
+                                                                        <t
+                                                                            t-if="rel_product.discount_percentage">
+                                                                            <span
+                                                                                class="new-discount"
+                                                                                style="font-size: 18px; color: #FF5207;">
+                                                                                <t
+                                                                                    t-esc="int(rel_product.discount_percentage)" />%
+                                                                                OFF </span>
+                                                                        </t>
+                                                                        <t
+                                                                            t-elif="rel_product.fixed_discount">
+                                                                            <span
+                                                                                class="new-discount"
+                                                                                style="font-size: 18px; color: #FF5207;">
+                                                                                -$<t
+                                                                                    t-esc="'{:,}'.format(int(rel_product.fixed_discount))" />
+                                                                                MXN </span>
+                                                                        </t>
+                                                                    </div>
+                                                                    <div
+                                                                        class="mt-0 new-discount-amount"
+                                                                        style="text-align:left;">
+                                                                        <span class="text-muted"> $<t
+                                                                                t-esc="'{:,}'.format(int(rel_product.list_price - rel_product.discounted_price))" />
+                                                                            descuento </span>
+                                                                    </div>
+                                                                </t>
+                                                                <t t-else="">
+                                                                    <span
+                                                                        class="fw-bold d-block new-main-price"
+                                                                        style="font-size: 25px; text-align:left;">
+                                                                        $<t
+                                                                            t-esc="'{:,}'.format(int(rel_product.list_price))" />
+                                                                    </span>
+                                                                </t>
+                                                                <t t-if="rel_product.free_shipping">
+                                                                    <div class="mt-0 new-shipping"
+                                                                        style="text-align:left;">
+                                                                        <span
+                                                                            class="text-orange new-shipping-text"
+                                                                            style="color: #FF5207; font-weight: bold; font-style: italic;">
+                                                                            Envío gratis
+                                                                        </span>
+                                                                    </div>
+                                                                </t>
+                                                                <t t-if="rel_product.brand_type_id">
+                                                                    <div
+                                                                        style="text-align:left; margin-bottom: 2px; margin-top: 0;">
+                                                                        <span
+                                                                            class="text-muted small"
+                                                                            style="font-size: 12px; line-height: 1;">
+                                                                            Por <t
+                                                                                t-esc="rel_product.brand_type_id.name" />
+                                                                        </span>
+                                                                    </div>
+                                                                </t>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </t>
+                                </div>
+                            </t>
+                        </div>
+                        <div style="height:30px;"></div>
+
+                    </div>
+                </div>
+                <!-- Popup de carrito -->
+                <!-- Ventana emergente -->
+                <div id="cart-popup"
+                    style="display:none; position:fixed; top:20%; left:50%; transform:translate(-50%, -50%); z-index:1000; background:#fff; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.2); padding:20px; width:300px; text-align:center;">
+                    <p style="font-size:18px; font-weight:600; margin-bottom:12px;">Producto
+                        agregado al carrito</p>
+                    <button type="button" id="close-popup"
+                        style="background:#4285f4; color:#fff; border:none; border-radius:5px; padding:10px 20px; font-size:16px;">
+                        Cerrar</button>
+                    <a href="/shop/cart"
+                        style="display:block; margin-top:10px; text-decoration:none; color:#4285f4; font-size:16px;">Ir
+                        al carrito</a>
+                </div>
+
+                <div id="product_option_block" class="d-none d-md-block"></div>
+                <div id="o_product_terms_and_share" class="d-none d-md-block"></div>
+
+
+            </div>
+
+            <div class="d-block d-md-none w-100 px-3 py-2 mx-auto"
+                style="font-family: 'Montserrat', Arial, sans-serif; max-width:480px; margin:0 auto; padding-top:0.5rem; padding-bottom:0.5rem; text-align:center; box-sizing:border-box; background-color:#fff;">
+                <!-- Estado del producto -->
+                <t t-set="pdate" t-value="product.create_date" />
+                <t t-set="now" t-value="datetime.datetime.now()" />
+                <div t-if="pdate and pdate.year == now.year and pdate.month == now.month"
+                    style="font-size:12px; color:#888;">
+                    Nuevo
+                </div>                <!-- Título -->
+                <div style="font-size:18px; font-weight:600; margin-bottom:4px;">
+                    <t
+                        t-esc="product.name and (product.name[:40] + '' if len(product.name) > 40 else product.name)" />
+                </div>
+                <div style="font-size:13px; color:#888; margin-bottom:4px;">
+                    <t t-if="product.product_model">
+                        <t t-esc="product.product_model" />
+                    </t>
+                    <t t-elif="product.default_code">
+                        <t t-esc="product.default_code" />
+                    </t>
+                </div>
+                <!-- Estrellas -->
+                <div class="mb-2">
+                    <span style="color:#0057ff; font-size:20px;">&#9733;&#9733;&#9733;&#9733;</span>
+                    <span style="color:#ccc; font-size:20px;">&#9733;</span>
+                </div>
+                <!-- Slider de imágenes -->
+                <div class="mb-2 text-center">
+                    <t t-set="pcount"
+                        t-value="1 + (len(product.product_image_ids) if product.product_image_ids else 0)" />
+                    <span
+                        style="font-size:11px; background:#f2f2f2; border-radius:8px; padding:2px 8px;">
+                        <t t-esc="1" /> / <t t-esc="pcount" />
+                    </span>
+                </div>
+                <div class="mb-3 text-center">
+                    <!-- Imagen principal primero -->
+                    <img id="main-product-img"
+                        t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'"
+                        alt="Imagen principal"
+                        style="max-width:100%; border-radius:10px; object-fit:contain;" />
+                </div>
+                <!-- Imágenes adicionales (si existen) -->
+                <t t-if="product.product_image_ids">
+                    <div class="d-flex justify-content-center gap-2 mb-3"
+                        style="overflow:auto; padding-bottom:4px;">
+                        <t t-foreach="product.product_image_ids" t-as="img">
+                            <img
+                                t-att-src="'/web/image/product.image/' + str(img.id) + '/image_1920'"
+                                t-att-alt="img.name or 'Imagen adicional'"
+                                class="img-thumbnail thumb-mini"
+                                t-att-data-img="'/web/image/product.image/' + str(img.id) + '/image_1920'"
+                                style="height:64px; width:auto; cursor:pointer; border-radius:8px;" />
+                        </t>
+                    </div>
+                </t>
+                <!-- Precio y descuento -->
+                <div class="card-body mobile-card-body"
+                    style="text-align:left; display:flex; flex-direction:column; justify-content:center; align-items:flex-start; padding:8px 0; min-height:87.74px; box-sizing:border-box;">
+                    <!-- <t t-if="product.product_tag_ids">
+                        <div class="d-flex justify-content-start mb-2 mobile-badge-container">
+                            <span class="badge bg-primary mobile-badge" style="border-radius: 0; text-transform: uppercase;">
+                                <t t-esc="product.product_tag_ids[0].name"/>
+                            </span>
+                        </div>
+                    </t> -->
+                    <t t-if="product.discounted_price &lt; product.list_price">
+                        <div class="mt-0 mobile-discount-amount">
+                            <span class="text-muted"
+                                style="font-size: 16px; text-decoration: line-through;"> $<t
+                                    t-esc="'{:,}'.format(int(product.list_price))" />
+                            </span>
+                        </div>
+                        <div
+                            class="d-flex align-items-center justify-content-start mobile-price-container"
+                            style="text-align:left; gap:8px;">
+                            <span class="text-dark fw-bold mobile-main-price"
+                                style="font-size: 28px; color: #000; font-weight: bold;"> $<t
+                                    t-esc="'{:,}'.format(int(product.discounted_price))" />
+                            </span>
+                            <t t-if="product.discount_percentage or product.fixed_discount">
+                                <span class="mobile-discount"
+                                    style="font-size: 16px; font-weight: normal; color: #FF5207; margin-left:8px;">
+                                    <t t-if="product.discount_percentage">
+                                        <t t-esc="int(product.discount_percentage)" />% OFF </t>
+                                    <t t-elif="product.fixed_discount"> -$<t
+                                            t-esc="'{:,}'.format(int(product.fixed_discount))" />
+                                        MXN </t>
+                                </span>
+                            </t>
+                        </div>
+                        <t
+                            t-if="product.list_price and product.discounted_price and (product.list_price - product.discounted_price) &gt; 0">
+                            <div class="mt-0 mobile-discount-amount">
+                                <span class="text-muted"> $<t
+                                        t-esc="'{:,}'.format(int(product.list_price - product.discounted_price))" />
+                                    descuento </span>
+                            </div>
+                        </t>
+                    </t>
+                    <t t-elif="product.list_price">
+                        <span class="fw-bold d-block mobile-main-price" style="text-align:left;"> $<t
+                                t-esc="'{:,}'.format(int(product.list_price))" />
+                        </span>
+                    </t>
+                </div>
+                <!-- Envío gratis -->
+                <t t-if="product.free_shipping">
+                    <div class="mt-0 mobile-shipping d-flex justify-content-start"
+                        style="text-align:left;">
+                        <span class="text-orange mobile-shipping-text">
+                            Envío gratis
+                        </span>
+                    </div>
+                </t>
+                <!-- Detalles -->
+                <div class="text-start"
+                    style="font-size:13px; color:#444; text-align:left; padding-left:8px; padding-right:8px;">
+                    <div>Modelo: <t t-esc="product.default_code" /></div>
+                    <div>Marca: <t t-esc="product.brand_type_id.name" /></div>
+                    <div>Disponible:</div>
+                </div>
+                <!-- Selector de cantidad -->
+                <div class="my-3">
+                    <button type="button" class="btn btn-light w-100" id="qty-toggle-btn">
+                        <span id="qty-toggle-text">
+                            <span id="qty-toggle-value"></span>
+                            <span id="qty-available-text" style="color:#888; font-size:14px; margin-left:6px;"></span>
+                        </span>
+                        <span class="float-end">&gt;</span>
+                    </button>
+
+                    <div id="mobile-qty-container"
+                        style="display:none; margin-top:8px; align-items:center;">
+                        <div
+                            style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px;">
+                            <button type="button" class="btn" id="qty-minus-mobile"
+                                style="min-width:36px; height:36px; font-size:20px; padding:0; background:transparent; border:1px solid #e0e0e0; color:#222; border-radius:6px;">
+                                -</button>
+                            <input id="qty-input-mobile" type="number" name="add_qty" value="1" min="1"
+                                t-att-max="product.qty_available"
+                                class="form-control text-center"
+                                style="width:3.5em; min-width:48px; max-width:4.5em; padding:0 4px; border:1px solid #e0e0e0; box-shadow:none; background:transparent; outline:none; font-size:16px; border-radius:6px;"
+                                onwheel="return false;"
+                                inputmode="numeric"
+                                maxlength="4"
+                            />
+                            <button type="button" class="btn" id="qty-plus-mobile"
+                                style="min-width:36px; height:36px; font-size:20px; padding:0; background:transparent; border:1px solid #e0e0e0; color:#222; border-radius:6px;">
+                                +</button>
+                        </div>
+                    </div>
+                </div>
+
+                <t t-jquery="body" t-operation="append">
+                    <style>
+                        /* Oculta las flechas de los inputs type number en todos los navegadores */
+                        input[type=number]::-webkit-inner-spin-button,
+                        input[type=number]::-webkit-outer-spin-button {
+                        -webkit-appearance: none;
+                        margin: 0;
+                        }
+                        input[type=number] {
+                        -moz-appearance: textfield;
+                        }
+                        /* Ajusta el ancho del input según el número de dígitos */
+                        #qty-input {
+                        width: 3.5em !important;
+                        min-width: 48px !important;
+                        max-width: 4.5em !important;
+                        text-align: center;
+                        }
+                    </style>
+                </t>
+
+                <t t-jquery="body" t-operation="append">
+                    <script type="text/javascript"><![CDATA[
+                        document.addEventListener('DOMContentLoaded', function() {
+                        
+                            var toggleBtn = document.getElementById('qty-toggle-btn');
+                            var container = document.getElementById('mobile-qty-container');
+                            var qtyInput = document.getElementById('qty-input-mobile');
+                            var minusBtn = document.getElementById('qty-minus-mobile');
+                            var plusBtn = document.getElementById('qty-plus-mobile');
+                            var toggleValue = document.getElementById('qty-toggle-value');
+                            var availableText = document.getElementById('qty-available-text');
+                        
+                            if (!toggleBtn || !container || !qtyInput) return;
+                        
+                            var max = parseInt(qtyInput.getAttribute('max')) || 9999;
+                        
+                            function updateToggleText() {
+                                toggleValue.textContent = qtyInput.value;
+                                availableText.textContent = '(' + max + ' disponibles)';
+                            }
+                        
+                            toggleBtn.addEventListener('click', function() {
+                                var isOpen = container.style.display === 'flex' || container.style.display === 'block';
+                                container.style.display = isOpen ? 'none' : 'flex';
+                                if (!isOpen) {
+                                    qtyInput.focus();
+                                    try { qtyInput.select(); } catch (e) {}
+                                }
+                            });
+                        
+                            minusBtn && minusBtn.addEventListener('click', function() {
+                                var val = parseInt(qtyInput.value) || 1;
+                                if (val > 1) {
+                                    qtyInput.value = val - 1;
+                                    updateToggleText();
+                                }
+                            });
+                            plusBtn && plusBtn.addEventListener('click', function() {
+                                var val = parseInt(qtyInput.value) || 1;
+                                if (val < max) {
+                                    qtyInput.value = val + 1;
+                                    updateToggleText();
+                                }
+                            });
+                            qtyInput.addEventListener('input', function() {
+                                var val = parseInt(qtyInput.value) || 1;
+                                if (val < 1) val = 1;
+                                if (val > max) val = max;
+                                qtyInput.value = val;
+                                updateToggleText();
+                            });
+                        
+                            qtyInput.addEventListener('wheel', function(e){ e.preventDefault(); });
+                        
+                            updateToggleText();
+                        });
+                    ]]></script>
+                </t>
+                <!-- Métodos de pago -->
+                <div style="font-size:13px; color:#888;">Puedes pagar con:</div>
+                <div class="d-flex flex-wrap align-items-center mb-3" style="gap:8px;">
+                    <img src="/theme_xtream/static/src/img/product-img/pagomobil.png"
+                        alt="Pago móvil" style="height:50px;" />
+                </div>
+                <!-- Botones -->
+                <form id="add-to-cart-form-mobile" action="/shop/cart/update" method="POST"
+                    class="js_website_sale w-100">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"
+                        t-nocache="The csrf token must always be up to date." />
+                    <input type="hidden" name="product_id"
+                        t-att-value="product.product_variant_id.id" />
+                    <input type="hidden" name="add_qty" id="cart-qty" />
+                    <button type="submit"
+                        class="btn w-100 mb-2"
+                        style="height:48px; border-radius:8px; background:#2979ff; color:#fff; border:none; font-weight:600; font-family:inherit; letter-spacing:0.5px;"
+                        onclick="document.getElementById('cart-qty').value = (document.getElementById('qty-input') &amp;&amp; document.getElementById('qty-input').value) ? document.getElementById('qty-input').value : 1;">
+                        <span style="font-size:16px; font-weight:600;">Agregar al carrito</span>
+                    </button>
+                </form>
+
+                <form id="buy-now-form-mobile" action="/shop/cart/update" method="POST"
+                    class="w-100">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"
+                        t-nocache="The csrf token must always be up to date." />
+                    <input type="hidden" name="product_id"
+                        t-att-value="product.product_variant_id.id" />
+                    <input type="hidden" name="add_qty" id="buy-qty" />
+                    <button type="submit"
+                        class="btn w-100"
+                        id="buy-now-btn-mobile"
+                        style="height:48px; border-radius:8px; background:#82b1ff; color:#1757e6; border:none; font-weight:600; font-family:inherit; letter-spacing:0.5px;"
+                        onclick="document.getElementById('buy-qty').value = (document.getElementById('qty-input') &amp;&amp; document.getElementById('qty-input').value) ? document.getElementById('qty-input').value : 1;">
+                        <span style="font-size:16px; font-weight:600;">Comprar</span>
+                    </button>
+                </form>
+                <!-- Separator between buttons and next section -->
+                <div style="height:5px;"></div>
+
+                <hr style="border:0; height:1px; background:#e0e0e0; margin:18px 0;" />
+
+
+                <t t-set="no_tag_products"
+                    t-value="request.env['product.template'].sudo().search([
+    ('website_published', '=', True),
+    ('id', '!=', product.id),
+    ('product_tag_ids', '=', False),
+    ('categ_id', '=', product.categ_id.id)
+], limit=2)" />
+                <t t-set="tag_products_random"
+                    t-value="request.env['product.template'].sudo().search([
+    ('website_published', '=', True),
+    ('id', '!=', product.id),
+    ('product_tag_ids', '!=', False),
+    ('categ_id', '=', product.categ_id.id)
+], limit=2)" />
+                <t t-set="related_tag_products" t-value="no_tag_products + tag_products_random" />
+                <t t-if="related_tag_products">
+                    <!-- Mobile: stacked list compact cards -->
+                    <div class="d-block d-md-none" style="margin-top:8px;">
+                        <div
+                            style="font-size:18px; color:#222; font-weight:600; text-align:left; margin-bottom:8px;">Productos
+                            que podrían interesarte</div>
+                        <div style="display:flex; flex-direction:column; gap:10px;">
+                            <t t-foreach="related_tag_products" t-as="rel_prod" t-key="rel_prod.id">
+                                <a t-att-href="rel_prod.website_url"
+                                    style="text-decoration:none; color:inherit;">
+                                    <div
+                                        style="display:flex; gap:12px; align-items:flex-start; justify-content:flex-start; border:1.5px solid #bdbdbd; border-radius:8px; padding:8px; background:#fff; text-align:left;">
+                                        <div
+                                            style="flex:0 0 92px; height:74px; display:flex; align-items:center; justify-content:flex-start; background:#fff; overflow:hidden; border-radius:6px;">
+                                            <img
+                                                t-att-src="'/web/image/product.template/%s/image_1024' % rel_prod.id"
+                                                alt=""
+                                                style="max-width:100%; max-height:100%; object-fit:contain;" />
+                                        </div>
+                                        <div style="flex:1; min-width:0; text-align:left;">
+                                            <h6
+                                                style="font-size:14px; margin:0 0 6px 0; line-height:1.15; max-height:2.3em; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; color:#222; text-align:left;">
+                                                <t t-esc="rel_prod.name" />
+                                            </h6>
+                                            <div
+                                                style="display:flex; align-items:flex-start; gap:8px; flex-wrap:wrap; justify-content:flex-start;">
+                                                <t
+                                                    t-if="rel_prod.discounted_price &lt; rel_prod.list_price">
+                                                    <span
+                                                        style="font-size:15px; font-weight:700; color:#000;">
+                                                        $<t
+                                                            t-esc="'{:,}'.format(int(rel_prod.discounted_price))" />
+                                                    </span>
+                                                    <span style="font-size:12px; color:#FF5207;">
+                                                        <t t-if="rel_prod.discount_percentage"><t
+                                                                t-esc="int(rel_prod.discount_percentage)" />%
+                                                            OFF</t>
+                                                        <t t-elif="rel_prod.fixed_discount">- $<t
+                                                                t-esc="'{:,}'.format(int(rel_prod.fixed_discount))" /></t>
+                                                    </span>
+                                                    <span
+                                                        style="font-size:12px; color:#888; text-decoration:line-through; margin-left:6px;">
+                                                        $<t
+                                                            t-esc="'{:,}'.format(int(rel_prod.list_price))" />
+                                                    </span>
+                                                </t>
+                                                <t t-else="">
+                                                    <span
+                                                        style="font-size:15px; font-weight:700; color:#000;">
+                                                        $<t
+                                                            t-esc="'{:,}'.format(int(rel_prod.list_price))" />
+                                                    </span>
+                                                </t>
+                                            </div>
+                                            <div
+                                                style="margin-top:6px; display:flex; gap:8px; align-items:center; justify-content:flex-start;">
+                                                <t t-if="rel_prod.free_shipping">
+                                                    <span style="font-size:12px; color:#FF5207;">Envío
+                                                        gratis</span>
+                                                </t>
+                                                <t t-if="rel_prod.brand_type_id">
+                                                    <span style="font-size:12px; color:#666;">por <t
+                                                            t-esc="rel_prod.brand_type_id.name" /></span>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+                <div class="row">
+                    <div class="col-12">
+                        <hr />
+                        <h3 class="h5"
+                            style="font-size:18px; color:#222; font-weight:600; text-align:left; margin-bottom:8px;">
+                            Descripción</h3>
+                        <div class="product-description mb-3"
+                            style="text-align:left; font-size:17px;" lang="es">
+                            <t t-if="product.website_description">
+                                <t t-raw="product.website_description" />
+                            </t>
+                            <t t-else="">
+                                <t t-esc="product.description_sale" />
+                            </t>
+                        </div>
+                        <hr />
+                        <div class="product-specifications" style="text-align:left; font-size:17px;"
+                            lang="es">
+                            <h4 class="h6"
+                                style="font-size:18px; color:#222; font-weight:600; text-align:left; margin-bottom:8px;">Ficha
+                                técnica</h4>
+
+                            <style>
+                                /* Compact, single-line friendly ficha técnica for mobile */
+                                .spec-container { width:100%; }
+                                .spec-row { display:flex; align-items:center; gap:8px; }
+                                .spec-label {
+                                flex:0 0 38%;
+                                min-width:110px;
+                                background:#f0f2f3;
+                                border-radius:8px;
+                                padding:10px 12px;
+                                font-weight:600;
+                                font-size:13px;
+                                display:flex;
+                                align-items:center;
+                                white-space:nowrap;
+                                overflow:hidden;
+                                text-overflow:ellipsis;
+                                }
+                                .spec-value {
+                                flex:1;
+                                background:#efefef;
+                                border-radius:8px;
+                                padding:10px 12px;
+                                font-size:11px;
+                                display:flex;
+                                align-items:center;
+                                /* force single-line and ellipsis for long values */
+                                white-space:nowrap;
+                                overflow:hidden;
+                                text-overflow:ellipsis;
+                                word-break:normal;
+                                }
+                                /* Slightly reduce text for very narrow screens */
+                                @media (max-width:360px) {
+                                .spec-label, .spec-value { font-size:12px; padding:8px 10px; }
+                                .spec-label { min-width:90px; }
+                                }
+                            </style>
+
+                            <!-- Responsive grid: stack on xs, two columns on sm+ -->
+                            <div class="spec-container container-fluid px-0"
+                                style="padding:0; margin:0; box-sizing:border-box;">
+                                <div class="row gx-0 gy-2" style="margin:0; width:100%;">
+                                    <div class="col-12 px-0">
+                                        <div class="spec-row">
+                                            <div class="spec-label">Modelo</div>
+                                            <div class="spec-value">
+                                                <t t-esc="product.product_model or ''" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="spec-row">
+                                            <div class="spec-label">Stock</div>
+                                            <div class="spec-value">
+                                                <t t-esc="int(product.qty_available)" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="spec-row">
+                                            <div class="spec-label">Referencia</div>
+                                            <div class="spec-value">
+                                                <t t-esc="product.default_code or ''" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="spec-row">
+                                            <div class="spec-label">Actualizado</div>
+                                            <div class="spec-value">
+                                                <t
+                                                    t-esc="product.write_date and product.write_date.strftime('%Y-%m-%d %H:%M:%S') or ''" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                    </div>
+                </div>
+
+
+                <t t-set="related_products"
+                    t-value="request.env['product.template'].sudo().search([
+    ('website_published', '=', True),
+    ('id', '!=', product.id),
+    ('brand_type_id', '=', product.brand_type_id.id)
+], limit=4)" />
+                <t t-if="related_products">
+                    <div style="margin-top:18px;">
+                        <h4
+                            style="font-weight:600; margin-bottom:10px; font-size:18px; text-align:left;">De
+                            la misma marca</h4>
+                        <div style="display:flex; flex-direction:column; gap:10px;">
+                            <t t-foreach="related_products" t-as="rel_prod" t-key="rel_prod.id">
+                                <a t-att-href="rel_prod.website_url"
+                                    style="text-decoration:none; color:inherit;">
+                                    <div
+                                        style="display:flex; gap:12px; align-items:center; justify-content:flex-start; border:1.5px solid #bdbdbd; border-radius:8px; padding:8px; background:#fff;">
+                                        <div
+                                            style="flex:0 0 92px; height:74px; display:flex; align-items:center; justify-content:flex-start; background:#fff; overflow:hidden; border-radius:6px;">
+                                            <img
+                                                t-att-src="'/web/image/product.template/%s/image_1024' % rel_prod.id"
+                                                alt=""
+                                                style="max-width:100%; max-height:100%; object-fit:contain;" />
+                                        </div>
+                                        <div style="flex:1; min-width:0; text-align:left;">
+                                            <h6
+                                                style="font-size:14px; margin:0 0 6px 0; line-height:1.15; max-height:2.3em; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; color:#222; text-align:left;">
+                                                <t t-esc="rel_prod.name" />
+                                            </h6>
+                                            <div
+                                                style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-start;">
+                                                <t
+                                                    t-if="rel_prod.discounted_price &lt; rel_prod.list_price">
+                                                    <span
+                                                        style="font-size:15px; font-weight:700; color:#000;">
+                                                        $<t
+                                                            t-esc="'{:,}'.format(int(rel_prod.discounted_price))" />
+                                                    </span>
+                                                    <span style="font-size:12px; color:#FF5207;">
+                                                        <t t-if="rel_prod.discount_percentage"><t
+                                                                t-esc="int(rel_prod.discount_percentage)" />%
+                                                            OFF</t>
+                                                        <t t-elif="rel_prod.fixed_discount">- $<t
+                                                                t-esc="'{:,}'.format(int(rel_prod.fixed_discount))" /></t>
+                                                    </span>
+                                                    <span
+                                                        style="font-size:12px; color:#888; text-decoration:line-through; margin-left:6px;">
+                                                        $<t
+                                                            t-esc="'{:,}'.format(int(rel_prod.list_price))" />
+                                                    </span>
+                                                </t>
+                                                <t t-else="">
+                                                    <span
+                                                        style="font-size:15px; font-weight:700; color:#000;">
+                                                        $<t
+                                                            t-esc="'{:,}'.format(int(rel_prod.list_price))" />
+                                                    </span>
+                                                </t>
+                                            </div>
+                                            <div
+                                                style="margin-top:6px; display:flex; gap:8px; align-items:center; justify-content:flex-start;">
+                                                <t t-if="rel_prod.free_shipping">
+                                                    <span style="font-size:12px; color:#FF5207;">Envío
+                                                        gratis</span>
+                                                </t>
+                                                <t t-if="rel_prod.brand_type_id">
+                                                    <span style="font-size:12px; color:#666;">por <t
+                                                            t-esc="rel_prod.brand_type_id.name" /></span>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+
+            </div>
+        </xpath>
+    </template>
+</odoo>
