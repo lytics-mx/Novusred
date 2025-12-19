@@ -34,7 +34,17 @@ class CategoryController(http.Controller):
         selected_subcategory = None
         selected_brand = None
         subcategories = []
-        
+
+        try:
+            current_page = int(request.params.get('page', 1))
+        except Exception:
+            current_page = 1
+        per_page = 5
+        total_products = request.env['product.template'].sudo().search_count(domain)
+        total_pages = max(1, (total_products + per_page - 1) // per_page)
+        start = (current_page - 1) * per_page
+        end = start + per_page
+
         if search:
             domain.append('|')  # OR condition
             domain.append(('name', 'ilike', search))
@@ -107,7 +117,7 @@ class CategoryController(http.Controller):
 
         # Obtener productos filtrados (SOLO PUBLICADOS, sin filtro de precio)
         products = request.env['product.template'].sudo().search(domain, offset=start, limit=per_page)
-
+        
         # Calcular precios con descuento
         for product in products:
             if product.discount_percentage > 0:
@@ -237,7 +247,7 @@ class CategoryController(http.Controller):
             current_page = int(request.params.get('page', 1))
         except Exception:
             current_page = 1
-
+        
         per_page = 5
         total_products = request.env['product.template'].sudo().search_count(domain)
         total_pages = max(1, (total_products + per_page - 1) // per_page)
