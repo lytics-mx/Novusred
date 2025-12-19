@@ -106,7 +106,7 @@ class CategoryController(http.Controller):
                 promotion_id = None
 
         # Obtener productos filtrados (SOLO PUBLICADOS, sin filtro de precio)
-        products = request.env['product.template'].sudo().search(domain)
+        products = request.env['product.template'].sudo().search(domain, offset=start, limit=per_page)
 
         # Calcular precios con descuento
         for product in products:
@@ -155,11 +155,7 @@ class CategoryController(http.Controller):
             products = products.sorted(lambda p: getattr(p, 'sales_count', 0), reverse=True)
 
         # Formatear productos para la vista
-        period_products = []
-        for product in products:
-            period_products.append({
-                'product': product
-            })
+        period_products = [{'product': product} for product in products]
 
         forced_brand_names = [
             'EPCOM PROFESSIONAL',
@@ -243,7 +239,7 @@ class CategoryController(http.Controller):
             current_page = 1
 
         per_page = 5
-        total_products = len(period_products)
+        total_products = request.env['product.template'].sudo().search_count(domain)
         total_pages = max(1, (total_products + per_page - 1) // per_page)
         start = (current_page - 1) * per_page
         end = start + per_page
