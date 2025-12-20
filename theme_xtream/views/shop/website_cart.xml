@@ -328,6 +328,7 @@
                     <div class="col-md-3 col-6 text-end">
                     <div class="fw-semibold" style="font-size:16px;">
                         Total: $<span id="cart-total-amount">0.00</span>
+                            Total: $<span id="cart-total-amount">0,00</span>
                     </div>
                     </div>
                     <div class="col-md-3 col-6 text-end">
@@ -414,7 +415,7 @@
                     const row = cartInput.closest('.row');
                     const lineTotalSpan = row.querySelector('.col-3 .fw-bold');
                     if (lineTotalSpan) {
-                        lineTotalSpan.textContent = '$' + lineTotal.toFixed(2);
+                            lineTotalSpan.textContent = '$' + formatNumber(lineTotal);
                     }
 
                     const itemIdInput = qtyInput.form.querySelector('input[name="line_id"], input[name="item_id"]');
@@ -425,11 +426,15 @@
                 });
 
                 const subtotalElement = document.getElementById(totalElementId);
-                if (subtotalElement) {
-                    subtotalElement.textContent = subtotal.toFixed(2);
+                    if (subtotalElement) {
+                        subtotalElement.textContent = formatNumber(subtotal);
                 }
             }
 
+                // Formatea un número con separador de miles (coma) y decimales (punto)
+                function formatNumber(num) {
+                    return num.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                }
             // Escuchar cambios en los inputs de cantidad para carrito
             document.querySelectorAll('#cart-tab-content .cart-quantity-input input[name="set_qty"]').forEach(function (input) {
                 input.addEventListener('input', function () {
