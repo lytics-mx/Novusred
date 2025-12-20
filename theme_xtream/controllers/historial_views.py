@@ -24,7 +24,7 @@ class ProductHistoryController(http.Controller):
 
         # Buscar registros de website.track creados por nuestro beacon (tienen user_id)
         tracks = request.env['website.track'].search([
-            ('visitor_id.user_id', '=', user_id),
+            ('visitor_id.partner_id', '=', request.env.user.partner_id.id),
             ('product_id', '!=', False),
         ], order='visit_datetime desc')
 
