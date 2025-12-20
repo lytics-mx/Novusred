@@ -277,39 +277,11 @@
                                             </li>
                                         </ul>
                                     </li>                          
-                                    <li class="nav-item position-relative">
-                                        <a class="nav-link text-white position-relative" href="/shop/cart">
+                                    <li class="nav-item">
+                                        <a class="nav-link text-white" href="/shop/cart">
                                             <i class="fa fa-shopping-cart"></i>
-                                            <span id="cart-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:12px; min-width:22px; height:22px; display:none; line-height:20px; padding:0 6px; border:2px solid #fff;">0</span>
                                         </a>
                                     </li>
-                                                                                    <script><![CDATA[
-// Actualiza el badge del carrito con la cantidad de productos
-function updateCartBadge() {
-    var badge = document.getElementById('cart-badge');
-    var qty = 0;
-    // Intenta obtener la cantidad del carrito desde localStorage o variable global de Odoo
-    if (window.odoo && window.odoo.session_info && typeof window.odoo.session_info.cart_quantity !== 'undefined') {
-        qty = parseInt(window.odoo.session_info.cart_quantity, 10) || 0;
-    } else if (window.localStorage && localStorage.getItem('cart_qty') !== null) {
-        qty = parseInt(localStorage.getItem('cart_qty'), 10) || 0;
-    } else if (typeof window.website_sale_cart_quantity !== 'undefined') {
-        qty = parseInt(window.website_sale_cart_quantity, 10) || 0;
-    }
-    if (badge) {
-        if (qty > 0) {
-            badge.textContent = qty;
-            badge.style.display = 'inline-block';
-        } else {
-            badge.style.display = 'none';
-        }
-    }
-}
-// Llama al cargar la página y cuando cambie el carrito
-document.addEventListener('DOMContentLoaded', updateCartBadge);
-document.addEventListener('cart:updated', updateCartBadge);
-// Si tienes AJAX para actualizar el carrito, dispara el evento 'cart:updated' después de cada cambio
-]]></script>
                                                                         
                                     <li class="nav-item d-flex align-items-center">
                                         <t t-if="request.env.user.id == request.website.user_id.id">
