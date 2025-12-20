@@ -122,18 +122,21 @@ class ShopController(WebsiteSale):
             # Buscar el producto en "Guardados"
             saved_item = request.env['saved.items'].sudo().search([('id', '=', item_id), ('user_id', '=', request.env.user.id)])
             if saved_item:
-                # Obtener el pedido actual
-                order = request.website.sale_get_order(force_create=True)
-                if order:
-                    # Agregar el producto al carrito
-                    request.env['sale.order.line'].sudo().create({
-                        'order_id': order.id,
-                        'product_id': saved_item.product_id.id,
-                        'product_uom_qty': 1,  # Cantidad predeterminada
-                        'price_unit': saved_item.price,
-                    })
-                    # Eliminar el producto de "Guardados"
-                    saved_item.unlink()
+                # Validar stock antes de agregar
+                if saved_item.product_id.qty_available > 0:
+                    order = request.website.sale_get_order(force_create=True)
+                    if order:
+                        request.env['sale.order.line'].sudo().create({
+                            'order_id': order.id,
+                            'product_id': saved_item.product_id.id,
+                            'product_uom_qty': 1,  # Cantidad predeterminada
+                            'price_unit': saved_item.price,
+                        })
+                        # Eliminar el producto de "Guardados"
+                        saved_item.unlink()
+                else:
+                    # Opcional: mensaje de error o redirección
+                    return request.redirect('/shop/cart?tab=saved&error=nostock')
         return request.redirect('/shop/cart')
     
     @http.route('/shop/cart/update_bundle', type='http', auth="public", website=True)
@@ -145,19 +148,23 @@ class ShopController(WebsiteSale):
         bundle_product_ids = request.httprequest.form.getlist('bundle_product_ids[]')  # Manejo correcto de múltiples valores
         root_product_id = post.get('product_id')
         add_qty = int(post.get('add_qty', 1))  # Default quantity is 1
-    
+
         if root_product_id:
             bundle_product_ids.append(root_product_id)
-    
+
         if bundle_product_ids:
             order = request.website.sale_get_order(force_create=1)
             for product_id in bundle_product_ids:
                 try:
                     product_id = int(product_id)
-                    order._cart_update(product_id=product_id, add_qty=add_qty)
+                    product = request.env['product.product'].sudo().browse(product_id)
+                    if product.qty_available > 0:
+                        order._cart_update(product_id=product_id, add_qty=add_qty)
+                    else:
+                        _logger.info(f"Producto {product_id} no añadido por falta de stock.")
                 except ValueError:
                     _logger.error(f"Error al procesar el producto ID: {product_id}")
                     continue
-    
-        _logger.info(f"Productos añadidos al carrito: {bundle_product_ids}")
+
+        _logger.info(f"Productos añadidos al carrito (con stock): {bundle_product_ids}")
         return request.redirect('/shop/cart')
