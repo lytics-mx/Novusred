@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 
 class WebsiteAuth(Home):
 
-    @http.route('/web/login', type='http', auth='public', website=True)
+    @http.route('/login', type='http', auth='public', website=True)
     def web_login(self, redirect=None, **kwargs):
         """Override the default login route to handle custom login logic."""
         # If this is a POST request (login form submitted)
