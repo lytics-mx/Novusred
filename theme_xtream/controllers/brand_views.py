@@ -22,43 +22,32 @@ class WebsiteBrand(http.Controller):
         if subcat_id:
             domain.append(('categ_id', '=', int(subcat_id)))
 
-
-
-        # Implementar paginación real para productos
-        # Paginación rápida y solo traer campos esenciales
-        try:
-            current_page = int(request.params.get('page', 1))
-        except Exception:
-            current_page = 1
-        per_page = 10
-        total_products = request.env['product.template'].sudo().search_count(domain)
-        total_pages = max(1, (total_products + per_page - 1) // per_page)
-        start = (current_page - 1) * per_page
-        products = request.env['product.template'].sudo().search(domain, offset=start, limit=per_page, fields=['id','name'])
-
-        # Si no hay productos publicados, redirige a /brand
+        products = request.env['product.template'].sudo().search(domain, limit=60)
         if not products:
             return request.redirect('/brand')
 
-
-
-        # Categorías principales de los productos paginados
-        # Solo obtener los IDs de categoría de los productos paginados
-        # No buscar categorías ni hijos para máxima velocidad
+        # Obtener todas las categorías y subcategorías con productos publicados de la marca en lote
+        categ_ids = products.mapped('categ_id').ids
+        # Buscar hijos en lote usando read_group para máxima velocidad
+        subcat_counts = request.env['product.template'].sudo().read_group([
+            ('brand_type_id', '=', brand_type_rec.id),
+            ('website_published', '=', True)
+        ], ['categ_id'], ['categ_id'])
+        subcat_ids = set(row['categ_id'][0] for row in subcat_counts if row['categ_id'])
+        categories = request.env['product.category'].sudo().browse(categ_ids)
         valid_categories = []
-
-        # Obtener la imagen de banner del campo banner_image de la primera categoría (si existe)
-        banner_image = False
-
-
+        for cat in categories:
+            valid_children = [c for c in cat.child_id if c.id in subcat_ids]
+            valid_categories.append({
+                'cat': cat,
+                'valid_children': valid_children,
+            })
+        banner_image = valid_categories[0]['cat'].banner_image if valid_categories and hasattr(valid_categories[0]['cat'], 'banner_image') else False
         return request.render('theme_xtream.brand_search', {
             'brand_type': brand_type_rec,
             'products': products,
-            'categories': valid_categories,  # Ahora es una lista de dicts
+            'categories': valid_categories,
             'banner_image': banner_image,
-            'current_page': current_page,
-            'total_pages': total_pages,
-            'total_products': total_products,
         })
 
     @http.route('/brand_search_redirect', type='http', auth='public', website=True)
