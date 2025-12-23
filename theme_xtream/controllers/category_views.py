@@ -28,6 +28,28 @@ class CategoryController(http.Controller):
         
         # Construir dominio base SOLO para productos publicados (sin filtros de precio)
         domain = [('website_published', '=', True), ('qty_available', '>', 0)]
+
+        # Filtros de precio y descuento en el dominio para acelerar la consulta
+        if price_range:
+            if price_range == '0_500':
+                domain.append(('list_price', '<=', 500))
+            elif price_range == '500_1000':
+                domain.append(('list_price', '>', 500))
+                domain.append(('list_price', '<=', 1000))
+            elif price_range == '1000_plus':
+                domain.append(('list_price', '>', 1000))
+        if min_price:
+            try:
+                min_price_val = float(min_price)
+                domain.append(('list_price', '>=', min_price_val))
+            except Exception:
+                pass
+        if max_price:
+            try:
+                max_price_val = float(max_price)
+                domain.append(('list_price', '<=', max_price_val))
+            except Exception:
+                pass
         
         # Variables para la vista
         selected_category = None
@@ -115,10 +137,11 @@ class CategoryController(http.Controller):
             except (ValueError, TypeError):
                 promotion_id = None
 
-        # Obtener productos filtrados (SOLO PUBLICADOS, sin filtro de precio)
+
+        # Obtener productos filtrados (SOLO PUBLICADOS, con filtro de precio en dominio)
         products = request.env['product.template'].sudo().search(domain, offset=start, limit=per_page)
-        
-        # Calcular precios con descuento
+
+        # Calcular precios con descuento solo para los productos mostrados
         for product in products:
             if product.discount_percentage > 0:
                 product.discounted_price = product.list_price * (1 - product.discount_percentage / 100)
@@ -127,28 +150,8 @@ class CategoryController(http.Controller):
             else:
                 product.discounted_price = product.list_price
 
-        # Filtro de precio en Python (NO en el dominio)
-        if price_range:
-            if price_range == '0_500':
-                products = products.filtered(lambda p: 0 < p.discounted_price <= 500)
-            elif price_range == '500_1000':
-                products = products.filtered(lambda p: 500 < p.discounted_price <= 1000)
-            elif price_range == '1000_plus':
-                products = products.filtered(lambda p: p.discounted_price > 1000)
-        if min_price:
-            try:
-                min_price_val = float(min_price)
-                products = products.filtered(lambda p: p.discounted_price >= min_price_val)
-            except Exception:
-                pass
-        if max_price:
-            try:
-                max_price_val = float(max_price)
-                products = products.filtered(lambda p: p.discounted_price <= max_price_val)
-            except Exception:
-                pass
 
-        # APLICAR ORDENAMIENTO
+        # APLICAR ORDENAMIENTO SOLO SI ES NECESARIO
         if sort == 'newest':
             products = products.sorted('create_date', reverse=True)
         elif sort == 'best_sellers':
@@ -164,7 +167,8 @@ class CategoryController(http.Controller):
         else:  # relevance (default) - más vendidos
             products = products.sorted(lambda p: getattr(p, 'sales_count', 0), reverse=True)
 
-        # Formatear productos para la vista
+
+        # Formatear productos para la vista (ya paginados)
         period_products = [{'product': product} for product in products]
 
         forced_brand_names = [
