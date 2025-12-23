@@ -22,28 +22,34 @@ class WebsiteBrand(http.Controller):
         if subcat_id:
             domain.append(('categ_id', '=', int(subcat_id)))
 
-        products = request.env['product.template'].sudo().search(domain)
+
+        # Limitar la cantidad de productos traídos para evitar time-out
+        products = request.env['product.template'].sudo().search(domain, limit=60)
 
         # Si no hay productos publicados, redirige a /brand
         if not products:
             return request.redirect('/brand')
 
-        # Categorías principales de los productos
-        category_ids = products.mapped('categ_id').ids
+
+        # Categorías principales de los productos (limitando para evitar traer demasiadas)
+        category_ids = products.mapped('categ_id').ids[:30]
         categories = request.env['product.category'].sudo().browse(category_ids)
 
-        # Filtrar solo subcategorías (child) que tengan productos publicados de la marca
+        # Filtrar solo subcategorías (child) que tengan productos publicados de la marca, limitando la búsqueda
         valid_categories = []
         for cat in categories:
-            valid_children = cat.child_id.filtered(
-                lambda c: request.env['product.template'].sudo().search_count([
+            # Limitar a máximo 20 hijos por categoría
+            children = cat.child_id[:20]
+            valid_children = []
+            for c in children:
+                count = request.env['product.template'].sudo().search_count([
                     ('categ_id', '=', c.id),
                     ('brand_type_id', '=', brand_type_rec.id),
                     ('website_published', '=', True)
-                ]) > 0
-            )
+                ])
+                if count > 0:
+                    valid_children.append(c)
             if valid_children:
-                # No modificar cat.child_id, solo pasar los hijos válidos al template
                 valid_categories.append({
                     'cat': cat,
                     'valid_children': valid_children,
