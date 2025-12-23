@@ -25,6 +25,7 @@ class WebsiteBrand(http.Controller):
 
 
         # Implementar paginación real para productos
+        # Paginación rápida y solo traer campos esenciales
         try:
             current_page = int(request.params.get('page', 1))
         except Exception:
@@ -33,7 +34,7 @@ class WebsiteBrand(http.Controller):
         total_products = request.env['product.template'].sudo().search_count(domain)
         total_pages = max(1, (total_products + per_page - 1) // per_page)
         start = (current_page - 1) * per_page
-        products = request.env['product.template'].sudo().search(domain, offset=start, limit=per_page)
+        products = request.env['product.template'].sudo().search(domain, offset=start, limit=per_page, fields=['id','name','list_price','image_1920','categ_id'])
 
         # Si no hay productos publicados, redirige a /brand
         if not products:
@@ -42,34 +43,12 @@ class WebsiteBrand(http.Controller):
 
 
         # Categorías principales de los productos paginados
-        category_ids = products.mapped('categ_id').ids
+        # Solo obtener los IDs de categoría de los productos paginados
+        category_ids = list(set([p['categ_id'][0] if isinstance(p['categ_id'], (list, tuple)) else p['categ_id'] for p in products if p.get('categ_id')]))
         categories = request.env['product.category'].sudo().browse(category_ids)
 
-        # Optimizar subcategorías: solo buscar hijos con productos publicados de la marca en lote
-        valid_categories = []
-        if categories:
-            # Buscar todos los hijos de todas las categorías de una vez
-            all_child_ids = sum([cat.child_id.ids for cat in categories], [])
-            if all_child_ids:
-                # Buscar cuántos productos publicados hay por subcategoría-hijo en lote
-                subcat_counts = request.env['product.template'].sudo().read_group(
-                    [
-                        ('categ_id', 'in', all_child_ids),
-                        ('brand_type_id', '=', brand_type_rec.id),
-                        ('website_published', '=', True)
-                    ],
-                    ['categ_id'], ['categ_id']
-                )
-                subcat_id_with_products = set(row['categ_id'][0] for row in subcat_counts if row['categ_id'])
-            else:
-                subcat_id_with_products = set()
-            for cat in categories:
-                valid_children = [c for c in cat.child_id if c.id in subcat_id_with_products]
-                if valid_children:
-                    valid_categories.append({
-                        'cat': cat,
-                        'valid_children': valid_children,
-                    })
+        # No buscar subcategorías ni hijos para máxima velocidad
+        valid_categories = [{'cat': cat, 'valid_children': []} for cat in categories]
 
         # Obtener la imagen de banner del campo banner_image de la primera categoría (si existe)
         banner_image = valid_categories[0]['cat'].banner_image if valid_categories and hasattr(valid_categories[0]['cat'], 'banner_image') else False
