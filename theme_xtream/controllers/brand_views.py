@@ -23,46 +23,66 @@ class WebsiteBrand(http.Controller):
             domain.append(('categ_id', '=', int(subcat_id)))
 
 
-        # Limitar la cantidad de productos traídos para evitar time-out
-        products = request.env['product.template'].sudo().search(domain, limit=60)
+
+        # Implementar paginación real para productos
+        try:
+            current_page = int(request.params.get('page', 1))
+        except Exception:
+            current_page = 1
+        per_page = 20
+        total_products = request.env['product.template'].sudo().search_count(domain)
+        total_pages = max(1, (total_products + per_page - 1) // per_page)
+        start = (current_page - 1) * per_page
+        products = request.env['product.template'].sudo().search(domain, offset=start, limit=per_page)
 
         # Si no hay productos publicados, redirige a /brand
         if not products:
             return request.redirect('/brand')
 
 
-        # Categorías principales de los productos (limitando para evitar traer demasiadas)
-        category_ids = products.mapped('categ_id').ids[:30]
+
+        # Categorías principales de los productos paginados
+        category_ids = products.mapped('categ_id').ids
         categories = request.env['product.category'].sudo().browse(category_ids)
 
-        # Filtrar solo subcategorías (child) que tengan productos publicados de la marca, limitando la búsqueda
+        # Optimizar subcategorías: solo buscar hijos con productos publicados de la marca en lote
         valid_categories = []
-        for cat in categories:
-            # Limitar a máximo 20 hijos por categoría
-            children = cat.child_id[:20]
-            valid_children = []
-            for c in children:
-                count = request.env['product.template'].sudo().search_count([
-                    ('categ_id', '=', c.id),
-                    ('brand_type_id', '=', brand_type_rec.id),
-                    ('website_published', '=', True)
-                ])
-                if count > 0:
-                    valid_children.append(c)
-            if valid_children:
-                valid_categories.append({
-                    'cat': cat,
-                    'valid_children': valid_children,
-                })
+        if categories:
+            # Buscar todos los hijos de todas las categorías de una vez
+            all_child_ids = sum([cat.child_id.ids for cat in categories], [])
+            if all_child_ids:
+                # Buscar cuántos productos publicados hay por subcategoría-hijo en lote
+                subcat_counts = request.env['product.template'].sudo().read_group(
+                    [
+                        ('categ_id', 'in', all_child_ids),
+                        ('brand_type_id', '=', brand_type_rec.id),
+                        ('website_published', '=', True)
+                    ],
+                    ['categ_id'], ['categ_id']
+                )
+                subcat_id_with_products = set(row['categ_id'][0] for row in subcat_counts if row['categ_id'])
+            else:
+                subcat_id_with_products = set()
+            for cat in categories:
+                valid_children = [c for c in cat.child_id if c.id in subcat_id_with_products]
+                if valid_children:
+                    valid_categories.append({
+                        'cat': cat,
+                        'valid_children': valid_children,
+                    })
 
         # Obtener la imagen de banner del campo banner_image de la primera categoría (si existe)
         banner_image = valid_categories[0]['cat'].banner_image if valid_categories and hasattr(valid_categories[0]['cat'], 'banner_image') else False
+
 
         return request.render('theme_xtream.brand_search', {
             'brand_type': brand_type_rec,
             'products': products,
             'categories': valid_categories,  # Ahora es una lista de dicts
             'banner_image': banner_image,
+            'current_page': current_page,
+            'total_pages': total_pages,
+            'total_products': total_products,
         })
 
     @http.route('/brand_search_redirect', type='http', auth='public', website=True)
