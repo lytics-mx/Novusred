@@ -179,16 +179,16 @@ class CategoryController(http.Controller):
             'EZVIZ'
         ]
 
-        # Obtener marcas disponibles SOLO de productos PUBLICADOS de la categoría/subcategoría seleccionada
+
+        # Obtener marcas disponibles SOLO de productos PUBLICADOS de la categoría/subcategoría seleccionada (limitando resultados)
         brand_domain = domain.copy()
         brand_domain = [d for d in brand_domain if d[0] != 'brand_type_id']
-        brand_products = request.env['product.template'].sudo().search(brand_domain + [('qty_available', '>', 0)])
-        available_brands = brand_products.mapped('brand_type_id').filtered(
-            lambda b: b.name and brand_products.filtered(lambda p: p.brand_type_id.id == b.id)
-        )
+        brand_products = request.env['product.template'].sudo().search(brand_domain + [('qty_available', '>', 0)], limit=100)
+        available_brands = brand_products.mapped('brand_type_id')
 
         forced_brands = []
         other_brands = []
+
         for name in forced_brand_names:
             brand = next((b for b in available_brands if b.name == name), None)
             if brand:
@@ -201,29 +201,31 @@ class CategoryController(http.Controller):
 
         # Calcular contador de productos PUBLICADOS por marca, usando los mismos filtros
         brand_counts = {}
+
         for brand in available_brands:
-            count = len(brand_products.filtered(lambda p: p.brand_type_id.id == brand.id))
+            count = sum(1 for p in brand_products if p.brand_type_id.id == brand.id)
             brand_counts[brand.id] = count
 
         # Obtener tags de descuento SOLO de productos PUBLICADOS de la categoría seleccionada
+
         if category_id or subcategory_id:
-            category_products = request.env['product.template'].sudo().search(brand_domain + [('qty_available', '>', 0)])
+            category_products = request.env['product.template'].sudo().search(brand_domain + [('qty_available', '>', 0)], limit=100)
             all_category_tags = category_products.mapped('product_tag_ids')
-            discount_tags = all_category_tags.filtered(lambda t: t.is_percentage and t.discount_percentage > 0)
-            promotion_tags = all_category_tags.filtered(lambda t: not t.is_percentage)
+            discount_tags = [t for t in all_category_tags if t.is_percentage and t.discount_percentage > 0]
+            promotion_tags = [t for t in all_category_tags if not t.is_percentage]
         else:
-            all_published_products = request.env['product.template'].sudo().search([('website_published', '=', True)])
+            all_published_products = request.env['product.template'].sudo().search([('website_published', '=', True)], limit=100)
             category_products = all_published_products
             all_published_tags = all_published_products.mapped('product_tag_ids')
-            discount_tags = all_published_tags.filtered(lambda t: t.is_percentage and t.discount_percentage > 0)
-            promotion_tags = all_published_tags.filtered(lambda t: not t.is_percentage)
+            discount_tags = [t for t in all_published_tags if t.is_percentage and t.discount_percentage > 0]
+            promotion_tags = [t for t in all_published_tags if not t.is_percentage]
 
         # Calcular rangos de precios (para los contadores)
         price_range_domain = domain.copy()
         # Si tienes algún filtro de precio en domain, quítalo aquí (en tu caso, no hay porque los aplicas en Python)
         if free_shipping:
             price_range_domain.append(('free_shipping', '=', True))
-        range_products = request.env['product.template'].sudo().search(price_range_domain)
+        range_products = request.env['product.template'].sudo().search(price_range_domain, limit=100)
         for product in range_products:
             if product.discount_percentage > 0:
                 product.discounted_price = product.list_price * (1 - product.discount_percentage / 100)
