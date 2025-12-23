@@ -22,31 +22,40 @@ class WebsiteBrand(http.Controller):
         if subcat_id:
             domain.append(('categ_id', '=', int(subcat_id)))
 
-        products = request.env['product.template'].sudo().search(domain, limit=60)
+        # Limitar la cantidad de productos mostrados para evitar sobrecarga
+        products = request.env['product.template'].sudo().search(domain, limit=12)
+
+        # Si no hay productos publicados, redirige a /brand
         if not products:
             return request.redirect('/brand')
 
-        # Obtener todas las categorías y subcategorías con productos publicados de la marca en lote
-        categ_ids = products.mapped('categ_id').ids
-        # Buscar hijos en lote usando read_group para máxima velocidad
-        subcat_counts = request.env['product.template'].sudo().read_group([
-            ('brand_type_id', '=', brand_type_rec.id),
-            ('website_published', '=', True)
-        ], ['categ_id'], ['categ_id'])
-        subcat_ids = set(row['categ_id'][0] for row in subcat_counts if row['categ_id'])
-        categories = request.env['product.category'].sudo().browse(categ_ids)
+        # Categorías principales de los productos
+        category_ids = products.mapped('categ_id').ids
+        categories = request.env['product.category'].sudo().browse(category_ids)
+
+        # Filtrar solo subcategorías (child) que tengan productos publicados de la marca
         valid_categories = []
         for cat in categories:
-            valid_children = [c for c in cat.child_id if c.id in subcat_ids]
-            valid_categories.append({
-                'cat': cat,
-                'valid_children': valid_children,
-            })
+            valid_children = cat.child_id.filtered(
+                lambda c: request.env['product.template'].sudo().search_count([
+                    ('categ_id', '=', c.id),
+                    ('brand_type_id', '=', brand_type_rec.id),
+                    ('website_published', '=', True)
+                ]) > 0
+            )[:5]  # Solo los primeros 5 hijos válidos
+            if valid_children:
+                valid_categories.append({
+                    'cat': cat,
+                    'valid_children': valid_children,
+                })
+
+        # Obtener la imagen de banner del campo banner_image de la primera categoría (si existe)
         banner_image = valid_categories[0]['cat'].banner_image if valid_categories and hasattr(valid_categories[0]['cat'], 'banner_image') else False
+
         return request.render('theme_xtream.brand_search', {
             'brand_type': brand_type_rec,
             'products': products,
-            'categories': valid_categories,
+            'categories': valid_categories,  # Ahora es una lista de dicts
             'banner_image': banner_image,
         })
 
