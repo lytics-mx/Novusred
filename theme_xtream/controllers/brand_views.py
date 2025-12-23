@@ -30,11 +30,11 @@ class WebsiteBrand(http.Controller):
             current_page = int(request.params.get('page', 1))
         except Exception:
             current_page = 1
-        per_page = 20
+        per_page = 10
         total_products = request.env['product.template'].sudo().search_count(domain)
         total_pages = max(1, (total_products + per_page - 1) // per_page)
         start = (current_page - 1) * per_page
-        products = request.env['product.template'].sudo().search(domain, offset=start, limit=per_page, fields=['id','name','list_price','image_1920','categ_id'])
+        products = request.env['product.template'].sudo().search(domain, offset=start, limit=per_page, fields=['id','name'])
 
         # Si no hay productos publicados, redirige a /brand
         if not products:
@@ -44,14 +44,11 @@ class WebsiteBrand(http.Controller):
 
         # Categorías principales de los productos paginados
         # Solo obtener los IDs de categoría de los productos paginados
-        category_ids = list(set([p['categ_id'][0] if isinstance(p['categ_id'], (list, tuple)) else p['categ_id'] for p in products if p.get('categ_id')]))
-        categories = request.env['product.category'].sudo().browse(category_ids)
-
-        # No buscar subcategorías ni hijos para máxima velocidad
-        valid_categories = [{'cat': cat, 'valid_children': []} for cat in categories]
+        # No buscar categorías ni hijos para máxima velocidad
+        valid_categories = []
 
         # Obtener la imagen de banner del campo banner_image de la primera categoría (si existe)
-        banner_image = valid_categories[0]['cat'].banner_image if valid_categories and hasattr(valid_categories[0]['cat'], 'banner_image') else False
+        banner_image = False
 
 
         return request.render('theme_xtream.brand_search', {
