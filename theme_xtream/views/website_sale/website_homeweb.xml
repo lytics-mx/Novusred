@@ -1301,8 +1301,9 @@
                                 </h2>
                                 <div id="carouselUltimaVista" class="carousel slide" data-bs-ride="carousel">
                                     <div class="carousel-inner">
-                                        <t t-foreach="productos_sugeridos[:4]" t-as="producto" t-key="producto.id">
-                                            <div t-att-class="'carousel-item' + (' active' if loop.index0 == 0 else '')">
+                                        <t t-set="idx" t-value="0"/>
+                                        <t t-foreach="productos_sugeridos[:4]" t-as="producto">
+                                            <div t-att-class="'carousel-item' + (' active' if idx == 0 else '')">
                                                 <a t-att-href="producto.website_url" style="text-decoration: none; display: block;">
                                                     <div style="background: #fff; border-radius: 12px; padding: 16px 0 0 0;">
                                                         <img
@@ -1315,11 +1316,12 @@
                                                             <t t-esc="producto.name.upper()" />
                                                         </div>
                                                         <div style="font-size: 22px; font-weight: bold; color: #222; margin-bottom: 0;">
-                                                            $<t t-esc="'{:,}'.format(int(producto.discounted_price if producto.discounted_price &lt; producto.list_price else producto.list_price))" />
+                                                            $<t t-esc="'{:,}'.format(int(producto.discounted_price if producto.discounted_price < producto.list_price else producto.list_price))" />
                                                         </div>
                                                     </div>
                                                 </a>
                                             </div>
+                                            <t t-set="idx" t-value="idx + 1"/>
                                         </t>
                                     </div>
                                     <button class="carousel-control-prev" type="button" data-bs-target="#carouselUltimaVista" data-bs-slide="prev" style="width:32px;">
