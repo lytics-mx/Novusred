@@ -3,6 +3,41 @@
     <template id="xtream_inicio_web" name="Inicio">        
         <t t-call="website.layout">
             <div class="d-none d-md-block">
+            <!-- Carrusel móvil de últimas vistas -->
+            <t t-if="suggested_products and len(suggested_products) > 0">
+                <div class="d-block d-md-none container mt-4">
+                    <div style="text-align: left;">
+                        <h2 style="font-family: 'Questrial', sans-serif; font-size: 20px;">De acuerdo a tu última vista</h2>
+                    </div>
+                    <div id="mobileLastViewedCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <t t-foreach="suggested_products[:4]" t-as="product" t-key="product.id">
+                                <div t-att-class="'carousel-item' + (' active' if loop.index0 == 0 else '')">
+                                    <div class="card h-100 shadow-sm product-card text-center" style="border-radius:12px;">
+                                        <img t-att-src="'/web/image/product.template/' + str(product.id) + '/image_1920'" class="card-img-top mx-auto" style="max-width:120px;max-height:120px;object-fit:contain;"/>
+                                        <div class="card-body p-2">
+                                            <div class="mb-1" style="font-size:13px;min-height:38px;white-space:normal;overflow:hidden;text-overflow:ellipsis;">
+                                                <t t-esc="product.name"/>
+                                            </div>
+                                            <div class="fw-bold" style="font-size:18px;">$
+                                                <t t-esc="'{:,}'.format(int(product.list_price))"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#mobileLastViewedCarousel" data-bs-slide="prev" style="width:32px;">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#mobileLastViewedCarousel" data-bs-slide="next" style="width:32px;">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Siguiente</span>
+                        </button>
+                    </div>
+                </div>
+            </t>
 
                 <!-- Agregar la referencia al CSS -->
                 <t t-set="head">
