@@ -1162,11 +1162,17 @@
                                 </div>
                             </t>
                             <!-- Productos relacionados por etiqueta -->
-                            <t t-set="related_tag_products"
+                            <t t-set="no_tag_products"
                                 t-value="request.env['product.template'].sudo().search([
-                                ('website_published', '=', True),
-                                ('product_tag_ids', '!=', False)
-                            ], limit=4)" />
+                                    ('website_published', '=', True),
+                                    ('product_tag_ids', '=', False)
+                                ], limit=2)" />
+                            <t t-set="tag_products_random"
+                                t-value="request.env['product.template'].sudo().search([
+                                    ('website_published', '=', True),
+                                    ('product_tag_ids', '!=', False)
+                                ], limit=2)" />
+                            <t t-set="related_tag_products" t-value="no_tag_products + tag_products_random" />
                             <t t-if="related_tag_products">
                                 <div
                                     style="margin-top:8px; font-size:22px; color:#222; font-weight:bold; text-align:left;">
