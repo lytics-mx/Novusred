@@ -489,46 +489,82 @@
                                 <i class="fa fa-chevron-down float-end"></i>
                             </a>
                             <ul id="mobileCategoriesMenu" class="ps-3" style="display:none;">
-                                <t t-set="parent_categories" t-value="request.env['product.category'].search([('parent_id', '=', False), ('name', '!=', 'All')])"/>
-                                <t t-foreach="parent_categories" t-as="category">
-                                    <li>
-                                        <a href="#" class="d-block py-2 text-dark mobile-parent-cat" t-att-data-cat-id="category.id">
-                                            <t t-esc="category.name"/>
-                                            <t t-if="category.child_id">
-                                                <i class="fa fa-chevron-right float-end"></i>
-                                            </t>
-                                        </a>
-                                        <t t-if="category.child_id">
-                                            <ul class="ps-3 mobile-subcat-list" style="display:none;" t-att-id="'mobileSubcat'+str(category.id)">
-                                                <t t-foreach="category.child_id" t-as="subcat">
-                                                    <t t-if="subcat.name != 'All'">
-                                                    <li>
-                                                        <a href="#" class="d-block py-2 text-dark mobile-child-cat" t-att-data-cat-id="subcat.id">
-                                                            <t t-esc="subcat.name"/>
-                                                            <t t-if="subcat.child_id">
-                                                                <i class="fa fa-chevron-right float-end"></i>
-                                                            </t>
-                                                        </a>
-                                                        <t t-if="subcat.child_id">
-                                                            <ul class="ps-3 mobile-subsubcat-list" style="display:none;" t-att-id="'mobileSubsubcat'+str(subcat.id)">
-                                                                <t t-foreach="subcat.child_id" t-as="subsubcat">
-                                                                    <t t-if="subsubcat.name != 'All'">
-                                                                    <li>
-                                                                        <a t-att-href="'/subcategory?category_id=' + str(subsubcat.id)" class="d-block py-2 text-dark">
-                                                                            <t t-esc="subsubcat.name"/>
-                                                                        </a>
-                                                                    </li>
+                                                        <t t-set="all_category" t-value="request.env['product.category'].search([('parent_id', '=', False), ('name', '=', 'All')], limit=1)"/>
+                                                        <t t-set="parent_categories" t-value="request.env['product.category'].search([('parent_id', '=', False), ('name', '!=', 'All')])"/>
+                                                        <t t-if="all_category">
+                                                            <t t-foreach="all_category.child_id" t-as="category">
+                                                                <li>
+                                                                    <a href="#" class="d-block py-2 text-dark mobile-parent-cat" t-att-data-cat-id="category.id">
+                                                                        <t t-esc="category.name"/>
+                                                                        <t t-if="category.child_id">
+                                                                            <i class="fa fa-chevron-right float-end"></i>
+                                                                        </t>
+                                                                    </a>
+                                                                    <t t-if="category.child_id">
+                                                                        <ul class="ps-3 mobile-subcat-list" style="display:none;" t-att-id="'mobileSubcat'+str(category.id)">
+                                                                            <t t-foreach="category.child_id" t-as="subcat">
+                                                                                <li>
+                                                                                    <a href="#" class="d-block py-2 text-dark mobile-child-cat" t-att-data-cat-id="subcat.id">
+                                                                                        <t t-esc="subcat.name"/>
+                                                                                        <t t-if="subcat.child_id">
+                                                                                            <i class="fa fa-chevron-right float-end"></i>
+                                                                                        </t>
+                                                                                    </a>
+                                                                                    <t t-if="subcat.child_id">
+                                                                                        <ul class="ps-3 mobile-subsubcat-list" style="display:none;" t-att-id="'mobileSubsubcat'+str(subcat.id)">
+                                                                                            <t t-foreach="subcat.child_id" t-as="subsubcat">
+                                                                                                <li>
+                                                                                                    <a t-att-href="'/subcategory?category_id=' + str(subsubcat.id)" class="d-block py-2 text-dark">
+                                                                                                        <t t-esc="subsubcat.name"/>
+                                                                                                    </a>
+                                                                                                </li>
+                                                                                            </t>
+                                                                                        </ul>
+                                                                                    </t>
+                                                                                </li>
+                                                                            </t>
+                                                                        </ul>
                                                                     </t>
-                                                                </t>
-                                                            </ul>
+                                                                </li>
+                                                            </t>
                                                         </t>
-                                                    </li>
-                                                    </t>
-                                                </t>
-                                            </ul>
-                                        </t>
-                                    </li>
-                                </t>
+                                                        <t t-else="">
+                                                            <t t-foreach="parent_categories" t-as="category">
+                                                                <li>
+                                                                    <a href="#" class="d-block py-2 text-dark mobile-parent-cat" t-att-data-cat-id="category.id">
+                                                                        <t t-esc="category.name"/>
+                                                                        <t t-if="category.child_id">
+                                                                            <i class="fa fa-chevron-right float-end"></i>
+                                                                        </t>
+                                                                    </a>
+                                                                    <t t-if="category.child_id">
+                                                                        <ul class="ps-3 mobile-subcat-list" style="display:none;" t-att-id="'mobileSubcat'+str(category.id)">
+                                                                            <t t-foreach="category.child_id" t-as="subcat">
+                                                                                <li>
+                                                                                    <a href="#" class="d-block py-2 text-dark mobile-child-cat" t-att-data-cat-id="subcat.id">
+                                                                                        <t t-esc="subcat.name"/>
+                                                                                        <t t-if="subcat.child_id">
+                                                                                            <i class="fa fa-chevron-right float-end"></i>
+                                                                                        </t>
+                                                                                    </a>
+                                                                                    <t t-if="subcat.child_id">
+                                                                                        <ul class="ps-3 mobile-subsubcat-list" style="display:none;" t-att-id="'mobileSubsubcat'+str(subcat.id)">
+                                                                                            <t t-foreach="subcat.child_id" t-as="subsubcat">
+                                                                                                <li>
+                                                                                                    <a t-att-href="'/subcategory?category_id=' + str(subsubcat.id)" class="d-block py-2 text-dark">
+                                                                                                        <t t-esc="subsubcat.name"/>
+                                                                                                    </a>
+                                                                                                </li>
+                                                                                            </t>
+                                                                                        </ul>
+                                                                                    </t>
+                                                                                </li>
+                                                                            </t>
+                                                                        </ul>
+                                                                    </t>
+                                                                </li>
+                                                            </t>
+                                                        </t>
                             </ul>
                         </li>
                         <!-- Ofertas -->
