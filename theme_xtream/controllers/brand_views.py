@@ -22,8 +22,7 @@ class WebsiteBrand(http.Controller):
         if subcat_id:
             domain.append(('categ_id', '=', int(subcat_id)))
 
-        # Limitar la cantidad de productos mostrados para evitar sobrecarga
-        products = request.env['product.template'].sudo().search(domain, limit=12)
+        products = request.env['product.template'].sudo().search(domain)
 
         # Si no hay productos publicados, redirige a /brand
         if not products:
@@ -42,8 +41,9 @@ class WebsiteBrand(http.Controller):
                     ('brand_type_id', '=', brand_type_rec.id),
                     ('website_published', '=', True)
                 ]) > 0
-            )[:5]  # Solo los primeros 5 hijos válidos
+            )
             if valid_children:
+                # No modificar cat.child_id, solo pasar los hijos válidos al template
                 valid_categories.append({
                     'cat': cat,
                     'valid_children': valid_children,
