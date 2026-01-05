@@ -1162,17 +1162,20 @@
                                 </div>
                             </t>
                             <!-- Productos relacionados por etiqueta -->
-                            <!-- Productos relacionados por etiqueta -->
                             <t t-set="no_tag_products"
                                 t-value="request.env['product.template'].sudo().search([
                                     ('website_published', '=', True),
-                                    ('product_tag_ids', '=', False)
-                                ], order='random()', limit=2)" />
+                                    ('id', '!=', product.id),
+                                    ('product_tag_ids', '=', False),
+                                    ('categ_id', '=', product.categ_id.id)
+                                ], limit=2, offset=int(product.id) % 10)" />
                             <t t-set="tag_products_random"
                                 t-value="request.env['product.template'].sudo().search([
                                     ('website_published', '=', True),
-                                    ('product_tag_ids', '!=', False)
-                                ], order='random()', limit=2)" />
+                                    ('id', '!=', product.id),
+                                    ('product_tag_ids', '!=', False),
+                                    ('categ_id', '=', product.categ_id.id)
+                                ], limit=2, offset=int(product.id) % 10)" />
                             <t t-set="related_tag_products" t-value="no_tag_products + tag_products_random" />
                             <t t-if="related_tag_products">
                                 <div
