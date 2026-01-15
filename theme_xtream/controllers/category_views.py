@@ -68,8 +68,6 @@ class CategoryController(http.Controller):
         end = start + per_page
 
         if search:
-            # Preprocess search term to replace hyphens with spaces
-            search = search.replace('-', ' ')
             domain.append('|')  # OR condition
             domain.append(('name', 'ilike', search))
             domain.append(('product_model', 'ilike', search))
