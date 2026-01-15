@@ -311,17 +311,6 @@ class CategoryController(http.Controller):
                 promotion_tag_counts[tag.id] = count
                 promotion_tag_counts_general[tag.id] = count_general
 
-        # Buscar productos similares por nombre
-        similar_products = []
-        if search:
-            similar_products = request.env['product.template'].sudo().search([
-                ('website_published', '=', True),
-                ('qty_available', '>', 0),
-                '|',
-                ('name', 'ilike', search),
-                ('product_model', 'ilike', search)
-            ])
-
         values = {
             'categories': categories,
             'current_page': current_page,
@@ -360,20 +349,7 @@ class CategoryController(http.Controller):
             }
         }
         
-        # Renderizar la vista con productos similares
-        return request.render('theme_xtream.website_subcategory', {
-            'categories': categories,
-            'subcategories': subcategories,
-            'selected_category': selected_category,
-            'selected_subcategory': selected_subcategory,
-            'selected_brand': selected_brand,
-            'products': products,
-            'similar_products': similar_products,
-            'product_count': product_count,
-            'price_ranges': price_ranges,
-            'current_page': current_page,
-            'total_pages': total_pages,
-        })
+        return request.render('theme_xtream.website_subcategory', values)
     
     @http.route('/category/get_subcategories', type='json', auth='public', website=True)
     def get_subcategories(self, category_id):
