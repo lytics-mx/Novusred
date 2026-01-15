@@ -311,6 +311,16 @@ class CategoryController(http.Controller):
                 promotion_tag_counts[tag.id] = count
                 promotion_tag_counts_general[tag.id] = count_general
 
+        # Buscar productos similares por nombre
+        similar_products = []
+        if search:
+            similar_products = request.env['product.template'].sudo().search([
+                ('website_published', '=', True),
+                ('qty_available', '>', 0),
+                ('name', 'ilike', search)
+            ])
+
+        # Renderizar la vista con productos similares
         values = {
             'categories': categories,
             'current_page': current_page,
