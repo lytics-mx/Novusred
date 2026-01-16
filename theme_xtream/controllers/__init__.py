@@ -3,7 +3,7 @@ from . import theme_xtream
 from . import offers_views
 from . import historial_views
 from . import category_views
-from . import brand_views
+# from . import brand_views
 
 
 from . import search
