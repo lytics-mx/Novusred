@@ -284,7 +284,7 @@
                                                                                 </div>
                                                                                 <t t-if="acc.list_price and acc.discounted_price and (acc.list_price - acc.discounted_price) &gt; 0">
                                                                                     <div class="mt-0 accessory-discount-amount">
-                                                                                        <span style="font-size: 12px; color: #333;">
+                                                                                        <span style="font-size: 12px;">
                                                                                             $<t t-esc="'{:,}'.format(int(acc.list_price - acc.discounted_price))" /> descuento
                                                                                         </span>
                                                                                     </div>
@@ -302,10 +302,15 @@
                                                                                     </span>
                                                                                 </div>
                                                                             </t>
-                                                                            <h6 class="card-title mb-2" style="font-size: 13px; line-height: 1.1; max-height: 2.2em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-transform: uppercase; width:100px;">
+                                                                            <h6 class="card-title mb-2" style="font-size: 13px; line-height: 1.1; max-height: 2.2em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; width:100px; text-overflow: clip;">
                                                                                 <t t-esc="acc.name" />
                                                                             </h6>
                                                                         </div>
+                                                                        <t t-if="acc_idx != (min(2, acc_count-idx-1))">
+                                                                            <span style="position: absolute; right: -20px; top: 50%; transform: translateY(-50%); font-size: 24px; font-weight: bold; color: #888; line-height: 1; pointer-events: none;">
+                                                                                +
+                                                                            </span>
+                                                                        </t>
                                                                     </div>
                                                                 </div>
                                                             </t>
@@ -612,16 +617,15 @@
                                                                                             </div>
                                                                                             <t
                                                                                                 t-if="rel_prod.list_price and rel_prod.discounted_price and (rel_prod.list_price - rel_prod.discounted_price) &gt; 0">
-                                                                                                <div
-                                                                                                    class="mt-0 mobile-discount-amount"
-                                                                                                    style="text-align: left;">
-                                                                                                    <span
-                                                                                                        class="text-muted">
-                                                                                                        $<t
-                                                                                                            t-esc="'{:,}'.format(int(rel_prod.list_price - rel_prod.discounted_price))" />
-                                                                                                        descuento
-                                                                                                        </span>
-                                                                                                </div>
+                                                                                            <div
+                                                                                                class="mt-0 mobile-discount-amount"
+                                                                                                style="text-align: left;">
+                                                                                                <span class="text-muted">
+                                                                                                    $<t
+                                                                                                        t-esc="'{:,}'.format(int(rel_prod.list_price - rel_prod.discounted_price))" />
+                                                                                                    descuento
+                                                                                                    </span>
+                                                                                            </div>
                                                                                             </t>
                                                                                         </t>
                                                                                         <t
@@ -764,8 +768,7 @@
                                                                                 <div
                                                                                     class="mt-0 mobile-discount-amount"
                                                                                     style="text-align: left;">
-                                                                                    <span
-                                                                                        class="text-muted">
+                                                                                    <span class="text-muted">
                                                                                         $<t
                                                                                             t-esc="'{:,}'.format(int(rel_prod.list_price - rel_prod.discounted_price))" />
                                                                                         descuento </span>
