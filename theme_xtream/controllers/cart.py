@@ -11,12 +11,9 @@ class ShopController(WebsiteSale):
     @http.route('/shop/cart', type='http', auth="public", website=True)
     def cart(self, tab=None, **kw):
         order = request.website.sale_get_order()
-        # Filter out products with 0 stock
-        saved_items = request.env['saved.items'].sudo().search([
-            ('user_id', '=', request.env.user.id),
-            ('quantity_available', '>', 0)  # Only include items with stock greater than 0
-        ])
-
+        # Obtener los productos guardados para el usuario actual
+        saved_items = request.env['saved.items'].sudo().search([('user_id', '=', request.env.user.id)])
+        
         values = {
             'website_sale_order': order,
             'saved_items': saved_items,
@@ -123,25 +120,23 @@ class ShopController(WebsiteSale):
         if item_id:
             item_id = int(item_id)
             # Buscar el producto en "Guardados"
-            saved_item = request.env['saved.items'].sudo().search([
-                ('id', '=', item_id),
-                ('user_id', '=', request.env.user.id),
-                ('quantity_available', '>', 0)  # Asegurarse de que el stock sea mayor que 0
-            ])
+            saved_item = request.env['saved.items'].sudo().search([('id', '=', item_id), ('user_id', '=', request.env.user.id)])
             if saved_item:
-                order = request.website.sale_get_order(force_create=True)
-                if order:
-                    request.env['sale.order.line'].sudo().create({
-                        'order_id': order.id,
-                        'product_id': saved_item.product_id.id,
-                        'product_uom_qty': 1,  # Cantidad predeterminada
-                        'price_unit': saved_item.price,
-                    })
-                    # Eliminar el producto de "Guardados"
-                    saved_item.unlink()
-            else:
-                # Redirigir con un error si el stock es 0
-                return request.redirect('/shop/cart?tab=saved&error=nostock')
+                # Validar stock antes de agregar
+                if saved_item.product_id.qty_available > 0:
+                    order = request.website.sale_get_order(force_create=True)
+                    if order:
+                        request.env['sale.order.line'].sudo().create({
+                            'order_id': order.id,
+                            'product_id': saved_item.product_id.id,
+                            'product_uom_qty': 1,  # Cantidad predeterminada
+                            'price_unit': saved_item.price,
+                        })
+                        # Eliminar el producto de "Guardados"
+                        saved_item.unlink()
+                else:
+                    # Opcional: mensaje de error o redirección
+                    return request.redirect('/shop/cart?tab=saved&error=nostock')
         return request.redirect('/shop/cart')
     
     @http.route('/shop/cart/update_bundle', type='http', auth="public", website=True)
