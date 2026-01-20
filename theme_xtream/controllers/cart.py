@@ -11,9 +11,12 @@ class ShopController(WebsiteSale):
     @http.route('/shop/cart', type='http', auth="public", website=True)
     def cart(self, tab=None, **kw):
         order = request.website.sale_get_order()
-        # Obtener los productos guardados para el usuario actual
-        saved_items = request.env['saved.items'].sudo().search([('user_id', '=', request.env.user.id)])
-        
+        # Filter out products with 0 stock
+        saved_items = request.env['saved.items'].sudo().search([
+            ('user_id', '=', request.env.user.id),
+            ('quantity_available', '>', 0)  # Only include items with stock greater than 0
+        ])
+
         values = {
             'website_sale_order': order,
             'saved_items': saved_items,
@@ -30,7 +33,7 @@ class ShopController(WebsiteSale):
             session_saved_items = request.session.get('saved_for_later', [])
             saved_items = [
                 item for item in session_saved_items
-                if item.get('product_id') not in order_product_ids
+                if item.get('product_id') not in order_product_ids and item.get('quantity_available', 0) > 0
             ]
         values['saved_items'] = saved_items
         return values
