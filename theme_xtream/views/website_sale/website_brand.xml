@@ -8,7 +8,7 @@
             </t>
             <div id="wrap" class="oe_structure oe_empty d-none d-md-block"
                 style="font-family: 'Questrial', sans-serif;">
-                <!-- Verifica que la ruta de la imagen sea válidas -->
+                <!-- Verifica que la ruta de la imagen sea válida -->
                 <t t-set="active_banner"
                     t-value="request.env['banner.image.line'].sudo().search([('is_active_carousel', '=', True), ('name', '=', 'marcas')], limit=1)" />
                 <t t-if="active_banner">
@@ -128,12 +128,8 @@
                                 OFERTAS</h2>
                         </div>
                         <div class="o_wsale_products_grid_table_wrapper">
-                            <t t-set="all_tagged_products"
-                                t-value="request.env['product.template'].sudo().search([('website_published', '=', True), ('product_tag_ids', '!=', False)], order='create_date desc')" />
-                            <t t-set="all_untagged_products"
-                                t-value="request.env['product.template'].sudo().search([('website_published', '=', True), ('product_tag_ids', '=', False)], order='create_date desc')" />
                             <t t-set="discounted_products"
-                                t-value="list(all_tagged_products) + list(all_untagged_products)" />
+                                t-value="products" />
                             <!-- Desktop View -->
                             <div class="d-none d-md-block">
                                 <div class="row g-3" style="display: flex; flex-wrap: wrap;">
@@ -234,10 +230,30 @@
 
                             </div>
 
+                            <!-- Paginación -->
+                            <div class="pagination-wrapper mt-4">
+                                <nav aria-label="Page navigation">
+                                    <ul class="pagination justify-content-center">
+                                        <li class="page-item" t-if="current_page &gt; 1">
+                                            <a class="page-link" t-att-href="'/brand?page=' + str(current_page - 1)" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                        <t t-foreach="range(1, total_pages + 1)" t-as="page">
+                                            <li class="page-item" t-att-class="'active' if page == current_page else ''">
+                                                <a class="page-link" t-att-href="'/brand?page=' + str(page)"><t t-esc="page"/></a>
+                                            </li>
+                                        </t>
+                                        <li class="page-item" t-if="current_page &lt; total_pages">
+                                            <a class="page-link" t-att-href="'/brand?page=' + str(current_page + 1)" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
 
                         </div>
-
-
                     </div>
                 </section>
 
