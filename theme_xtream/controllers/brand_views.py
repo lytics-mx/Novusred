@@ -22,6 +22,12 @@ class WebsiteBrand(http.Controller):
         if subcat_id:
             domain.append(('categ_id', '=', int(subcat_id)))
 
+        # Convertir el parámetro `page` a entero
+        try:
+            page = int(page)
+        except ValueError:
+            page = 1
+
         # Implementar paginación
         items_per_page = 20
         total_products = request.env['product.template'].sudo().search_count(domain)
@@ -84,6 +90,12 @@ class WebsiteBrand(http.Controller):
 
     @http.route('/brand', auth='public', website=True)
     def home(self, page=1):
+        # Convertir el parámetro `page` a entero
+        try:
+            page = int(page)
+        except ValueError:
+            page = 1
+
         items_per_page = 20
         domain = [('website_published', '=', True)]
         total_products = request.env['product.template'].sudo().search_count(domain)
