@@ -4,7 +4,7 @@ from odoo.http import request
 class WebsiteBrand(http.Controller):
 
     @http.route('/brand/<string:brand_name>', auth='public', website=True)
-    def brand_products(self, brand_name, subcat_id=None, **kwargs):
+    def brand_products(self, brand_name, subcat_id=None, page=1, **kwargs):
         BrandType = request.env['brand.type']
         brand_type_rec = BrandType.sudo().search([
             ('slug', '=', brand_name.lower()),
@@ -22,7 +22,11 @@ class WebsiteBrand(http.Controller):
         if subcat_id:
             domain.append(('categ_id', '=', int(subcat_id)))
 
-        products = request.env['product.template'].sudo().search(domain)
+        # Implementar paginación
+        items_per_page = 20
+        total_products = request.env['product.template'].sudo().search_count(domain)
+        offset = (page - 1) * items_per_page
+        products = request.env['product.template'].sudo().search(domain, limit=items_per_page, offset=offset)
 
         # Si no hay productos publicados, redirige a /brand
         if not products:
@@ -52,11 +56,16 @@ class WebsiteBrand(http.Controller):
         # Obtener la imagen de banner del campo banner_image de la primera categoría (si existe)
         banner_image = valid_categories[0]['cat'].banner_image if valid_categories and hasattr(valid_categories[0]['cat'], 'banner_image') else False
 
+        # Calcular el total de páginas para la paginación
+        total_pages = (total_products + items_per_page - 1) // items_per_page
+
         return request.render('theme_xtream.brand_search', {
             'brand_type': brand_type_rec,
             'products': products,
             'categories': valid_categories,  # Ahora es una lista de dicts
             'banner_image': banner_image,
+            'current_page': page,
+            'total_pages': total_pages,
         })
 
     @http.route('/brand_search_redirect', type='http', auth='public', website=True)
@@ -74,9 +83,19 @@ class WebsiteBrand(http.Controller):
         return request.redirect('/brand')
 
     @http.route('/brand', auth='public', website=True)
-    def home(self):
-        products = request.env['product.template'].sudo().search([('website_published', '=', True)], order='create_date desc', limit=10)
+    def home(self, page=1):
+        items_per_page = 20
+        domain = [('website_published', '=', True)]
+        total_products = request.env['product.template'].sudo().search_count(domain)
+        offset = (page - 1) * items_per_page
+        products = request.env['product.template'].sudo().search(domain, order='create_date desc', limit=items_per_page, offset=offset)
+
+        # Calcular el total de páginas para la paginación
+        total_pages = (total_products + items_per_page - 1) // items_per_page
+
         return http.request.render('theme_xtream.website_brand', {
             'products': products,
+            'current_page': page,
+            'total_pages': total_pages,
         })
-    
+
