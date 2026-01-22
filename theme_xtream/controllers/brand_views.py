@@ -28,11 +28,15 @@ class WebsiteBrand(http.Controller):
         except ValueError:
             page = 1
 
-        # Implementar paginación
+        # Implementar paginación con un límite global de 100 productos
         items_per_page = 20
-        total_products = request.env['product.template'].sudo().search_count(domain)
+        max_products = 100
+        total_products = min(request.env['product.template'].sudo().search_count(domain), max_products)
         offset = (page - 1) * items_per_page
-        products = request.env['product.template'].sudo().search(domain, limit=items_per_page, offset=offset)
+        if offset >= max_products:
+            return request.redirect('/brand')  # Redirigir si se excede el límite
+
+        products = request.env['product.template'].sudo().search(domain, limit=min(items_per_page, max_products - offset), offset=offset)
 
         # Si no hay productos publicados, redirige a /brand
         if not products:
@@ -96,11 +100,16 @@ class WebsiteBrand(http.Controller):
         except ValueError:
             page = 1
 
+        # Implementar paginación con un límite global de 100 productos
         items_per_page = 20
+        max_products = 100
         domain = [('website_published', '=', True)]
-        total_products = request.env['product.template'].sudo().search_count(domain)
+        total_products = min(request.env['product.template'].sudo().search_count(domain), max_products)
         offset = (page - 1) * items_per_page
-        products = request.env['product.template'].sudo().search(domain, order='create_date desc', limit=items_per_page, offset=offset)
+        if offset >= max_products:
+            return request.redirect('/brand')  # Redirigir si se excede el límite
+
+        products = request.env['product.template'].sudo().search(domain, limit=min(items_per_page, max_products - offset), offset=offset)
 
         # Calcular el total de páginas para la paginación
         total_pages = (total_products + items_per_page - 1) // items_per_page
