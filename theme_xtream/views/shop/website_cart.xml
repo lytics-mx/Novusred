@@ -10,12 +10,12 @@
                   <ul class="nav nav-tabs border-0">
                   <li class="nav-item">
                     <button class="nav-link active" id="cart-tab-btn" data-tab="cart-tab">
-                    Carrito (<t t-esc="len(website_sale_order.order_line)"/>)
+                    Carrito (<t t-esc="len(website_sale_order.order_line.filtered(lambda l: l.product_id.is_published))"/>)
                     </button>
                   </li>
                   <li class="nav-item">
                       <button class="nav-link" id="saved-tab-btn" data-tab="saved-tab">
-                          Guardados (<t t-esc="len(saved_items)"/>)
+                          Guardados (<t t-esc="len(saved_items.filtered(lambda i: i.product_id.is_published))"/>)
                       </button>
                   </li>
                   </ul>
@@ -25,8 +25,8 @@
                 <!-- Contenido del carrito -->
                 <div id="cart-tab-content" class="tab-content">
                   <t t-set="order" t-value="website_sale_order"/>
-                  <t t-if="order and order.order_line">
-                    <t t-foreach="order.order_line" t-as="line">
+                  <t t-if="order and order.order_line.filtered(lambda l: l.product_id.is_published)">
+                    <t t-foreach="order.order_line.filtered(lambda l: l.product_id.is_published)" t-as="line">
                       <div class="row align-items-center px-4 py-3 border-bottom">
                         <div class="col-2 d-flex justify-content-center align-items-center">
                           <img t-att-src="'/web/image/product.product/%d/image_128' % line.product_id.id"
@@ -163,7 +163,7 @@
                 
                 <!-- Contenido de guardados -->
                 <div id="saved-tab-content" class="tab-content d-none">
-                    <t t-set="saved_items" t-value="request.env['saved.items'].search([('user_id', '=', request.env.user.id)])"/>
+                    <t t-set="saved_items" t-value="request.env['saved.items'].search([('user_id', '=', request.env.user.id), ('product_id.is_published', '=', True)])"/>
                     <t t-if="saved_items">
                         <t t-foreach="saved_items" t-as="item">
                             <div class="row align-items-center px-4 py-3 border-bottom">
@@ -324,7 +324,7 @@
               </div>
               
               <!-- Pie: envío, total y botón (solo visible en tab de carrito) -->
-                <div id="cart-footer" class="card-footer bg-white border-0 pt-4 pb-4" t-if="order and order.order_line">
+                <div id="cart-footer" class="card-footer bg-white border-0 pt-4 pb-4" t-if="order and order.order_line.filtered(lambda l: l.product_id.is_published)">
                   <div class="row align-items-center">
                     <div class="col-md-6 col-12 mb-2 mb-md-0">
                     <t t-if="order.partner_shipping_id">
@@ -691,7 +691,7 @@
                         </div>
                         <!-- Guardados móvil -->
                         <div id="saved-tab-content-mobile" class="tab-content d-none">
-                            <t t-set="saved_items" t-value="request.env['saved.items'].search([('user_id', '=', request.env.user.id)])"/>
+                            <t t-set="saved_items" t-value="request.env['saved.items'].search([('user_id', '=', request.env.user.id), ('product_id.is_published', '=', True)])"/>
                             <t t-if="saved_items">
                                 <t t-foreach="saved_items" t-as="item">
                                     <div class="d-flex align-items-center px-2 py-2 border-bottom">
