@@ -135,10 +135,10 @@ class ShopController(WebsiteSale):
                         # Eliminar el producto de "Guardados"
                         saved_item.unlink()
                 else:
-                    # Opcional: mensaje de error o redirección
+                    # Redirigir con mensaje de error si no hay stock
                     return request.redirect('/shop/cart?tab=saved&error=nostock')
         return request.redirect('/shop/cart')
-    
+
     @http.route('/shop/cart/update_bundle', type='http', auth="public", website=True)
     def update_bundle_cart(self, **post):
         """

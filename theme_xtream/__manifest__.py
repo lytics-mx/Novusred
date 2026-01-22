@@ -45,7 +45,7 @@
         'views/website_sale/website_history.xml',
         'views/website_sale/website_category.xml',
         'views/website_sale/website_subcategory.xml',
-        # 'views/website_sale/website_brand.xml',
+        'views/website_sale/website_brand.xml',
         'views/website_sale/website_view_products.xml',
         'views/website_sale/website_offers.xml',
         'views/website_sale/website_homeweb.xml',
