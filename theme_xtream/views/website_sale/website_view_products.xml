@@ -935,6 +935,7 @@
                                         </span>
                                     </div>
                                 </t>
+                                <t t-set="combination_info" t-value="product._get_combination_info()"/>
                                 <!-- Stock -->
                                 <div class="mb-3" style="text-align:left;">
                                     <div style="color:#222; font-size:16px; margin-bottom:2px;"> En
@@ -954,79 +955,81 @@
                                         </span>
                                     </div> -->
                                     <!-- Cantidad -->
-                                    <div style="font-size:16px; margin-bottom:10px;"> Cantidad: <span
-                                            class="input-group"
-                                            style="width:auto; display:inline-flex; vertical-align:middle; margin-left:6px;">
-                                            <button type="button" class="btn" id="qty-minus"
-                                                style="min-width:28px; font-size:20px; padding:0; background:transparent; border:none; color:#222;">
-                                        -</button>
-                                            <input id="qty-input" type="number" name="add_qty"
-                                                value="1" min="1" t-att-max="product.qty_available"
-                                                class="form-control text-center"
-                                                style="width:2.5em; min-width:32px; max-width:3em; padding:0 4px; border:none; box-shadow:none; background:transparent; outline:none; font-size:14px;"
-                                                onwheel="return false;"
-                                                inputmode="numeric"
-                                                maxlength="2"
-                                            />
-                                            <button type="button" class="btn" id="qty-plus"
-                                                style="min-width:28px; font-size:20px; padding:0; background:transparent; border:none; color:#222;">
-                                        +</button>
-                                        </span>
-                                    <t
-                                            t-jquery="body" t-operation="append">
-                                            <style>
-                                                /* Oculta las flechas de los inputs type number en
-                                        todos los navegadores */
-                                        input[type=number]::-webkit-inner-spin-button,
-                                        input[type=number]::-webkit-outer-spin-button {
-                                        -webkit-appearance: none;
-                                                margin: 0;
+                                    <div t-if="combination_info.get('is_available') or combination_info.get('allow_out_of_stock_order')"></div>
+                                        <div style="font-size:16px; margin-bottom:10px;"> Cantidad: <span
+                                                class="input-group"
+                                                style="width:auto; display:inline-flex; vertical-align:middle; margin-left:6px;">
+                                                <button type="button" class="btn" id="qty-minus"
+                                                    style="min-width:28px; font-size:20px; padding:0; background:transparent; border:none; color:#222;">
+                                            -</button>
+                                                <input id="qty-input" type="number" name="add_qty"
+                                                    value="1" min="1" t-att-max="product.qty_available"
+                                                    class="form-control text-center"
+                                                    style="width:2.5em; min-width:32px; max-width:3em; padding:0 4px; border:none; box-shadow:none; background:transparent; outline:none; font-size:14px;"
+                                                    onwheel="return false;"
+                                                    inputmode="numeric"
+                                                    maxlength="2"
+                                                />
+                                                <button type="button" class="btn" id="qty-plus"
+                                                    style="min-width:28px; font-size:20px; padding:0; background:transparent; border:none; color:#222;">
+                                            +</button>
+                                            </span>
+                                        <t
+                                                t-jquery="body" t-operation="append">
+                                                <style>
+                                                    /* Oculta las flechas de los inputs type number en
+                                            todos los navegadores */
+                                            input[type=number]::-webkit-inner-spin-button,
+                                            input[type=number]::-webkit-outer-spin-button {
+                                            -webkit-appearance: none;
+                                                    margin: 0;
+                                                    }
+                                                    input[type=number] {
+                                                    -moz-appearance: textfield;
+                                                    }
+                                                    /* Ajusta el ancho del input según el número de
+                                            dígitos */
+                                                    #qty-input {
+                                                    width: 2.5em !important;
+                                                    min-width: 32px !important;
+                                                    max-width: 3em !important;
+                                                    text-align: center;
+                                                    }
+                                                </style>
+                                            </t>
+                                        <span
+                                                style="color:#888; font-size:15.2px;">(<t
+                                                    t-esc="int(product.qty_available)" /> disponibles)</span>
+                                        </div>
+                                        <t t-jquery="body" t-operation="append">
+                                            <script type="text/javascript"><![CDATA[
+                                            document.addEventListener('DOMContentLoaded', function() {
+                                                var qtyInput = document.getElementById('qty-input');
+                                                var minusBtn = document.getElementById('qty-minus');
+                                                var plusBtn = document.getElementById('qty-plus');
+                                                if (qtyInput && minusBtn && plusBtn) {
+                                                    var max = parseInt(qtyInput.getAttribute('max')) || 9999;
+                                                    minusBtn.addEventListener('click', function() {
+                                                        var val = parseInt(qtyInput.value) || 1;
+                                                        if (val > 1) qtyInput.value = val - 1;
+                                                    });
+                                                    plusBtn.addEventListener('click', function() {
+                                                        var val = parseInt(qtyInput.value) || 1;
+                                                        if (val < max) qtyInput.value = val + 1;
+                                                    });
+                                                    qtyInput.addEventListener('input', function() {
+                                                        var val = parseInt(qtyInput.value) || 1;
+                                                        if (val < 1) qtyInput.value = 1;
+                                                        if (val > max) qtyInput.value = max;
+                                                    });
                                                 }
-                                                input[type=number] {
-                                                -moz-appearance: textfield;
-                                                }
-                                                /* Ajusta el ancho del input según el número de
-                                        dígitos */
-                                                #qty-input {
-                                                width: 2.5em !important;
-                                                min-width: 32px !important;
-                                                max-width: 3em !important;
-                                                text-align: center;
-                                                }
-                                            </style>
+                                            });
+                                        ]]></script>
                                         </t>
-                                    <span
-                                            style="color:#888; font-size:15.2px;">(<t
-                                                t-esc="int(product.qty_available)" /> disponibles)</span>
                                     </div>
-                                    <t t-jquery="body" t-operation="append">
-                                        <script type="text/javascript"><![CDATA[
-                                        document.addEventListener('DOMContentLoaded', function() {
-                                            var qtyInput = document.getElementById('qty-input');
-                                            var minusBtn = document.getElementById('qty-minus');
-                                            var plusBtn = document.getElementById('qty-plus');
-                                            if (qtyInput && minusBtn && plusBtn) {
-                                                var max = parseInt(qtyInput.getAttribute('max')) || 9999;
-                                                minusBtn.addEventListener('click', function() {
-                                                    var val = parseInt(qtyInput.value) || 1;
-                                                    if (val > 1) qtyInput.value = val - 1;
-                                                });
-                                                plusBtn.addEventListener('click', function() {
-                                                    var val = parseInt(qtyInput.value) || 1;
-                                                    if (val < max) qtyInput.value = val + 1;
-                                                });
-                                                qtyInput.addEventListener('input', function() {
-                                                    var val = parseInt(qtyInput.value) || 1;
-                                                    if (val < 1) qtyInput.value = 1;
-                                                    if (val > max) qtyInput.value = max;
-                                                });
-                                            }
-                                        });
-                                    ]]></script>
-                                    </t>
                                 </div>
                                 <!-- Métodos de pago -->
-                                <div style="margin-bottom:12px;">
+                                <div style="margin-bottom:12px;" t-if="combination_info.get('is_available') or combination_info.get('allow_out_of_stock_order')">
                                     <div style="color:#222; font-size:0.98em; margin-bottom:4px;">Puedes
                                         pagar con:</div>
                                     <t t-set="active_banner"
@@ -1042,7 +1045,7 @@
                                     </t>
                                 </div>
                                 <!-- Botones -->
-                                <div class="d-grid" style="gap: 10px;">
+                                <div class="d-grid" style="gap: 10px;" t-if="combination_info.get('is_available') or combination_info.get('allow_out_of_stock_order')">
                                     <form id="add-to-cart-form" action="/shop/cart/update"
                                         method="POST" class="js_website_sale w-100">
                                         <input type="hidden" name="csrf_token"
