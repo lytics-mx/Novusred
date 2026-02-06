@@ -1,3 +1,4 @@
+from re import search
 from odoo import http
 from odoo.http import request
 import json
@@ -22,7 +23,8 @@ class WebsiteSearch(http.Controller):
             if product:
                 return request.redirect(f'/shop/{product.slug()}?product=product.template({product.id},)')
             else:
-                return request.redirect(f'/subcategory?search={search_sanitized}')
+                # Si no se encuentra el modelo exacto, redirige a la tienda estándar con búsqueda
+                return request.redirect(f"/shop?search={search}")
         else:
             Brand = request.env['brand.type'].sudo()
             brand = Brand.search([('name', 'ilike', search), ('active', '=', True)], limit=1)

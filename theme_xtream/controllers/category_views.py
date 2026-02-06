@@ -60,15 +60,15 @@ class CategoryController(http.Controller):
         selected_brand = None
         subcategories = []
 
-        try:
-            current_page = int(request.params.get('page', 1))
-        except Exception:
-            current_page = 1
-        per_page = 5
-        total_products = request.env['product.template'].sudo().search_count(domain)
-        total_pages = max(1, (total_products + per_page - 1) // per_page)
-        start = (current_page - 1) * per_page
-        end = start + per_page
+        # try:
+        #     current_page = int(request.params.get('page', 1))
+        # except Exception:
+        #     current_page = 1
+        # per_page = 5
+        # total_products = request.env['product.template'].sudo().search_count(domain)
+        # total_pages = max(1, (total_products + per_page - 1) // per_page)
+        # start = (current_page - 1) * per_page
+        # end = start + per_page
 
         if search:
             search = (search or "").replace('-', ' ').strip()
@@ -147,6 +147,23 @@ class CategoryController(http.Controller):
             except (ValueError, TypeError):
                 promotion_id = None
 
+        # --- Paginación (debe ir DESPUÉS de armar el domain final) ---
+        try:
+            current_page = int(request.params.get('page', 1))
+        except Exception:
+            current_page = 1
+
+        per_page = 5
+        total_products = request.env['product.template'].sudo().search_count(domain)
+        total_pages = max(1, (total_products + per_page - 1) // per_page)
+
+        # Si piden una página mayor a las existentes, la ajustamos
+        if current_page > total_pages:
+            current_page = total_pages
+
+        start = (current_page - 1) * per_page
+        end = start + per_page
+        # --- fin paginación ---
 
         # Obtener productos filtrados (SOLO PUBLICADOS, con filtro de precio en dominio)
         products = request.env['product.template'].sudo().search(domain, offset=start, limit=per_page)
