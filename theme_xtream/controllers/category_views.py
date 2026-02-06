@@ -218,7 +218,10 @@ class CategoryController(http.Controller):
         brand_counts = {}
 
         for brand in available_brands:
-            count = sum(1 for p in brand_products if p.brand_type_id.id == brand.id)
+            count = sum(
+                1 for p in brand_products
+                if p.get('brand_type_id') and p['brand_type_id'][0] == brand.id
+            )
             brand_counts[brand.id] = count
 
         # Obtener tags de descuento SOLO de productos PUBLICADOS de la categoría seleccionada
