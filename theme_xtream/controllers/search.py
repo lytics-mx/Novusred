@@ -18,7 +18,7 @@ class WebsiteSearch(http.Controller):
             return request.redirect(f'/category_search?search={search_sanitized}')
         elif search_type == 'model':
             Product = request.env['product.template'].sudo()
-            product = Product.search([('product_model', '=', search)], limit=1)
+            product = Product.search([('product_model', 'ilike', search)], limit=1)
             if product:
                 return request.redirect(f'/shop/{product.slug()}?product=product.template({product.id},)')
             else:

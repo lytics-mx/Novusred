@@ -935,7 +935,6 @@
                                         </span>
                                     </div>
                                 </t>
-                                <t t-set="combination_info" t-value="product._get_combination_info()"/>
                                 <!-- Stock -->
                                 <div class="mb-3" style="text-align:left;">
                                     <div style="color:#222; font-size:16px; margin-bottom:2px;"> En
@@ -949,13 +948,13 @@
                                         </span>
                                     </div>
                                     <!-- Modelo -->
-                                    <!-- <div style="color:#222; font-size:16px; margin-bottom:10px;">
+                                    <div style="color:#222; font-size:16px; margin-bottom:10px;">
                                         Modelo: <span>
-                                            <t t-esc="product.product_model" />
+                                            <t t-esc="product.default_code" />
                                         </span>
-                                    </div> -->
+                                    </div>
                                     <!-- Cantidad -->
-                                    <div t-if="combination_info.get('is_available') or combination_info.get('allow_out_of_stock_order')"></div>
+                                    <div t-if="int(product.qty_available) &gt; 0"></div>
                                         <div style="font-size:16px; margin-bottom:10px;"> Cantidad: <span
                                                 class="input-group"
                                                 style="width:auto; display:inline-flex; vertical-align:middle; margin-left:6px;">
@@ -1029,7 +1028,7 @@
                                     </div>
                                 </div>
                                 <!-- Métodos de pago -->
-                                <div style="margin-bottom:12px;" t-if="combination_info.get('is_available') or combination_info.get('allow_out_of_stock_order')">
+                                <div style="margin-bottom:12px;" t-if="int(product.qty_available) &gt; 0">
                                     <div style="color:#222; font-size:0.98em; margin-bottom:4px;">Puedes
                                         pagar con:</div>
                                     <t t-set="active_banner"
@@ -1045,7 +1044,7 @@
                                     </t>
                                 </div>
                                 <!-- Botones -->
-                                <div class="d-grid" style="gap: 10px;" t-if="combination_info.get('is_available') or combination_info.get('allow_out_of_stock_order')">
+                                <div class="d-grid" style="gap: 10px;" t-if="int(product.qty_available) &gt; 0">
                                     <form id="add-to-cart-form" action="/shop/cart/update"
                                         method="POST" class="js_website_sale w-100">
                                         <input type="hidden" name="csrf_token"
@@ -1317,7 +1316,7 @@
                 <div id="o_product_terms_and_share" class="d-none d-md-block"></div>
 
 
-            </div>
+            
 
             <div class="d-block d-md-none w-100 px-3 py-2 mx-auto"
                 style="font-family: 'Montserrat', Arial, sans-serif; max-width:480px; margin:0 auto; padding-top:0.5rem; padding-bottom:0.5rem; text-align:center; box-sizing:border-box; background-color:#fff;">

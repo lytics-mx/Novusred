@@ -71,7 +71,8 @@ class CategoryController(http.Controller):
         end = start + per_page
 
         if search:
-            domain.append('|')  # OR condition
+            search = (search or "").replace('-', ' ').strip()
+            domain.append('|')
             domain.append(('name', 'ilike', search))
             domain.append(('product_model', 'ilike', search))
         # Filtro por categoría (ESTE ES EL PRINCIPAL)
